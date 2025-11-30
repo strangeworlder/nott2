@@ -51,7 +51,7 @@ The remaining cards are set aside in five piles:
 *   **Face Card Reserves**: The remaining Jacks, Queens, and Kings, each in their own pile.
 *   **The two Jokers**: Kept separate for the final act.
 
-If there are no cards left in a Reserve you would need to pull from, pull from the next highest Reserve pile instead.
+
 
 ### The Trophy Pile
 To begin the night with a sense of dread, take the bottom card (a random 10) from the Number Reserve and place it face-up to start the Trophy Pile.
@@ -146,15 +146,31 @@ After the narration is complete, update the decks.
 *   **On a Success**: The Threat Card is removed and placed on top of the Trophy Pile (setting new Base Difficulty). Add the next card from the Number Reserve to the bottom of the Threat Deck.
 *   **On a Failure**: The Threat Card is placed on the bottom of the Threat Deck. Add the next card from the Number Reserve to the bottom of the deck.
 
-### Face Cards (Facing the Killer)
-Success against the Killer is always costly. Based on your Fallout (the d4), another face card is added to the Threat Deck.
-*   **1 or 2 (Clean/Rough)**: Add a random **Jack**.
-*   **3 or 4 (Jump Scare/Twist)**: Add a random **Queen**.
+### Face cards (Facing the Killer)
+Success against the Killer is always costly.
 
-If this was the first time a face card of its suit was defeated, you’ve found a weakness. The Threat Card is removed from the game. **Doing this for all four suits triggers the Endgame.**
-If you had already defeated a card of that suit, the Threat Card remains in the Threat Deck.
+**Determining Difficulty**: The difficulty for a Face Card test is determined by adding the **Trophy Pile's top card** to the modifier from the face card in question:
+*   **Jack**: +1
+*   **Queen**: +2
+*   **King**: +3
 
-**Failure against the Killer**: You gain one **Strike**, and a random **King** is added to the bottom of the Threat Deck.
+Based on your Fallout (the d4), another face card from Face Card Reserves is added from the reserve to the Threat Deck.
+*   **Clean/Messy (1 or 2 on d4)**: Add a random **Jack**.
+*   **Costy/Dire (3 or 4 on d4)**: Add a random **Queen**.
+
+**Running out of Reserves:**
+*   **No Jacks?** Add a **Queen** instead.
+*   **No Queens?** Add a **King** instead.
+*   **No Kings?** Add a **Jack** or **Queen** instead.
+*   **No Face Cards?** Do not add any card.
+
+If this was the first time a face card of its suit (♠, ♥, ♣, ♦) was defeated (you’ve succeeded in a test against it), you’ve found a weakness of the Killer. The Threat Card is removed from the game. **Doing this for all four suits triggers the Endgame.**
+
+If you had already defeated a card of that suit, the Threat Card is not removed, but remains in the Threat Deck.
+
+**Failure is disastrous**: you gain one Strike, and a random **King** is added from the Face Card Reserves to the bottom of the Threat Deck.
+
+After resolving any confrontation with the Killer, the entire Threat Deck and Trophy Pile are shuffled and a new Threat Card and the new top card of the Trophy Pile get revealed.
 
 ## Three Strikes and you’re out!
 

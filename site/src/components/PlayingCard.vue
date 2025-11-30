@@ -15,9 +15,9 @@ const suitIcons: Record<string, string> = {
 
 // Fixed colors for white background card
 const suitColors: Record<string, string> = {
-  'Spades': 'text-nott-black', 
+  'Spades': '', 
   'Hearts': 'text-nott-red', 
-  'Clubs': 'text-nott-black', 
+  'Clubs': '', 
   'Diamonds': 'text-nott-red',
 }
 
@@ -35,7 +35,7 @@ const rankChar = computed(() => {
 </script>
 
 <template>
-  <div class="relative w-64 aspect-[2/3] bg-nott-white rounded-lg shadow-[0_0_30px_rgba(255,0,0,0.2)] flex flex-col items-center justify-center border-4 border-nott-black overflow-hidden select-none transition-transform hover:scale-105 duration-300">
+  <div class="relative w-64 aspect-[2/3] bg-nott-white text-nott-black rounded-lg shadow-[0_0_30px_rgba(255,0,0,0.2)] flex flex-col items-center justify-center border-4 border-nott-black overflow-hidden select-none transition-transform hover:scale-105 duration-300">
     <!-- Corner Ranks -->
     <div class="absolute top-2 left-2 text-2xl font-display" :class="suitColors[suit]">
       {{ rankChar }}

@@ -169,19 +169,19 @@ export const falloutScale: Fallout[] = [
     },
     {
         level: 2,
-        title: 'The Rough Cut',
+        title: 'The Messy Cut',
         description: 'The Table Edits.',
         mechanic: 'You narrate the core outcome (Success or Failure). The other players suggest 2-3 potential "costs" or "complications" (scratches, noise, lost time). You choose one to include in your narration.',
     },
     {
         level: 3,
-        title: 'The Jump Scare',
+        title: 'The Costy Cut',
         description: 'The Agreed Consequence.',
         mechanic: 'Whether you Succeeded or Failed the test, the Consequence you agreed upon in Step 3 happens. If Success: You get what you wanted, but the bad thing happens. If Failure: You don\'t get what you wanted, and the bad thing happens.',
     },
     {
         level: 4,
-        title: 'The Twist',
+        title: 'The Dire Cut',
         description: 'The Nightmare.',
         mechanic: 'The Agreed Consequence happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. (This counts as a Strike).',
     },

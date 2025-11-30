@@ -16,9 +16,9 @@ const suitIcons: Record<string, string> = {
 }
 
 const suitColors: Record<string, string> = {
-  'Spades': 'text-nott-white',
+  'Spades': '',
   'Hearts': 'text-nott-red',
-  'Clubs': 'text-nott-white',
+  'Clubs': '',
   'Diamonds': 'text-nott-red',
 }
 
