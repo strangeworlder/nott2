@@ -43,7 +43,7 @@ These are added together to get a result between **1 and 13**.
 ### The Threat Deck
 The horror starts small. Shuffle the **2s, 3s, 4s, and one Jack** together. The deck is placed face down on the table. The **four Aces** are placed on top of this stack face up.
 
-If there is a face down card on top of the Threat Deck, reveal it to see the next challenge.
+These Aces represent the prologue. While they are in play, there is only one card visible. Once the Aces are resolved, you will **draw two cards** from the top of the Threat Deck to be visible at all times.
 
 ### The Reserves
 The remaining cards are set aside in five piles:
@@ -82,8 +82,12 @@ The Table starts with **13 Genre Points** in a central pool.
 
 The game proceeds in scenes. In each scene, one player is the **Active Player (AP)**.
 
-### 1. The Setup: The Card is the Prompt
-When a new Threat Card is revealed, do not look at the number yet. Look at the Suit. The Active Player must answer the prompt associated with that suit to frame the scene.
+### 1. The Setup: Choose Your Path
+**The Prologue (Aces)**: When an Ace is visible, there is no choice. The player whose Aptitude matches the Ace's suit **must** be the Active Player for that scene.
+
+**The Main Game**: Once the Aces are gone, there will be **two cards visible** on the table. The Active Player chooses which of the two cards they will challenge. The unchosen card remains on the table.
+
+**The Prompt**: Once a card is selected, look at the Suit. The Active Player must answer the prompt associated with that suit to frame the scene.
 
 **The Prompt Matrix**
 
@@ -145,7 +149,12 @@ If your Aptitude matches the Threat Card suit, you are naturally skilled in this
 
 After the narration is complete, update the decks.
 
-### Number Cards
+### Replenishing the Table
+1.  **Draw Replacement**: Draw the top card from the Threat Deck to replace the chosen card, so there are two visible cards again.
+2.  **Face Card Exception**: If the **unchosen card remaining on the table** is a Face Card, do **not** draw a replacement. You must deal with that Face Card in the next scene (unless a shuffle occurs).
+3.  **Shuffling**: If a rule triggers a shuffle of the Threat Deck, shuffle **all visible cards** back into the deck, then draw two new ones.
+
+### Number Cards (Deck Evolution)
 *   **On a Success**: The Threat Card is removed and placed on top of the Trophy Pile (setting new Base Difficulty). Add the next card from the Number Reserve to the bottom of the Threat Deck.
 *   **On a Failure**: The Threat Card is placed on the bottom of the Threat Deck. Add the next card from the Number Reserve to the bottom of the deck.
 

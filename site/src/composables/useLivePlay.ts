@@ -47,7 +47,7 @@ const selectedJoker = ref<'Red' | 'Black' | null>(null)
 const sacrificeConfirmed = ref(false)
 const rollMain = ref<number | null>(null)
 const rollEffort = ref<number | null>(null)
-const targetDifficulty = ref<number | null>(null)
+
 const manualOverride = ref(false)
 const debugMode = ref(true)
 const isGenrePointUsed = ref(false)
@@ -109,6 +109,19 @@ export function useLivePlay() {
 
         const suitData = fullPromptMatrix.find(s => s.suit === card.suit)
         return suitData?.prompts.find(p => p.rank === card.rank)?.prompt
+    })
+
+    const targetDifficulty = computed(() => {
+        if (!trophyTop.value) return null
+        if (isFaceCard.value) {
+            let modifier = 0
+            const currentRank = activeCard.value?.rank || 0
+            if (currentRank === 11) modifier = 1
+            if (currentRank === 12) modifier = 2
+            if (currentRank === 13) modifier = 3
+            return trophyTop.value.rank + modifier
+        }
+        return trophyTop.value.rank
     })
 
     const rollTotal = computed(() => {
@@ -247,16 +260,6 @@ export function useLivePlay() {
         const card = trophyPile.value.find(c => c.rank === rank)
         if (card) {
             trophyTop.value = card
-            if (isFaceCard.value) {
-                let modifier = 0
-                const currentRank = activeCard.value?.rank || 0
-                if (currentRank === 11) modifier = 1
-                if (currentRank === 12) modifier = 2
-                if (currentRank === 13) modifier = 3
-                targetDifficulty.value = card.rank + modifier
-            } else {
-                targetDifficulty.value = card.rank
-            }
         }
     }
 
@@ -305,7 +308,6 @@ export function useLivePlay() {
         sacrificeConfirmed.value = false
         rollMain.value = null
         rollEffort.value = null
-        targetDifficulty.value = null
         isGenrePointUsed.value = false
         isGenrePointAwarded.value = false
     }
@@ -384,9 +386,12 @@ export function useLivePlay() {
                         if (weaknessesFound.value.length === 4) {
                             isEndgame.value = true
                         }
+                        // CRITICAL FIX: Remove the weakness card from visibleCards so it isn't returned to the deck
+                        visibleCards.value = visibleCards.value.filter(c => c.id !== activeCard.value?.id)
                     }
                 } else {
-                    if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
+                    // Fix: Do NOT manually return the card here. shuffleThreatDeck returns ALL visible cards.
+                    // if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
                 }
 
                 if (rollEffort.value && rollEffort.value <= 2) {
@@ -410,7 +415,8 @@ export function useLivePlay() {
             if (isFaceCard.value) {
                 strikes.value++
                 updateDeckState(13, 'Spades', 'add')
-                if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
+                // Fix: Do NOT manually return the card here. shuffleThreatDeck returns ALL visible cards.
+                // if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
 
                 shuffleThreatDeck()
                 shuffleTrophyPile()
@@ -481,7 +487,6 @@ export function useLivePlay() {
         sacrificeConfirmed.value = false
         rollMain.value = null
         rollEffort.value = null
-        targetDifficulty.value = null
         isGenrePointUsed.value = false
         isGenrePointAwarded.value = false
     }
