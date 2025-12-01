@@ -159,7 +159,7 @@ const applyGameStateUpdates = () => {
 
     // 3. Face Card Specifics
     if (isFaceCard.value) {
-      // Fallout 1-2: Add Jack, 3-4: Add Queen
+      // Low Fallout: Add Jack, High Fallout: Add Queen
       if (rollFallout.value && rollFallout.value <= 2) {
         addRandomFaceCard(11) // Jack
       } else if (rollFallout.value && rollFallout.value >= 3) {
@@ -398,7 +398,7 @@ const suitColors: Record<string, string> = {
         <Card class="bg-nott-red/5 border-nott-red/30">
           <Checkbox 
             v-model="consequenceConfirmed"
-            label="We have agreed on a specific, terrible Consequence (Fallout 3)."
+            label="We have agreed on a specific, terrible Consequence (Overexertion)."
           />
         </Card>
       </div>
@@ -470,7 +470,7 @@ const suitColors: Record<string, string> = {
             </div>
             <div class="p-4 border border-nott-gray/30 rounded bg-nott-black/50 text-center">
               <Text variant="label" color="red" class="mb-1">Aptitude?</Text>
-              <Text variant="caption" color="muted">If Suit matches your Aptitude, you may +/- 1 to Fallout Die.</Text>
+              <Text variant="caption" color="muted">If Suit matches Aptitude: +1 to Push (Risk), -1 for Safety (Control).</Text>
             </div>
           </div>
 

@@ -136,7 +136,7 @@ const emit = defineEmits<{
           </div>
           <div class="p-4 border border-nott-gray/30 rounded bg-nott-black/50 text-center">
             <Text variant="label" color="red" class="mb-1">Aptitude?</Text>
-            <Text variant="caption" color="muted">If Suit matches your Aptitude, you may +/- 1 to Fallout Die.</Text>
+            <Text variant="caption" color="muted">If Suit matches Aptitude: +1 to Push (Risk), -1 for Safety (Control).</Text>
           </div>
         </div>
 

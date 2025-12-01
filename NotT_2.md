@@ -64,7 +64,7 @@ You are no heroes. You are just in the wrong place at the wrong time.
 1.  **Choose a Name.**
 2.  **Come up with a clear Archetype.**
 3.  **Think of a reason “Why are you here?”.**
-4.  **Select an Aptitude** (Power, Resolve, Intellect or Finesse). When doing a Test matching your Aptitude’s suit, you can add or subtract one from your Fallout dice.
+4.  **Select an Aptitude** (Power, Resolve, Intellect or Finesse). Your Aptitude represents your character's natural strengths, allowing them to push themselves further with less risk.
 
 ### Archetype examples
 *   **♠ (Power)**: The Jock, The Protective, The Townie, The Greaser, The Sheriff, The Father, The Rival
@@ -114,7 +114,7 @@ Once per scene, any other player can interject with "Something's not right..." a
 ### 3. The Stakes: Loading the Gun
 Now, the table looks at the Difficulty Number. Before rolling, the table asks the Active Player: **"If this goes wrong, what is the Consequence?"**
 
-The Active Player (with help from the table) must define the **Fallout 3** result. This must be specific and bad.
+The Active Player (with help from the table) must define the **Overexertion** result. This must be specific and bad.
 *   Example: "If I fail this, I don't just miss the jump; I twist my ankle and drop the flashlight into the ravine."
 
 ### 4. The Resolution: The Director's Edit
@@ -124,19 +124,22 @@ The Active Player rolls the **d13 (d10 + d4)**.
 *   **Equal or Greater**: Success.
 *   **Less**: Failure.
 
-**Narrative Control**: Determined strictly by the **d4 (Fallout Die)**.
+### Narrative Control: The Fallout Scale (Pushing Your Luck)
 
-**The Fallout Scale**
+The **d4 (Fallout Die)** represents how hard your character is pushing themselves to succeed. A higher Fallout die adds to your Total (making Success more likely) but increases the severity of the consequences.
 
-*   **1 (The Clean Cut): The Player's Movie.** You have total control. You narrate the outcome (Success or Failure) exactly how you want it. You look cool, or your failure is tragic and noble.
-*   **2 (The Rough Cut): The Table Edits.** You narrate the core outcome (Success or Failure). The other players suggest 2-3 potential "costs" or "complications" (scratches, noise, lost time). You choose one to include in your narration.
-*   **3 (The Jump Scare): The Agreed Consequence.** Whether you Succeeded or Failed the test, the Consequence you agreed upon in Step 3 happens.
-    *   *If you Succeeded:* You get what you wanted, but the bad thing happens (e.g., you clear the gap, but the flashlight falls).
-    *   *If you Failed:* You don't get what you wanted, and the bad thing happens.
-*   **4 (The Twist): The Nightmare.** The Agreed Consequence happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. **(This counts as a Strike).**
+*   **1 (Controlled Effort):** You kept your cool. You narrate the outcome (Success or Failure) exactly how you want it. You look capable, or your failure is tragic and noble.
+*   **2 (Pushing It):** You exerted yourself. You narrate the core outcome. The other players suggest 2-3 potential "costs" (scratches, noise, lost time). You choose one to include.
+*   **3 (Overexertion):** You pushed too hard. Whether you Succeeded or Failed, the Consequence you agreed upon in Step 3 happens.
+    *   *Success:* You get what you wanted, but the bad thing happens.
+    *   *Failure:* You don't get what you wanted, and the bad thing happens.
+*   **4 (Breaking Point):** You lost control. The Agreed Consequence happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. **(This counts as a Strike).**
 
-### Aptitude
-If your Aptitude matches the Threat Card suit, you may modify your Fallout Die (d4) by +1 or -1 after the roll.
+### Aptitude: Managing the Risk
+If your Aptitude matches the Threat Card suit, you are naturally skilled in this area. After rolling, you may **modify your Fallout Die (d4) by +1 or -1**.
+
+*   **Increase Fallout (+1)**: You push yourself harder to turn a Failure into a Success (by increasing your Total), but you risk a worse Consequence.
+*   **Decrease Fallout (-1)**: You rely on your natural talent to reduce the Consequence (by lowering the Fallout level), but you risk turning a Success into a Failure (by lowering your Total).
 
 ## Updating the Game State
 

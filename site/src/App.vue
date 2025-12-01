@@ -16,8 +16,8 @@ const currentView = ref<'showcase' | 'rules' | 'play' | 'online'>('showcase')
 </script>
 
 <template>
-  <div class="min-h-screen bg-nott-black p-4 md:p-8 font-body selection:bg-nott-red selection:text-white">
-    <header class="max-w-7xl mx-auto mb-12 text-center">
+  <div class="min-h-screen bg-nott-black p-4 md:p-8 font-body selection:bg-nott-red selection:text-white max-w-[960px] mx-auto">
+    <header class="mx-auto mb-12 text-center">
       <h1 class="text-5xl md:text-7xl font-display text-nott-red mb-2 tracking-tighter animate-pulse-slow text-shadow-glow">
         NIGHT OF THE THIRTEENTH
       </h1>
@@ -54,7 +54,7 @@ const currentView = ref<'showcase' | 'rules' | 'play' | 'online'>('showcase')
       </nav>
     </header>
 
-    <main class="max-w-7xl mx-auto">
+    <main class="mx-auto">
       <Transition
         enter-active-class="transition duration-300 ease-out"
         enter-from-class="transform translate-y-4 opacity-0"

@@ -77,7 +77,7 @@ const emit = defineEmits<{
               <div class="flex items-start gap-3">
                 <div class="w-8"></div>
                 <div>
-                  <Text variant="label" color="red" class="mb-1">3. Fallout (Face Card Added):</Text>
+                  <Text variant="label" color="red" class="mb-1">3. The Killer Retaliates:</Text>
                   <div v-if="falloutResult">
                     <Text variant="body"><strong>{{ falloutResult.title }} ({{ falloutResult.level }})</strong></Text>
                     <Text v-if="falloutResult.level <= 2" variant="body" class="mt-1">Add a random <strong>Jack</strong> to the Threat Deck.</Text>
@@ -89,7 +89,7 @@ const emit = defineEmits<{
               <div class="flex items-start gap-3">
                 <div class="w-8"></div>
                 <div>
-                  <Text variant="label" color="red" class="mb-1">4. Shuffle:</Text>
+                  <Text variant="label" color="red" class="mb-1">4. The Threat Remains:</Text>
                   <Text variant="body"><strong>Shuffle the entire Threat Deck and Trophy Pile.</strong></Text>
                 </div>
               </div>
@@ -117,21 +117,21 @@ const emit = defineEmits<{
               <div class="flex items-start gap-3">
                 <div class="w-8"></div>
                 <div>
-                  <Text variant="label" color="red" class="mb-1">2. Strike:</Text>
+                  <Text variant="label" color="red" class="mb-1">2. The Killer Strikes:</Text>
                   <Text variant="body">Mark 1 Strike on your character sheet.</Text>
                 </div>
               </div>
               <div class="flex items-start gap-3">
                 <div class="w-8"></div>
                 <div>
-                  <Text variant="label" color="red" class="mb-1">3. Add King:</Text>
+                  <Text variant="label" color="red" class="mb-1">3. The Horror Grows:</Text>
                   <Text variant="body">Add a random <strong>King</strong> to the bottom of the Threat Deck.</Text>
                 </div>
               </div>
               <div class="flex items-start gap-3">
                 <div class="w-8"></div>
                 <div>
-                  <Text variant="label" color="red" class="mb-1">4. Shuffle:</Text>
+                  <Text variant="label" color="red" class="mb-1">4. The Threat Remains:</Text>
                   <Text variant="body"><strong>Shuffle the entire Threat Deck and Trophy Pile.</strong></Text>
                 </div>
               </div>

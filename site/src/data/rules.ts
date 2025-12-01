@@ -163,27 +163,27 @@ export interface Fallout {
 export const falloutScale: Fallout[] = [
     {
         level: 1,
-        title: 'The Clean Cut',
-        description: 'The Player\'s Movie.',
-        mechanic: 'You have total control. You narrate the outcome (Success or Failure) exactly how you want it. You look cool, or your failure is tragic and noble.',
+        title: 'Controlled Effort',
+        description: 'Safe and effective.',
+        mechanic: 'You kept your cool. You narrate the outcome (Success or Failure) exactly how you want it. You look capable, or your failure is tragic and noble.',
     },
     {
         level: 2,
-        title: 'The Messy Cut',
-        description: 'The Table Edits.',
-        mechanic: 'You narrate the core outcome (Success or Failure). The other players suggest 2-3 potential "costs" or "complications" (scratches, noise, lost time). You choose one to include in your narration.',
+        title: 'Pushing It',
+        description: 'Effort with minor costs.',
+        mechanic: 'You exerted yourself. You narrate the core outcome. The other players suggest 2-3 potential "costs" (scratches, noise, lost time). You choose one to include.',
     },
     {
         level: 3,
-        title: 'The Costy Cut',
-        description: 'The Agreed Consequence.',
-        mechanic: 'Whether you Succeeded or Failed the test, the Consequence you agreed upon in Step 3 happens. If Success: You get what you wanted, but the bad thing happens. If Failure: You don\'t get what you wanted, and the bad thing happens.',
+        title: 'Overexertion',
+        description: 'Guaranteed consequence.',
+        mechanic: 'You pushed too hard. Whether you Succeeded or Failed, the Consequence you agreed upon in Step 3 happens. If Success: You get what you wanted, but the bad thing happens. If Failure: You don\'t get what you wanted, and the bad thing happens.',
     },
     {
         level: 4,
-        title: 'The Dire Cut',
-        description: 'The Nightmare.',
-        mechanic: 'The Agreed Consequence happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. (This counts as a Strike).',
+        title: 'Breaking Point',
+        description: 'Disaster strikes.',
+        mechanic: 'You lost control. The Agreed Consequence happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. (This counts as a Strike).',
     },
 ];
 
@@ -204,7 +204,7 @@ export const basicRules = {
         },
         {
             step: '3. The Stakes',
-            description: 'Define the Consequence of failure (Fallout 3).',
+            description: 'Define the Consequence of failure (Overexertion).',
         },
         {
             step: '4. The Resolution',
@@ -253,8 +253,8 @@ export const basicRules = {
         },
         faceCards: {
             title: 'Face Cards (The Killer)',
-            success: 'Based on Fallout (d4): 1-2 adds a Jack, 3-4 adds a Queen. First time defeating a suit removes it (Weakness Found).',
-            failure: 'Gain a Strike. Add a King to bottom of Threat Deck.',
+            success: 'Based on Fallout (d4): 1-2 adds a Jack, 3-4 adds a Queen. (If Reserve empty: Jack->Queen->King->None). First time defeating a suit removes it (Weakness Found). If already defeated, it stays in deck. Shuffle Threat Deck & Trophy Pile after any confrontation.',
+            failure: 'Gain a Strike. Add a King to bottom of Threat Deck. Shuffle Threat Deck & Trophy Pile after any confrontation.',
         },
     },
     endgame: {
@@ -263,7 +263,7 @@ export const basicRules = {
         setup: 'Remove all Number Cards. Shuffle in both Jokers.',
         redJoker: {
             title: 'Red Joker (The End)',
-            effect: 'The Final Test. Difficulty = Top of Trophy Pile.',
+            effect: 'The Final Test. Shuffle Trophy Pile; Difficulty = Top of Trophy Pile.',
             success: 'Survivors Win.',
             failure: 'Character Dies. Joker reshuffled.',
         },
@@ -284,7 +284,7 @@ export const characterRules = {
         'Select an Aptitude (Power, Resolve, Intellect or Finesse).',
     ],
     aptitudes: {
-        description: 'When doing a Test matching your Aptitude’s suit, you can add or subtract one from your Fallout dice.',
+        description: 'Your Aptitude represents your character\'s natural strengths. When doing a Test matching your Aptitude’s suit, you can modify your Fallout Die (d4) by +1 or -1. Increase (+1) to push for Success (higher Total) at greater risk. Decrease (-1) to play it safe (lower Fallout) but risk Failure (lower Total).',
         list: [
             { suit: 'Spades', name: 'Power', description: 'Physical threat' },
             { suit: 'Hearts', name: 'Resolve', description: 'Fear/Paranoia' },

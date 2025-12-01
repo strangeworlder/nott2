@@ -37,7 +37,7 @@ const emit = defineEmits<{
       <Card class="bg-nott-red/5 border-nott-red/30">
         <Checkbox 
           v-model="consequenceConfirmed"
-          label="We have agreed on a specific, terrible Consequence (Fallout 3)."
+          label="We have agreed on a specific, terrible Consequence (Overexertion)."
         />
       </Card>
     </div>
