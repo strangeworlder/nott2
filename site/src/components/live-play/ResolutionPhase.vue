@@ -43,7 +43,7 @@ onMounted(() => {
 <template>
   <WizardStep
     title="The Resolution"
-    :step-number="5"
+    :step-number="4"
     :total-steps="6"
     :can-proceed="rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)"
     show-back

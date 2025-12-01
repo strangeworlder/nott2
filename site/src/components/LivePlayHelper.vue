@@ -6,9 +6,9 @@ import Button from './Button.vue'
 // Import Steps
 import GameSetup from './live-play/GameSetup.vue'
 import SceneSetup from './live-play/SceneSetup.vue'
-import ConversationPhase from './live-play/ConversationPhase.vue'
-import StakesPhase from './live-play/StakesPhase.vue'
+import ConversationAndStakesPhase from './live-play/ConversationAndStakesPhase.vue'
 import ResolutionPhase from './live-play/ResolutionPhase.vue'
+import ResolveScenePhase from './live-play/ResolveScenePhase.vue'
 import FalloutPhase from './live-play/FalloutPhase.vue'
 import WinScreen from './live-play/WinScreen.vue'
 
@@ -72,22 +72,22 @@ const prevStep = () => {
       @next="nextStep"
     />
 
-    <!-- Step 3: Conversation -->
-    <ConversationPhase 
+    <!-- Step 3: Conversation & Stakes -->
+    <ConversationAndStakesPhase 
       v-if="currentStep === 3"
       @back="prevStep"
       @next="nextStep"
     />
 
-    <!-- Step 4: Stakes -->
-    <StakesPhase 
+    <!-- Step 4: Resolution -->
+    <ResolutionPhase 
       v-if="currentStep === 4"
       @back="prevStep"
       @next="nextStep"
     />
 
-    <!-- Step 5: Resolution -->
-    <ResolutionPhase 
+    <!-- Step 5: Resolve Scene -->
+    <ResolveScenePhase 
       v-if="currentStep === 5"
       @back="prevStep"
       @next="nextStep"
