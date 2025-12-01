@@ -29,7 +29,8 @@ const {
   getRankName,
   tableGenrePoints,
   playerGenrePoints,
-  isGameWon
+  isGameWon,
+  currentAct
 } = useLivePlay()
 
 const nextStep = () => {
@@ -49,7 +50,10 @@ const prevStep = () => {
     <div class="w-full max-w-4xl flex justify-between items-center mb-8">
       <div class="flex flex-col">
         <Text variant="h3" color="red">Live Play Helper</Text>
-        <Text v-if="trophyTop" variant="caption" color="muted">Base Difficulty: <span class="text-nott-white font-bold">{{ trophyTop.rank }}</span></Text>
+        <div class="flex gap-4 items-center">
+          <Text v-if="currentAct" variant="caption" class="text-nott-red font-bold uppercase tracking-widest">Act {{ currentAct }}</Text>
+          <Text v-if="trophyTop" variant="caption" color="muted">Base Difficulty: <span class="text-nott-white font-bold">{{ trophyTop.rank }}</span></Text>
+        </div>
       </div>
       <Button variant="secondary" @click="fullReset" class="text-xs px-3 py-1 h-8">Reset Game</Button>
     </div>

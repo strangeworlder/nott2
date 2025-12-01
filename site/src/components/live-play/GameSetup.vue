@@ -14,11 +14,11 @@ const emit = defineEmits<{
 
 <template>
   <WizardStep
-    :title="isEndgame ? 'Endgame Setup' : 'Game Setup'"
+    :title="isEndgame ? 'Act 3: The Finale Setup' : 'Game Setup'"
     :step-number="1"
     :total-steps="6"
     :can-proceed="true"
-    :next-label="isEndgame ? 'Start the Endgame' : 'Start the Night'"
+    :next-label="isEndgame ? 'Start the Finale' : 'Start the Night'"
     @next="emit('next')"
   >
     <div class="mb-6 text-center">

@@ -258,8 +258,8 @@ export const basicRules = {
         },
     },
     endgame: {
-        title: 'The Endgame',
-        trigger: 'Defeat a Face Card of all 4 suits.',
+        title: 'Act 3: The Finale',
+        trigger: 'Defeat a Face Card of all 4 suits (Triggers Act 3).',
         setup: 'Remove all Number Cards. Shuffle in both Jokers.',
         redJoker: {
             title: 'Red Joker (The End)',

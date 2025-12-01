@@ -78,6 +78,25 @@ The Table starts with **13 Genre Points** in a central pool.
 *   **Awarding**: Any player can award another player a Genre Point for playing into a horror trope, making a great roleplay choice, or terrifying the table. **(Use the app to track this at the end of the scene).**
 *   **Spending**: You can spend one Genre Point to reroll your entire d13 and add a +1 to that roll’s main die. You must accept the second result. **(Toggle this in the Resolution Phase to track the spend).**
 
+## The Three Acts
+
+The game is played in three Acts, escalating the horror from a creeping dread to an explosive finale.
+
+### Act 1: The Setup
+The Killer is a presence, but not acting in any way. We get to learn about the characters without an axe-wielding maniac in every scene.
+*   **Duration**: From the start of the game until the **first resolution of a Face Card**.
+*   **Rules**: Play proceeds as normal. If a Face Card is revealed, it is a looming threat, but the Act only ends when a player *resolves* a scene against a Face Card (Win or Lose).
+
+### Act 2: The Horror Story
+The Killer is now a part of the story. This is the actual horror movie.
+*   **Duration**: From the resolution of the first Face Card until **four weaknesses are found**.
+*   **Rules**: The stakes are higher. The Killer is hunting.
+
+### Act 3: The Finale
+The explosive finale of the horror movie.
+*   **Duration**: From the moment the fourth weakness is found until the end of the game.
+*   **Rules**: See "Act 3: The Finale" section.
+
 ## The Game Loop
 
 The game proceeds in scenes. In each scene, one player is the **Active Player (AP)**.
@@ -176,7 +195,7 @@ Based on your Effort (the d4), another face card from Face Card Reserves is adde
 *   **No Kings?** Add a **Jack** or **Queen** instead.
 *   **No Face Cards?** Do not add any card.
 
-If this was the first time a face card of its suit (♠, ♥, ♣, ♦) was defeated (you’ve succeeded in a test against it), you’ve found a weakness of the Killer. The Threat Card is removed from the game. **Doing this for all four suits triggers the Endgame.**
+If this was the first time a face card of its suit (♠, ♥, ♣, ♦) was defeated (you’ve succeeded in a test against it), you’ve found a weakness of the Killer. The Threat Card is removed from the game. **Doing this for all four suits triggers Act 3: The Finale.**
 
 If you had already defeated a card of that suit, the Threat Card is not removed, but remains in the Threat Deck.
 
@@ -194,7 +213,7 @@ Everyone gets two close calls with death before the end comes for them.
 
 When you get your **third Strike**, the character’s story is over. Come up with the most horrifying way to go.
 
-## The Endgame
+## Act 3: The Finale
 
 Should you survive long enough to defeat a face card from all four suits, the night reaches its bloody climax. Remove all number cards from the Threat Deck, leaving only the face cards. Both Jokers are shuffled into this deck.
 
@@ -205,6 +224,6 @@ When a Joker is revealed, its effect is triggered immediately. For any Joker-act
     *   **Failure**: The character is killed. The Red Joker is shuffled back into the deck.
 
 *   **The Black Joker (The Twist)**: One last, desperate attempt.
-    *   **Success**: Removes the highest face card from the deck.
+    *   **Success**: Removes the highest face card from the Threat Deck if available.
     *   **Failure**: Adds another King.
-    *   The Black Joker is then removed from the game.
+    *   The Black Joker is then removed from the game. Shuffle the Threat Deck and Trophy Pile.

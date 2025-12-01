@@ -11,6 +11,7 @@ const weaknessesFound = ref<Suit[]>([])
 const isEndgame = ref(false)
 const tableGenrePoints = ref(13)
 const playerGenrePoints = ref(0)
+const currentAct = ref(1)
 
 // Manual Input State
 const manualSuit = ref<Suit>('Spades')
@@ -346,6 +347,7 @@ export function useLivePlay() {
         reset()
         isEndgameInitialized.value = false
         isGameWon.value = false
+        currentAct.value = 1
     }
 
     const startGame = () => {
@@ -354,6 +356,7 @@ export function useLivePlay() {
         isEndgame.value = false
         isEndgameInitialized.value = false
         isGameWon.value = false
+        currentAct.value = 1
         acesRemaining.value = 4
         middleStack.value = { 2: 4, 3: 4, 4: 4, 11: 1 }
         bottomStack.value = {
@@ -466,6 +469,7 @@ export function useLivePlay() {
                         weaknessesFound.value.push(activeCard.value.suit)
                         if (weaknessesFound.value.length === 4) {
                             isEndgame.value = true
+                            currentAct.value = 3
                         }
                         // CRITICAL FIX: Remove the weakness card from visibleCards so it isn't returned to the deck
                         visibleCards.value = visibleCards.value.filter(c => c.id !== activeCard.value?.id)
@@ -483,6 +487,11 @@ export function useLivePlay() {
 
                 shuffleThreatDeck()
                 shuffleTrophyPile()
+
+                // Act 1 -> Act 2 Transition
+                if (currentAct.value === 1) {
+                    currentAct.value = 2
+                }
             } else {
                 if (!isEndgame.value) addNextReserve()
                 if (activeCard.value) {
@@ -515,6 +524,11 @@ export function useLivePlay() {
 
                 shuffleThreatDeck()
                 shuffleTrophyPile()
+
+                // Act 1 -> Act 2 Transition
+                if (currentAct.value === 1) {
+                    currentAct.value = 2
+                }
             } else {
                 if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
                 if (!isEndgame.value) addNextReserve()
@@ -683,6 +697,7 @@ export function useLivePlay() {
         playerGenrePoints,
         isGenrePointUsed,
         isGenrePointAwarded,
+        currentAct,
 
         // Computed
         selectedSuit,
