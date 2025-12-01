@@ -1,38 +1,11 @@
-
 import { ref, computed } from 'vue'
 import { effortScale, faceCardPrompts, faceCardPrompt, fullPromptMatrix } from '../data/rules'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 
-// Shared state (singleton if we want state to persist across component mounts, 
-// or we can export a function that creates new state. 
-// Given the original component had local state, but we might want to preserve it if the user navigates away and back,
-// let's keep it local to the composable instance for now, but if the user wants global state we can move it out.
-// The original component had "Local State for Physical Play". 
-// Let's make it a singleton so state is preserved if the component is unmounted/remounted, 
-// which is often desired in a "Helper" tool.
-// Actually, let's follow the pattern of `useGameEngine` which seems to use global state.
-// But wait, `useGameEngine` in the file I saw had global state defined OUTSIDE the function.
-// `LivePlayHelper.vue` was using its own local state.
-// I will replicate the local state behavior by creating the state inside the function, 
-// BUT if the user wants it to be a singleton, I should define it outside.
-// For a "Live Play Helper", it's likely the user wants to keep state if they accidentally navigate away.
-// However, to be safe and strictly follow the refactor, I will return a NEW state each time 
-// UNLESS I see a reason to make it global. 
-// The prompt says "externalize logic that can be externalized".
-// I'll stick to the factory pattern (state inside function) to match the original component's lifecycle, 
-// unless I see `useGameEngine` is being used as a singleton.
-// `useGameEngine.ts` has `const threatDeck = ref<Card[]>([])` OUTSIDE the function.
-// So `useGameEngine` IS a singleton.
-// `LivePlayHelper.vue` was NOT using `useGameEngine`'s state, it was defining its own:
-// `const currentCard = ref<GameCard | null>(null)`
-// `const strikes = ref(0)`
-// ...
-// So `LivePlayHelper` was independent.
-// I will create `useLivePlay` to manage this specific state. 
-// I will make it a singleton to be helpful (preserving state is usually good), 
-// but provide a `reset` function.
+// Shared state (singleton)
+const visibleCards = ref<GameCard[]>([])
+const selectedCardId = ref<string | null>(null)
 
-const currentCard = ref<GameCard | null>(null)
 const strikes = ref(0)
 const weaknessesFound = ref<Suit[]>([])
 const isEndgame = ref(false)
@@ -83,8 +56,14 @@ const isGenrePointAwarded = ref(false)
 export function useLivePlay() {
 
     // Computed Helpers
-    const selectedSuit = computed(() => currentCard.value?.suit || null)
-    const selectedRank = computed(() => currentCard.value?.rank || null)
+    const activeCard = computed(() => {
+        if (selectedJoker.value) return null // Joker takes precedence in UI logic usually, but let's be careful
+        if (!selectedCardId.value) return null
+        return visibleCards.value.find(c => c.id === selectedCardId.value) || null
+    })
+
+    const selectedSuit = computed(() => activeCard.value?.suit || null)
+    const selectedRank = computed(() => activeCard.value?.rank || null)
     const isFaceCard = computed(() => (selectedRank.value || 0) > 10)
     const isFirstTime = computed(() => {
         if (!selectedSuit.value || !isFaceCard.value) return true
@@ -97,9 +76,9 @@ export function useLivePlay() {
 
     const cardName = computed(() => {
         if (selectedJoker.value) return `${selectedJoker.value} Joker`
-        if (!currentCard.value) return 'Unknown Card'
-        const rankName = getRankName(currentCard.value.rank)
-        return `${rankName} of ${currentCard.value.suit}`
+        if (!activeCard.value) return 'Unknown Card'
+        const rankName = getRankName(activeCard.value.rank)
+        return `${rankName} of ${activeCard.value.suit}`
     })
 
     const getRankName = (rank: number) => {
@@ -114,7 +93,7 @@ export function useLivePlay() {
         if (selectedJoker.value === 'Red') return "THE FINAL TEST. The Killer has you dead to rights. How do you escape death?"
         if (selectedJoker.value === 'Black') return "THE TWIST. One last desperate attempt. What do you sacrifice to survive?"
 
-        const card = currentCard.value
+        const card = activeCard.value
         if (!card) return null
 
         if (isFaceCard.value) {
@@ -217,6 +196,13 @@ export function useLivePlay() {
     }
 
     const shuffleThreatDeck = () => {
+        // Return all visible cards to the deck first
+        visibleCards.value.forEach(card => {
+            updateDeckState(card.rank, card.suit, 'return')
+        })
+        visibleCards.value = []
+        selectedCardId.value = null
+
         for (const rank in middleStack.value) {
             const r = Number(rank)
             bottomStack.value[r] += middleStack.value[r]
@@ -231,19 +217,30 @@ export function useLivePlay() {
         isTrophyTopRandomized.value = true
     }
 
-    const setManualCard = () => {
+    const addVisibleCard = () => {
         if (manualJoker.value) {
+            // Jokers are special, they don't go into visibleCards usually, 
+            // but for simplicity let's handle them as a separate state or just set selectedJoker
+            // If user adds a Joker, it usually overrides everything.
             selectedJoker.value = manualJoker.value
-            currentCard.value = null
+            selectedCardId.value = null
         } else {
-            selectedJoker.value = null
-            currentCard.value = {
-                id: 'manual',
+            const newCard: GameCard = {
+                id: `${manualRank.value}-${manualSuit.value}`,
                 suit: manualSuit.value,
                 rank: manualRank.value
             }
-            updateDeckState(manualRank.value, manualSuit.value, 'draw')
+            // Avoid duplicates
+            if (!visibleCards.value.find(c => c.id === newCard.id)) {
+                visibleCards.value.push(newCard)
+                updateDeckState(manualRank.value, manualSuit.value, 'draw')
+            }
         }
+    }
+
+    const selectCard = (id: string) => {
+        selectedCardId.value = id
+        selectedJoker.value = null
     }
 
     const setTrophyTop = (rank: number) => {
@@ -252,7 +249,7 @@ export function useLivePlay() {
             trophyTop.value = card
             if (isFaceCard.value) {
                 let modifier = 0
-                const currentRank = currentCard.value?.rank || 0
+                const currentRank = activeCard.value?.rank || 0
                 if (currentRank === 11) modifier = 1
                 if (currentRank === 12) modifier = 2
                 if (currentRank === 13) modifier = 3
@@ -331,6 +328,8 @@ export function useLivePlay() {
         trophyTop.value = null
         tableGenrePoints.value = 13
         playerGenrePoints.value = 0
+        visibleCards.value = []
+        selectedCardId.value = null
         reset()
     }
 
@@ -349,6 +348,8 @@ export function useLivePlay() {
         drawnCards.value = new Set()
         tableGenrePoints.value = 13
         playerGenrePoints.value = 0
+        visibleCards.value = []
+        selectedCardId.value = null
 
         const initialTrophy: GameCard = { id: 'initial-trophy', suit: 'Unknown', rank: 10 }
         trophyPile.value = [initialTrophy]
@@ -378,14 +379,14 @@ export function useLivePlay() {
         if (isSuccess.value) {
             if (isFaceCard.value) {
                 if (isFirstTime.value) {
-                    if (currentCard.value) {
-                        weaknessesFound.value.push(currentCard.value.suit)
+                    if (activeCard.value) {
+                        weaknessesFound.value.push(activeCard.value.suit)
                         if (weaknessesFound.value.length === 4) {
                             isEndgame.value = true
                         }
                     }
                 } else {
-                    if (currentCard.value) updateDeckState(currentCard.value.rank, currentCard.value.suit, 'return')
+                    if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
                 }
 
                 if (rollEffort.value && rollEffort.value <= 2) {
@@ -398,10 +399,10 @@ export function useLivePlay() {
                 shuffleTrophyPile()
             } else {
                 if (!isEndgame.value) addNextReserve()
-                if (currentCard.value) {
-                    trophyPile.value.push(currentCard.value)
+                if (activeCard.value) {
+                    trophyPile.value.push(activeCard.value)
                     revealHiddenTen()
-                    trophyTop.value = currentCard.value
+                    trophyTop.value = activeCard.value
                     isTrophyTopRandomized.value = false
                 }
             }
@@ -409,16 +410,22 @@ export function useLivePlay() {
             if (isFaceCard.value) {
                 strikes.value++
                 updateDeckState(13, 'Spades', 'add')
-                if (currentCard.value) updateDeckState(currentCard.value.rank, currentCard.value.suit, 'return')
+                if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
 
                 shuffleThreatDeck()
                 shuffleTrophyPile()
             } else {
-                if (currentCard.value) updateDeckState(currentCard.value.rank, currentCard.value.suit, 'return')
+                if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
                 if (!isEndgame.value) addNextReserve()
             }
         }
     }
+
+
+
+    const hasFaceCardOnTable = computed(() => {
+        return visibleCards.value.some(c => c.rank > 10)
+    })
 
     const getNextValidCard = (): { rank: Rank, suit: Suit } => {
         // 1. Check Aces
@@ -455,11 +462,17 @@ export function useLivePlay() {
 
     const startNextScene = () => {
         applyGameStateUpdates()
-        currentCard.value = null
+
+        // Remove the active card from visible cards
+        if (selectedCardId.value) {
+            visibleCards.value = visibleCards.value.filter(c => c.id !== selectedCardId.value)
+        }
+
+        selectedCardId.value = null
         selectedJoker.value = null
         manualJoker.value = null
 
-        // Smart Auto-Selection
+        // Smart Auto-Selection for next draw
         const nextCard = getNextValidCard()
         manualSuit.value = nextCard.suit
         manualRank.value = nextCard.rank
@@ -475,7 +488,9 @@ export function useLivePlay() {
 
     return {
         // State
-        currentCard,
+        activeCard, // Renamed from currentCard
+        visibleCards, // New
+        selectedCardId, // New
         strikes,
         weaknessesFound,
         isEndgame,
@@ -515,6 +530,7 @@ export function useLivePlay() {
         effortResult,
         availableTrophyRanks,
         isMiddleStackEmpty,
+        hasFaceCardOnTable, // New
 
         // Methods
         isRankAvailable,
@@ -523,7 +539,8 @@ export function useLivePlay() {
         addNextReserve,
         shuffleThreatDeck,
         shuffleTrophyPile,
-        setManualCard,
+        addVisibleCard, // New
+        selectCard, // New
         setTrophyTop,
         reset,
         fullReset,
@@ -533,7 +550,7 @@ export function useLivePlay() {
         getRankName,
         awardGenrePoint,
         toggleGenrePointUsage,
-        toggleGenrePointAward
+        toggleGenrePointAward,
+        getNextValidCard // New
     }
 }
-

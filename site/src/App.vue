@@ -181,9 +181,14 @@ const currentView = ref<'showcase' | 'rules' | 'play'>('showcase')
                 </div>
               </div>
 
-              <div class="grid md:grid-cols-2 gap-8 mt-8">
+            </section>
+
+            <section class="space-y-4">
+              <h2 class="text-3xl font-display text-nott-white border-b border-nott-gray pb-2">Game Elements</h2>
+              
+              <div class="grid md:grid-cols-2 gap-8">
                 <div class="space-y-4">
-                  <Text variant="h3">Game Elements</Text>
+                  <Text variant="h3">Playing Cards</Text>
                   <div class="flex gap-4 flex-wrap">
                     <PlayingCard suit="Spades" :rank="1" />
                     <PlayingCard suit="Hearts" :rank="12" />
@@ -191,11 +196,58 @@ const currentView = ref<'showcase' | 'rules' | 'play'>('showcase')
                 </div>
 
                 <div class="space-y-4">
+                  <Text variant="h3">Selectable Cards (Interaction)</Text>
+                  <div class="flex gap-4 flex-wrap">
+                    <!-- Unselected -->
+                    <div class="relative cursor-pointer hover:scale-105 transition-transform">
+                        <PlayingCard suit="Clubs" :rank="10" />
+                    </div>
+                    <!-- Selected -->
+                    <div class="relative cursor-pointer hover:scale-105 transition-transform">
+                        <PlayingCard suit="Diamonds" :rank="7" class="ring-4 ring-nott-red ring-offset-2 ring-offset-black" />
+                        <div class="absolute -bottom-8 left-0 right-0 text-center">
+                            <Text variant="label" color="red">SELECTED</Text>
+                        </div>
+                    </div>
+                    <!-- Disabled -->
+                    <div class="relative opacity-50 cursor-not-allowed">
+                        <PlayingCard suit="Spades" :rank="2" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid md:grid-cols-2 gap-8 mt-8">
+                <div class="space-y-4">
                   <Text variant="h3">Dice Selectors</Text>
                   <div class="space-y-4">
                     <DieSelector :sides="4" :modelValue="1" label="d4" color="red" />
                     <DieSelector :sides="10" :modelValue="5" label="d10" />
                   </div>
+                </div>
+
+                <div class="space-y-4">
+                    <Text variant="h3">Status & Guidance</Text>
+                    <div class="space-y-4 border border-nott-gray p-4 rounded bg-nott-white/5">
+                        <!-- Guidance Text Examples -->
+                        <div>
+                            <Text variant="label" color="muted" class="mb-2">Guidance Text</Text>
+                            <div class="space-y-2">
+                                <Text variant="body" color="muted">Draw cards to populate the table...</Text>
+                                <Text variant="body" color="red" class="font-bold animate-pulse">Select a card to reveal the challenge</Text>
+                                <Text variant="body" color="muted">Challenge selected.</Text>
+                            </div>
+                        </div>
+
+                        <!-- Warnings -->
+                        <div>
+                            <Text variant="label" color="muted" class="mb-2">Warnings</Text>
+                            <div class="text-center border border-nott-red/30 bg-nott-red/10 p-4 rounded">
+                                <Text variant="caption" color="red" class="font-bold">FACE CARD ACTIVE</Text>
+                                <Text variant="caption" color="muted">You cannot draw another card while a Face Card is on the table.</Text>
+                            </div>
+                        </div>
+                    </div>
                 </div>
               </div>
             </section>
