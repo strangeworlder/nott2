@@ -5,6 +5,7 @@ import Card from '../Card.vue'
 import Text from '../Text.vue'
 import Toggle from '../Toggle.vue'
 import DieSelector from '../DieSelector.vue'
+import SelectionButton from '../SelectionButton.vue'
 
 const { 
   rollMain, 
@@ -59,19 +60,16 @@ const emit = defineEmits<{
                 <!-- If randomized, show button list -->
                 <div v-if="isTrophyTopRandomized && availableTrophyRanks.length > 1" class="flex flex-col items-center gap-2">
                    <div class="flex flex-wrap justify-center gap-1 max-w-[200px]">
-                     <button 
+                     <SelectionButton 
                        v-for="rank in availableTrophyRanks" 
                        :key="rank"
                        @click="setTrophyTop(rank)"
-                       class="w-8 h-8 rounded border font-display text-sm transition-all duration-200 flex items-center justify-center"
-                       :class="[
-                         trophyTop?.rank === rank
-                           ? 'bg-nott-white border-nott-white text-nott-black' 
-                           : 'bg-nott-black border-nott-gray text-nott-white hover:border-nott-white/50'
-                       ]"
+                       :selected="trophyTop?.rank === rank"
+                       variant="square"
+                       class="!w-8 !h-8 !text-sm"
                      >
                        {{ rank }}
-                     </button>
+                     </SelectionButton>
                    </div>
                 </div>
                 <!-- Else show static number -->
@@ -134,7 +132,7 @@ const emit = defineEmits<{
 
         <!-- Reminders -->
         <div class="grid grid-cols-2 gap-4">
-          <div class="p-4 border border-nott-gray/30 rounded bg-nott-black/50 text-center flex flex-col items-center justify-center gap-2">
+          <Card class="text-center flex flex-col items-center justify-center gap-2 !p-4">
             <Text variant="label" color="red" class="mb-1">Genre Point?</Text>
             <div v-if="playerGenrePoints > 0 || isGenrePointUsed">
                 <Toggle 
@@ -148,11 +146,11 @@ const emit = defineEmits<{
             <div v-else>
                 <Text variant="caption" color="muted">No tokens available.</Text>
             </div>
-          </div>
-          <div class="p-4 border border-nott-gray/30 rounded bg-nott-black/50 text-center flex flex-col items-center justify-center">
+          </Card>
+          <Card class="text-center flex flex-col items-center justify-center !p-4">
             <Text variant="label" color="red" class="mb-1">Aptitude?</Text>
             <Text variant="caption" color="muted">If Suit matches Aptitude: +1 to Push (Risk), -1 for Safety (Control).</Text>
-          </div>
+          </Card>
         </div>
 
         <!-- Effort Instruction Display -->

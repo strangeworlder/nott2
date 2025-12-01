@@ -11,6 +11,7 @@ import Badge from './components/Badge.vue'
 import DieSelector from './components/DieSelector.vue'
 import PlayingCard from './components/PlayingCard.vue'
 import Checkbox from './components/Checkbox.vue'
+import SelectionButton from './components/SelectionButton.vue'
 
 const currentView = ref<'showcase' | 'rules' | 'play'>('showcase')
 </script>
@@ -163,10 +164,18 @@ const currentView = ref<'showcase' | 'rules' | 'play'>('showcase')
                       <Checkbox :modelValue="true" label="Checked" />
                       <Checkbox :modelValue="false" label="Unchecked" />
                     </div>
-                    <div class="flex gap-4 items-center">
+                    <div class="flex gap-4 items-center flex-wrap">
                       <Badge>Default</Badge>
                       <Badge variant="outline">Outline</Badge>
                       <Badge variant="red">Red</Badge>
+                      <Badge variant="success">Success</Badge>
+                      <Badge variant="danger">Danger</Badge>
+                    </div>
+                    <div class="flex gap-4 items-center flex-wrap">
+                      <SelectionButton :selected="false">Option</SelectionButton>
+                      <SelectionButton :selected="true">Selected</SelectionButton>
+                      <SelectionButton variant="square" :selected="false">A</SelectionButton>
+                      <SelectionButton variant="square" :selected="true" color="red">A</SelectionButton>
                     </div>
                   </div>
                 </div>

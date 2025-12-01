@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useLivePlay } from '../../composables/useLivePlay'
 import WizardStep from '../WizardStep.vue'
 import Card from '../Card.vue'
 import Text from '../Text.vue'
 import Button from '../Button.vue'
 import PlayingCard from '../PlayingCard.vue'
+import SelectionButton from '../SelectionButton.vue'
 import type { Suit, Rank } from '../../composables/useGameEngine'
 
 const { 
@@ -53,6 +55,11 @@ const suitColors: Record<string, string> = {
 const confirmCardSelection = () => {
   setManualCard()
 }
+
+const isValidSelection = computed(() => {
+  if (manualJoker.value) return true
+  return isRankAvailable(manualRank.value) && isSuitAvailable(manualRank.value, manualSuit.value)
+})
 </script>
 
 <template>
@@ -73,75 +80,84 @@ const confirmCardSelection = () => {
       <div v-if="!currentCard && !selectedJoker" class="text-center py-12">
         <Text variant="quote" class="mb-8">Draw a card from your physical deck...</Text>
         
-        <div class="max-w-md mx-auto bg-nott-white/5 p-6 rounded border border-nott-gray/50 space-y-6">
-          <div class="space-y-2">
-            <Text variant="label">Select Card</Text>
-            
-            <!-- Rank Grid -->
-            <div class="grid grid-cols-5 gap-2">
-              <button 
-                v-for="r in ranks" 
-                :key="r.value"
-                @click="manualRank = r.value"
-                :disabled="!isRankAvailable(r.value)"
-                class="h-10 rounded border font-display text-lg transition-all duration-200 flex items-center justify-center"
-                :class="[
-                  manualRank === r.value 
-                    ? 'bg-nott-red border-nott-red text-white' 
-                    : 'bg-nott-black border-nott-gray text-nott-white hover:border-nott-red/50',
-                  !isRankAvailable(r.value) ? 'opacity-20 cursor-not-allowed' : ''
-                ]"
+        <div class="max-w-md mx-auto">
+          <Card>
+            <div class="space-y-6">
+              <div class="space-y-2">
+                <Text variant="label">Select Card</Text>
+                
+                <!-- Rank Grid -->
+                <div class="grid grid-cols-5 gap-2">
+                  <SelectionButton 
+                    v-for="r in ranks" 
+                    :key="r.value"
+                    @click="manualRank = r.value"
+                    :selected="manualRank === r.value"
+                    :disabled="!isRankAvailable(r.value)"
+                    variant="square"
+                    color="red"
+                  >
+                    {{ r.label }}
+                  </SelectionButton>
+                </div>
+
+                <!-- Suit Grid -->
+                <div class="grid grid-cols-4 gap-2 mt-4">
+                  <SelectionButton 
+                    v-for="s in suits" 
+                    :key="s"
+                    @click="manualSuit = s"
+                    :selected="manualSuit === s"
+                    :disabled="!isSuitAvailable(manualRank, s)"
+                    variant="default"
+                    color="default"
+                    :class="suitColors[s]"
+                  >
+                    {{ suitIcons[s] }}
+                  </SelectionButton>
+                </div>
+              </div>
+
+              <div v-if="isEndgame" class="border-t border-nott-gray/30 pt-4">
+                <Text variant="label" class="mb-2">Or Joker?</Text>
+                <div class="flex gap-4 justify-center">
+                  <SelectionButton
+                    @click="manualJoker = 'Red'"
+                    :selected="manualJoker === 'Red'"
+                    color="red"
+                    class="flex-1"
+                  >
+                    Red
+                  </SelectionButton>
+                  <SelectionButton
+                    @click="manualJoker = 'Black'"
+                    :selected="manualJoker === 'Black'"
+                    color="default"
+                    class="flex-1"
+                  >
+                    Black
+                  </SelectionButton>
+                  <SelectionButton
+                    @click="manualJoker = null"
+                    :selected="manualJoker === null"
+                    color="default"
+                    class="flex-1 text-nott-gray"
+                  >
+                    None
+                  </SelectionButton>
+                </div>
+              </div>
+
+              <Button 
+                variant="primary"
+                class="w-full mt-4"
+                @click="confirmCardSelection"
+                :disabled="!isValidSelection"
               >
-                {{ r.label }}
-              </button>
+                REVEAL PROMPT
+              </Button>
             </div>
-
-            <!-- Suit Grid -->
-            <div class="grid grid-cols-4 gap-2 mt-4">
-              <button 
-                v-for="s in suits" 
-                :key="s"
-                @click="manualSuit = s"
-                class="h-12 rounded border font-display text-2xl transition-all duration-200 flex items-center justify-center"
-                :class="[
-                  manualSuit === s 
-                    ? 'bg-nott-white border-nott-white text-nott-black' 
-                    : 'bg-nott-black border-nott-gray hover:border-nott-white/50',
-                  suitColors[s],
-                  !isSuitAvailable(manualRank, s) ? 'opacity-20 cursor-not-allowed' : ''
-                ]"
-                :disabled="!isSuitAvailable(manualRank, s)"
-              >
-                {{ suitIcons[s] }}
-              </button>
-            </div>
-          </div>
-
-          <div v-if="isEndgame" class="border-t border-nott-gray/30 pt-4">
-            <Text variant="label" class="mb-2">Or Joker?</Text>
-            <div class="flex gap-4 justify-center">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" v-model="manualJoker" value="Red" class="text-nott-red focus:ring-nott-red bg-nott-black border-nott-gray">
-                <span class="text-nott-red font-display">Red</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" v-model="manualJoker" value="Black" class="text-nott-white focus:ring-nott-white bg-nott-black border-nott-gray">
-                <span class="text-nott-white font-display">Black</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" v-model="manualJoker" :value="null" class="text-nott-gray focus:ring-nott-gray bg-nott-black border-nott-gray">
-                <span class="text-nott-gray font-display">None</span>
-              </label>
-            </div>
-          </div>
-
-          <Button 
-            variant="primary"
-            class="w-full mt-4"
-            @click="confirmCardSelection"
-          >
-            REVEAL PROMPT
-          </Button>
+          </Card>
         </div>
       </div>
 

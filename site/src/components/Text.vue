@@ -17,7 +17,7 @@ const tag = computed(() => {
   if (props.variant === 'h1') return 'h1'
   if (props.variant === 'h2') return 'h2'
   if (props.variant === 'h3') return 'h3'
-  if (props.variant === 'label') return 'label'
+  if (props.variant === 'label') return 'div'
   return 'p'
 })
 
@@ -25,13 +25,13 @@ const classes = computed(() => {
   const base = []
   
   // Variants
-  if (props.variant === 'h1') base.push('font-display uppercase tracking-widest text-4xl md:text-6xl')
-  if (props.variant === 'h2') base.push('font-display uppercase tracking-widest text-2xl md:text-4xl')
-  if (props.variant === 'h3') base.push('font-display uppercase tracking-widest text-xl')
-  if (props.variant === 'body') base.push('font-body text-base leading-relaxed')
-  if (props.variant === 'label') base.push('font-display uppercase tracking-widest text-sm')
-  if (props.variant === 'caption') base.push('font-body text-sm italic')
-  if (props.variant === 'quote') base.push('font-body text-xl md:text-2xl leading-relaxed italic')
+  if (props.variant === 'h1') base.push('block font-display uppercase tracking-widest text-4xl md:text-6xl')
+  if (props.variant === 'h2') base.push('block font-display uppercase tracking-widest text-2xl md:text-4xl')
+  if (props.variant === 'h3') base.push('block font-display uppercase tracking-widest text-xl')
+  if (props.variant === 'body') base.push('block font-body text-base leading-relaxed')
+  if (props.variant === 'label') base.push('block font-display uppercase tracking-widest text-sm')
+  if (props.variant === 'caption') base.push('block font-body text-sm italic')
+  if (props.variant === 'quote') base.push('block font-body text-xl md:text-2xl leading-relaxed italic')
 
   // Colors
   if (props.color === 'white') base.push('text-nott-white')

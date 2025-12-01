@@ -93,13 +93,16 @@ const prevStep = () => {
     />
 
     <!-- Debug Toggle -->
-    <button 
-      @click="debugMode = !debugMode"
-      class="fixed bottom-4 right-4 z-50 bg-black/80 text-green-400 border border-green-500/30 px-2 py-1 text-xs font-mono rounded hover:bg-green-900/50"
-      :class="{ 'mb-24': debugMode }"
-    >
-      {{ debugMode ? 'Hide Debug' : 'Show Debug' }}
-    </button>
+    <div class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
+      <Button 
+        @click="debugMode = !debugMode"
+        variant="secondary"
+        size="sm"
+        class="!text-xs !py-1 !px-2 border-green-500/30 text-green-400 hover:text-green-300 hover:border-green-500"
+      >
+        {{ debugMode ? 'Hide Debug' : 'Show Debug' }}
+      </Button>
+    </div>
     <div v-if="debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-green-400 p-2 font-mono border-t border-green-500/30 overflow-x-auto z-50">
       <div class="flex gap-8 whitespace-nowrap">
         <div>

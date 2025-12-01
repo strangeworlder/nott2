@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Button from './Button.vue'
+import Text from './Text.vue'
 
 defineProps<{
   title: string
@@ -20,13 +21,13 @@ defineEmits<{
   <div class="max-w-4xl mx-auto">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8 border-b border-nott-red/30 pb-4">
-      <h2 class="text-3xl font-display text-nott-white">
+      <Text variant="h2">
         <span class="text-nott-red mr-2">{{ stepNumber }}.</span>
         {{ title }}
-      </h2>
-      <div class="text-nott-white/40 font-display">
+      </Text>
+      <Text variant="label" color="muted">
         STEP {{ stepNumber }} / {{ totalSteps }}
-      </div>
+      </Text>
     </div>
 
     <!-- Content -->

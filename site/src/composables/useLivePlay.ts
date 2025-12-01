@@ -420,13 +420,50 @@ export function useLivePlay() {
         }
     }
 
+    const getNextValidCard = (): { rank: Rank, suit: Suit } => {
+        // 1. Check Aces
+        if (acesRemaining.value > 0) {
+            const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
+            const availableSuit = suits.find(s => !drawnCards.value.has(`1-${s}`))
+            if (availableSuit) return { rank: 1, suit: availableSuit }
+        }
+
+        // 2. Check Middle Stack (2-4, 11)
+        // We want to find the lowest rank that has cards available
+        const middleRanks = [2, 3, 4, 11]
+        for (const rank of middleRanks) {
+            if (middleStack.value[rank] > 0) {
+                const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
+                const availableSuit = suits.find(s => !drawnCards.value.has(`${rank}-${s}`))
+                if (availableSuit) return { rank: rank as Rank, suit: availableSuit }
+            }
+        }
+
+        // 3. Check Bottom Stack
+        // Iterate through all ranks 1-13
+        for (let rank = 1; rank <= 13; rank++) {
+            if (bottomStack.value[rank] > 0) {
+                const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
+                const availableSuit = suits.find(s => !drawnCards.value.has(`${rank}-${s}`))
+                if (availableSuit) return { rank: rank as Rank, suit: availableSuit }
+            }
+        }
+
+        // Fallback (should rarely happen unless deck is empty)
+        return { rank: 1, suit: 'Spades' }
+    }
+
     const startNextScene = () => {
         applyGameStateUpdates()
         currentCard.value = null
         selectedJoker.value = null
         manualJoker.value = null
-        manualSuit.value = 'Spades'
-        manualRank.value = acesRemaining.value > 0 ? 1 : 2
+
+        // Smart Auto-Selection
+        const nextCard = getNextValidCard()
+        manualSuit.value = nextCard.suit
+        manualRank.value = nextCard.rank
+
         currentStep.value = 2
         sacrificeConfirmed.value = false
         rollMain.value = null

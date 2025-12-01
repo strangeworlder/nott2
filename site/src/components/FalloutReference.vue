@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { effortScale } from '../data/rules'
 import Card from './Card.vue'
+import Text from './Text.vue'
 </script>
 
 <template>
@@ -12,12 +13,12 @@ import Card from './Card.vue'
       class="h-full"
     >
       <div class="space-y-3">
-        <p class="text-nott-red font-display tracking-wider text-sm uppercase border-b border-nott-gray/30 pb-1">
+        <Text variant="label" color="red" class="border-b border-nott-gray/30 pb-1">
           {{ effort.description }}
-        </p>
-        <p class="text-sm leading-relaxed text-nott-white/90">
+        </Text>
+        <Text variant="body" class="text-nott-white/90">
           {{ effort.mechanic }}
-        </p>
+        </Text>
       </div>
     </Card>
   </div>

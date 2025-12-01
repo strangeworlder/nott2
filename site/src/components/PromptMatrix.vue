@@ -3,6 +3,8 @@ import { ref, computed } from 'vue'
 import { fullPromptMatrix, faceCardPrompts, faceCardPrompt } from '../data/rules'
 import Card from './Card.vue'
 import Button from './Button.vue'
+import Text from './Text.vue'
+import SelectionButton from './SelectionButton.vue'
 
 const selectedSuit = ref<string | null>(null)
 const selectedRank = ref<number | null>(null)
@@ -90,57 +92,48 @@ const getRankLabel = (rank: number) => {
     >
       <div v-if="selectedSuit && currentSuitData" class="space-y-6">
         <div class="text-center">
-          <h3 class="text-2xl font-display text-nott-white mb-2">
+          <Text variant="h3" class="mb-2">
             <span :class="suitColors[selectedSuit]">{{ suitIcons[selectedSuit] }}</span>
             {{ selectedSuit }}
-          </h3>
-          <p class="text-nott-red uppercase tracking-widest text-sm">{{ currentSuitData.theme }}</p>
+          </Text>
+          <Text variant="label" color="red">{{ currentSuitData.theme }}</Text>
         </div>
 
         <!-- Rank Buttons -->
         <div class="flex flex-wrap justify-center gap-2">
           <!-- Ace -->
-          <button
+          <SelectionButton
             @click="selectedRank = 1"
-            class="w-10 h-10 rounded border transition-all duration-200 font-display text-lg flex items-center justify-center"
-            :class="[
-              selectedRank === 1
-                ? 'bg-nott-red border-nott-red text-nott-white shadow-[0_0_10px_rgba(138,0,0,0.5)]'
-                : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-red hover:text-nott-white'
-            ]"
+            :selected="selectedRank === 1"
+            variant="square"
+            color="red"
           >
             A
-          </button>
+          </SelectionButton>
           
           <!-- Numbers 2-10 -->
-          <button
+          <SelectionButton
             v-for="rank in 9"
             :key="rank + 1"
             @click="selectedRank = rank + 1"
-            class="w-10 h-10 rounded border transition-all duration-200 font-display text-lg flex items-center justify-center"
-            :class="[
-              selectedRank === rank + 1
-                ? 'bg-nott-red border-nott-red text-nott-white shadow-[0_0_10px_rgba(138,0,0,0.5)]'
-                : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-red hover:text-nott-white'
-            ]"
+            :selected="selectedRank === rank + 1"
+            variant="square"
+            color="red"
           >
             {{ rank + 1 }}
-          </button>
+          </SelectionButton>
 
           <!-- Face Cards -->
-          <button
+          <SelectionButton
             v-for="rank in [11, 12, 13]"
             :key="rank"
             @click="selectedRank = rank"
-            class="w-10 h-10 rounded border transition-all duration-200 font-display text-lg flex items-center justify-center"
-            :class="[
-              selectedRank === rank
-                ? 'bg-nott-red border-nott-red text-nott-white shadow-[0_0_10px_rgba(138,0,0,0.5)]'
-                : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-red hover:text-nott-white'
-            ]"
+            :selected="selectedRank === rank"
+            variant="square"
+            color="red"
           >
             {{ getRankLabel(rank) }}
-          </button>
+          </SelectionButton>
         </div>
 
         <!-- First Time Toggle for Face Cards -->
@@ -157,14 +150,14 @@ const getRankLabel = (rank: number) => {
         <!-- Prompt Card -->
         <div v-if="selectedRank" class="max-w-2xl mx-auto">
            <Card class="text-center py-8">
-             <div class="text-4xl font-display text-nott-red mb-4">{{ getRankLabel(selectedRank) }}</div>
-             <p class="text-xl md:text-2xl text-nott-white leading-relaxed">
+             <Text variant="h2" color="red" class="mb-4">{{ getRankLabel(selectedRank) }}</Text>
+             <Text variant="quote">
                "{{ currentPrompt }}"
-             </p>
+             </Text>
            </Card>
         </div>
         <div v-else class="text-center text-nott-white/40 italic mt-8">
-          Select a rank to reveal the prompt...
+          <Text variant="caption" color="muted">Select a rank to reveal the prompt...</Text>
         </div>
       </div>
     </Transition>
