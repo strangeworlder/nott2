@@ -11,7 +11,7 @@ const {
   isFaceCard, 
   isFirstTime, 
   selectedSuit, 
-  falloutResult,
+  effortResult,
   startNextScene
 } = useLivePlay()
 
@@ -78,9 +78,9 @@ const emit = defineEmits<{
                 <div class="w-8"></div>
                 <div>
                   <Text variant="label" color="red" class="mb-1">3. The Killer Retaliates:</Text>
-                  <div v-if="falloutResult">
-                    <Text variant="body"><strong>{{ falloutResult.title }} ({{ falloutResult.level }})</strong></Text>
-                    <Text v-if="falloutResult.level <= 2" variant="body" class="mt-1">Add a random <strong>Jack</strong> to the Threat Deck.</Text>
+                  <div v-if="effortResult">
+                    <Text variant="body"><strong>{{ effortResult.title }} ({{ effortResult.level }})</strong></Text>
+                    <Text v-if="effortResult.level <= 2" variant="body" class="mt-1">Add a random <strong>Jack</strong> to the Threat Deck.</Text>
                     <Text v-else variant="body" class="mt-1">Add a random <strong>Queen</strong> to the Threat Deck.</Text>
                   </div>
                 </div>

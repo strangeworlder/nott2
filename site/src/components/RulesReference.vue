@@ -34,7 +34,7 @@ const activeTab = ref<'basic' | 'characters' | 'prompts' | 'fallout'>('basic')
         :variant="activeTab === 'fallout' ? 'primary' : 'ghost'"
         @click="activeTab = 'fallout'"
       >
-        Fallout Scale
+        Effort Scale
       </Button>
     </div>
 

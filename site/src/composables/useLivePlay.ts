@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { falloutScale, faceCardPrompts, faceCardPrompt, fullPromptMatrix } from '../data/rules'
+import { effortScale, faceCardPrompts, faceCardPrompt, fullPromptMatrix } from '../data/rules'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 
 // Shared state (singleton if we want state to persist across component mounts, 
@@ -68,9 +68,9 @@ const isTrophyTopRandomized = ref(true)
 // UI State that is tightly coupled to game flow
 const currentStep = ref(1)
 const selectedJoker = ref<'Red' | 'Black' | null>(null)
-const consequenceConfirmed = ref(false)
+const sacrificeConfirmed = ref(false)
 const rollMain = ref<number | null>(null)
-const rollFallout = ref<number | null>(null)
+const rollEffort = ref<number | null>(null)
 const targetDifficulty = ref<number | null>(null)
 const manualOverride = ref(false)
 const debugMode = ref(true)
@@ -128,14 +128,14 @@ export function useLivePlay() {
     })
 
     const rollTotal = computed(() => {
-        if (rollMain.value === null || rollFallout.value === null) return 0
-        return rollMain.value + rollFallout.value
+        if (rollMain.value === null || rollEffort.value === null) return 0
+        return rollMain.value + rollEffort.value
     })
 
     const isSuccess = computed(() => {
-        if (rollMain.value === null || rollFallout.value === null) return false
+        if (rollMain.value === null || rollEffort.value === null) return false
 
-        const total = rollMain.value + rollFallout.value
+        const total = rollMain.value + rollEffort.value
 
         if (isFaceCard.value || selectedJoker.value) {
             if (targetDifficulty.value === null) return false
@@ -146,9 +146,9 @@ export function useLivePlay() {
         }
     })
 
-    const falloutResult = computed(() => {
-        if (!rollFallout.value) return null
-        return falloutScale.find(f => f.level === rollFallout.value)
+    const effortResult = computed(() => {
+        if (!rollEffort.value) return null
+        return effortScale.find(f => f.level === rollEffort.value)
     })
 
     const availableTrophyRanks = computed(() => {
@@ -259,9 +259,9 @@ export function useLivePlay() {
     const reset = () => {
         currentStep.value = 1
         selectedJoker.value = null
-        consequenceConfirmed.value = false
+        sacrificeConfirmed.value = false
         rollMain.value = null
-        rollFallout.value = null
+        rollEffort.value = null
         targetDifficulty.value = null
     }
 
@@ -336,9 +336,9 @@ export function useLivePlay() {
                     if (currentCard.value) updateDeckState(currentCard.value.rank, currentCard.value.suit, 'return')
                 }
 
-                if (rollFallout.value && rollFallout.value <= 2) {
+                if (rollEffort.value && rollEffort.value <= 2) {
                     updateDeckState(11, 'Spades', 'add')
-                } else if (rollFallout.value && rollFallout.value >= 3) {
+                } else if (rollEffort.value && rollEffort.value >= 3) {
                     updateDeckState(12, 'Spades', 'add')
                 }
 
@@ -376,9 +376,9 @@ export function useLivePlay() {
         manualSuit.value = 'Spades'
         manualRank.value = acesRemaining.value > 0 ? 1 : 2
         currentStep.value = 2
-        consequenceConfirmed.value = false
+        sacrificeConfirmed.value = false
         rollMain.value = null
-        rollFallout.value = null
+        rollEffort.value = null
         targetDifficulty.value = null
     }
 
@@ -401,9 +401,9 @@ export function useLivePlay() {
         isTrophyTopRandomized,
         currentStep,
         selectedJoker,
-        consequenceConfirmed,
+        sacrificeConfirmed,
         rollMain,
-        rollFallout,
+        rollEffort,
         targetDifficulty,
         manualOverride,
         debugMode,
@@ -417,7 +417,7 @@ export function useLivePlay() {
         currentPrompt,
         rollTotal,
         isSuccess,
-        falloutResult,
+        effortResult,
         availableTrophyRanks,
         isMiddleStackEmpty,
 

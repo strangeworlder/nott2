@@ -153,14 +153,14 @@ export const faceCardPrompts: SuitFacePrompts[] = [
     }
 ];
 
-export interface Fallout {
+export interface Effort {
     level: number;
     title: string;
     description: string;
     mechanic: string;
 }
 
-export const falloutScale: Fallout[] = [
+export const effortScale: Effort[] = [
     {
         level: 1,
         title: 'Controlled Effort',
@@ -176,14 +176,14 @@ export const falloutScale: Fallout[] = [
     {
         level: 3,
         title: 'Overexertion',
-        description: 'Guaranteed consequence.',
-        mechanic: 'You pushed too hard. Whether you Succeeded or Failed, the Consequence you agreed upon in Step 3 happens. If Success: You get what you wanted, but the bad thing happens. If Failure: You don\'t get what you wanted, and the bad thing happens.',
+        description: 'Guaranteed sacrifice.',
+        mechanic: 'You pushed too hard. Whether you Succeeded or Failed, the Sacrifice you agreed upon in Step 3 happens. If Success: You get what you wanted, but you pay the price. If Failure: You don\'t get what you wanted, and you still pay the price.',
     },
     {
         level: 4,
         title: 'Breaking Point',
         description: 'Disaster strikes.',
-        mechanic: 'You lost control. The Agreed Consequence happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. (This counts as a Strike).',
+        mechanic: 'You lost control. The Agreed Sacrifice happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. (This counts as a Strike).',
     },
 ];
 
@@ -191,7 +191,7 @@ export const basicRules = {
     d13: {
         title: 'The d13',
         description: 'Roll a d10 (0-9) and a d4 (1-4). Add them together for a result between 1 and 13.',
-        note: 'd10 is the Main Die. d4 is the Fallout Die.',
+        note: 'd10 is the Main Die. d4 is the Effort Die.',
     },
     gameLoop: [
         {
@@ -204,18 +204,18 @@ export const basicRules = {
         },
         {
             step: '3. The Stakes',
-            description: 'Define the Consequence of failure (Overexertion).',
+            description: 'Define the Sacrifice of failure (Overexertion).',
         },
         {
             step: '4. The Resolution',
-            description: 'Roll d13. Compare Total vs Threat Number for Success/Failure. Check d4 for Fallout.',
+            description: 'Roll d13. Compare Total vs Threat Number for Success/Failure. Check d4 for Effort.',
         },
     ],
     strikes: {
         title: 'Three Strikes',
         triggers: [
             'Fail any Test against the Killer.',
-            'Roll a 4 (The Twist) on the Fallout Scale (Success or Failure).',
+            'Roll a 4 (The Twist) on the Effort Scale (Success or Failure).',
         ],
         consequence: 'On the 3rd Strike, the character dies.',
     },
@@ -253,7 +253,7 @@ export const basicRules = {
         },
         faceCards: {
             title: 'Face Cards (The Killer)',
-            success: 'Based on Fallout (d4): 1-2 adds a Jack, 3-4 adds a Queen. (If Reserve empty: Jack->Queen->King->None). First time defeating a suit removes it (Weakness Found). If already defeated, it stays in deck. Shuffle Threat Deck & Trophy Pile after any confrontation.',
+            success: 'Based on Effort (d4): 1-2 adds a Jack, 3-4 adds a Queen. (If Reserve empty: Jack->Queen->King->None). First time defeating a suit removes it (Weakness Found). If already defeated, it stays in deck. Shuffle Threat Deck & Trophy Pile after any confrontation.',
             failure: 'Gain a Strike. Add a King to bottom of Threat Deck. Shuffle Threat Deck & Trophy Pile after any confrontation.',
         },
     },
@@ -284,7 +284,7 @@ export const characterRules = {
         'Select an Aptitude (Power, Resolve, Intellect or Finesse).',
     ],
     aptitudes: {
-        description: 'Your Aptitude represents your character\'s natural strengths. When doing a Test matching your Aptitude’s suit, you can modify your Fallout Die (d4) by +1 or -1. Increase (+1) to push for Success (higher Total) at greater risk. Decrease (-1) to play it safe (lower Fallout) but risk Failure (lower Total).',
+        description: 'Your Aptitude represents your character\'s natural strengths. When doing a Test matching your Aptitude’s suit, you can modify your Effort Die (d4) by +1 or -1. Increase (+1) to push for Success (higher Total) at greater risk. Decrease (-1) to play it safe (lower Effort) but risk Failure (lower Total).',
         list: [
             { suit: 'Spades', name: 'Power', description: 'Physical threat' },
             { suit: 'Hearts', name: 'Resolve', description: 'Fear/Paranoia' },

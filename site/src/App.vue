@@ -84,7 +84,7 @@ const currentView = ref<'showcase' | 'rules' | 'play' | 'online'>('showcase')
                   <div class="text-nott-white space-y-2">
                     <p>The old house stood silent on the hill. Too silent.</p>
                     <p class="italic">"Did you hear that?" she whispered.</p>
-                    <p class="font-bold">FALLOUT: THE TWIST</p>
+                    <p class="font-bold">EFFORT: THE TWIST</p>
                   </div>
                 </div>
               </div>

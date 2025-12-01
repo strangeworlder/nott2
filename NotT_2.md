@@ -32,7 +32,7 @@ In this version, there is no Director. The **Active Player (AP)** is the Protago
 
 The game uses a “d13” dice, that is a combination of a d10 and a d4.
 *   The **d10 (Main die)** is read so that the side that says 0 is actually a zero, so it produces results ranging from 0 to 9.
-*   The **d4 (Fallout die)** produces a result between 1 and 4.
+*   The **d4 (Effort die)** produces a result between 1 and 4.
 
 These are added together to get a result between **1 and 13**.
 
@@ -112,10 +112,10 @@ Once per scene, any other player can interject with "Something's not right..." a
 *   Other Player: "Something's not right... there is no ignition. The wires have been ripped out entirely."
 
 ### 3. The Stakes: Loading the Gun
-Now, the table looks at the Difficulty Number. Before rolling, the table asks the Active Player: **"If this goes wrong, what is the Consequence?"**
+Now, the table looks at the Difficulty Number. Before rolling, the table asks the Active Player: **"If you push yourself, what are you willing to Sacrifice?"**
 
-The Active Player (with help from the table) must define the **Overexertion** result. This must be specific and bad.
-*   Example: "If I fail this, I don't just miss the jump; I twist my ankle and drop the flashlight into the ravine."
+The Active Player (with help from the table) must define the **Overexertion** result. This must be specific and represent a loss.
+*   Example: "If I push this hard, I don't just miss the jump; I twist my ankle and drop the flashlight into the ravine."
 
 ### 4. The Resolution: The Director's Edit
 The Active Player rolls the **d13 (d10 + d4)**.
@@ -124,22 +124,22 @@ The Active Player rolls the **d13 (d10 + d4)**.
 *   **Equal or Greater**: Success.
 *   **Less**: Failure.
 
-### Narrative Control: The Fallout Scale (Pushing Your Luck)
+### Narrative Control: The Effort Scale (Pushing Your Luck)
 
-The **d4 (Fallout Die)** represents how hard your character is pushing themselves to succeed. A higher Fallout die adds to your Total (making Success more likely) but increases the severity of the consequences.
+The **d4 (Effort Die)** represents how hard your character is pushing themselves to succeed. A higher Effort die adds to your Total (making Success more likely) but increases the severity of the sacrifice you make.
 
 *   **1 (Controlled Effort):** You kept your cool. You narrate the outcome (Success or Failure) exactly how you want it. You look capable, or your failure is tragic and noble.
 *   **2 (Pushing It):** You exerted yourself. You narrate the core outcome. The other players suggest 2-3 potential "costs" (scratches, noise, lost time). You choose one to include.
-*   **3 (Overexertion):** You pushed too hard. Whether you Succeeded or Failed, the Consequence you agreed upon in Step 3 happens.
-    *   *Success:* You get what you wanted, but the bad thing happens.
-    *   *Failure:* You don't get what you wanted, and the bad thing happens.
-*   **4 (Breaking Point):** You lost control. The Agreed Consequence happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. **(This counts as a Strike).**
+*   **3 (Overexertion):** You pushed too hard. Whether you Succeeded or Failed, the Sacrifice you agreed upon in Step 3 happens.
+    *   *Success:* You get what you wanted, but you pay the price.
+    *   *Failure:* You don't get what you wanted, and you still pay the price.
+*   **4 (Breaking Point):** You lost control. The Agreed Sacrifice happens, AND it gets worse. The other players suggest "The Twist"—a new, horrible piece of information or immediate danger. You choose which Twist becomes true. **(This counts as a Strike).**
 
 ### Aptitude: Managing the Risk
-If your Aptitude matches the Threat Card suit, you are naturally skilled in this area. After rolling, you may **modify your Fallout Die (d4) by +1 or -1**.
+If your Aptitude matches the Threat Card suit, you are naturally skilled in this area. After rolling, you may **modify your Effort Die (d4) by +1 or -1**.
 
-*   **Increase Fallout (+1)**: You push yourself harder to turn a Failure into a Success (by increasing your Total), but you risk a worse Consequence.
-*   **Decrease Fallout (-1)**: You rely on your natural talent to reduce the Consequence (by lowering the Fallout level), but you risk turning a Success into a Failure (by lowering your Total).
+*   **Increase Effort (+1)**: You push yourself harder to turn a Failure into a Success (by increasing your Total), but you risk a greater Sacrifice.
+*   **Decrease Effort (-1)**: You rely on your natural talent to reduce the Sacrifice (by lowering the Effort level), but you risk turning a Success into a Failure (by lowering your Total).
 
 ## Updating the Game State
 
@@ -157,7 +157,7 @@ Success against the Killer is always costly.
 *   **Queen**: +2
 *   **King**: +3
 
-Based on your Fallout (the d4), another face card from Face Card Reserves is added from the reserve to the Threat Deck.
+Based on your Effort (the d4), another face card from Face Card Reserves is added from the reserve to the Threat Deck.
 *   **Clean/Messy (1 or 2 on d4)**: Add a random **Jack**.
 *   **Costy/Dire (3 or 4 on d4)**: Add a random **Queen**.
 
@@ -181,7 +181,7 @@ Everyone gets two close calls with death before the end comes for them.
 
 **You get a Strike when you:**
 *   Fail any Test against the Killer.
-*   Roll a **4 (The Twist)** on the Fallout Scale (whether you succeed or fail).
+*   Roll a **4 (The Twist)** on the Effort Scale (whether you succeed or fail).
 
 When you get your **third Strike**, the character’s story is over. Come up with the most horrifying way to go.
 

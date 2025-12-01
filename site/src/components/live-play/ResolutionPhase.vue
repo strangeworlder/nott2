@@ -7,14 +7,14 @@ import DieSelector from '../DieSelector.vue'
 
 const { 
   rollMain, 
-  rollFallout, 
+  rollEffort, 
   isFaceCard, 
   selectedJoker, 
   targetDifficulty, 
   isSuccess, 
   rollTotal, 
   selectedRank, 
-  falloutResult,
+  effortResult,
   isTrophyTopRandomized,
   availableTrophyRanks,
   trophyTop,
@@ -32,13 +32,13 @@ const emit = defineEmits<{
     title="The Resolution"
     :step-number="5"
     :total-steps="6"
-    :can-proceed="rollMain !== null && rollFallout !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)"
+    :can-proceed="rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)"
     show-back
     @back="emit('back')"
     @next="emit('next')"
   >
     <div class="mb-6 text-center">
-      <Text variant="quote" color="muted" class="italic">"Roll the d13 (d10 + d4). Compare your total to the Difficulty. The d4 also determines your Fallout—how well you succeed or how badly you fail."</Text>
+      <Text variant="quote" color="muted" class="italic">"Roll the d13 (d10 + d4). Compare your total to the Difficulty. The d4 also determines your Effort—how well you succeed or how badly you fail."</Text>
     </div>
 
     <div class="max-w-2xl mx-auto space-y-8">
@@ -107,14 +107,14 @@ const emit = defineEmits<{
         <!-- d4 Input -->
         <DieSelector 
           :sides="4"
-          v-model="rollFallout"
-          label="d4 (Fallout Die)"
+          v-model="rollEffort"
+          label="d4 (Effort Die)"
           color="red"
         />
       </div>
 
       <!-- Result Display -->
-      <div v-if="rollMain !== null && rollFallout !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)" class="space-y-6 animate-fade-in">
+      <div v-if="rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)" class="space-y-6 animate-fade-in">
         <div 
           class="text-center p-8 rounded border-2 transition-all duration-500"
           :class="isSuccess ? 'bg-green-900/20 border-green-500/50' : 'bg-nott-red/20 border-nott-red/50'"
@@ -140,14 +140,14 @@ const emit = defineEmits<{
           </div>
         </div>
 
-        <!-- Fallout Instruction Display -->
-        <div v-if="falloutResult" class="animate-fade-in">
+        <!-- Effort Instruction Display -->
+        <div v-if="effortResult" class="animate-fade-in">
           <Card class="border-nott-red/50 bg-nott-red/5">
             <div class="text-center space-y-2">
-              <Text variant="h3" color="red">{{ falloutResult.title }}</Text>
-              <Text variant="label" class="text-nott-white">{{ falloutResult.description }}</Text>
+              <Text variant="h3" color="red">{{ effortResult.title }}</Text>
+              <Text variant="label" class="text-nott-white">{{ effortResult.description }}</Text>
               <div class="h-px w-1/2 mx-auto bg-nott-red/30 my-2"></div>
-              <Text variant="body" class="italic text-nott-white/80">"{{ falloutResult.mechanic }}"</Text>
+              <Text variant="body" class="italic text-nott-white/80">"{{ effortResult.mechanic }}"</Text>
             </div>
           </Card>
         </div>

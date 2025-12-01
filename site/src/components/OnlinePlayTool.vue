@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { fullPromptMatrix, faceCardPrompts, faceCardPrompt, falloutScale, basicRules } from '../data/rules'
+import { fullPromptMatrix, faceCardPrompts, faceCardPrompt, effortScale, basicRules } from '../data/rules'
 import { useGameEngine, type Card as GameCard } from '../composables/useGameEngine'
 import WizardStep from './WizardStep.vue'
 import Card from './Card.vue'
@@ -34,9 +34,9 @@ const {
 // Local UI State
 const currentStep = ref(1)
 const selectedJoker = ref<'Red' | 'Black' | null>(null)
-const consequenceConfirmed = ref(false)
+const sacrificeConfirmed = ref(false)
 const rollMain = ref<number | null>(null)
-const rollFallout = ref<number | null>(null)
+const rollEffort = ref<number | null>(null)
 const targetDifficulty = ref<number | null>(null)
 const manualOverride = ref(false) // For manually selecting a card if needed
 
@@ -89,14 +89,14 @@ const currentPrompt = computed(() => {
 })
 
 const rollTotal = computed(() => {
-  if (rollMain.value === null || rollFallout.value === null) return 0
-  return rollMain.value + rollFallout.value
+  if (rollMain.value === null || rollEffort.value === null) return 0
+  return rollMain.value + rollEffort.value
 })
 
 const isSuccess = computed(() => {
-  if (rollMain.value === null || rollFallout.value === null) return false
+  if (rollMain.value === null || rollEffort.value === null) return false
   
-  const total = rollMain.value + rollFallout.value
+  const total = rollMain.value + rollEffort.value
   
   if (isFaceCard.value || selectedJoker.value) {
     if (targetDifficulty.value === null) return false
@@ -107,9 +107,9 @@ const isSuccess = computed(() => {
   }
 })
 
-const falloutResult = computed(() => {
-  if (!rollFallout.value) return null
-  return falloutScale.find(f => f.level === rollFallout.value)
+const effortResult = computed(() => {
+  if (!rollEffort.value) return null
+  return effortScale.find(f => f.level === rollEffort.value)
 })
 
 // Actions
@@ -138,7 +138,7 @@ const startNextScene = () => {
   resetCurrentCard()
   currentStep.value = 2 // Go to Scene Setup
   selectedJoker.value = null
-  consequenceConfirmed.value = false
+  sacrificeConfirmed.value = false
   rollMain.value = null
   rollFallout.value = null
   targetDifficulty.value = null
@@ -159,10 +159,10 @@ const applyGameStateUpdates = () => {
 
     // 3. Face Card Specifics
     if (isFaceCard.value) {
-      // Low Fallout: Add Jack, High Fallout: Add Queen
-      if (rollFallout.value && rollFallout.value <= 2) {
+      // Low Effort: Add Jack, High Effort: Add Queen
+      if (rollEffort.value && rollEffort.value <= 2) {
         addRandomFaceCard(11) // Jack
-      } else if (rollFallout.value && rollFallout.value >= 3) {
+      } else if (rollEffort.value && rollEffort.value >= 3) {
         addRandomFaceCard(12) // Queen
       }
 
@@ -201,7 +201,7 @@ const triggerEndgame = () => {
 const reset = () => {
   currentStep.value = 1
   selectedJoker.value = null
-  consequenceConfirmed.value = false
+  sacrificeConfirmed.value = false
   rollMain.value = null
   rollFallout.value = null
   targetDifficulty.value = null
@@ -383,22 +383,22 @@ const suitColors: Record<string, string> = {
       title="The Stakes"
       :step-number="4"
       :total-steps="6"
-      :can-proceed="consequenceConfirmed"
+      :can-proceed="sacrificeConfirmed"
       show-back
       @back="prevStep"
       @next="nextStep"
     >
       <div class="max-w-2xl mx-auto space-y-8">
         <div class="text-center space-y-4">
-          <Text variant="h2">Define the Consequence</Text>
+          <Text variant="h2">Define the Sacrifice</Text>
           <Text variant="body" color="muted">Before rolling, ask the Active Player:</Text>
-          <Text variant="quote" color="red">"If this goes wrong, what is the Consequence?"</Text>
+          <Text variant="quote" color="red">"If you push yourself, what are you willing to Sacrifice?"</Text>
         </div>
 
         <Card class="bg-nott-red/5 border-nott-red/30">
           <Checkbox 
-            v-model="consequenceConfirmed"
-            label="We have agreed on a specific, terrible Consequence (Overexertion)."
+            v-model="sacrificeConfirmed"
+            label="We have agreed on a specific, terrible Sacrifice (Overexertion)."
           />
         </Card>
       </div>
@@ -410,7 +410,7 @@ const suitColors: Record<string, string> = {
       title="The Resolution"
       :step-number="5"
       :total-steps="6"
-      :can-proceed="rollMain !== null && rollFallout !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)"
+      :can-proceed="rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)"
       show-back
       @back="prevStep"
       @next="nextStep"
@@ -441,14 +441,14 @@ const suitColors: Record<string, string> = {
           <!-- d4 Input -->
           <DieSelector 
             :sides="4"
-            v-model="rollFallout"
-            label="d4 (Fallout Die)"
+            v-model="rollEffort"
+            label="d4 (Effort Die)"
             color="red"
           />
         </div>
 
         <!-- Result Display -->
-        <div v-if="rollMain !== null && rollFallout !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)" class="space-y-6 animate-fade-in">
+        <div v-if="rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)" class="space-y-6 animate-fade-in">
           <div 
             class="text-center p-8 rounded border-2 transition-all duration-500"
             :class="isSuccess ? 'bg-green-900/20 border-green-500/50' : 'bg-nott-red/20 border-nott-red/50'"
@@ -474,9 +474,9 @@ const suitColors: Record<string, string> = {
             </div>
           </div>
 
-          <Card :title="falloutResult?.title" class="border-nott-red">
-            <Text variant="body" class="mb-2">{{ falloutResult?.description }}</Text>
-            <Text variant="caption">{{ falloutResult?.mechanic }}</Text>
+          <Card :title="effortResult?.title" class="border-nott-red">
+            <Text variant="body" class="mb-2">{{ effortResult?.description }}</Text>
+            <Text variant="caption">{{ effortResult?.mechanic }}</Text>
           </Card>
         </div>
       </div>
@@ -513,8 +513,8 @@ const suitColors: Record<string, string> = {
               <div v-if="isFaceCard" class="space-y-4">
                 <div>
                   <Text variant="label" color="red" class="mb-1">1. The Killer Retaliates:</Text>
-                  <Text variant="body" v-if="rollFallout && rollFallout <= 2">Add a random <strong>Jack</strong> to the Threat Deck.</Text>
-                  <Text variant="body" v-if="rollFallout && rollFallout >= 3">Add a random <strong>Queen</strong> to the Threat Deck.</Text>
+                  <Text variant="body" v-if="rollEffort && rollEffort <= 2">Add a random <strong>Jack</strong> to the Threat Deck.</Text>
+                  <Text variant="body" v-if="rollEffort && rollEffort >= 3">Add a random <strong>Queen</strong> to the Threat Deck.</Text>
                 </div>
                 <div>
                   <Text variant="label" color="red" class="mb-1">2. Check for Weakness:</Text>
