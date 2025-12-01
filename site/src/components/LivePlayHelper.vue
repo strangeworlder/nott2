@@ -94,6 +94,26 @@ const prevStep = () => {
       v-if="currentStep === 6"
       @back="prevStep"
     />
+    <!-- Debug Toggle -->
+    <div class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
+      <Button 
+        @click="debugMode = !debugMode"
+        variant="secondary"
+        size="sm"
+        class="!text-xs !py-1 !px-2 border-green-500/30 text-green-400 hover:text-green-300 hover:border-green-500"
+      >
+        {{ debugMode ? 'Hide Debug' : 'Show Debug' }}
+      </Button>
+    </div>
+
+    <!-- Debug Panel -->
+    <div v-if="debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-green-400 p-2 font-mono border-t border-green-500/30 overflow-x-auto z-50">
+      <div class="flex gap-8 whitespace-nowrap">
+        <div>
+          <strong class="text-white">Middle Stack ({{ Object.values(middleStack).reduce((a, b) => a + b, 0) }}):</strong>
+          <span v-for="(count, rank) in middleStack" :key="rank" class="ml-2">
+            {{ rank }}:{{ count }}
+          </span>
         </div>
         <div>
           <strong class="text-white">Bottom Stack ({{ Object.values(bottomStack).reduce((a, b) => a + b, 0) }}):</strong>
@@ -126,5 +146,11 @@ const prevStep = () => {
         </div>
       </div>
     </div>
+
+    <!-- Win Screen -->
+    <WinScreen 
+      v-if="isGameWon" 
+      @reset="fullReset"
+    />
   </div>
 </template>
