@@ -41,6 +41,14 @@ const trophyPile = ref<GameCard[]>([])
 const trophyTop = ref<GameCard | null>(null)
 const isTrophyTopRandomized = ref(true)
 
+// Face Card Reserves
+const faceCardReserves = ref({
+    11: 3, // Jacks (4 total - 1 in middle stack)
+    12: 4, // Queens
+    13: 4  // Kings
+})
+const lastAddedFaceCardRank = ref<number | null>(null)
+
 // UI State that is tightly coupled to game flow
 const currentStep = ref(1)
 const selectedJoker = ref<'Red' | 'Black' | null>(null)
@@ -51,7 +59,9 @@ const rollEffort = ref<number | null>(null)
 const manualOverride = ref(false)
 const debugMode = ref(true)
 const isGenrePointUsed = ref(false)
+const isEndgameInitialized = ref(false)
 const isGenrePointAwarded = ref(false)
+const isGameWon = ref(false)
 
 export function useLivePlay() {
 
@@ -322,6 +332,7 @@ export function useLivePlay() {
             1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
             11: 0, 12: 0, 13: 0
         }
+        faceCardReserves.value = { 11: 3, 12: 4, 13: 4 }
         reserveQueue.value = [
             5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10
         ]
@@ -333,17 +344,23 @@ export function useLivePlay() {
         visibleCards.value = []
         selectedCardId.value = null
         reset()
+        isEndgameInitialized.value = false
+        isGameWon.value = false
     }
 
     const startGame = () => {
         strikes.value = 0
         weaknessesFound.value = []
+        isEndgame.value = false
+        isEndgameInitialized.value = false
+        isGameWon.value = false
         acesRemaining.value = 4
         middleStack.value = { 2: 4, 3: 4, 4: 4, 11: 1 }
         bottomStack.value = {
             1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
             11: 0, 12: 0, 13: 0
         }
+        faceCardReserves.value = { 11: 3, 12: 4, 13: 4 }
         reserveQueue.value = [
             5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10
         ]
@@ -377,8 +394,72 @@ export function useLivePlay() {
         }
     }
 
+    const addFaceCardToThreatDeck = (targetRank: number, effort: number | null = null) => {
+        // Helper to try adding a specific rank
+        const tryAdd = (rank: number): boolean => {
+            if (faceCardReserves.value[rank as 11 | 12 | 13] > 0) {
+                faceCardReserves.value[rank as 11 | 12 | 13]--
+                updateDeckState(rank as Rank, 'Spades', 'add') // Suit doesn't matter for count, but we need one
+                lastAddedFaceCardRank.value = rank
+                return true
+            }
+            return false
+        }
+
+        // Reset last added
+        lastAddedFaceCardRank.value = null
+
+        // Substitution Logic
+        if (targetRank === 11) { // Need Jack
+            if (tryAdd(11)) return
+            if (tryAdd(12)) return // No Jacks? Add Queen
+            tryAdd(13)             // No Queens? Add King
+        } else if (targetRank === 12) { // Need Queen
+            if (tryAdd(12)) return
+            if (tryAdd(13)) return // No Queens? Add King
+            tryAdd(11)             // No Kings? Add Jack
+        } else if (targetRank === 13) { // Need King
+            if (tryAdd(13)) return
+
+            // If No Kings, substitution depends on Effort
+            // High Effort (3-4) -> Worse Consequence (Queen first)
+            // Low Effort (1-2) -> Lesser Consequence (Jack first)
+            // If effort is null (shouldn't happen in this context but safe fallback), default to Queen (worse)
+
+            if (effort && effort <= 2) {
+                if (tryAdd(11)) return // Try Jack
+                tryAdd(12)             // Then Queen
+            } else {
+                if (tryAdd(12)) return // Try Queen
+                tryAdd(11)             // Then Jack
+            }
+        }
+    }
+
     const applyGameStateUpdates = () => {
         if (isSuccess.value) {
+            // Joker Success Logic
+            if (selectedJoker.value === 'Red') {
+                isGameWon.value = true
+                return
+            }
+            if (selectedJoker.value === 'Black') {
+                // Remove highest face card
+                // We need to find the highest rank in the threat deck (bottomStack + middleStack)
+                // Actually, "Removes the highest face card from the deck"
+                // We don't track individual cards in the deck perfectly, but we track counts.
+                // Let's try to remove a King, then Queen, then Jack from reserves/deck state.
+                // Since we don't have a "deck" array, we just decrement the counts in bottomStack/middleStack?
+                // Or just assume it's done narratively?
+                // The instructions say "Removes the highest face card from the deck".
+                // We should probably try to decrement a King from bottomStack if possible.
+
+                // For now, we'll just handle the Joker removal itself.
+                // The instruction text will tell the user what to do.
+                selectedJoker.value = null // Removed from game
+                return
+            }
+
             if (isFaceCard.value) {
                 if (isFirstTime.value) {
                     if (activeCard.value) {
@@ -395,9 +476,9 @@ export function useLivePlay() {
                 }
 
                 if (rollEffort.value && rollEffort.value <= 2) {
-                    updateDeckState(11, 'Spades', 'add')
+                    addFaceCardToThreatDeck(11, rollEffort.value) // Add Jack
                 } else if (rollEffort.value && rollEffort.value >= 3) {
-                    updateDeckState(12, 'Spades', 'add')
+                    addFaceCardToThreatDeck(12, rollEffort.value) // Add Queen
                 }
 
                 shuffleThreatDeck()
@@ -412,9 +493,23 @@ export function useLivePlay() {
                 }
             }
         } else {
+            // Joker Failure Logic
+            if (selectedJoker.value === 'Red') {
+                // Shuffle back
+                // We don't need to do anything state-wise other than NOT removing it.
+                // It stays in the "deck" conceptually.
+                return
+            }
+            if (selectedJoker.value === 'Black') {
+                // Add King
+                addFaceCardToThreatDeck(13)
+                selectedJoker.value = null // Removed from game
+                return
+            }
+
             if (isFaceCard.value) {
                 strikes.value++
-                updateDeckState(13, 'Spades', 'add')
+                addFaceCardToThreatDeck(13, rollEffort.value) // Add King
                 // Fix: Do NOT manually return the card here. shuffleThreatDeck returns ALL visible cards.
                 // if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
 
@@ -427,7 +522,46 @@ export function useLivePlay() {
         }
     }
 
+    const pendingFalloutRank = computed(() => {
+        if (!isFaceCard.value) return null
 
+        // Determine target rank based on success/failure and effort
+        let targetRank = 0
+        if (isSuccess.value) {
+            // Success: Effort 1-2 -> Jack (11), Effort 3-4 -> Queen (12)
+            if (rollEffort.value && rollEffort.value <= 2) targetRank = 11
+            else if (rollEffort.value && rollEffort.value >= 3) targetRank = 12
+        } else {
+            // Failure: Always King (13)
+            targetRank = 13
+        }
+
+        if (targetRank === 0) return null
+
+        // Check reserves (read-only)
+        const reserves = faceCardReserves.value
+        const check = (r: number) => reserves[r as 11 | 12 | 13] > 0 ? r : null
+
+        // Exact mirror of addFaceCardToThreatDeck substitution logic
+        if (targetRank === 11) { // Need Jack
+            return check(11) || check(12) || check(13)
+        }
+        if (targetRank === 12) { // Need Queen
+            return check(12) || check(13) || check(11)
+        }
+        if (targetRank === 13) { // Need King
+            if (check(13)) return 13
+
+            // Effort logic for King substitution
+            const effort = rollEffort.value
+            if (effort && effort <= 2) {
+                return check(11) || check(12)
+            } else {
+                return check(12) || check(11)
+            }
+        }
+        return null
+    })
 
     const hasFaceCardOnTable = computed(() => {
         return visibleCards.value.some(c => c.rank > 10)
@@ -466,6 +600,27 @@ export function useLivePlay() {
         return { rank: 1, suit: 'Spades' }
     }
 
+    const startEndgame = () => {
+        // Clear number cards from tracking for debug accuracy
+        acesRemaining.value = 0
+        // Keep Jacks (11) in middle stack, clear others
+        middleStack.value = { 2: 0, 3: 0, 4: 0, 11: middleStack.value[11] }
+
+        // Clear 1-10 from bottomStack, keep Face Cards
+        for (let i = 1; i <= 10; i++) {
+            bottomStack.value[i] = 0
+        }
+        reserveQueue.value = [] // No more reserves
+        rollMain.value = null
+        rollEffort.value = null
+        isGenrePointUsed.value = false
+        isGenrePointAwarded.value = false
+
+        // Start the loop
+        currentStep.value = 2
+        isEndgameInitialized.value = true
+    }
+
     const startNextScene = () => {
         applyGameStateUpdates()
 
@@ -477,6 +632,11 @@ export function useLivePlay() {
         selectedCardId.value = null
         selectedJoker.value = null
         manualJoker.value = null
+
+        if (isEndgame.value && !isEndgameInitialized.value) {
+            currentStep.value = 1
+            return
+        }
 
         // Smart Auto-Selection for next draw
         const nextCard = getNextValidCard()
@@ -499,6 +659,7 @@ export function useLivePlay() {
         strikes,
         weaknessesFound,
         isEndgame,
+        isGameWon, // New
         manualSuit,
         manualRank,
         manualJoker,
@@ -550,12 +711,16 @@ export function useLivePlay() {
         reset,
         fullReset,
         startGame,
+        startEndgame, // New
         applyGameStateUpdates,
         startNextScene,
         getRankName,
         awardGenrePoint,
         toggleGenrePointUsage,
         toggleGenrePointAward,
-        getNextValidCard // New
+        getNextValidCard, // New
+        faceCardReserves, // New
+        lastAddedFaceCardRank, // New
+        pendingFalloutRank // New
     }
 }

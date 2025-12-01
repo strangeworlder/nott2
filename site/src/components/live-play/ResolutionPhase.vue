@@ -30,6 +30,14 @@ const emit = defineEmits<{
   (e: 'back'): void
   (e: 'next'): void
 }>()
+
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  // Reset dice when entering this phase
+  rollMain.value = null
+  rollEffort.value = null
+})
 </script>
 
 <template>

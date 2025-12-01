@@ -15,7 +15,9 @@ const {
   toggleGenrePointAward,
   isGenrePointAwarded,
   tableGenrePoints,
-  playerGenrePoints
+  playerGenrePoints,
+  pendingFalloutRank,
+  getRankName
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -113,8 +115,8 @@ const emit = defineEmits<{
                     <Text variant="label" color="success" class="mb-1">The Killer Retaliates</Text>
                     <div v-if="effortResult" class="bg-nott-white/5 p-3 rounded mt-1 border border-nott-white/10">
                       <Text variant="body" class="mb-1"><strong>{{ effortResult.title }} ({{ effortResult.level }})</strong></Text>
-                      <Text v-if="effortResult.level <= 2" variant="body">Add a random <strong>Jack</strong> to the Threat Deck.</Text>
-                      <Text v-else variant="body">Add a random <strong>Queen</strong> to the Threat Deck.</Text>
+                      <Text v-if="pendingFalloutRank" variant="body">Add a random <strong>{{ getRankName(pendingFalloutRank) }}</strong> to the Threat Deck.</Text>
+                      <Text v-else variant="body" color="muted">No Face Cards left in reserve!</Text>
                     </div>
                   </div>
                 </div>
@@ -141,47 +143,98 @@ const emit = defineEmits<{
               <!-- Vertical Line -->
               <div class="absolute left-[15px] top-2 bottom-2 w-0.5 bg-nott-gray/30"></div>
 
-              <!-- Step 1 -->
-              <div class="relative flex gap-6">
-                <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">1</div>
-                <div class="flex-1">
-                  <Text variant="label" color="red" class="mb-1">Threat Deck</Text>
-                  <Text variant="body">Place the <strong>{{ cardName }}</strong> at the bottom of the Threat Deck.</Text>
-                </div>
-              </div>
+              <!-- Joker Steps -->
+              <template v-if="selectedJoker">
+                 <!-- Red Joker -->
+                 <template v-if="selectedJoker === 'Red'">
+                    <div v-if="isSuccess" class="relative flex gap-6">
+                        <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">!</div>
+                        <div class="flex-1">
+                            <Text variant="label" color="red" class="mb-1">Victory</Text>
+                            <Text variant="body">The Red Joker is defeated. You have survived.</Text>
+                        </div>
+                    </div>
+                    <div v-else class="relative flex gap-6">
+                        <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">!</div>
+                        <div class="flex-1">
+                            <Text variant="label" color="red" class="mb-1">The End</Text>
+                            <Text variant="body"><strong>Your character is killed.</strong></Text>
+                            <Text variant="body" class="mt-2">Shuffle the <strong>Red Joker</strong> back into the Threat Deck.</Text>
+                        </div>
+                    </div>
+                 </template>
 
-              <!-- Step 2 (Number Card) -->
-              <div v-if="!isFaceCard" class="relative flex gap-6">
-                <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">2</div>
-                <div class="flex-1">
-                  <Text variant="label" color="red" class="mb-1">Add Reserve</Text>
-                  <Text variant="body">Take the next card from the <strong>Number Reserve</strong> and add it to the bottom of the Threat Deck.</Text>
-                </div>
-              </div>
+                 <!-- Black Joker -->
+                 <template v-else-if="selectedJoker === 'Black'">
+                    <div class="relative flex gap-6">
+                        <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">1</div>
+                        <div class="flex-1">
+                            <Text variant="label" color="red" class="mb-1">One Last Chance</Text>
+                            <Text variant="body">Remove the <strong>Black Joker</strong> from the game.</Text>
+                        </div>
+                    </div>
+                    <div v-if="isSuccess" class="relative flex gap-6">
+                        <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">2</div>
+                        <div class="flex-1">
+                            <Text variant="label" color="red" class="mb-1">A Small Victory</Text>
+                            <Text variant="body">Remove the highest Face Card from the Threat Deck.</Text>
+                        </div>
+                    </div>
+                    <div v-else class="relative flex gap-6">
+                        <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">2</div>
+                        <div class="flex-1">
+                            <Text variant="label" color="red" class="mb-1">The Horror Grows</Text>
+                            <Text variant="body">Add a random <strong>King</strong> to the Threat Deck.</Text>
+                        </div>
+                    </div>
+                 </template>
+              </template>
 
-              <!-- Face Card Steps -->
+              <!-- Standard Card Steps (Face or Number) -->
               <template v-else>
-                <div class="relative flex gap-6">
-                  <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">2</div>
-                  <div class="flex-1">
-                    <Text variant="label" color="red" class="mb-1">The Killer Strikes</Text>
-                    <Text variant="body">Mark 1 Strike on your character sheet.</Text>
+                  <!-- Step 1: Place Card -->
+                  <div class="relative flex gap-6">
+                    <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">1</div>
+                    <div class="flex-1">
+                      <Text variant="label" color="red" class="mb-1">Threat Deck</Text>
+                      <Text variant="body">Place the <strong>{{ cardName }}</strong> at the bottom of the Threat Deck.</Text>
+                    </div>
                   </div>
-                </div>
-                <div class="relative flex gap-6">
-                  <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">3</div>
-                  <div class="flex-1">
-                    <Text variant="label" color="red" class="mb-1">The Horror Grows</Text>
-                    <Text variant="body">Add a random <strong>King</strong> to the bottom of the Threat Deck.</Text>
+
+                  <!-- Step 2 (Number Card) -->
+                  <div v-if="!isFaceCard" class="relative flex gap-6">
+                    <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">2</div>
+                    <div class="flex-1">
+                      <Text variant="label" color="red" class="mb-1">Add Reserve</Text>
+                      <Text variant="body">Take the next card from the <strong>Number Reserve</strong> and add it to the bottom of the Threat Deck.</Text>
+                    </div>
                   </div>
-                </div>
-                <div class="relative flex gap-6">
-                  <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">4</div>
-                  <div class="flex-1">
-                    <Text variant="label" color="red" class="mb-1">The Threat Remains</Text>
-                    <Text variant="body"><strong>Shuffle the entire Threat Deck and Trophy Pile.</strong></Text>
-                  </div>
-                </div>
+
+                  <!-- Face Card Steps -->
+                  <template v-else>
+                    <div class="relative flex gap-6">
+                      <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">2</div>
+                      <div class="flex-1">
+                        <Text variant="label" color="red" class="mb-1">The Killer Strikes</Text>
+                        <Text variant="body">Mark 1 Strike on your character sheet.</Text>
+                      </div>
+                    </div>
+                    <div class="relative flex gap-6">
+                      <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">3</div>
+                      <div class="flex-1">
+                        <Text variant="label" color="red" class="mb-1">The Horror Grows</Text>
+                        <Text v-if="pendingFalloutRank" variant="body">Add a random <strong>{{ getRankName(pendingFalloutRank) }}</strong> to the bottom of the Threat Deck.</Text>
+                        <Text v-else variant="body" color="muted">No Face Cards left in reserve!</Text>
+                      </div>
+                    </div>
+                    <div class="relative flex gap-6">
+                      <div class="w-8 h-8 rounded-full bg-nott-black border border-nott-red/50 flex items-center justify-center shrink-0 z-10 text-nott-red font-display">4</div>
+                      <div class="flex-1">
+                        <Text variant="label" color="red" class="mb-1">The Threat Remains</Text>
+                        <Text variant="body"><strong>Shuffle the entire Threat Deck and Trophy Pile.</strong></Text>
+                      </div>
+                    </div>
+                  </template>
               </template>
             </div>
           </div>

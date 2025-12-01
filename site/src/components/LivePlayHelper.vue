@@ -10,12 +10,14 @@ import ConversationPhase from './live-play/ConversationPhase.vue'
 import StakesPhase from './live-play/StakesPhase.vue'
 import ResolutionPhase from './live-play/ResolutionPhase.vue'
 import FalloutPhase from './live-play/FalloutPhase.vue'
+import WinScreen from './live-play/WinScreen.vue'
 
 const { 
   currentStep, 
   isEndgame, 
   trophyTop, 
   fullReset, 
+  startEndgame,
   startGame, 
   debugMode,
   middleStack,
@@ -26,7 +28,8 @@ const {
   strikes,
   getRankName,
   tableGenrePoints,
-  playerGenrePoints
+  playerGenrePoints,
+  isGameWon
 } = useLivePlay()
 
 const nextStep = () => {
@@ -55,7 +58,7 @@ const prevStep = () => {
     <GameSetup 
       v-if="currentStep === 1"
       :is-endgame="isEndgame"
-      @next="startGame"
+      @next="isEndgame ? startEndgame() : startGame()"
     />
 
     <!-- Step 2: Scene Setup (Draw Threat) -->
@@ -91,25 +94,6 @@ const prevStep = () => {
       v-if="currentStep === 6"
       @back="prevStep"
     />
-
-    <!-- Debug Toggle -->
-    <div class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
-      <Button 
-        @click="debugMode = !debugMode"
-        variant="secondary"
-        size="sm"
-        class="!text-xs !py-1 !px-2 border-green-500/30 text-green-400 hover:text-green-300 hover:border-green-500"
-      >
-        {{ debugMode ? 'Hide Debug' : 'Show Debug' }}
-      </Button>
-    </div>
-    <div v-if="debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-green-400 p-2 font-mono border-t border-green-500/30 overflow-x-auto z-50">
-      <div class="flex gap-8 whitespace-nowrap">
-        <div>
-          <strong class="text-white">Middle Stack ({{ Object.values(middleStack).reduce((a, b) => a + b, 0) }}):</strong>
-          <span v-for="(count, rank) in middleStack" :key="rank" class="ml-2">
-            {{ rank }}:{{ count }}
-          </span>
         </div>
         <div>
           <strong class="text-white">Bottom Stack ({{ Object.values(bottomStack).reduce((a, b) => a + b, 0) }}):</strong>
