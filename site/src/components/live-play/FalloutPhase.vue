@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useLivePlay } from '../../composables/useLivePlay'
 import WizardStep from '../WizardStep.vue'
-import Card from '../Card.vue'
-import Text from '../Text.vue'
-import Badge from '../Badge.vue'
+import Toggle from '../Toggle.vue'
 
 const { 
   isSuccess, 
@@ -12,7 +10,11 @@ const {
   isFirstTime, 
   selectedSuit, 
   effortResult,
-  startNextScene
+  startNextScene,
+  toggleGenrePointAward,
+  isGenrePointAwarded,
+  tableGenrePoints,
+  playerGenrePoints
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -36,6 +38,22 @@ const emit = defineEmits<{
     </div>
 
     <div class="space-y-8">
+      <Card title="Genre Point Checkpoint">
+        <div class="flex flex-col items-center text-center gap-4">
+            <Text variant="body">Did a player play into a trope, make a great roleplay choice, or terrify the table?</Text>
+            <div class="flex items-center gap-4">
+                <Toggle 
+                    :model-value="isGenrePointAwarded"
+                    @update:model-value="toggleGenrePointAward"
+                    label-on="Genre Point Awarded"
+                    label-off="Award Genre Point?"
+                    :disabled="!isGenrePointAwarded && tableGenrePoints === 0"
+                />
+            </div>
+            <Text variant="caption" color="muted">Tokens on Table: {{ tableGenrePoints }} | Tokens Held: {{ playerGenrePoints }}</Text>
+        </div>
+      </Card>
+
       <Card title="Update Physical Decks">
         <div class="space-y-6">
           <div v-if="isSuccess">

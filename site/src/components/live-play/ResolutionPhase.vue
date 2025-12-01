@@ -3,6 +3,7 @@ import { useLivePlay } from '../../composables/useLivePlay'
 import WizardStep from '../WizardStep.vue'
 import Card from '../Card.vue'
 import Text from '../Text.vue'
+import Toggle from '../Toggle.vue'
 import DieSelector from '../DieSelector.vue'
 
 const { 
@@ -18,7 +19,10 @@ const {
   isTrophyTopRandomized,
   availableTrophyRanks,
   trophyTop,
-  setTrophyTop
+  setTrophyTop,
+  playerGenrePoints,
+  isGenrePointUsed,
+  toggleGenrePointUsage
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -130,11 +134,22 @@ const emit = defineEmits<{
 
         <!-- Reminders -->
         <div class="grid grid-cols-2 gap-4">
-          <div class="p-4 border border-nott-gray/30 rounded bg-nott-black/50 text-center">
+          <div class="p-4 border border-nott-gray/30 rounded bg-nott-black/50 text-center flex flex-col items-center justify-center gap-2">
             <Text variant="label" color="red" class="mb-1">Genre Point?</Text>
-            <Text variant="caption" color="muted">Spend 1 GP to reroll. You must keep the new result.</Text>
+            <div v-if="playerGenrePoints > 0 || isGenrePointUsed">
+                <Toggle 
+                    :model-value="isGenrePointUsed"
+                    @update:model-value="toggleGenrePointUsage"
+                    label-on="Used a genre point"
+                    label-off="Didn't use a genre point"
+                />
+                <Text variant="caption" color="muted" class="mt-1">Tokens Available: {{ playerGenrePoints }}</Text>
+            </div>
+            <div v-else>
+                <Text variant="caption" color="muted">No tokens available.</Text>
+            </div>
           </div>
-          <div class="p-4 border border-nott-gray/30 rounded bg-nott-black/50 text-center">
+          <div class="p-4 border border-nott-gray/30 rounded bg-nott-black/50 text-center flex flex-col items-center justify-center">
             <Text variant="label" color="red" class="mb-1">Aptitude?</Text>
             <Text variant="caption" color="muted">If Suit matches Aptitude: +1 to Push (Risk), -1 for Safety (Control).</Text>
           </div>

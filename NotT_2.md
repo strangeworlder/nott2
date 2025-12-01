@@ -75,8 +75,8 @@ You are no heroes. You are just in the wrong place at the wrong time.
 ## Genre Points
 
 The Table starts with **13 Genre Points** in a central pool.
-*   **Awarding**: Any player can award another player a Genre Point for playing into a horror trope, making a great roleplay choice, or terrifying the table.
-*   **Spending**: You can spend one Genre Point to reroll your entire d13 and add a +1 to that roll’s main die. You must accept the second result.
+*   **Awarding**: Any player can award another player a Genre Point for playing into a horror trope, making a great roleplay choice, or terrifying the table. **(Use the app to track this at the end of the scene).**
+*   **Spending**: You can spend one Genre Point to reroll your entire d13 and add a +1 to that roll’s main die. You must accept the second result. **(Toggle this in the Resolution Phase to track the spend).**
 
 ## The Game Loop
 
@@ -158,8 +158,8 @@ Success against the Killer is always costly.
 *   **King**: +3
 
 Based on your Effort (the d4), another face card from Face Card Reserves is added from the reserve to the Threat Deck.
-*   **Clean/Messy (1 or 2 on d4)**: Add a random **Jack**.
-*   **Costy/Dire (3 or 4 on d4)**: Add a random **Queen**.
+*   **Controlled/Pushing It (1 or 2 on d4)**: Add a random **Jack**.
+*   **Overexertion/Breaking Point (3 or 4 on d4)**: Add a random **Queen**.
 
 **Running out of Reserves:**
 *   **No Jacks?** Add a **Queen** instead.

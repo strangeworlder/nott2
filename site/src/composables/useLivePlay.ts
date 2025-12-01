@@ -1,3 +1,4 @@
+
 import { ref, computed } from 'vue'
 import { effortScale, faceCardPrompts, faceCardPrompt, fullPromptMatrix } from '../data/rules'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
@@ -35,6 +36,8 @@ const currentCard = ref<GameCard | null>(null)
 const strikes = ref(0)
 const weaknessesFound = ref<Suit[]>([])
 const isEndgame = ref(false)
+const tableGenrePoints = ref(13)
+const playerGenrePoints = ref(0)
 
 // Manual Input State
 const manualSuit = ref<Suit>('Spades')
@@ -74,6 +77,8 @@ const rollEffort = ref<number | null>(null)
 const targetDifficulty = ref<number | null>(null)
 const manualOverride = ref(false)
 const debugMode = ref(true)
+const isGenrePointUsed = ref(false)
+const isGenrePointAwarded = ref(false)
 
 export function useLivePlay() {
 
@@ -129,13 +134,15 @@ export function useLivePlay() {
 
     const rollTotal = computed(() => {
         if (rollMain.value === null || rollEffort.value === null) return 0
-        return rollMain.value + rollEffort.value
+        let total = rollMain.value + rollEffort.value
+        if (isGenrePointUsed.value) total += 1
+        return total
     })
 
     const isSuccess = computed(() => {
         if (rollMain.value === null || rollEffort.value === null) return false
 
-        const total = rollMain.value + rollEffort.value
+        const total = rollTotal.value
 
         if (isFaceCard.value || selectedJoker.value) {
             if (targetDifficulty.value === null) return false
@@ -256,6 +263,45 @@ export function useLivePlay() {
         }
     }
 
+    const awardGenrePoint = () => {
+        if (tableGenrePoints.value > 0) {
+            tableGenrePoints.value--
+            playerGenrePoints.value++
+        }
+    }
+
+    const toggleGenrePointAward = () => {
+        if (isGenrePointAwarded.value) {
+            // Refund
+            isGenrePointAwarded.value = false
+            playerGenrePoints.value--
+            tableGenrePoints.value++
+        } else {
+            // Award
+            if (tableGenrePoints.value > 0) {
+                isGenrePointAwarded.value = true
+                tableGenrePoints.value--
+                playerGenrePoints.value++
+            }
+        }
+    }
+
+    const toggleGenrePointUsage = () => {
+        if (isGenrePointUsed.value) {
+            // Refund
+            isGenrePointUsed.value = false
+            playerGenrePoints.value++
+            tableGenrePoints.value--
+        } else {
+            // Use
+            if (playerGenrePoints.value > 0) {
+                isGenrePointUsed.value = true
+                playerGenrePoints.value--
+                tableGenrePoints.value++
+            }
+        }
+    }
+
     const reset = () => {
         currentStep.value = 1
         selectedJoker.value = null
@@ -263,6 +309,8 @@ export function useLivePlay() {
         rollMain.value = null
         rollEffort.value = null
         targetDifficulty.value = null
+        isGenrePointUsed.value = false
+        isGenrePointAwarded.value = false
     }
 
     const fullReset = () => {
@@ -281,6 +329,8 @@ export function useLivePlay() {
         drawnCards.value = new Set()
         trophyPile.value = []
         trophyTop.value = null
+        tableGenrePoints.value = 13
+        playerGenrePoints.value = 0
         reset()
     }
 
@@ -297,6 +347,8 @@ export function useLivePlay() {
             5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10
         ]
         drawnCards.value = new Set()
+        tableGenrePoints.value = 13
+        playerGenrePoints.value = 0
 
         const initialTrophy: GameCard = { id: 'initial-trophy', suit: 'Unknown', rank: 10 }
         trophyPile.value = [initialTrophy]
@@ -380,6 +432,8 @@ export function useLivePlay() {
         rollMain.value = null
         rollEffort.value = null
         targetDifficulty.value = null
+        isGenrePointUsed.value = false
+        isGenrePointAwarded.value = false
     }
 
     return {
@@ -407,6 +461,10 @@ export function useLivePlay() {
         targetDifficulty,
         manualOverride,
         debugMode,
+        tableGenrePoints,
+        playerGenrePoints,
+        isGenrePointUsed,
+        isGenrePointAwarded,
 
         // Computed
         selectedSuit,
@@ -435,6 +493,10 @@ export function useLivePlay() {
         startGame,
         applyGameStateUpdates,
         startNextScene,
-        getRankName
+        getRankName,
+        awardGenrePoint,
+        toggleGenrePointUsage,
+        toggleGenrePointAward
     }
 }
+

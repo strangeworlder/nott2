@@ -24,7 +24,9 @@ const {
   trophyPile,
   weaknessesFound,
   strikes,
-  getRankName
+  getRankName,
+  tableGenrePoints,
+  playerGenrePoints
 } = useLivePlay()
 
 const nextStep = () => {
@@ -128,6 +130,12 @@ const prevStep = () => {
         </div>
         <div>
           <strong class="text-white">Strikes:</strong> {{ strikes }}
+        </div>
+        <div>
+          <strong class="text-white">Table GP:</strong> {{ tableGenrePoints }}
+        </div>
+        <div>
+          <strong class="text-white">Player GP:</strong> {{ playerGenrePoints }}
         </div>
       </div>
     </div>

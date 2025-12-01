@@ -4,7 +4,7 @@ import Button from './components/Button.vue'
 import Card from './components/Card.vue'
 import RulesReference from './components/RulesReference.vue'
 import LivePlayHelper from './components/LivePlayHelper.vue'
-import OnlinePlayTool from './components/OnlinePlayTool.vue'
+
 import Text from './components/Text.vue'
 import Toggle from './components/Toggle.vue'
 import Badge from './components/Badge.vue'
@@ -12,7 +12,7 @@ import DieSelector from './components/DieSelector.vue'
 import PlayingCard from './components/PlayingCard.vue'
 import Checkbox from './components/Checkbox.vue'
 
-const currentView = ref<'showcase' | 'rules' | 'play' | 'online'>('showcase')
+const currentView = ref<'showcase' | 'rules' | 'play'>('showcase')
 </script>
 
 <template>
@@ -44,13 +44,7 @@ const currentView = ref<'showcase' | 'rules' | 'play' | 'online'>('showcase')
         >
           Live Play Helper
         </button>
-        <button 
-          @click="currentView = 'online'"
-          class="text-nott-white hover:text-nott-red transition-colors font-display uppercase tracking-wider px-4 py-2 border border-transparent hover:border-nott-red/50"
-          :class="{ 'text-nott-red border-nott-red': currentView === 'online' }"
-        >
-          Online Play Tool
-        </button>
+
       </nav>
     </header>
 
@@ -207,9 +201,7 @@ const currentView = ref<'showcase' | 'rules' | 'play' | 'online'>('showcase')
           <LivePlayHelper />
         </div>
 
-        <div v-else key="online">
-          <OnlinePlayTool />
-        </div>
+
       </Transition>
     </main>
   </div>
