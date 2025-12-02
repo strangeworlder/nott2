@@ -4,6 +4,7 @@ import Text from './Text.vue'
 import Button from './Button.vue'
 
 // Import Steps
+import WelcomeScreen from './live-play/WelcomeScreen.vue'
 import GameSetup from './live-play/GameSetup.vue'
 import SceneSetup from './live-play/SceneSetup.vue'
 import ConversationAndStakesPhase from './live-play/ConversationAndStakesPhase.vue'
@@ -57,6 +58,12 @@ const prevStep = () => {
       </div>
       <Button variant="secondary" @click="fullReset" class="text-xs px-3 py-1 h-8">Reset Game</Button>
     </div>
+
+    <!-- Step 0: Welcome Screen -->
+    <WelcomeScreen 
+      v-if="currentStep === 0"
+      @next="nextStep"
+    />
 
     <!-- Step 1: Game Setup / Endgame Setup -->
     <GameSetup 

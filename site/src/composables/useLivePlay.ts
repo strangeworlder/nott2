@@ -51,7 +51,7 @@ const faceCardReserves = ref({
 const lastAddedFaceCardRank = ref<number | null>(null)
 
 // UI State that is tightly coupled to game flow
-const currentStep = ref(1)
+const currentStep = ref(0)
 const selectedJoker = ref<'Red' | 'Black' | null>(null)
 const sacrificeConfirmed = ref(false)
 const rollMain = ref<number | null>(null)
@@ -314,7 +314,7 @@ export function useLivePlay() {
     }
 
     const reset = () => {
-        currentStep.value = 1
+        currentStep.value = 0
         selectedJoker.value = null
         sacrificeConfirmed.value = false
         rollMain.value = null
