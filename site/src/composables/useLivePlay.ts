@@ -5,6 +5,7 @@ import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 export type LivePlayPhase =
     | 'welcome'
     | 'game-setup'
+    | 'act-setup'
     | 'scene-setup'
     | 'conversation-stakes'
     | 'resolution'
@@ -73,6 +74,7 @@ const isGenrePointUsed = ref(false)
 const isEndgameInitialized = ref(false)
 const isGenrePointAwarded = ref(false)
 const isGameWon = ref(false)
+const isBlackJokerRemoved = ref(false)
 
 export function useLivePlay() {
 
@@ -359,6 +361,7 @@ export function useLivePlay() {
         reset()
         isEndgameInitialized.value = false
         isGameWon.value = false
+        isBlackJokerRemoved.value = false
         currentAct.value = 1
     }
 
@@ -368,6 +371,7 @@ export function useLivePlay() {
         isEndgame.value = false
         isEndgameInitialized.value = false
         isGameWon.value = false
+        isBlackJokerRemoved.value = false
         currentAct.value = 1
         acesRemaining.value = 4
         middleStack.value = { 2: 4, 3: 4, 4: 4, 11: 1 }
@@ -473,6 +477,7 @@ export function useLivePlay() {
                 // For now, we'll just handle the Joker removal itself.
                 // The instruction text will tell the user what to do.
                 selectedJoker.value = null // Removed from game
+                isBlackJokerRemoved.value = true
                 return
             }
 
@@ -483,6 +488,7 @@ export function useLivePlay() {
                         if (weaknessesFound.value.length === 4) {
                             isEndgame.value = true
                             currentAct.value = 3
+                            currentPhase.value = 'act-setup'
                         }
                         // CRITICAL FIX: Remove the weakness card from visibleCards so it isn't returned to the deck
                         visibleCards.value = visibleCards.value.filter(c => c.id !== activeCard.value?.id)
@@ -526,6 +532,7 @@ export function useLivePlay() {
                 // Add King
                 addFaceCardToThreatDeck(13)
                 selectedJoker.value = null // Removed from game
+                isBlackJokerRemoved.value = true
                 return
             }
 
@@ -642,6 +649,7 @@ export function useLivePlay() {
         rollEffort.value = null
         isGenrePointUsed.value = false
         isGenrePointAwarded.value = false
+        sacrificeConfirmed.value = false
 
         // Start the loop
         currentPhase.value = 'scene-setup'
@@ -663,7 +671,7 @@ export function useLivePlay() {
         manualJoker.value = null
 
         if (isEndgame.value && !isEndgameInitialized.value) {
-            currentPhase.value = 'game-setup'
+            currentPhase.value = 'act-setup'
             return
         }
 
@@ -686,11 +694,10 @@ export function useLivePlay() {
                 currentPhase.value = 'game-setup'
                 break
             case 'game-setup':
-                if (isEndgame.value) {
-                    startEndgame()
-                } else {
-                    startGame()
-                }
+                currentPhase.value = 'act-setup'
+                break
+            case 'act-setup':
+                currentPhase.value = 'scene-setup'
                 break
             case 'scene-setup':
                 currentPhase.value = 'conversation-stakes'
@@ -714,6 +721,9 @@ export function useLivePlay() {
         switch (currentPhase.value) {
             case 'game-setup':
                 currentPhase.value = 'welcome'
+                break
+            case 'act-setup':
+                if (currentAct.value === 1) currentPhase.value = 'game-setup'
                 break
             case 'scene-setup':
                 // Cannot go back to game setup from scene setup easily without reset
@@ -742,6 +752,7 @@ export function useLivePlay() {
         weaknessesFound,
         isEndgame,
         isGameWon, // New
+        isBlackJokerRemoved, // New
         manualSuit,
         manualRank,
         manualJoker,

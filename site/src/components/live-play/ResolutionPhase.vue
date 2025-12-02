@@ -6,6 +6,7 @@ import Toggle from '../Toggle.vue'
 import DieSelector from '../DieSelector.vue'
 import SelectionButton from '../SelectionButton.vue'
 import Button from '../Button.vue'
+import ActionFooter from '../ActionFooter.vue'
 
 const { 
   rollMain, 
@@ -43,14 +44,14 @@ onMounted(() => {
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <div class="mb-6 text-center">
-      <Text variant="quote" color="muted" class="italic">"Roll the d13 (d10 + d4). Compare your total to the Difficulty. The d4 also determines your Effort—how well you succeed or how badly you fail."</Text>
+      <Text variant="quote" color="muted">Roll the d13 (d10 + d4). Compare your total to the Difficulty. The d4 also determines your Effort—how well you succeed or how badly you fail.</Text>
     </div>
 
     <div class="max-w-2xl mx-auto space-y-8 mb-12">
       
         <!-- Target Difficulty (Face Cards/Jokers only) -->
         <div v-if="isFaceCard || selectedJoker" class="space-y-4 animate-fade-in">
-          <Text variant="label" class="text-center">Target Difficulty Calculation</Text>
+          <Text variant="label" align="center">Target Difficulty Calculation</Text>
           
           <div class="flex justify-center items-center gap-4">
              <!-- Base Difficulty -->
@@ -59,17 +60,17 @@ onMounted(() => {
                 
                 <!-- If randomized, show button list -->
                 <div v-if="isTrophyTopRandomized && availableTrophyRanks.length > 1" class="flex flex-col items-center gap-2">
-                   <div class="flex flex-wrap justify-center gap-1 max-w-[200px]">
-                     <SelectionButton 
-                       v-for="rank in availableTrophyRanks" 
-                       :key="rank"
-                       @click="setTrophyTop(rank)"
-                       :selected="trophyTop?.rank === rank"
-                       variant="square"
-                       class="!w-8 !h-8 !text-sm"
-                     >
-                       {{ rank }}
-                     </SelectionButton>
+                     <div class="flex flex-wrap justify-center gap-1 max-w-[200px]">
+                       <SelectionButton 
+                         v-for="rank in availableTrophyRanks" 
+                         :key="rank"
+                         @click="setTrophyTop(rank)"
+                         :selected="trophyTop?.rank === rank"
+                         variant="square"
+                         size="sm"
+                       >
+                         {{ rank }}
+                       </SelectionButton>
                    </div>
                 </div>
                 <!-- Else show static number -->
@@ -115,21 +116,6 @@ onMounted(() => {
         />
       </div>
 
-      <!-- Result Display -->
-      <div v-if="rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)" class="space-y-6 animate-fade-in">
-        <div 
-          class="text-center p-8 rounded border-2 transition-all duration-500"
-          :class="isSuccess ? 'bg-green-900/20 border-green-500/50' : 'bg-nott-red/20 border-nott-red/50'"
-        >
-          <Text variant="label" color="muted" class="mb-2">Total Result: {{ rollTotal }} vs {{ (isFaceCard || selectedJoker) ? targetDifficulty : selectedRank }}</Text>
-          <div 
-            class="text-6xl md:text-8xl font-display tracking-tighter mb-2"
-            :class="isSuccess ? 'text-green-500 text-shadow-glow-green' : 'text-nott-red text-shadow-glow'"
-          >
-            {{ isSuccess ? 'SUCCESS' : 'FAILURE' }}
-          </div>
-        </div>
-
         <!-- Reminders -->
         <div class="grid grid-cols-2 gap-4">
           <Card class="text-center flex flex-col items-center justify-center gap-2 !p-4">
@@ -153,14 +139,29 @@ onMounted(() => {
           </Card>
         </div>
 
+      <!-- Result Display -->
+      <div v-if="rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)" class="space-y-6 animate-fade-in">
+        <Card 
+          class="text-center transition-all duration-500"
+          :variant="isSuccess ? 'success' : 'failure'"
+        >
+          <Text variant="label" color="muted" class="mb-2">Total Result: {{ rollTotal }} vs {{ (isFaceCard || selectedJoker) ? targetDifficulty : selectedRank }}</Text>
+          <Text 
+            variant="quote"
+            :color="isSuccess ? 'success' : 'red'"
+            glow
+            class="mb-2 tracking-tighter"
+          >
+            {{ isSuccess ? 'SUCCESS' : 'FAILURE' }}
+          </Text>
+        </Card>
+
         <!-- Effort Instruction Display -->
         <div v-if="effortResult" class="animate-fade-in">
           <Card class="border-nott-red/50 bg-nott-red/5">
             <div class="text-center space-y-2">
               <Text variant="h3" color="red">{{ effortResult.title }}</Text>
-              <Text variant="label" class="text-nott-white">{{ effortResult.description }}</Text>
-              <div class="h-px w-1/2 mx-auto bg-nott-red/30 my-2"></div>
-              <Text variant="body" class="italic text-nott-white/80">"{{ effortResult.mechanic }}"</Text>
+              <Text variant="label" color="white">{{ effortResult.description }}</Text>
             </div>
           </Card>
         </div>
@@ -168,7 +169,7 @@ onMounted(() => {
     </div>
 
     <!-- Action Footer -->
-    <div class="flex justify-center pt-8 border-t border-nott-gray/30">
+    <ActionFooter>
       <Button 
         size="lg"
         variant="primary" 
@@ -178,6 +179,6 @@ onMounted(() => {
       >
         Resolve Scene →
       </Button>
-    </div>
+    </ActionFooter>
   </div>
 </template>

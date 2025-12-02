@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { basicRules, characterRules } from '../data/rules'
 import Card from './Card.vue'
+import List from './List.vue'
+import ListItem from './ListItem.vue'
 </script>
 
 <template>
@@ -22,9 +24,9 @@ import Card from './Card.vue'
           </div>
         </Card>
         <Card :title="basicRules.deckRules.reserves.title">
-          <ul class="list-disc list-inside text-nott-white/80 space-y-1">
-            <li v-for="pile in basicRules.deckRules.reserves.piles" :key="pile">{{ pile }}</li>
-          </ul>
+          <List>
+            <ListItem v-for="pile in basicRules.deckRules.reserves.piles" :key="pile">{{ pile }}</ListItem>
+          </List>
         </Card>
         <Card :title="basicRules.deckRules.trophy.title">
           <div class="space-y-2 text-nott-white/80">
@@ -115,11 +117,11 @@ import Card from './Card.vue'
     <div class="grid gap-6 md:grid-cols-2">
       <!-- Strikes -->
       <Card :title="basicRules.strikes.title">
-        <ul class="list-disc list-inside space-y-2 mb-4 text-nott-white/90">
-          <li v-for="trigger in basicRules.strikes.triggers" :key="trigger">
+        <List spacing="md">
+          <ListItem v-for="trigger in basicRules.strikes.triggers" :key="trigger">
             {{ trigger }}
-          </li>
-        </ul>
+          </ListItem>
+        </List>
         <p class="text-nott-red font-display uppercase text-sm">{{ basicRules.strikes.consequence }}</p>
       </Card>
 
@@ -134,27 +136,27 @@ import Card from './Card.vue'
       <h3 class="text-2xl font-display text-nott-white mb-4 border-l-4 border-nott-red pl-4">Character Rules</h3>
       <div class="grid gap-6 md:grid-cols-2">
         <Card title="Creation">
-          <ol class="list-decimal list-inside space-y-2 text-nott-white/80">
-            <li v-for="step in characterRules.creationSteps" :key="step">{{ step }}</li>
-          </ol>
+          <List as="ol">
+            <ListItem v-for="step in characterRules.creationSteps" :key="step">{{ step }}</ListItem>
+          </List>
         </Card>
         <Card title="Aptitudes">
           <p class="text-nott-white/80 mb-4">{{ characterRules.aptitudes.description }}</p>
-          <ul class="space-y-2">
-            <li v-for="apt in characterRules.aptitudes.list" :key="apt.name" class="flex items-center gap-2">
+          <List spacing="md">
+            <ListItem v-for="apt in characterRules.aptitudes.list" :key="apt.name" class="flex items-center gap-2">
               <span class="text-nott-red font-display w-24">{{ apt.name }}</span>
               <span class="text-nott-white/60 text-sm">({{ apt.suit }}: {{ apt.description }})</span>
-            </li>
-          </ul>
+            </ListItem>
+          </List>
         </Card>
       </div>
       <div class="mt-6">
         <h4 class="text-xl text-nott-white font-display mb-4">Archetypes</h4>
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card v-for="arch in characterRules.archetypes" :key="arch.suit" :title="arch.suit + ' (' + arch.aptitude + ')'">
-            <ul class="text-sm text-nott-white/60 space-y-1">
-              <li v-for="ex in arch.examples" :key="ex">{{ ex }}</li>
-            </ul>
+            <List spacing="sm">
+              <ListItem v-for="ex in arch.examples" :key="ex">{{ ex }}</ListItem>
+            </List>
           </Card>
         </div>
       </div>

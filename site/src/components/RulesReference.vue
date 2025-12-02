@@ -4,39 +4,40 @@ import PromptMatrix from './PromptMatrix.vue'
 import FalloutReference from './FalloutReference.vue'
 import BasicRules from './BasicRules.vue'
 import CharacterRules from './CharacterRules.vue'
-import Button from './Button.vue'
+import Navigation from './Navigation.vue'
+import NavButton from './NavButton.vue'
 
 const activeTab = ref<'basic' | 'characters' | 'prompts' | 'fallout'>('basic')
 </script>
 
 <template>
   <div class="space-y-8">
-    <div class="flex justify-center gap-4 flex-wrap">
-      <Button 
-        :variant="activeTab === 'basic' ? 'primary' : 'ghost'"
+    <Navigation>
+      <NavButton 
+        :active="activeTab === 'basic'"
         @click="activeTab = 'basic'"
       >
         Basic Rules
-      </Button>
-      <Button 
-        :variant="activeTab === 'characters' ? 'primary' : 'ghost'"
+      </NavButton>
+      <NavButton 
+        :active="activeTab === 'characters'"
         @click="activeTab = 'characters'"
       >
         Characters
-      </Button>
-      <Button 
-        :variant="activeTab === 'prompts' ? 'primary' : 'ghost'"
+      </NavButton>
+      <NavButton 
+        :active="activeTab === 'prompts'"
         @click="activeTab = 'prompts'"
       >
         Prompt Matrix
-      </Button>
-      <Button 
-        :variant="activeTab === 'fallout' ? 'primary' : 'ghost'"
+      </NavButton>
+      <NavButton 
+        :active="activeTab === 'fallout'"
         @click="activeTab = 'fallout'"
       >
         Effort Scale
-      </Button>
-    </div>
+      </NavButton>
+    </Navigation>
 
     <Transition
       enter-active-class="transition duration-300 ease-out"

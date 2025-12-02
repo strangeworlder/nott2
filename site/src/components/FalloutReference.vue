@@ -13,10 +13,10 @@ import Text from './Text.vue'
       class="h-full"
     >
       <div class="space-y-3">
-        <Text variant="label" color="red" class="border-b border-nott-gray/30 pb-1">
+        <Text variant="label" color="red" border="bottom">
           {{ effort.description }}
         </Text>
-        <Text variant="body" class="text-nott-white/90">
+        <Text variant="body" color="white">
           {{ effort.mechanic }}
         </Text>
       </div>

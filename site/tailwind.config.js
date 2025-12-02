@@ -11,6 +11,7 @@ export default {
                 'nott-red': '#8a0000',
                 'nott-white': '#f0f0f0',
                 'nott-gray': '#2a2a2a',
+                'nott-green': '#22c55e',
             },
             fontFamily: {
                 display: ['Oswald', 'sans-serif'],

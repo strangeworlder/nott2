@@ -5,6 +5,7 @@ interface Props {
   suit: string
   rank: number
   isFace?: boolean
+  selected?: boolean
 }
 
 const props = defineProps<Props>()
@@ -35,7 +36,10 @@ const rankChar = computed(() => {
 </script>
 
 <template>
-  <div class="relative w-64 aspect-[2/3] bg-nott-white text-nott-black rounded-lg shadow-[0_0_30px_rgba(255,0,0,0.2)] flex flex-col items-center justify-center border-4 border-nott-black overflow-hidden select-none transition-transform hover:scale-105 duration-300">
+  <div 
+    class="relative w-64 aspect-[2/3] bg-nott-white text-nott-black rounded-lg shadow-[0_0_30px_rgba(255,0,0,0.2)] flex flex-col items-center justify-center border-4 border-nott-black overflow-hidden select-none transition-transform hover:scale-105 duration-300"
+    :class="{ 'ring-4 ring-nott-red ring-offset-2 ring-offset-black': selected }"
+  >
     <!-- Corner Ranks -->
     <div class="absolute top-2 left-2 text-2xl font-display" :class="suitColors[suit]">
       {{ rankChar }}
