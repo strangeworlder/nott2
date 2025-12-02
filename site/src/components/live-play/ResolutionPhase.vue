@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useLivePlay } from '../../composables/useLivePlay'
-import WizardStep from '../WizardStep.vue'
 import Card from '../Card.vue'
 import Text from '../Text.vue'
 import Toggle from '../Toggle.vue'
 import DieSelector from '../DieSelector.vue'
 import SelectionButton from '../SelectionButton.vue'
+import Button from '../Button.vue'
 
 const { 
   rollMain, 
@@ -41,20 +41,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <WizardStep
-    title="The Resolution"
-    :step-number="4"
-    :total-steps="6"
-    :can-proceed="rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true)"
-    show-back
-    @back="emit('back')"
-    @next="emit('next')"
-  >
+  <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <div class="mb-6 text-center">
       <Text variant="quote" color="muted" class="italic">"Roll the d13 (d10 + d4). Compare your total to the Difficulty. The d4 also determines your Effort—how well you succeed or how badly you fail."</Text>
     </div>
 
-    <div class="max-w-2xl mx-auto space-y-8">
+    <div class="max-w-2xl mx-auto space-y-8 mb-12">
       
         <!-- Target Difficulty (Face Cards/Jokers only) -->
         <div v-if="isFaceCard || selectedJoker" class="space-y-4 animate-fade-in">
@@ -174,5 +166,18 @@ onMounted(() => {
         </div>
       </div>
     </div>
-  </WizardStep>
+
+    <!-- Action Footer -->
+    <div class="flex justify-center pt-8 border-t border-nott-gray/30">
+      <Button 
+        size="lg"
+        variant="primary" 
+        @click="$emit('next')"
+        :disabled="!(rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true))"
+        class="px-12"
+      >
+        Resolve Scene →
+      </Button>
+    </div>
+  </div>
 </template>

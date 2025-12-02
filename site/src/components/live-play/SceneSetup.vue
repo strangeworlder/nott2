@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useLivePlay } from '../../composables/useLivePlay'
-import WizardStep from '../WizardStep.vue'
 import Card from '../Card.vue'
+import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
 import Button from '../Button.vue'
 import PlayingCard from '../PlayingCard.vue'
@@ -10,7 +10,6 @@ import SelectionButton from '../SelectionButton.vue'
 import type { Suit, Rank } from '../../composables/useGameEngine'
 
 const { 
-  currentStep, 
   activeCard, 
   visibleCards,
   selectedCardId,
@@ -26,7 +25,8 @@ const {
   selectCard,
   acesRemaining,
   hasFaceCardOnTable,
-  getNextValidCard
+  getNextValidCard,
+  currentAct
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -114,20 +114,12 @@ const handleCardClick = (id: string) => {
 </script>
 
 <template>
-  <WizardStep
-    title="Scene Setup"
-    :step-number="2"
-    :total-steps="6"
-    :can-proceed="showPrompt"
-    show-back
-    @back="emit('back')"
-    @next="emit('next')"
-  >
+  <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <div class="mb-6 text-center">
       <Text variant="quote" color="muted" class="italic">"Reveal the cards. Choose your challenge. The Suit is the nature of the threat, the Number is the severity."</Text>
     </div>
 
-    <div class="space-y-8">
+    <div class="space-y-8 mb-12">
       
       <!-- Card Table Area -->
       <div class="flex flex-col items-center gap-6">
@@ -189,7 +181,7 @@ const handleCardClick = (id: string) => {
                     :key="r.value"
                     @click="manualRank = r.value"
                     :selected="manualRank === r.value"
-                    :disabled="!isRankAvailable(r.value)"
+                    :disabled="!isRankAvailable(r.value) || !!manualJoker"
                     variant="square"
                     color="red"
                   >
@@ -204,7 +196,7 @@ const handleCardClick = (id: string) => {
                     :key="s"
                     @click="manualSuit = s"
                     :selected="manualSuit === s"
-                    :disabled="!isSuitAvailable(manualRank, s)"
+                    :disabled="!isSuitAvailable(manualRank, s) || !!manualJoker"
                     variant="default"
                     color="default"
                     :class="suitColors[s]"
@@ -228,6 +220,7 @@ const handleCardClick = (id: string) => {
                   <SelectionButton
                     @click="manualJoker = 'Black'"
                     :selected="manualJoker === 'Black'"
+                    :disabled="currentAct > 1"
                     color="default"
                     class="flex-1"
                   >
@@ -274,12 +267,23 @@ const handleCardClick = (id: string) => {
         </div>
 
         <div v-if="currentPrompt" class="max-w-2xl mx-auto">
-          <Card class="text-center py-8 border-nott-red/50">
-            <Text variant="quote">"{{ currentPrompt }}"</Text>
-          </Card>
+          <ScenePrompt :prompt="currentPrompt" />
         </div>
       </div>
 
     </div>
-  </WizardStep>
+
+    <!-- Action Footer -->
+    <div class="flex justify-center pt-8 border-t border-nott-gray/30">
+      <Button 
+        size="lg"
+        variant="primary" 
+        @click="$emit('next')"
+        :disabled="!showPrompt"
+        class="px-12"
+      >
+        Start Scene →
+      </Button>
+    </div>
+  </div>
 </template>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useLivePlay } from '../../composables/useLivePlay'
-import WizardStep from '../WizardStep.vue'
 import Card from '../Card.vue'
+import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
 import Checkbox from '../Checkbox.vue'
+import Button from '../Button.vue'
 
 const { sacrificeConfirmed, currentPrompt } = useLivePlay()
 
@@ -14,20 +15,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <WizardStep
-    title="Conversation & Stakes"
-    :step-number="3"
-    :total-steps="6"
-    :can-proceed="sacrificeConfirmed"
-    show-back
-    @back="emit('back')"
-    @next="emit('next')"
-  >
+  <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <!-- Scene Prompt -->
-    <div v-if="currentPrompt" class="mb-8 bg-nott-black p-6 rounded-lg border border-nott-red/30 shadow-[0_0_15px_rgba(220,38,38,0.2)] text-center animate-pulse-slow">
-      <Text variant="h3" color="red" class="mb-2">SCENE PROMPT</Text>
-      <Text variant="h2" class="text-white italic">"{{ currentPrompt }}"</Text>
-    </div>
+    <!-- Scene Prompt -->
+    <ScenePrompt v-if="currentPrompt" :prompt="currentPrompt" class="mb-8 animate-pulse-slow" />
 
     <div class="mb-6 text-center">
       <Text variant="quote" color="muted" class="italic">"Narrate the events leading up to this moment. Ask questions. Describe the world. Sooner or later, you'll try something risky."</Text>
@@ -49,7 +40,7 @@ const emit = defineEmits<{
       </Card>
     </div>
 
-    <div class="max-w-2xl mx-auto space-y-8 border-t border-nott-gray/20 pt-8">
+    <div class="max-w-2xl mx-auto space-y-8 border-t border-nott-gray/20 pt-8 mb-12">
       <div class="text-center space-y-4">
         <Text variant="h2">Define the Sacrifice</Text>
         <Text variant="body" color="muted">Before rolling, ask the Active Player:</Text>
@@ -63,5 +54,18 @@ const emit = defineEmits<{
         />
       </Card>
     </div>
-  </WizardStep>
+
+    <!-- Action Footer -->
+    <div class="flex justify-center pt-8 border-t border-nott-gray/30">
+      <Button 
+        size="lg"
+        variant="primary" 
+        @click="$emit('next')"
+        :disabled="!sacrificeConfirmed"
+        class="px-12"
+      >
+        Roll Dice →
+      </Button>
+    </div>
+  </div>
 </template>

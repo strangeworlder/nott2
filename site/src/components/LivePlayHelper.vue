@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useLivePlay } from '../composables/useLivePlay'
-import Text from './Text.vue'
 import Button from './Button.vue'
+import LivePlayHeader from './live-play/LivePlayHeader.vue'
 
 // Import Steps
 import WelcomeScreen from './live-play/WelcomeScreen.vue'
@@ -14,10 +14,8 @@ import FalloutPhase from './live-play/FalloutPhase.vue'
 import WinScreen from './live-play/WinScreen.vue'
 
 const { 
-  currentStep, 
+  currentPhase, 
   isEndgame, 
-  trophyTop, 
-  fullReset, 
   startEndgame,
   startGame, 
   debugMode,
@@ -30,81 +28,76 @@ const {
   getRankName,
   tableGenrePoints,
   playerGenrePoints,
-  isGameWon,
-  currentAct
+  nextPhase,
+  prevPhase
 } = useLivePlay()
 
-const nextStep = () => {
-  if (currentStep.value < 6) {
-    currentStep.value++
-  }
-}
+import { watch } from 'vue'
 
-const prevStep = () => {
-  if (currentStep.value > 1) currentStep.value--
-}
+watch(currentPhase, () => {
+  window.scrollTo(0, 0)
+}, { flush: 'post' })
+
 </script>
 
 <template>
   <div class="min-h-screen bg-nott-black text-nott-white flex flex-col items-center p-4 md:p-8">
-    <!-- Header -->
-    <div class="w-full max-w-4xl flex justify-between items-center mb-8">
-      <div class="flex flex-col">
-        <Text variant="h3" color="red">Live Play Helper</Text>
-        <div class="flex gap-4 items-center">
-          <Text v-if="currentAct" variant="caption" class="text-nott-red font-bold uppercase tracking-widest">Act {{ currentAct }}</Text>
-          <Text v-if="trophyTop" variant="caption" color="muted">Base Difficulty: <span class="text-nott-white font-bold">{{ trophyTop.rank }}</span></Text>
-        </div>
-      </div>
-      <Button variant="secondary" @click="fullReset" class="text-xs px-3 py-1 h-8">Reset Game</Button>
-    </div>
+    
+    <!-- New Header (Visible on all screens except Welcome and Win, though Welcome handles its own layout) -->
+    <LivePlayHeader v-if="currentPhase !== 'welcome' && currentPhase !== 'win'" />
 
-    <!-- Step 0: Welcome Screen -->
+    <!-- Phase: Welcome Screen -->
     <WelcomeScreen 
-      v-if="currentStep === 0"
-      @next="nextStep"
+      v-if="currentPhase === 'welcome'"
+      @next="nextPhase"
     />
 
-    <!-- Step 1: Game Setup / Endgame Setup -->
+    <!-- Phase: Game Setup / Endgame Setup -->
     <GameSetup 
-      v-if="currentStep === 1"
+      v-if="currentPhase === 'game-setup'"
       :is-endgame="isEndgame"
       @next="isEndgame ? startEndgame() : startGame()"
     />
 
-    <!-- Step 2: Scene Setup (Draw Threat) -->
+    <!-- Phase: Scene Setup (Draw Threat) -->
     <SceneSetup 
-      v-if="currentStep === 2"
-      @back="prevStep"
-      @next="nextStep"
+      v-if="currentPhase === 'scene-setup'"
+      @back="prevPhase"
+      @next="nextPhase"
     />
 
-    <!-- Step 3: Conversation & Stakes -->
+    <!-- Phase: Conversation & Stakes -->
     <ConversationAndStakesPhase 
-      v-if="currentStep === 3"
-      @back="prevStep"
-      @next="nextStep"
+      v-if="currentPhase === 'conversation-stakes'"
+      @back="prevPhase"
+      @next="nextPhase"
     />
 
-    <!-- Step 4: Resolution -->
+    <!-- Phase: Resolution -->
     <ResolutionPhase 
-      v-if="currentStep === 4"
-      @back="prevStep"
-      @next="nextStep"
+      v-if="currentPhase === 'resolution'"
+      @back="prevPhase"
+      @next="nextPhase"
     />
 
-    <!-- Step 5: Resolve Scene -->
+    <!-- Phase: Resolve Scene -->
     <ResolveScenePhase 
-      v-if="currentStep === 5"
-      @back="prevStep"
-      @next="nextStep"
+      v-if="currentPhase === 'resolve-scene'"
+      @back="prevPhase"
+      @next="nextPhase"
     />
 
-    <!-- Step 6: Update Game State -->
+    <!-- Phase: Fallout -->
     <FalloutPhase 
-      v-if="currentStep === 6"
-      @back="prevStep"
+      v-if="currentPhase === 'fallout'"
+      @back="prevPhase"
     />
+
+    <!-- Win Screen -->
+    <WinScreen 
+      v-if="currentPhase === 'win'" 
+    />
+
     <!-- Debug Toggle -->
     <div class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
       <Button 
@@ -120,6 +113,9 @@ const prevStep = () => {
     <!-- Debug Panel -->
     <div v-if="debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-green-400 p-2 font-mono border-t border-green-500/30 overflow-x-auto z-50">
       <div class="flex gap-8 whitespace-nowrap">
+        <div>
+          <strong class="text-white">Phase:</strong> {{ currentPhase }}
+        </div>
         <div>
           <strong class="text-white">Middle Stack ({{ Object.values(middleStack).reduce((a, b) => a + b, 0) }}):</strong>
           <span v-for="(count, rank) in middleStack" :key="rank" class="ml-2">
@@ -157,11 +153,5 @@ const prevStep = () => {
         </div>
       </div>
     </div>
-
-    <!-- Win Screen -->
-    <WinScreen 
-      v-if="isGameWon" 
-      @reset="fullReset"
-    />
   </div>
 </template>

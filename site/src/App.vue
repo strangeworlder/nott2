@@ -4,7 +4,7 @@ import RulesReference from './components/RulesReference.vue'
 import LivePlayHelper from './components/LivePlayHelper.vue'
 import DesignSystem from './components/DesignSystem.vue'
 
-const currentView = ref<'showcase' | 'rules' | 'play'>('showcase')
+const currentView = ref<'showcase' | 'rules' | 'play'>('play')
 </script>
 
 <template>
@@ -16,11 +16,11 @@ const currentView = ref<'showcase' | 'rules' | 'play'>('showcase')
       
       <nav class="flex justify-center gap-4 mt-8">
         <button 
-          @click="currentView = 'showcase'"
+          @click="currentView = 'play'"
           class="text-nott-white hover:text-nott-red transition-colors font-display uppercase tracking-wider px-4 py-2 border border-transparent hover:border-nott-red/50"
-          :class="{ 'text-nott-red border-nott-red': currentView === 'showcase' }"
+          :class="{ 'text-nott-red border-nott-red': currentView === 'play' }"
         >
-          Design System
+          Live Play Helper
         </button>
         <button 
           @click="currentView = 'rules'"
@@ -30,11 +30,11 @@ const currentView = ref<'showcase' | 'rules' | 'play'>('showcase')
           Rules Reference
         </button>
         <button 
-          @click="currentView = 'play'"
+          @click="currentView = 'showcase'"
           class="text-nott-white hover:text-nott-red transition-colors font-display uppercase tracking-wider px-4 py-2 border border-transparent hover:border-nott-red/50"
-          :class="{ 'text-nott-red border-nott-red': currentView === 'play' }"
+          :class="{ 'text-nott-red border-nott-red': currentView === 'showcase' }"
         >
-          Live Play Helper
+          DS
         </button>
 
       </nav>

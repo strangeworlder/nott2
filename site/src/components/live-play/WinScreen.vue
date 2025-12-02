@@ -1,10 +1,9 @@
 <script setup lang="ts">
+import { useLivePlay } from '../../composables/useLivePlay'
 import Button from '../Button.vue'
 import Text from '../Text.vue'
 
-defineEmits<{
-  (e: 'reset'): void
-}>()
+const { fullReset } = useLivePlay()
 </script>
 
 <template>
@@ -19,7 +18,7 @@ defineEmits<{
       </Text>
 
       <div class="pt-12">
-        <Button variant="primary" size="lg" @click="$emit('reset')">
+        <Button variant="primary" size="lg" @click="fullReset">
           Play Again
         </Button>
       </div>

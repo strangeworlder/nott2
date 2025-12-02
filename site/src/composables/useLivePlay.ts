@@ -2,6 +2,16 @@ import { ref, computed } from 'vue'
 import { effortScale, faceCardPrompts, faceCardPrompt, fullPromptMatrix } from '../data/rules'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 
+export type LivePlayPhase =
+    | 'welcome'
+    | 'game-setup'
+    | 'scene-setup'
+    | 'conversation-stakes'
+    | 'resolution'
+    | 'resolve-scene'
+    | 'fallout'
+    | 'win'
+
 // Shared state (singleton)
 const visibleCards = ref<GameCard[]>([])
 const selectedCardId = ref<string | null>(null)
@@ -51,7 +61,7 @@ const faceCardReserves = ref({
 const lastAddedFaceCardRank = ref<number | null>(null)
 
 // UI State that is tightly coupled to game flow
-const currentStep = ref(0)
+const currentPhase = ref<LivePlayPhase>('welcome')
 const selectedJoker = ref<'Red' | 'Black' | null>(null)
 const sacrificeConfirmed = ref(false)
 const rollMain = ref<number | null>(null)
@@ -271,6 +281,7 @@ export function useLivePlay() {
         const card = trophyPile.value.find(c => c.rank === rank)
         if (card) {
             trophyTop.value = card
+            isTrophyTopRandomized.value = false
         }
     }
 
@@ -314,8 +325,9 @@ export function useLivePlay() {
     }
 
     const reset = () => {
-        currentStep.value = 0
+        currentPhase.value = 'welcome'
         selectedJoker.value = null
+        manualJoker.value = null
         sacrificeConfirmed.value = false
         rollMain.value = null
         rollEffort.value = null
@@ -378,7 +390,7 @@ export function useLivePlay() {
         trophyTop.value = initialTrophy
         isTrophyTopRandomized.value = true
 
-        currentStep.value = 2
+        currentPhase.value = 'scene-setup'
     }
 
     const revealHiddenTen = () => {
@@ -444,6 +456,7 @@ export function useLivePlay() {
             // Joker Success Logic
             if (selectedJoker.value === 'Red') {
                 isGameWon.value = true
+                currentPhase.value = 'win'
                 return
             }
             if (selectedJoker.value === 'Black') {
@@ -631,12 +644,14 @@ export function useLivePlay() {
         isGenrePointAwarded.value = false
 
         // Start the loop
-        currentStep.value = 2
+        currentPhase.value = 'scene-setup'
         isEndgameInitialized.value = true
     }
 
     const startNextScene = () => {
         applyGameStateUpdates()
+
+        if (isGameWon.value) return
 
         // Remove the active card from visible cards
         if (selectedCardId.value) {
@@ -648,7 +663,7 @@ export function useLivePlay() {
         manualJoker.value = null
 
         if (isEndgame.value && !isEndgameInitialized.value) {
-            currentStep.value = 1
+            currentPhase.value = 'game-setup'
             return
         }
 
@@ -657,12 +672,65 @@ export function useLivePlay() {
         manualSuit.value = nextCard.suit
         manualRank.value = nextCard.rank
 
-        currentStep.value = 2
+        currentPhase.value = 'scene-setup'
         sacrificeConfirmed.value = false
         rollMain.value = null
         rollEffort.value = null
         isGenrePointUsed.value = false
         isGenrePointAwarded.value = false
+    }
+
+    const nextPhase = () => {
+        switch (currentPhase.value) {
+            case 'welcome':
+                currentPhase.value = 'game-setup'
+                break
+            case 'game-setup':
+                if (isEndgame.value) {
+                    startEndgame()
+                } else {
+                    startGame()
+                }
+                break
+            case 'scene-setup':
+                currentPhase.value = 'conversation-stakes'
+                break
+            case 'conversation-stakes':
+                currentPhase.value = 'resolution'
+                break
+            case 'resolution':
+                currentPhase.value = 'resolve-scene'
+                break
+            case 'resolve-scene':
+                currentPhase.value = 'fallout'
+                break
+            case 'fallout':
+                startNextScene()
+                break
+        }
+    }
+
+    const prevPhase = () => {
+        switch (currentPhase.value) {
+            case 'game-setup':
+                currentPhase.value = 'welcome'
+                break
+            case 'scene-setup':
+                // Cannot go back to game setup from scene setup easily without reset
+                break
+            case 'conversation-stakes':
+                currentPhase.value = 'scene-setup'
+                break
+            case 'resolution':
+                currentPhase.value = 'conversation-stakes'
+                break
+            case 'resolve-scene':
+                currentPhase.value = 'resolution'
+                break
+            case 'fallout':
+                currentPhase.value = 'resolve-scene'
+                break
+        }
     }
 
     return {
@@ -685,7 +753,7 @@ export function useLivePlay() {
         trophyPile,
         trophyTop,
         isTrophyTopRandomized,
-        currentStep,
+        currentPhase,
         selectedJoker,
         sacrificeConfirmed,
         rollMain,
@@ -736,6 +804,8 @@ export function useLivePlay() {
         getNextValidCard, // New
         faceCardReserves, // New
         lastAddedFaceCardRank, // New
-        pendingFalloutRank // New
+        pendingFalloutRank, // New
+        nextPhase, // New
+        prevPhase // New
     }
 }

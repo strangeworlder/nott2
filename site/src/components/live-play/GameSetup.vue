@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import WizardStep from '../WizardStep.vue'
 import Card from '../Card.vue'
 import Text from '../Text.vue'
+import Button from '../Button.vue'
 
 defineProps<{
   isEndgame: boolean
@@ -13,19 +13,13 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <WizardStep
-    :title="isEndgame ? 'Act 3: The Finale Setup' : 'Game Setup'"
-    :step-number="1"
-    :total-steps="6"
-    :can-proceed="true"
-    :next-label="isEndgame ? 'Start the Finale' : 'Start the Night'"
-    @next="emit('next')"
-  >
+  <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <div class="mb-6 text-center">
+      <Text variant="h2" class="mb-2 text-nott-red">{{ isEndgame ? 'Act 3: The Finale Setup' : 'Game Setup' }}</Text>
       <Text variant="quote" color="muted" class="italic">"You are no heroes. You are just in the wrong place at the wrong time. The horror starts small, but it will escalate."</Text>
     </div>
 
-    <div v-if="!isEndgame" class="grid gap-6 md:grid-cols-2">
+    <div v-if="!isEndgame" class="grid gap-6 md:grid-cols-2 mb-12">
       <Card title="Build the Decks">
         <Text variant="body" color="muted" class="mb-4">Manually build the deck:</Text>
         <ul class="space-y-4 text-nott-white/80">
@@ -60,7 +54,7 @@ const emit = defineEmits<{
         </ul>
       </Card>
     </div>
-    <div v-else class="max-w-2xl mx-auto">
+    <div v-else class="max-w-2xl mx-auto mb-12">
       <Card title="Prepare for the End">
         <ul class="space-y-4 text-nott-white/80">
           <li class="flex items-start gap-2">
@@ -78,5 +72,17 @@ const emit = defineEmits<{
         </ul>
       </Card>
     </div>
-  </WizardStep>
+
+    <!-- Action Footer -->
+    <div class="flex justify-center pt-8 border-t border-nott-gray/30">
+      <Button 
+        size="lg"
+        variant="primary" 
+        @click="$emit('next')"
+        class="px-12"
+      >
+        {{ isEndgame ? 'Start the Finale' : 'Start the Night' }} →
+      </Button>
+    </div>
+  </div>
 </template>

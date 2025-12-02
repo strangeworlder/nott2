@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useLivePlay } from '../../composables/useLivePlay'
-import WizardStep from '../WizardStep.vue'
 import Card from '../Card.vue'
+import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
+import Button from '../Button.vue'
 
 const { 
   currentPrompt,
@@ -18,20 +19,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <WizardStep
-    title="Resolve the Scene"
-    :step-number="5"
-    :total-steps="6"
-    :can-proceed="true"
-    show-back
-    @back="emit('back')"
-    @next="emit('next')"
-  >
+  <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <!-- Scene Prompt -->
-    <div v-if="currentPrompt" class="mb-8 bg-nott-black p-6 rounded-lg border border-nott-red/30 shadow-[0_0_15px_rgba(220,38,38,0.2)] text-center">
-      <Text variant="h3" color="red" class="mb-2">SCENE PROMPT</Text>
-      <Text variant="h2" class="text-white italic">"{{ currentPrompt }}"</Text>
-    </div>
+    <!-- Scene Prompt -->
+    <ScenePrompt v-if="currentPrompt" :prompt="currentPrompt" class="mb-8" />
 
     <div class="mb-6 text-center">
       <Text variant="quote" color="muted" class="italic">"The dice have spoken. Now, tell us how it happens."</Text>
@@ -63,9 +54,21 @@ const emit = defineEmits<{
       </Card>
     </div>
 
-    <div class="text-center bg-nott-white/5 p-6 rounded-lg border border-nott-white/10">
+    <div class="text-center bg-nott-white/5 p-6 rounded-lg border border-nott-white/10 mb-12">
       <Text variant="h3" class="mb-2">Bring the Scene to a Close</Text>
       <Text variant="body" color="muted">Work together to narrate the final moments of the scene based on these results. When the beat is finished, proceed to update the game state.</Text>
     </div>
-  </WizardStep>
+
+    <!-- Action Footer -->
+    <div class="flex justify-center pt-8 border-t border-nott-gray/30">
+      <Button 
+        size="lg"
+        variant="primary" 
+        @click="$emit('next')"
+        class="px-12"
+      >
+        Update Game State →
+      </Button>
+    </div>
+  </div>
 </template>
