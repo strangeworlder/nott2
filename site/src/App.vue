@@ -3,42 +3,37 @@ import { ref } from 'vue'
 import RulesReference from './components/RulesReference.vue'
 import LivePlayHelper from './components/LivePlayHelper.vue'
 import DesignSystem from './components/DesignSystem.vue'
+import Header from './components/Header.vue'
+import Navigation from './components/Navigation.vue'
+import NavButton from './components/NavButton.vue'
 
 const currentView = ref<'showcase' | 'rules' | 'play'>('play')
 </script>
 
 <template>
   <div class="min-h-screen bg-nott-black p-4 md:p-8 font-body selection:bg-nott-red selection:text-white max-w-[960px] mx-auto">
-    <header class="mx-auto mb-12 text-center">
-      <h1 class="text-5xl md:text-7xl font-display text-nott-red mb-2 tracking-tighter animate-pulse-slow text-shadow-glow">
-        NIGHT OF THE THIRTEENTH
-      </h1>
-      
-      <nav class="flex justify-center gap-4 mt-8">
-        <button 
+    <Header>
+      <Navigation>
+        <NavButton 
           @click="currentView = 'play'"
-          class="text-nott-white hover:text-nott-red transition-colors font-display uppercase tracking-wider px-4 py-2 border border-transparent hover:border-nott-red/50"
-          :class="{ 'text-nott-red border-nott-red': currentView === 'play' }"
+          :active="currentView === 'play'"
         >
           Live Play Helper
-        </button>
-        <button 
+        </NavButton>
+        <NavButton 
           @click="currentView = 'rules'"
-          class="text-nott-white hover:text-nott-red transition-colors font-display uppercase tracking-wider px-4 py-2 border border-transparent hover:border-nott-red/50"
-          :class="{ 'text-nott-red border-nott-red': currentView === 'rules' }"
+          :active="currentView === 'rules'"
         >
           Rules Reference
-        </button>
-        <button 
+        </NavButton>
+        <NavButton 
           @click="currentView = 'showcase'"
-          class="text-nott-white hover:text-nott-red transition-colors font-display uppercase tracking-wider px-4 py-2 border border-transparent hover:border-nott-red/50"
-          :class="{ 'text-nott-red border-nott-red': currentView === 'showcase' }"
+          :active="currentView === 'showcase'"
         >
           DS
-        </button>
-
-      </nav>
-    </header>
+        </NavButton>
+      </Navigation>
+    </Header>
 
     <main class="mx-auto">
       <Transition

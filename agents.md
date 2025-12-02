@@ -35,10 +35,12 @@
     - **Always** prefer existing components and traits from the Design System.
     - If a new UI element is needed, it **must** be added to the Design System first, then used in the feature.
     - Avoid ad-hoc styling or one-off components outside the system.
+    - **Value**: The Design System is the backbone of the application's identity. It ensures consistency, speeds up development, and maintains the premium "Slasher" aesthetic. Respect it.
 - **Components**:
     - Use atomic design principles (atoms, molecules, organisms).
     - Extract reusable logic into composables.
     - Ensure strict type safety for props and emits.
+    - **Props over Classes**: Minimize utility classes (e.g., Tailwind) on component instances. Use props to control variations (e.g., `<Button variant="primary">` instead of `<Button class="bg-red-500">`). This is critical for future-proofing and theming (e.g., "Playsets").
 - **Aesthetics**:
     - **Theme**: Dark, moody, premium, "Slasher" vibe.
     - **UX**: Responsive, interactive (hover states, transitions), accessible.
@@ -51,6 +53,7 @@
 ### 3. Documentation
 - **Rules**: Updates to game mechanics must be reflected in `NotT_2.md`.
 - **Workflows**: Common procedures (e.g., deployment, database migration) should be documented in `.agent/workflows/`.
+- **Components**: Every component must be thoroughly documented. Explain props, slots, events, and usage examples. This is non-negotiable for maintainability.
 
 ## Interaction Protocol
 1.  **Understand**: Read the user request and relevant files (`NotT_2.md`, source code).

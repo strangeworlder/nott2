@@ -17,12 +17,12 @@ const {
 
 const phaseName = computed(() => {
   switch (currentPhase.value) {
-    case 'game-setup': return 'The Setup'
-    case 'scene-setup': return 'The Setup'
-    case 'conversation-stakes': return 'The Conversation'
-    case 'resolution': return 'The Resolution'
-    case 'resolve-scene': return 'Resolve Scene'
-    case 'fallout': return 'Fallout'
+    case 'game-setup': return 'Game Setup'
+    case 'scene-setup': return 'Scene Setup'
+    case 'conversation-stakes': return 'The Conversation & Setting The Stakes'
+    case 'resolution': return 'Resolution'
+    case 'resolve-scene': return 'Narrate The Results'
+    case 'fallout': return 'Deck Management'
     case 'win': return 'Victory'
     default: return ''
   }
@@ -68,8 +68,8 @@ const rankDisplay = computed(() => {
     <!-- Top Bar: Act & Reset -->
     <div class="flex justify-between items-center mb-4 border-b border-nott-red/30 pb-2">
       <div class="flex items-center gap-4">
-        <Text variant="caption" class="text-nott-red font-bold uppercase tracking-widest">
-          Act {{ currentAct }}
+        <Text variant="caption" color="red" class="uppercase tracking-widest">
+          <strong>Act {{ currentAct }}</strong>
         </Text>
         <div class="h-4 w-px bg-nott-gray/30"></div>
         <Text variant="caption" color="muted" class="uppercase tracking-wider">
@@ -95,21 +95,21 @@ const rankDisplay = computed(() => {
           </div>
           
           <div class="flex flex-col">
-            <Text variant="label" color="muted" class="text-[10px] uppercase">Current Threat</Text>
-            <Text variant="body" class="font-bold leading-none">{{ cardName }}</Text>
+            <Text variant="micro" color="muted">Current Threat</Text>
+            <Text variant="body" leading="none"><strong>{{ cardName }}</strong></Text>
           </div>
         </div>
         <div v-else>
-            <Text variant="body" color="muted" class="italic">No active threat</Text>
+            <Text variant="body" color="muted"><em>No active threat</em></Text>
         </div>
       </div>
 
       <!-- Difficulty Info -->
       <div v-if="trophyTop" class="flex items-center gap-3">
         <div class="text-right">
-          <Text variant="label" color="muted" class="text-[10px] uppercase">Top of the Trophy Pile</Text>
+          <Text variant="micro" color="muted">Top of the Trophy Pile</Text>
           <div class="flex items-center justify-end gap-2">
-            <Text variant="h3" class="text-nott-white leading-none">
+            <Text variant="h3" color="white" leading="none">
               {{ isTrophyTopRandomized ? 'Unknown' : trophyTop.rank }}
             </Text>
           </div>

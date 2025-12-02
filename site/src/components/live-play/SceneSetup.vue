@@ -7,6 +7,7 @@ import Text from '../Text.vue'
 import Button from '../Button.vue'
 import PlayingCard from '../PlayingCard.vue'
 import SelectionButton from '../SelectionButton.vue'
+import ActionFooter from '../ActionFooter.vue'
 import type { Suit, Rank } from '../../composables/useGameEngine'
 
 const { 
@@ -26,7 +27,8 @@ const {
   acesRemaining,
   hasFaceCardOnTable,
   getNextValidCard,
-  currentAct
+  currentAct,
+  isBlackJokerRemoved
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -53,9 +55,6 @@ const ranks: { label: string, value: Rank }[] = [
 
 const suitIcons: Record<string, string> = {
   'Spades': '♠', 'Hearts': '♥', 'Clubs': '♣', 'Diamonds': '♦',
-}
-const suitColors: Record<string, string> = {
-  'Spades': '', 'Hearts': 'text-nott-red', 'Clubs': '', 'Diamonds': 'text-nott-red',
 }
 
 const isAddingCard = ref(false)
@@ -116,7 +115,7 @@ const handleCardClick = (id: string) => {
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <div class="mb-6 text-center">
-      <Text variant="quote" color="muted" class="italic">"Reveal the cards. Choose your challenge. The Suit is the nature of the threat, the Number is the severity."</Text>
+      <Text variant="quote" color="muted"><em>"Reveal the cards. Choose your challenge. The Suit is the nature of the threat, the Number is the severity."</em></Text>
     </div>
 
     <div class="space-y-8 mb-12">
@@ -127,7 +126,7 @@ const handleCardClick = (id: string) => {
         <!-- Guidance Text -->
         <div class="text-center animate-fade-in h-8">
             <Text v-if="canAddMore" variant="body" color="muted">Draw cards to populate the table...</Text>
-            <Text v-else-if="!selectedCardId" variant="body" color="red" class="font-bold animate-pulse">Select a card to reveal the challenge</Text>
+            <Text v-else-if="!selectedCardId" variant="body" color="red" animation="pulse"><strong>Select a card to reveal the challenge</strong></Text>
             <Text v-else variant="body" color="muted">Challenge selected.</Text>
         </div>
 
@@ -146,7 +145,7 @@ const handleCardClick = (id: string) => {
             <PlayingCard 
               :suit="card.suit" 
               :rank="card.rank" 
-              :class="{ 'ring-4 ring-nott-red ring-offset-2 ring-offset-black': selectedCardId === card.id }"
+              :selected="selectedCardId === card.id"
             />
             <div v-if="selectedCardId === card.id" class="absolute -bottom-8 left-0 right-0 text-center">
               <Text variant="label" color="red">SELECTED</Text>
@@ -156,7 +155,7 @@ const handleCardClick = (id: string) => {
 
         <!-- Face Card Warning -->
         <div v-if="hasFaceCardOnTable && visibleCards.length < 2" class="text-center animate-fade-in max-w-md">
-            <Text variant="caption" color="red" class="font-bold">FACE CARD ACTIVE</Text>
+            <Text variant="caption" color="red"><strong>FACE CARD ACTIVE</strong></Text>
             <Text variant="caption" color="muted">You cannot draw another card while a Face Card is on the table. You must deal with it.</Text>
         </div>
 
@@ -198,8 +197,7 @@ const handleCardClick = (id: string) => {
                     :selected="manualSuit === s"
                     :disabled="!isSuitAvailable(manualRank, s) || !!manualJoker"
                     variant="default"
-                    color="default"
-                    :class="suitColors[s]"
+                    :color="(s === 'Hearts' || s === 'Diamonds') ? 'red' : 'default'"
                   >
                     {{ suitIcons[s] }}
                   </SelectionButton>
@@ -220,7 +218,7 @@ const handleCardClick = (id: string) => {
                   <SelectionButton
                     @click="manualJoker = 'Black'"
                     :selected="manualJoker === 'Black'"
-                    :disabled="currentAct > 1"
+                    :disabled="isBlackJokerRemoved"
                     color="default"
                     class="flex-1"
                   >
@@ -274,7 +272,7 @@ const handleCardClick = (id: string) => {
     </div>
 
     <!-- Action Footer -->
-    <div class="flex justify-center pt-8 border-t border-nott-gray/30">
+    <ActionFooter>
       <Button 
         size="lg"
         variant="primary" 
@@ -284,6 +282,6 @@ const handleCardClick = (id: string) => {
       >
         Start Scene →
       </Button>
-    </div>
+    </ActionFooter>
   </div>
 </template>

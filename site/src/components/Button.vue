@@ -2,15 +2,17 @@
 import { computed } from 'vue'
 
 interface Props {
-  variant?: 'primary' | 'secondary' | 'ghost'
-  size?: 'sm' | 'md' | 'lg'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'debug'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   disabled?: boolean
+  block?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'primary',
   size: 'md',
   disabled: false,
+  block: false,
 })
 
 const classes = computed(() => {
@@ -20,15 +22,20 @@ const classes = computed(() => {
     primary: 'bg-nott-red text-white hover:bg-red-900 border border-transparent shadow-[0_0_10px_rgba(138,0,0,0.5)] hover:shadow-[0_0_20px_rgba(138,0,0,0.8)]',
     secondary: 'bg-transparent text-nott-white border border-nott-gray hover:border-nott-red hover:text-nott-red hover:bg-nott-red/5',
     ghost: 'bg-transparent text-nott-white hover:text-nott-red hover:bg-nott-gray/20',
+    debug: 'bg-transparent text-nott-green border border-nott-green/30 hover:text-nott-green hover:border-nott-green hover:bg-nott-green/10',
   }
 
   const sizes = {
+    xs: 'px-2 py-1 text-xs',
     sm: 'px-3 py-1 text-sm',
     md: 'px-6 py-2 text-base',
     lg: 'px-8 py-3 text-lg',
+    xl: 'px-12 py-4 text-xl',
   }
 
-  return `${base} ${variants[props.variant]} ${sizes[props.size]}`
+  const width = props.block ? 'w-full' : ''
+
+  return `${base} ${variants[props.variant]} ${sizes[props.size]} ${width}`
 })
 </script>
 

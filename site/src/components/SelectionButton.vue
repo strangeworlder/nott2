@@ -6,21 +6,28 @@ interface Props {
   disabled?: boolean
   variant?: 'default' | 'square'
   color?: 'default' | 'red'
+  size?: 'sm' | 'md'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   selected: false,
   disabled: false,
   variant: 'default',
-  color: 'default'
+  color: 'default',
+  size: 'md'
 })
 
 const classes = computed(() => {
   const base = 'border font-display transition-all duration-200 flex items-center justify-center focus:outline-none'
   
   const variants = {
-    default: 'h-12 px-4 rounded text-lg',
-    square: 'h-10 w-full rounded text-lg aspect-square'
+    default: 'rounded px-4',
+    square: 'rounded w-full aspect-square'
+  }
+
+  const sizes = {
+    sm: props.variant === 'square' ? 'h-8 text-sm' : 'h-8 text-sm',
+    md: props.variant === 'square' ? 'h-10 text-lg' : 'h-12 text-lg'
   }
 
   const colors = {
@@ -33,12 +40,8 @@ const classes = computed(() => {
   }
 
   const disabledState = props.disabled ? 'opacity-20 cursor-not-allowed' : 'cursor-pointer'
-  
-  // If color is red, use red styles, else default (white/black for selected)
-  // But wait, the original code had different styles for Rank (Red) and Suit (White/Black).
-  // So I added a color prop.
 
-  return `${base} ${variants[props.variant]} ${colors[props.color]} ${disabledState}`
+  return `${base} ${variants[props.variant]} ${sizes[props.size]} ${colors[props.color]} ${disabledState}`
 })
 </script>
 

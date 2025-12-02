@@ -10,19 +10,19 @@ defineEmits(['next'])
     
     <!-- Hero Section -->
     <div class="space-y-8">
-        <Text variant="h2" class="text-nott-red">
+        <Text variant="h2" color="red">
             Live Play Helper
         </Text>
         <div class="space-y-6 max-w-3xl mx-auto">
-            <Text variant="body" class="text-lg md:text-xl text-nott-white/90 leading-relaxed">
-                Gather your friends and prepare for a night of terror. In <span class="text-nott-red font-bold">Night of the Thirteenth</span>, you will tell the story of a slasher movie. 
+            <Text variant="lead" color="white">
+                Gather your friends and prepare for a night of terror. In <strong>Night of the Thirteenth</strong>, you will tell the story of a slasher movie. 
                 Together, you will weave a tale of suspense, gore, and desperate survival. You will need a deck of cards to determine your fate, some dice to test your luck, and the courage to face the darkness. The nightmare will last for about 2 to 3 hours.
             </Text>
-            <Text variant="body" class="text-lg md:text-xl text-nott-white/90 leading-relaxed">
+            <Text variant="lead" color="white">
                 This Live Play Helper is designed to help you navigate the rules of the game and make the most of your experience, but the story will be all you.
             </Text>
-            <Text variant="body" class="text-lg md:text-xl text-nott-red font-bold block mt-4">
-                Will you survive the night?
+            <Text variant="lead" color="red" class="block mt-4">
+                <strong>Will you survive the night?</strong>
             </Text>
         </div>
     </div>
@@ -39,7 +39,7 @@ defineEmits(['next'])
             </div>
             <div class="space-y-1">
                 <Text variant="label" color="muted">Duration</Text>
-                <Text variant="body" class="text-lg">2-3 Hours</Text>
+                <Text variant="lead">2-3 Hours</Text>
             </div>
         </div>
 
@@ -55,7 +55,7 @@ defineEmits(['next'])
             </div>
             <div class="space-y-1">
                 <Text variant="label" color="muted">Players</Text>
-                <Text variant="body" class="text-lg">4 Players</Text>
+                <Text variant="lead">4 Players</Text>
             </div>
         </div>
 
@@ -75,7 +75,7 @@ defineEmits(['next'])
             </div>
             <div class="space-y-1">
                 <Text variant="label" color="muted">Supplies</Text>
-                <Text variant="body" class="text-base leading-snug">
+                <Text variant="body">
                     Deck of Cards (2 Jokers)<br>
                     d10 & d4 Dice<br>
                     13 Tokens<br>
@@ -86,8 +86,8 @@ defineEmits(['next'])
     </div>
 
     <!-- Action -->
-    <div class="pt-8">
-        <Button variant="primary" size="lg" @click="$emit('next')" class="animate-pulse-slow text-xl px-12 py-4">
+    <div class="pt-8 animate-pulse-slow">
+        <Button variant="primary" size="xl" @click="$emit('next')">
             Start the Nightmare
         </Button>
     </div>

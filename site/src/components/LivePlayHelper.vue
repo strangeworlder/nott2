@@ -6,6 +6,7 @@ import LivePlayHeader from './live-play/LivePlayHeader.vue'
 // Import Steps
 import WelcomeScreen from './live-play/WelcomeScreen.vue'
 import GameSetup from './live-play/GameSetup.vue'
+import ActSetup from './live-play/ActSetup.vue'
 import SceneSetup from './live-play/SceneSetup.vue'
 import ConversationAndStakesPhase from './live-play/ConversationAndStakesPhase.vue'
 import ResolutionPhase from './live-play/ResolutionPhase.vue'
@@ -15,6 +16,7 @@ import WinScreen from './live-play/WinScreen.vue'
 
 const { 
   currentPhase, 
+  currentAct,
   isEndgame, 
   startEndgame,
   startGame, 
@@ -52,11 +54,17 @@ watch(currentPhase, () => {
       @next="nextPhase"
     />
 
-    <!-- Phase: Game Setup / Endgame Setup -->
+    <!-- Phase: Game Setup (Placeholder) -->
     <GameSetup 
       v-if="currentPhase === 'game-setup'"
-      :is-endgame="isEndgame"
-      @next="isEndgame ? startEndgame() : startGame()"
+      @next="nextPhase"
+    />
+
+    <!-- Phase: Act Setup -->
+    <ActSetup 
+      v-if="currentPhase === 'act-setup'"
+      :act="currentAct"
+      @next="isEndgame ? startEndgame() : (currentAct === 1 ? startGame() : nextPhase())"
     />
 
     <!-- Phase: Scene Setup (Draw Threat) -->
@@ -102,16 +110,15 @@ watch(currentPhase, () => {
     <div class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
       <Button 
         @click="debugMode = !debugMode"
-        variant="secondary"
-        size="sm"
-        class="!text-xs !py-1 !px-2 border-green-500/30 text-green-400 hover:text-green-300 hover:border-green-500"
+        variant="debug"
+        size="xs"
       >
         {{ debugMode ? 'Hide Debug' : 'Show Debug' }}
       </Button>
     </div>
 
     <!-- Debug Panel -->
-    <div v-if="debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-green-400 p-2 font-mono border-t border-green-500/30 overflow-x-auto z-50">
+    <div v-if="debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-nott-green p-2 font-mono border-t border-nott-green/30 overflow-x-auto z-50">
       <div class="flex gap-8 whitespace-nowrap">
         <div>
           <strong class="text-white">Phase:</strong> {{ currentPhase }}

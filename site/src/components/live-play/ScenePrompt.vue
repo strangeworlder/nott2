@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Text from '../Text.vue'
+import Card from '../Card.vue'
 
 defineProps<{
   prompt: string
@@ -8,8 +9,8 @@ defineProps<{
 </script>
 
 <template>
-  <div class="bg-nott-black p-6 rounded-lg border border-nott-red/30 shadow-[0_0_15px_rgba(220,38,38,0.2)] text-center">
-    <Text variant="h3" color="red" class="mb-2">{{ label || 'SCENE PROMPT' }}</Text>
-    <Text variant="body" class="text-white italic">"{{ prompt }}"</Text>
-  </div>
+  <Card variant="muted" :title="label || 'SCENE PROMPT'" :interactive="false" class="text-center">
+    <Text variant="body" color="white">{{ prompt }}</Text>
+    <div class="h-px w-1/2 mx-auto bg-nott-red/30 my-2"></div>
+  </Card>
 </template>
