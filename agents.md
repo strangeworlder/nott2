@@ -41,6 +41,20 @@
     - Extract reusable logic into composables.
     - Ensure strict type safety for props and emits.
     - **Props over Classes**: Minimize utility classes (e.g., Tailwind) on component instances. Use props to control variations (e.g., `<Button variant="primary">` instead of `<Button class="bg-red-500">`). This is critical for future-proofing and theming (e.g., "Playsets").
+- **Frontend Principles**:
+    - **Component-First Architecture**:
+        - **Avoid Raw HTML**: Do not use raw HTML elements (`div`, `span`, `p`, `h1-h6`, `ul`, `li`, `button`) for UI primitives where a Design System component exists.
+        - **Text**: Always use the `<Text>` component with the appropriate `variant` (e.g., `h1`, `body`, `quote`, `label`) instead of `<p>` or heading tags.
+        - **Containers**: Use `<Card>` for grouping content sections.
+        - **Lists**: Use `<List>` and `<ListItem>` for structured lists.
+        - **Icons**: Use the `<Icon>` component instead of inline SVGs.
+        - **Actions**: Use `<Button>` for interactions and `<ActionFooter>` for the primary page-level action.
+    - **Data-Driven Templates**:
+        - Content should be driven by data structures (arrays/objects).
+        - Use `v-for` to render repeated elements (cards, list items, buttons) rather than hardcoding them.
+    - **Layout & Animation**:
+        - Use standard CSS grid/flex layouts for structure.
+        - Apply standard animation utility classes (e.g., `animate-fade-in`) to top-level containers for smooth entry.
 - **Aesthetics**:
     - **Theme**: Dark, moody, premium, "Slasher" vibe.
     - **UX**: Responsive, interactive (hover states, transitions), accessible.
@@ -49,8 +63,18 @@
     - `src/components`: UI components.
     - `src/data`: Game rules, static data, types.
     - `src/App.vue`: Main layout.
+    - `src/data/default`: Default location for JSON data files.
 
-### 3. Documentation
+### 3. Data Management
+- **Externalize Text**:
+    - All substantial textual data (prompts, flavor text, rules text) must be stored in external JSON files (e.g., in `site/src/data/default`).
+    - Do not hardcode long strings or content matrices within TypeScript/Vue files.
+    - This separation allows for easier content updates, localization, and the creation of alternative "Playsets" without modifying code.
+    - Use `marked` to parse Markdown content from JSON files to allow for rich text formatting.
+- **Dynamic Content**:
+    - Avoid hardcoding lists or grids of items in templates.
+    - Use `v-for` loops to iterate over data arrays.
+    - Store metadata like icon names in the data and bind them dynamically in the component.
 - **Rules**: Updates to game mechanics must be reflected in `NotT_2.md`.
 - **Workflows**: Common procedures (e.g., deployment, database migration) should be documented in `.agent/workflows/`.
 - **Components**: Every component must be thoroughly documented. Explain props, slots, events, and usage examples. This is non-negotiable for maintainability.

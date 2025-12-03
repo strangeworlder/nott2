@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { effortScale, faceCardPrompts, faceCardPrompt, fullPromptMatrix } from '../data/rules'
+import { effortScale } from '../data/rules'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 
 export type LivePlayPhase =
@@ -13,6 +13,8 @@ export type LivePlayPhase =
     | 'fallout'
     | 'win'
 
+export type Playset = 'default' | 'summercamp'
+
 // Shared state (singleton)
 const visibleCards = ref<GameCard[]>([])
 const selectedCardId = ref<string | null>(null)
@@ -23,6 +25,7 @@ const isEndgame = ref(false)
 const tableGenrePoints = ref(13)
 const playerGenrePoints = ref(0)
 const currentAct = ref(1)
+const selectedPlayset = ref<Playset | null>(null)
 
 // Manual Input State
 const manualSuit = ref<Suit>('Spades')
@@ -112,27 +115,7 @@ export function useLivePlay() {
         return rank.toString()
     }
 
-    const currentPrompt = computed(() => {
-        if (selectedJoker.value === 'Red') return "THE FINAL TEST. The Killer has you dead to rights. How do you escape death?"
-        if (selectedJoker.value === 'Black') return "THE TWIST. One last desperate attempt. What do you sacrifice to survive?"
 
-        const card = activeCard.value
-        if (!card) return null
-
-        if (isFaceCard.value) {
-            const faceData = faceCardPrompts.find(s => s.suit === card.suit)
-            if (!faceData) return null
-
-            if (card.rank === 11) return `${faceCardPrompt} ${isFirstTime.value ? faceData.jack.firstTime : faceData.jack.recurring}`
-            if (card.rank === 12) return `${faceCardPrompt} ${isFirstTime.value ? faceData.queen.firstTime : faceData.queen.recurring}`
-            if (card.rank === 13) return `${faceCardPrompt} ${isFirstTime.value ? faceData.king.firstTime : faceData.king.recurring}`
-
-            return faceCardPrompt
-        }
-
-        const suitData = fullPromptMatrix.find(s => s.suit === card.suit)
-        return suitData?.prompts.find(p => p.rank === card.rank)?.prompt
-    })
 
     const targetDifficulty = computed(() => {
         if (!trophyTop.value) return null
@@ -363,6 +346,7 @@ export function useLivePlay() {
         isGameWon.value = false
         isBlackJokerRemoved.value = false
         currentAct.value = 1
+        selectedPlayset.value = null
     }
 
     const startGame = () => {
@@ -777,6 +761,7 @@ export function useLivePlay() {
         isGenrePointUsed,
         isGenrePointAwarded,
         currentAct,
+        selectedPlayset,
 
         // Computed
         selectedSuit,
@@ -784,7 +769,7 @@ export function useLivePlay() {
         isFaceCard,
         isFirstTime,
         cardName,
-        currentPrompt,
+
         rollTotal,
         isSuccess,
         effortResult,

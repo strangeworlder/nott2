@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/marked": "^6.0.0",
+    "marked": "^17.0.1",
     "pdf-parse": "^1.1.1"
   }
 }

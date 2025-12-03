@@ -1,0 +1,35 @@
+{
+    "intro": "We will now create a scene for the Active Player's character. The Active Player will be the Director for the scene, responsible for the start and maintaining the tone they wish for it to have. They have complete authority over the actions of their characters and a veto right to anything suggested by the other players. Ask questions. Describe the situation. The other players can take the roles of side characters and assist the Active Player in their scene. The scene will culminate in the active character trying something where success is left to the dice.",
+    "actDescriptions": {
+        "1": "This is Act 1, so the risks are not so dire.",
+        "2": "This is Act 2, so the stakes are higher.",
+        "3": "This is Act 3, so the risks should be terrible sacrifices."
+    },
+    "steps": {
+        "setScene": {
+            "title": "1. Set the scene",
+            "activePlayer1": "**Active player:**<br/>Based on the scene prompt, above, describe where this scene is taking place.",
+            "otherPlayers": "**Other players:**<br/>Describe the situation and the characters in the scene.",
+            "activePlayer2": "**Active player:**<br/>Their character will be on the front and center of the scene."
+        },
+        "focusCamera": {
+            "title": "2. Focus the Camera",
+            "intro": "The Active Player asks one of the following questions and the others answer:"
+        },
+        "defineGoals": {
+            "title": "3. Define goals and escalate",
+            "intro": "Once per scene, anyone can interject:",
+            "quote": "\"Something's not right...\"",
+            "caption": "Add a terrifying detail that makes the situation worse. The Active Player must accept it."
+        },
+        "commitToEffort": {
+            "title": "4. Commit to the effort",
+            "quote": "\"If you end up pushing yourself to reach your goal, what are you willing to risk?\"",
+            "caption": "Discuss the risk together and agree on a specific sacrifice that fits the current tension of the scene."
+        }
+    },
+    "ui": {
+        "checkboxLabel": "We have agreed on what happens when the character Overexerts themselves.",
+        "buttonText": "Roll Dice"
+    }
+}

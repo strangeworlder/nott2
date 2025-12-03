@@ -1,0 +1,31 @@
+{
+    "title": "Live Play Helper",
+    "intro": [
+        "Gather your friends and prepare for a night of terror. In **Night of the Thirteenth**, you will tell the story of a slasher movie. Together, you will weave a tale of suspense, gore, and desperate survival. You will need a deck of cards to determine your fate, some dice to test your luck, and the courage to face the darkness. The nightmare will last for about 2 to 3 hours.",
+        "This **Live Play Helper** is designed to help you navigate the rules of the game and make the most of your experience, but the story will be all you.",
+        "**Will you survive the night?**"
+    ],
+    "infoGrid": [
+        {
+            "label": "Duration",
+            "value": "2-3 Hours",
+            "icon": "clock"
+        },
+        {
+            "label": "Players",
+            "value": "4 Players",
+            "icon": "users"
+        },
+        {
+            "label": "Supplies",
+            "value": [
+                "Deck of Cards",
+                "d10 & d4 Dice",
+                "13 Tokens",
+                "Pen & Paper"
+            ],
+            "icon": "supplies"
+        }
+    ],
+    "buttonText": "Start the Nightmare"
+}

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { fullPromptMatrix, faceCardPrompts, faceCardPrompt } from '../data/rules'
+import { getScenePrompt, cardPrompts } from '../data/scenePrompts'
+import type { Suit } from '../composables/useGameEngine'
 import Card from './Card.vue'
 import Button from './Button.vue'
 import Text from './Text.vue'
@@ -25,24 +26,20 @@ const suitColors: Record<string, string> = {
 }
 
 const currentSuitData = computed(() => {
-  return fullPromptMatrix.find(p => p.suit === selectedSuit.value)
+  return cardPrompts.suits.find(p => p.suit === selectedSuit.value)
+})
+
+// Filter out Joker for the UI matrix
+const displaySuits = computed(() => {
+  return cardPrompts.suits.filter(s => s.suit !== 'Joker')
 })
 
 const currentPrompt = computed(() => {
   if (!selectedSuit.value || !selectedRank.value) return null
 
-  // Face Cards
-  if (selectedRank.value > 10) {
-    const faceData = faceCardPrompts.find(s => s.suit === selectedSuit.value)
-    if (!faceData) return null
-    
-    if (selectedRank.value === 11) return `${faceCardPrompt} ${isFirstTime.value ? faceData.jack.firstTime : faceData.jack.recurring}`
-    if (selectedRank.value === 12) return `${faceCardPrompt} ${isFirstTime.value ? faceData.queen.firstTime : faceData.queen.recurring}`
-    if (selectedRank.value === 13) return `${faceCardPrompt} ${isFirstTime.value ? faceData.king.firstTime : faceData.king.recurring}`
-  }
-
-  // Number Cards & Ace
-  return currentSuitData.value?.prompts.find(p => p.rank === selectedRank.value)?.prompt
+  // Use the shared helper
+  const card = { rank: selectedRank.value, suit: selectedSuit.value as Suit }
+  return getScenePrompt(card, null, isFirstTime.value)
 })
 
 const selectSuit = (suit: string) => {
@@ -65,7 +62,7 @@ const getRankLabel = (rank: number) => {
     <!-- Suit Selection -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <Button
-        v-for="suit in fullPromptMatrix"
+        v-for="suit in displaySuits"
         :key="suit.suit"
         :variant="selectedSuit === suit.suit ? 'primary' : 'secondary'"
         class="h-32 flex flex-col items-center justify-center gap-3 transition-all duration-300"
@@ -152,7 +149,7 @@ const getRankLabel = (rank: number) => {
            <Card class="text-center py-8">
              <Text variant="h2" color="red" class="mb-4">{{ getRankLabel(selectedRank) }}</Text>
              <Text variant="quote">
-               "{{ currentPrompt }}"
+               <span v-html="currentPrompt"></span>
              </Text>
            </Card>
         </div>

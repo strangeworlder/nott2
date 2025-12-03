@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useLivePlay } from '../../composables/useLivePlay'
-import Card from '../Card.vue'
+
 import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
 import Button from '../Button.vue'
 import PlayingCard from '../PlayingCard.vue'
-import SelectionButton from '../SelectionButton.vue'
+
 import ActionFooter from '../ActionFooter.vue'
-import type { Suit, Rank } from '../../composables/useGameEngine'
+import ManualCardEntry from './ManualCardEntry.vue'
+import { getSceneSetupContent } from '../../utils/contentLoader'
+
 
 const { 
   activeCard, 
@@ -19,7 +21,7 @@ const {
   manualRank, 
   manualJoker, 
   isEndgame,
-  currentPrompt,
+
   isRankAvailable,
   isSuitAvailable,
   addVisibleCard,
@@ -28,7 +30,9 @@ const {
   hasFaceCardOnTable,
   getNextValidCard,
   currentAct,
-  isBlackJokerRemoved
+  isBlackJokerRemoved,
+  isFirstTime,
+  selectedPlayset
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -36,26 +40,7 @@ const emit = defineEmits<{
   (e: 'next'): void
 }>()
 
-const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
-const ranks: { label: string, value: Rank }[] = [
-  { label: 'A', value: 1 },
-  { label: '2', value: 2 },
-  { label: '3', value: 3 },
-  { label: '4', value: 4 },
-  { label: '5', value: 5 },
-  { label: '6', value: 6 },
-  { label: '7', value: 7 },
-  { label: '8', value: 8 },
-  { label: '9', value: 9 },
-  { label: '10', value: 10 },
-  { label: 'J', value: 11 },
-  { label: 'Q', value: 12 },
-  { label: 'K', value: 13 },
-]
-
-const suitIcons: Record<string, string> = {
-  'Spades': '♠', 'Hearts': '♥', 'Clubs': '♣', 'Diamonds': '♦',
-}
+const content = computed(() => getSceneSetupContent(selectedPlayset.value))
 
 const isAddingCard = ref(false)
 const targetVisibleCount = computed(() => {
@@ -110,12 +95,24 @@ const handleCardClick = (id: string) => {
         selectCard(id)
     }
 }
+
+const explanationText = computed(() => {
+  if (acesRemaining.value > 0) {
+    return content.value.explanations.aces
+  }
+  
+  if (currentAct.value === 3 || isEndgame.value) {
+    return content.value.explanations.finale
+  }
+
+  return content.value.explanations.default
+})
 </script>
 
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <div class="mb-6 text-center">
-      <Text variant="quote" color="muted"><em>"Reveal the cards. Choose your challenge. The Suit is the nature of the threat, the Number is the severity."</em></Text>
+      <Text variant="quote" color="muted" v-html="explanationText"></Text>
     </div>
 
     <div class="space-y-8 mb-12">
@@ -125,9 +122,9 @@ const handleCardClick = (id: string) => {
         
         <!-- Guidance Text -->
         <div class="text-center animate-fade-in h-8">
-            <Text v-if="canAddMore" variant="body" color="muted">Draw cards to populate the table...</Text>
-            <Text v-else-if="!selectedCardId" variant="body" color="red" animation="pulse"><strong>Select a card to reveal the challenge</strong></Text>
-            <Text v-else variant="body" color="muted">Challenge selected.</Text>
+            <Text v-if="canAddMore" variant="body" color="muted" v-html="content.guidance.draw"></Text>
+            <Text v-else-if="!selectedCardId" variant="body" color="red" animation="pulse" v-html="content.guidance.select"></Text>
+            <Text v-else variant="body" color="muted" v-html="content.guidance.selected"></Text>
         </div>
 
         <!-- Visible Cards Display -->
@@ -148,114 +145,45 @@ const handleCardClick = (id: string) => {
               :selected="selectedCardId === card.id"
             />
             <div v-if="selectedCardId === card.id" class="absolute -bottom-8 left-0 right-0 text-center">
-              <Text variant="label" color="red">SELECTED</Text>
+              <Text variant="label" color="red">{{ content.ui.selectedLabel }}</Text>
             </div>
           </div>
         </div>
 
         <!-- Face Card Warning -->
         <div v-if="hasFaceCardOnTable && visibleCards.length < 2" class="text-center animate-fade-in max-w-md">
-            <Text variant="caption" color="red"><strong>FACE CARD ACTIVE</strong></Text>
-            <Text variant="caption" color="muted">You cannot draw another card while a Face Card is on the table. You must deal with it.</Text>
+            <Text variant="caption" color="red" v-html="content.guidance.faceCardActive"></Text>
+            <Text variant="caption" color="muted" v-html="content.guidance.faceCardWarning"></Text>
         </div>
 
         <!-- Add Card Button / Interface -->
         <div v-if="canAddMore && !isAddingCard && !selectedJoker" class="animate-fade-in">
           <Button variant="secondary" @click="startAddCard">
-            + Draw Card
+            {{ content.ui.drawButton }}
           </Button>
         </div>
 
         <!-- Card Input Interface -->
-        <div v-if="isAddingCard" class="w-full max-w-md animate-fade-in">
-          <Card>
-            <div class="space-y-6">
-              <div class="space-y-2">
-                <Text variant="label">Select Drawn Card</Text>
-                
-                <!-- Rank Grid -->
-                <div class="grid grid-cols-5 gap-2">
-                  <SelectionButton 
-                    v-for="r in ranks" 
-                    :key="r.value"
-                    @click="manualRank = r.value"
-                    :selected="manualRank === r.value"
-                    :disabled="!isRankAvailable(r.value) || !!manualJoker"
-                    variant="square"
-                    color="red"
-                  >
-                    {{ r.label }}
-                  </SelectionButton>
-                </div>
-
-                <!-- Suit Grid -->
-                <div class="grid grid-cols-4 gap-2 mt-4">
-                  <SelectionButton 
-                    v-for="s in suits" 
-                    :key="s"
-                    @click="manualSuit = s"
-                    :selected="manualSuit === s"
-                    :disabled="!isSuitAvailable(manualRank, s) || !!manualJoker"
-                    variant="default"
-                    :color="(s === 'Hearts' || s === 'Diamonds') ? 'red' : 'default'"
-                  >
-                    {{ suitIcons[s] }}
-                  </SelectionButton>
-                </div>
-              </div>
-
-              <div v-if="isEndgame" class="border-t border-nott-gray/30 pt-4">
-                <Text variant="label" class="mb-2">Or Joker?</Text>
-                <div class="flex gap-4 justify-center">
-                  <SelectionButton
-                    @click="manualJoker = 'Red'"
-                    :selected="manualJoker === 'Red'"
-                    color="red"
-                    class="flex-1"
-                  >
-                    Red
-                  </SelectionButton>
-                  <SelectionButton
-                    @click="manualJoker = 'Black'"
-                    :selected="manualJoker === 'Black'"
-                    :disabled="isBlackJokerRemoved"
-                    color="default"
-                    class="flex-1"
-                  >
-                    Black
-                  </SelectionButton>
-                  <SelectionButton
-                    @click="manualJoker = null"
-                    :selected="manualJoker === null"
-                    color="default"
-                    class="flex-1 text-nott-gray"
-                  >
-                    None
-                  </SelectionButton>
-                </div>
-              </div>
-
-              <div class="flex gap-2 mt-4">
-                <Button variant="secondary" class="flex-1" @click="isAddingCard = false">Cancel</Button>
-                <Button 
-                  variant="primary"
-                  class="flex-1"
-                  @click="confirmAddCard"
-                  :disabled="!isValidAddition"
-                >
-                  Add to Table
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
+        <ManualCardEntry
+          v-if="isAddingCard"
+          v-model:manualRank="manualRank"
+          v-model:manualSuit="manualSuit"
+          v-model:manualJoker="manualJoker"
+          :is-endgame="isEndgame"
+          :is-black-joker-removed="isBlackJokerRemoved"
+          :is-valid-addition="isValidAddition"
+          :is-rank-available="isRankAvailable"
+          :is-suit-available="isSuitAvailable"
+          @cancel="isAddingCard = false"
+          @confirm="confirmAddCard"
+        />
 
       </div>
 
       <!-- Prompt Display (Only when card selected) -->
       <div v-if="showPrompt" class="space-y-6 animate-fade-in border-t border-nott-gray/30 pt-8 mt-8">
         <div class="text-center">
-             <Text variant="h3" color="red">Challenge Selected</Text>
+             <Text variant="h3" color="red">{{ content.ui.promptTitle }}</Text>
         </div>
 
         <div v-if="selectedJoker" class="flex justify-center">
@@ -264,8 +192,12 @@ const handleCardClick = (id: string) => {
              </div>
         </div>
 
-        <div v-if="currentPrompt" class="max-w-2xl mx-auto">
-          <ScenePrompt :prompt="currentPrompt" />
+        <div v-if="activeCard || selectedJoker" class="max-w-2xl mx-auto">
+          <ScenePrompt 
+            :card="activeCard" 
+            :selected-joker="selectedJoker"
+            :is-first-time="isFirstTime"
+          />
         </div>
       </div>
 
@@ -280,7 +212,7 @@ const handleCardClick = (id: string) => {
         :disabled="!showPrompt"
         class="px-12"
       >
-        Start Scene →
+        {{ content.ui.startButton }}
       </Button>
     </ActionFooter>
   </div>

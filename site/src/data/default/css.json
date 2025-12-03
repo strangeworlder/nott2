@@ -1,0 +1,13 @@
+{
+    "colors": {
+        "nott-black": "#0a0a0a",
+        "nott-red": "#a00000",
+        "nott-white": "#f0f0f0",
+        "nott-gray": "#2a2a2a",
+        "nott-green": "#22c55e"
+    },
+    "fonts": {
+        "display": "'Oswald', sans-serif",
+        "body": "'Courier Prime', monospace"
+    }
+}
