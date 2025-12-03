@@ -1,0 +1,56 @@
+{
+    "title": "Night of the Thirteenth",
+    "intro": "Welcome to the game. Prepare yourself for a night of horror.",
+    "playsetSelectionTitle": "Select Playset",
+    "playsets": [
+        {
+            "id": "default",
+            "name": "Generic Slasher",
+            "description": "A classic slasher setup. No specific tropes enforced, just you and the killer.",
+            "details": [
+                {
+                    "label": "Content Warnings",
+                    "items": [
+                        "Violence",
+                        "Gore",
+                        "Death"
+                    ]
+                },
+                {
+                    "label": "Touchstones",
+                    "items": [
+                        "Halloween",
+                        "Friday the 13th",
+                        "Scream"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "summercamp",
+            "name": "Summercamp Slasher",
+            "description": "Counselors, cabins, and a killer in the woods. The quintessential slasher setting.",
+            "details": [
+                {
+                    "label": "Content Warnings",
+                    "items": [
+                        "Violence",
+                        "Gore",
+                        "Death",
+                        "Teen peril"
+                    ]
+                },
+                {
+                    "label": "Touchstones",
+                    "items": [
+                        "Friday the 13th",
+                        "Sleepaway Camp",
+                        "The Burning",
+                        "Fear Street: 1978"
+                    ]
+                }
+            ]
+        }
+    ],
+    "buttonText": "Begin Setup →"
+}

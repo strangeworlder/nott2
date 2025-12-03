@@ -5,76 +5,58 @@ import ActionFooter from '../ActionFooter.vue'
 import SelectionButton from '../SelectionButton.vue'
 import Card from '../Card.vue'
 import { useLivePlay, type Playset } from '../../composables/useLivePlay'
+import { getGameSetupContent } from '../../utils/contentLoader'
+import { computed } from 'vue'
 
 const { selectedPlayset } = useLivePlay()
+const content = getGameSetupContent()
 
 const emit = defineEmits<{
   (e: 'next'): void
 }>()
 
-const selectPlayset = (playset: Playset) => {
-  selectedPlayset.value = playset
+const selectPlayset = (playsetId: string) => {
+  selectedPlayset.value = playsetId as Playset
 }
 
-const playsetDetails: Record<Playset, { description: string, warnings: string[], touchstones: string[] }> = {
-  'Generic slasher (no flavor)': {
-    description: "A classic slasher setup. No specific tropes enforced, just you and the killer.",
-    warnings: ["Violence", "Gore", "Death"],
-    touchstones: ["Halloween", "Friday the 13th", "Scream"]
-  },
-  'Summercamp Slasher': {
-    description: "Counselors, cabins, and a killer in the woods. The quintessential slasher setting.",
-    warnings: ["Violence", "Gore", "Death", "Teen peril"],
-    touchstones: ["Friday the 13th", "Sleepaway Camp", "The Burning", "Fear Street: 1978"]
-  }
-}
-
+const selectedPlaysetDetails = computed(() => {
+    return content.playsets.find(p => p.id === selectedPlayset.value)
+})
 </script>
 
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in flex flex-col items-center justify-center min-h-[50vh]">
     <div class="mb-6 text-center">
-      <Text variant="h1" color="red" class="mb-4">Night of the Thirteenth</Text>
+      <Text variant="h1" color="red" class="mb-4">{{ content.title }}</Text>
       <Text variant="body" color="muted" class="max-w-xl mx-auto">
-        Welcome to the game. Prepare yourself for a night of horror.
+        <span v-html="content.intro"></span>
       </Text>
     </div>
 
     <div class="mb-8 w-full max-w-md space-y-4">
-      <Text variant="h3" class="text-center">Select Playset</Text>
+      <Text variant="h3" class="text-center">{{ content.playsetSelectionTitle }}</Text>
       <div class="flex flex-col gap-3">
         <SelectionButton 
-          :selected="selectedPlayset === 'Generic slasher (no flavor)'"
-          @click="selectPlayset('Generic slasher (no flavor)')"
+            v-for="playset in content.playsets"
+            :key="playset.id"
+            :selected="selectedPlayset === playset.id"
+            @click="selectPlayset(playset.id)"
         >
-          Generic slasher (no flavor)
-        </SelectionButton>
-        <SelectionButton 
-          :selected="selectedPlayset === 'Summercamp Slasher'"
-          @click="selectPlayset('Summercamp Slasher')"
-        >
-          Summercamp Slasher
+          {{ playset.name }}
         </SelectionButton>
       </div>
 
-      <div v-if="selectedPlayset" class="animate-fade-in mt-4">
-        <Card :title="selectedPlayset">
+      <div v-if="selectedPlaysetDetails" class="animate-fade-in mt-4">
+        <Card :title="selectedPlaysetDetails.name">
           <div class="space-y-4">
             <Text variant="body" color="muted">
-              {{ playsetDetails[selectedPlayset].description }}
+              {{ selectedPlaysetDetails.description }}
             </Text>
             
-            <div>
-              <Text variant="label" color="red" class="mb-1">Content Warnings</Text>
+            <div v-for="(detail, index) in selectedPlaysetDetails.details" :key="index">
+              <Text variant="label" color="red" class="mb-1">{{ detail.label }}</Text>
               <Text variant="caption" color="muted">
-                {{ playsetDetails[selectedPlayset].warnings.join(', ') }}
-              </Text>
-            </div>
-
-            <div>
-              <Text variant="label" color="red" class="mb-1">Touchstones</Text>
-              <Text variant="caption" color="muted">
-                {{ playsetDetails[selectedPlayset].touchstones.join(', ') }}
+                {{ detail.items.join(', ') }}
               </Text>
             </div>
           </div>
@@ -89,7 +71,7 @@ const playsetDetails: Record<Playset, { description: string, warnings: string[],
         :disabled="!selectedPlayset"
         @click="$emit('next')"
       >
-        Begin Setup →
+        {{ content.buttonText }}
       </Button>
     </ActionFooter>
   </div>

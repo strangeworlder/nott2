@@ -13,7 +13,7 @@ export type LivePlayPhase =
     | 'fallout'
     | 'win'
 
-export type Playset = 'Generic slasher (no flavor)' | 'Summercamp Slasher'
+export type Playset = 'default' | 'summercamp'
 
 // Shared state (singleton)
 const visibleCards = ref<GameCard[]>([])
