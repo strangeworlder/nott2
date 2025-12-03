@@ -7,6 +7,7 @@ import List from '../List.vue'
 import ListItem from '../ListItem.vue'
 import { getActSetupContent } from '../../utils/contentLoader'
 import { computed } from 'vue'
+import { useLivePlay } from '../../composables/useLivePlay'
 
 const props = defineProps<{
   act: number
@@ -16,7 +17,8 @@ const emit = defineEmits<{
   (e: 'next'): void
 }>()
 
-const content = computed(() => getActSetupContent(props.act))
+const { selectedPlayset } = useLivePlay()
+const content = computed(() => getActSetupContent(props.act, selectedPlayset.value))
 </script>
 
 <template>
@@ -31,7 +33,14 @@ const content = computed(() => getActSetupContent(props.act))
     </div>
 
     <div :class="{'grid gap-6 md:grid-cols-2 mb-12': content.sections.length > 1, 'max-w-2xl mx-auto mb-12': content.sections.length === 1}">
-        <Card v-for="(section, index) in content.sections" :key="index" :title="section.title">
+        <Card 
+          v-for="(section, index) in content.sections" 
+          :key="index" 
+          :title="section.title"
+          :class="{
+            'md:col-span-2': content.sections.length > 1 && content.sections.length % 2 !== 0 && index === content.sections.length - 1
+          }"
+        >
             <Text v-if="section.intro" variant="body" color="muted" class="mb-4">
                 <span v-html="section.intro"></span>
             </Text>

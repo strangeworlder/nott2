@@ -1,7 +1,51 @@
 import { marked } from 'marked';
-import gameSetupData from '../data/default/gameSetup.json';
-import welcomeScreenData from '../data/default/welcomeScreen.json';
-import actSetupData from '../data/default/actSetup.json';
+
+// Load all JSON data files
+const dataFiles = import.meta.glob('../data/**/*.json', { eager: true });
+
+function deepMerge(target: any, source: any): any {
+    if (typeof target !== 'object' || target === null || typeof source !== 'object' || source === null) {
+        return source;
+    }
+
+    if (Array.isArray(target) && Array.isArray(source)) {
+        return source; // Replace arrays
+    }
+
+    if (Array.isArray(target) || Array.isArray(source)) {
+        return source; // Type mismatch, replace
+    }
+
+    const result = { ...target };
+    for (const key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+            if (Object.prototype.hasOwnProperty.call(target, key)) {
+                result[key] = deepMerge(target[key], source[key]);
+            } else {
+                result[key] = source[key];
+            }
+        }
+    }
+    return result;
+}
+
+function loadData<T>(filename: string, playsetId?: string | null): T {
+    const defaultPath = `../data/default/${filename}`;
+    const defaultModule = dataFiles[defaultPath] as { default: T } | undefined;
+
+    let data = defaultModule ? defaultModule.default : {} as T;
+
+    if (playsetId && playsetId !== 'default') {
+        const playsetPath = `../data/${playsetId}/${filename}`;
+        const playsetModule = dataFiles[playsetPath] as { default: T } | undefined;
+
+        if (playsetModule) {
+            data = deepMerge(data, playsetModule.default);
+        }
+    }
+
+    return data;
+}
 
 export interface PlaysetData {
     id: string;
@@ -35,33 +79,6 @@ export interface ActSetupContent {
     buttonText: string;
 }
 
-export function getGameSetupContent(): GameSetupContent {
-    return {
-        title: gameSetupData.title,
-        intro: marked.parseInline(gameSetupData.intro) as string,
-        playsetSelectionTitle: gameSetupData.playsetSelectionTitle,
-        playsets: gameSetupData.playsets,
-        buttonText: gameSetupData.buttonText
-    };
-}
-
-export function getActSetupContent(act: number): ActSetupContent | null {
-    const data = (actSetupData as any)[act.toString()];
-    if (!data) return null;
-
-    return {
-        title: data.title,
-        quote: marked.parseInline(data.quote) as string,
-        sections: data.sections.map((section: any) => ({
-            title: section.title,
-            intro: section.intro ? marked.parseInline(section.intro) as string : undefined,
-            steps: section.steps.map((step: string) => marked.parseInline(step) as string),
-            footer: section.footer ? marked.parseInline(section.footer) as string : undefined
-        })),
-        buttonText: data.buttonText
-    };
-}
-
 export interface WelcomeScreenContent {
     title: string;
     intro: string[];
@@ -73,10 +90,42 @@ export interface WelcomeScreenContent {
     buttonText: string;
 }
 
-export function getWelcomeScreenContent(): WelcomeScreenContent {
-    const intro = welcomeScreenData.intro.map(text => marked.parseInline(text) as string);
+export function getGameSetupContent(playsetId?: string | null): GameSetupContent {
+    const data = loadData<any>('gameSetup.json', playsetId);
+    return {
+        title: data.title,
+        intro: marked.parseInline(data.intro) as string,
+        playsetSelectionTitle: data.playsetSelectionTitle,
+        playsets: data.playsets,
+        buttonText: data.buttonText
+    };
+}
 
-    const infoGrid = welcomeScreenData.infoGrid.map(item => {
+export function getActSetupContent(act: number, playsetId?: string | null): ActSetupContent | null {
+    const data = loadData<any>('actSetup.json', playsetId);
+    const actData = data[act.toString()];
+
+    if (!actData) return null;
+
+    return {
+        title: actData.title,
+        quote: marked.parseInline(actData.quote) as string,
+        sections: actData.sections ? actData.sections.map((section: any) => ({
+            title: section.title,
+            intro: section.intro ? marked.parseInline(section.intro) as string : undefined,
+            steps: section.steps.map((step: string) => marked.parseInline(step) as string),
+            footer: section.footer ? marked.parseInline(section.footer) as string : undefined
+        })) : [],
+        buttonText: actData.buttonText
+    };
+}
+
+export function getWelcomeScreenContent(playsetId?: string | null): WelcomeScreenContent {
+    const data = loadData<any>('welcomeScreen.json', playsetId);
+
+    const intro = data.intro.map((text: string) => marked.parseInline(text) as string);
+
+    const infoGrid = data.infoGrid.map((item: any) => {
         let value = item.value;
         if (Array.isArray(value)) {
             value = marked.parseInline(value.join('<br>')) as string;
@@ -89,9 +138,50 @@ export function getWelcomeScreenContent(): WelcomeScreenContent {
     });
 
     return {
-        title: welcomeScreenData.title,
+        title: data.title,
         intro: intro,
         infoGrid: infoGrid,
-        buttonText: welcomeScreenData.buttonText
+        buttonText: data.buttonText
+    };
+}
+
+export interface SceneSetupContent {
+    explanations: {
+        aces: string;
+        finale: string;
+        default: string;
+    };
+    guidance: {
+        draw: string;
+        select: string;
+        selected: string;
+        faceCardActive: string;
+        faceCardWarning: string;
+    };
+    ui: {
+        selectedLabel: string;
+        drawButton: string;
+        promptTitle: string;
+        startButton: string;
+    };
+}
+
+export function getSceneSetupContent(playsetId?: string | null): SceneSetupContent {
+    const data = loadData<any>('sceneSetup.json', playsetId);
+
+    return {
+        explanations: {
+            aces: marked.parseInline(data.explanations.aces) as string,
+            finale: marked.parseInline(data.explanations.finale) as string,
+            default: marked.parseInline(data.explanations.default) as string
+        },
+        guidance: {
+            draw: marked.parseInline(data.guidance.draw) as string,
+            select: marked.parseInline(data.guidance.select) as string,
+            selected: marked.parseInline(data.guidance.selected) as string,
+            faceCardActive: marked.parseInline(data.guidance.faceCardActive) as string,
+            faceCardWarning: marked.parseInline(data.guidance.faceCardWarning) as string
+        },
+        ui: data.ui
     };
 }

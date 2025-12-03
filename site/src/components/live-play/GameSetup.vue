@@ -9,7 +9,7 @@ import { getGameSetupContent } from '../../utils/contentLoader'
 import { computed } from 'vue'
 
 const { selectedPlayset } = useLivePlay()
-const content = getGameSetupContent()
+const content = computed(() => getGameSetupContent(selectedPlayset.value))
 
 const emit = defineEmits<{
   (e: 'next'): void
@@ -20,15 +20,15 @@ const selectPlayset = (playsetId: string) => {
 }
 
 const selectedPlaysetDetails = computed(() => {
-    return content.playsets.find(p => p.id === selectedPlayset.value)
+    return content.value.playsets.find((p: any) => p.id === selectedPlayset.value)
 })
 </script>
 
 <template>
-  <div class="w-full max-w-4xl mx-auto animate-fade-in flex flex-col items-center justify-center min-h-[50vh]">
+  <div class="w-full mx-auto animate-fade-in flex flex-col items-center justify-center min-h-[50vh]">
     <div class="mb-6 text-center">
       <Text variant="h1" color="red" class="mb-4">{{ content.title }}</Text>
-      <Text variant="body" color="muted" class="max-w-xl mx-auto">
+      <Text variant="quote" color="muted" class="max-w-xl mx-auto">
         <span v-html="content.intro"></span>
       </Text>
     </div>
