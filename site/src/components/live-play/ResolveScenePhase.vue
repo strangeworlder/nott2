@@ -7,7 +7,9 @@ import Button from '../Button.vue'
 import ActionFooter from '../ActionFooter.vue'
 
 const { 
-  currentPrompt,
+  activeCard,
+  selectedJoker,
+  isFirstTime,
   isSuccess,
   effortResult,
   rollEffort
@@ -23,7 +25,13 @@ const emit = defineEmits<{
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <!-- Scene Prompt -->
     <!-- Scene Prompt -->
-    <ScenePrompt v-if="currentPrompt" :prompt="currentPrompt" class="mb-8" />
+    <ScenePrompt 
+      v-if="activeCard || selectedJoker" 
+      :card="activeCard" 
+      :selected-joker="selectedJoker"
+      :is-first-time="isFirstTime"
+      class="mb-8" 
+    />
 
     <div class="mb-6 text-center">
       <Text variant="quote" color="muted"><em>"The dice have spoken. Now, tell us how it happens."</em></Text>

@@ -14,6 +14,7 @@ import Navigation from './Navigation.vue'
 import NavButton from './NavButton.vue'
 import ScenePrompt from './live-play/ScenePrompt.vue'
 import ProcessStep from './ProcessStep.vue'
+import Icon from './Icon.vue'
 </script>
 
 <template>
@@ -73,41 +74,15 @@ import ProcessStep from './ProcessStep.vue'
         <h2 class="text-3xl font-display text-nott-white border-b border-nott-gray pb-2">Icons</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div class="flex flex-col items-center gap-2 p-4 border border-nott-gray rounded bg-nott-white/5">
-                <div class="text-nott-red">
-                    <!-- Clock SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                </div>
+                <Icon name="clock" size="48" color="red" />
                 <Text variant="label" color="muted">Duration</Text>
             </div>
             <div class="flex flex-col items-center gap-2 p-4 border border-nott-gray rounded bg-nott-white/5">
-                <div class="text-nott-red">
-                    <!-- Users SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                </div>
+                <Icon name="users" size="48" color="red" />
                 <Text variant="label" color="muted">Players</Text>
             </div>
             <div class="flex flex-col items-center gap-2 p-4 border border-nott-gray rounded bg-nott-white/5">
-                <div class="text-nott-red">
-                    <!-- Cards/Dice SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                        <line x1="7" y1="2" x2="7" y2="22"></line>
-                        <line x1="17" y1="2" x2="17" y2="22"></line>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <line x1="2" y1="7" x2="7" y2="7"></line>
-                        <line x1="2" y1="17" x2="7" y2="17"></line>
-                        <line x1="17" y1="17" x2="22" y2="17"></line>
-                        <line x1="17" y1="7" x2="22" y2="7"></line>
-                    </svg>
-                </div>
+                <Icon name="supplies" size="48" color="red" />
                 <Text variant="label" color="muted">Supplies</Text>
             </div>
         </div>

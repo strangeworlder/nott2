@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import Text from '../Text.vue'
 import Button from '../Button.vue'
+import Icon from '../Icon.vue'
+import Card from '../Card.vue'
+import { getWelcomeScreenContent } from '../../utils/contentLoader'
 
 defineEmits(['next'])
+
+const content = getWelcomeScreenContent()
 </script>
 
 <template>
@@ -11,84 +16,46 @@ defineEmits(['next'])
     <!-- Hero Section -->
     <div class="space-y-8">
         <Text variant="h2" color="red">
-            Live Play Helper
+            {{ content.title }}
         </Text>
         <div class="space-y-6 max-w-3xl mx-auto">
-            <Text variant="lead" color="white">
-                Gather your friends and prepare for a night of terror. In <strong>Night of the Thirteenth</strong>, you will tell the story of a slasher movie. 
-                Together, you will weave a tale of suspense, gore, and desperate survival. You will need a deck of cards to determine your fate, some dice to test your luck, and the courage to face the darkness. The nightmare will last for about 2 to 3 hours.
-            </Text>
-            <Text variant="lead" color="white">
-                This Live Play Helper is designed to help you navigate the rules of the game and make the most of your experience, but the story will be all you.
-            </Text>
-            <Text variant="lead" color="red" class="block mt-4">
-                <strong>Will you survive the night?</strong>
+            <Text 
+                v-for="(paragraph, index) in content.intro" 
+                :key="index"
+                variant="lead" 
+                :color="index === content.intro.length - 1 ? 'red' : 'white'"
+                :class="{ 'block mt-4': index === content.intro.length - 1 }"
+            >
+                <span v-html="paragraph"></span>
             </Text>
         </div>
     </div>
 
     <!-- Info Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full px-4 border-t border-b border-nott-gray/30 py-8">
-        <div class="flex flex-col items-center justify-start text-center space-y-3">
-            <div class="text-nott-red/80">
-                <!-- Clock SVG -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
+        <Card 
+            v-for="(item, index) in content.infoGrid" 
+            :key="index"
+            variant="ghost" 
+            :interactive="false" 
+            :center="true"
+        >
+            <div class="flex flex-col items-center justify-start space-y-3">
+                <Icon :name="item.icon as any" size="32" color="red" />
+                <div class="space-y-1">
+                    <Text variant="label" color="muted">{{ item.label }}</Text>
+                    <Text variant="body">
+                        <span v-html="item.value"></span>
+                    </Text>
+                </div>
             </div>
-            <div class="space-y-1">
-                <Text variant="label" color="muted">Duration</Text>
-                <Text variant="lead">2-3 Hours</Text>
-            </div>
-        </div>
-
-        <div class="flex flex-col items-center justify-start text-center space-y-3">
-            <div class="text-nott-red/80">
-                <!-- Users SVG -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-            </div>
-            <div class="space-y-1">
-                <Text variant="label" color="muted">Players</Text>
-                <Text variant="lead">4 Players</Text>
-            </div>
-        </div>
-
-        <div class="flex flex-col items-center justify-start text-center space-y-3">
-            <div class="text-nott-red/80">
-                <!-- Cards/Dice SVG -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                    <line x1="7" y1="2" x2="7" y2="22"></line>
-                    <line x1="17" y1="2" x2="17" y2="22"></line>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <line x1="2" y1="7" x2="7" y2="7"></line>
-                    <line x1="2" y1="17" x2="7" y2="17"></line>
-                    <line x1="17" y1="17" x2="22" y2="17"></line>
-                    <line x1="17" y1="7" x2="22" y2="7"></line>
-                </svg>
-            </div>
-            <div class="space-y-1">
-                <Text variant="label" color="muted">Supplies</Text>
-                <Text variant="body">
-                    Deck of Cards (2 Jokers)<br>
-                    d10 & d4 Dice<br>
-                    13 Tokens<br>
-                    Pen & Paper
-                </Text>
-            </div>
-        </div>
+        </Card>
     </div>
 
     <!-- Action -->
     <div class="pt-8 animate-pulse-slow">
         <Button variant="primary" size="xl" @click="$emit('next')">
-            Start the Nightmare
+            {{ content.buttonText }}
         </Button>
     </div>
   </div>

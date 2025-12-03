@@ -19,7 +19,7 @@ const {
   manualRank, 
   manualJoker, 
   isEndgame,
-  currentPrompt,
+
   isRankAvailable,
   isSuitAvailable,
   addVisibleCard,
@@ -28,7 +28,8 @@ const {
   hasFaceCardOnTable,
   getNextValidCard,
   currentAct,
-  isBlackJokerRemoved
+  isBlackJokerRemoved,
+  isFirstTime
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -264,8 +265,12 @@ const handleCardClick = (id: string) => {
              </div>
         </div>
 
-        <div v-if="currentPrompt" class="max-w-2xl mx-auto">
-          <ScenePrompt :prompt="currentPrompt" />
+        <div v-if="activeCard || selectedJoker" class="max-w-2xl mx-auto">
+          <ScenePrompt 
+            :card="activeCard" 
+            :selected-joker="selectedJoker"
+            :is-first-time="isFirstTime"
+          />
         </div>
       </div>
 

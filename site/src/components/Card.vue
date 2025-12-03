@@ -4,19 +4,22 @@ import { computed } from 'vue'
 interface Props {
   title?: string
   interactive?: boolean
-  variant?: 'default' | 'muted' | 'highlighted' | 'success' | 'failure' | 'instruction'
+  variant?: 'default' | 'muted' | 'highlighted' | 'success' | 'failure' | 'instruction' | 'ghost'
   noPadding?: boolean
+  center?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   interactive: true,
   variant: 'default',
-  noPadding: false
+  noPadding: false,
+  center: false
 })
 
 const containerClasses = computed(() => {
   const base = 'relative bg-nott-black border rounded-lg h-full flex flex-col transition-colors duration-300'
   const padding = props.noPadding ? '' : 'p-6'
+  const align = props.center ? 'items-center text-center' : ''
   
   const variants = {
     default: 'border-nott-gray',
@@ -24,10 +27,11 @@ const containerClasses = computed(() => {
     highlighted: 'border-nott-red shadow-[0_0_15px_rgba(220,38,38,0.2)]',
     success: 'border-nott-green/30 bg-green-900/10',
     failure: 'border-nott-red/30 bg-nott-red/5',
-    instruction: 'border-nott-white/10 bg-nott-white/5'
+    instruction: 'border-nott-white/10 bg-nott-white/5',
+    ghost: 'border-transparent bg-transparent'
   }
 
-  return `${base} ${padding} ${variants[props.variant]}`
+  return `${base} ${padding} ${align} ${variants[props.variant]}`
 })
 
 const glowClasses = computed(() => {
@@ -39,7 +43,8 @@ const glowClasses = computed(() => {
     highlighted: 'bg-nott-red opacity-50',
     success: 'bg-nott-green',
     failure: 'bg-nott-red',
-    instruction: 'bg-nott-white hidden'
+    instruction: 'bg-nott-white hidden',
+    ghost: 'hidden'
   }
 
   return `${base} ${variants[props.variant]}`
@@ -54,7 +59,8 @@ const titleClasses = computed(() => {
     highlighted: 'text-nott-white border-nott-red',
     success: 'text-nott-green border-nott-green/30',
     failure: 'text-nott-red border-nott-red/30',
-    instruction: 'text-nott-white border-nott-white/10'
+    instruction: 'text-nott-white border-nott-white/10',
+    ghost: 'text-nott-white border-nott-gray/30'
   }
 
   return `${base} ${variants[props.variant]}`

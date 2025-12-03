@@ -49,8 +49,18 @@
     - `src/components`: UI components.
     - `src/data`: Game rules, static data, types.
     - `src/App.vue`: Main layout.
+    - `src/data/default`: Default location for JSON data files.
 
-### 3. Documentation
+### 3. Data Management
+- **Externalize Text**:
+    - All substantial textual data (prompts, flavor text, rules text) must be stored in external JSON files (e.g., in `site/src/data/default`).
+    - Do not hardcode long strings or content matrices within TypeScript/Vue files.
+    - This separation allows for easier content updates, localization, and the creation of alternative "Playsets" without modifying code.
+    - Use `marked` to parse Markdown content from JSON files to allow for rich text formatting.
+- **Dynamic Content**:
+    - Avoid hardcoding lists or grids of items in templates.
+    - Use `v-for` loops to iterate over data arrays.
+    - Store metadata like icon names in the data and bind them dynamically in the component.
 - **Rules**: Updates to game mechanics must be reflected in `NotT_2.md`.
 - **Workflows**: Common procedures (e.g., deployment, database migration) should be documented in `.agent/workflows/`.
 - **Components**: Every component must be thoroughly documented. Explain props, slots, events, and usage examples. This is non-negotiable for maintainability.
