@@ -7,15 +7,15 @@ export default {
     theme: {
         extend: {
             colors: {
-                'nott-black': '#0a0a0a',
-                'nott-red': '#8a0000',
-                'nott-white': '#f0f0f0',
-                'nott-gray': '#2a2a2a',
-                'nott-green': '#22c55e',
+                'nott-black': 'rgb(var(--color-nott-black) / <alpha-value>)',
+                'nott-red': 'rgb(var(--color-nott-red) / <alpha-value>)',
+                'nott-white': 'rgb(var(--color-nott-white) / <alpha-value>)',
+                'nott-gray': 'rgb(var(--color-nott-gray) / <alpha-value>)',
+                'nott-green': 'rgb(var(--color-nott-green) / <alpha-value>)',
             },
             fontFamily: {
-                display: ['Oswald', 'sans-serif'],
-                body: ['Courier Prime', 'monospace'],
+                display: ['var(--font-display)'],
+                body: ['var(--font-body)'],
             },
         },
     },

@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import RulesReference from './components/RulesReference.vue'
 import LivePlayHelper from './components/LivePlayHelper.vue'
 import DesignSystem from './components/DesignSystem.vue'
 import Header from './components/Header.vue'
 import Navigation from './components/Navigation.vue'
 import NavButton from './components/NavButton.vue'
+import { useLivePlay } from './composables/useLivePlay'
+import { updateTheme } from './utils/theme'
+
+const { selectedPlayset } = useLivePlay()
+
+watch(selectedPlayset, (newId) => {
+  updateTheme(newId)
+}, { immediate: true })
 
 const currentView = ref<'showcase' | 'rules' | 'play'>('play')
 </script>

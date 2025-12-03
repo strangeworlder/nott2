@@ -185,3 +185,89 @@ export function getSceneSetupContent(playsetId?: string | null): SceneSetupConte
         ui: data.ui
     };
 }
+
+export interface ConversationAndStakesContent {
+    intro: string;
+    actDescriptions: {
+        "1": string;
+        "2": string;
+        "3": string;
+    };
+    steps: {
+        setScene: {
+            title: string;
+            activePlayer1: string;
+            otherPlayers: string;
+            activePlayer2: string;
+        };
+        focusCamera: {
+            title: string;
+            intro: string;
+        };
+        defineGoals: {
+            title: string;
+            intro: string;
+            quote: string;
+            caption: string;
+        };
+        commitToEffort: {
+            title: string;
+            quote: string;
+            caption: string;
+        };
+    };
+    ui: {
+        checkboxLabel: string;
+        buttonText: string;
+    };
+}
+
+export function getConversationAndStakesContent(playsetId?: string | null): ConversationAndStakesContent {
+    const data = loadData<any>('conversationAndStakes.json', playsetId);
+
+    return {
+        intro: marked.parseInline(data.intro) as string,
+        actDescriptions: data.actDescriptions,
+        steps: {
+            setScene: {
+                title: data.steps.setScene.title,
+                activePlayer1: marked.parseInline(data.steps.setScene.activePlayer1) as string,
+                otherPlayers: marked.parseInline(data.steps.setScene.otherPlayers) as string,
+                activePlayer2: marked.parseInline(data.steps.setScene.activePlayer2) as string
+            },
+            focusCamera: {
+                title: data.steps.focusCamera.title,
+                intro: marked.parseInline(data.steps.focusCamera.intro) as string
+            },
+            defineGoals: {
+                title: data.steps.defineGoals.title,
+                intro: marked.parseInline(data.steps.defineGoals.intro) as string,
+                quote: marked.parseInline(data.steps.defineGoals.quote) as string,
+                caption: marked.parseInline(data.steps.defineGoals.caption) as string
+            },
+            commitToEffort: {
+                title: data.steps.commitToEffort.title,
+                quote: marked.parseInline(data.steps.commitToEffort.quote) as string,
+                caption: marked.parseInline(data.steps.commitToEffort.caption) as string
+            }
+        },
+        ui: data.ui
+    };
+}
+
+export interface CssContent {
+    colors: Record<string, string>;
+    fonts: Record<string, string>;
+}
+
+export function getCssContent(playsetId?: string | null): CssContent {
+    return loadData<CssContent>('css.json', playsetId);
+}
+
+export interface SensoryPromptsContent {
+    [key: string]: string[];
+}
+
+export function getSensoryPrompts(playsetId?: string | null): SensoryPromptsContent {
+    return loadData<SensoryPromptsContent>('sensoryPrompts.json', playsetId);
+}

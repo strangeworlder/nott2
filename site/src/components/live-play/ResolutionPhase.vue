@@ -49,7 +49,6 @@ onMounted(() => {
 
     <div class="max-w-2xl mx-auto space-y-8 mb-12">
       
-        <!-- Target Difficulty (Face Cards/Jokers only) -->
         <div v-if="isFaceCard || selectedJoker" class="space-y-4 animate-fade-in">
           <Text variant="label" align="center">Target Difficulty Calculation</Text>
           
@@ -97,6 +96,15 @@ onMounted(() => {
           </div>
           
           <Text variant="caption" color="muted" class="text-center">Base + Modifier (J=1, Q=2, K=3)</Text>
+        </div>
+
+        <!-- Target Difficulty (Number Cards) -->
+        <div v-else class="space-y-4 animate-fade-in">
+           <div class="flex flex-col items-center justify-center gap-2">
+              <Text variant="label" align="center">Target Difficulty</Text>
+              <div class="text-6xl font-display text-nott-red font-bold">{{ selectedRank }}</div>
+              <Text variant="caption" color="muted">Roll equal to or higher than the card rank.</Text>
+           </div>
         </div>
 
       <div class="grid md:grid-cols-2 gap-8">

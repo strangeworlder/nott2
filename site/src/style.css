@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'Courier Prime', monospace;
+  font-family: var(--font-body);
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: dark;
-  color: #f0f0f0;
-  background-color: #0a0a0a;
+  color: rgb(var(--color-nott-white));
+  background-color: rgb(var(--color-nott-black));
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -30,15 +30,15 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .text-shadow-glow {
-  text-shadow: 0 0 10px rgba(138, 0, 0, 0.5), 0 0 20px rgba(138, 0, 0, 0.3);
+  text-shadow: 0 0 10px rgba(var(--color-nott-red), 0.5), 0 0 20px rgba(var(--color-nott-red), 0.3);
 }
 
 .text-shadow-glow-green {
-  text-shadow: 0 0 10px rgba(34, 197, 94, 0.5), 0 0 20px rgba(34, 197, 94, 0.3);
+  text-shadow: 0 0 10px rgba(var(--color-nott-green), 0.5), 0 0 20px rgba(var(--color-nott-green), 0.3);
 }
