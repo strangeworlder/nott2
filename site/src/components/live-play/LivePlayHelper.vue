@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useLivePlay } from '../composables/useLivePlay'
-import Button from './Button.vue'
-import LivePlayHeader from './live-play/LivePlayHeader.vue'
+import { useLivePlay } from '../../composables/useLivePlay'
+import Button from '../Button.vue'
+import LivePlayHeader from './LivePlayHeader.vue'
 
 // Import Steps
-import WelcomeScreen from './live-play/WelcomeScreen.vue'
-import GameSetup from './live-play/GameSetup.vue'
-import ActSetup from './live-play/ActSetup.vue'
-import SceneSetup from './live-play/SceneSetup.vue'
-import ConversationAndStakesPhase from './live-play/ConversationAndStakesPhase.vue'
-import ResolutionPhase from './live-play/ResolutionPhase.vue'
-import ResolveScenePhase from './live-play/ResolveScenePhase.vue'
-import FalloutPhase from './live-play/FalloutPhase.vue'
-import WinScreen from './live-play/WinScreen.vue'
+import WelcomeScreen from './WelcomeScreen.vue'
+import GameSetup from './GameSetup.vue'
+import ActSetup from './ActSetup.vue'
+import SceneSetup from './SceneSetup.vue'
+import ConversationAndStakesPhase from './ConversationAndStakesPhase.vue'
+import ResolutionPhase from './ResolutionPhase.vue'
+import ResolveScenePhase from './ResolveScenePhase.vue'
+import FalloutPhase from './FalloutPhase.vue'
+import WinScreen from './WinScreen.vue'
 
 const { 
   currentPhase, 

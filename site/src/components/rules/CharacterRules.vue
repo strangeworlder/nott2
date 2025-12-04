@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { characterRules } from '../data/rules'
-import Card from './Card.vue'
-import Text from './Text.vue'
-import List from './List.vue'
-import ListItem from './ListItem.vue'
+import { characterRules } from '../../data/rules'
+import Card from '../Card.vue'
+import Text from '../Text.vue'
+import List from '../List.vue'
+import ListItem from '../ListItem.vue'
 
 const suitIcons: Record<string, string> = {
   'Spades': '♠',

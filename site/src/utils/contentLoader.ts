@@ -321,3 +321,11 @@ export function getResolutionPhaseContent(playsetId?: string | null): Resolution
         buttonText: data.buttonText
     };
 }
+
+export interface PlaysetConfig {
+    overrides?: Record<string, boolean>;
+}
+
+export function getPlaysetConfig(playsetId?: string | null): PlaysetConfig {
+    return loadData<PlaysetConfig>('config.json', playsetId);
+}

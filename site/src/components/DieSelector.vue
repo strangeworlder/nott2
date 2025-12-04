@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/DieSelector.vue'
+
 interface Props {
   sides: number
   modelValue: number | null
@@ -14,42 +19,40 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: number): void
 }>()
 
-const getClasses = (n: number) => {
-  const isSelected = props.modelValue === n
-  
-  if (props.color === 'white') {
-    return isSelected
-      ? 'bg-nott-white text-nott-black border-nott-white shadow-[0_0_10px_rgba(255,255,255,0.5)]'
-      : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-white hover:text-nott-white'
-  } else {
-    return isSelected
-      ? 'bg-nott-red text-nott-white border-nott-red shadow-[0_0_10px_rgba(138,0,0,0.5)]'
-      : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-red hover:text-nott-white'
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/DieSelector.vue')
+const currentComponent = shallowRef(DefaultComponent)
+
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
   }
-}
+
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.DieSelector) {
+    const path = `./playsets/${playsetId}/DieSelector.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
+  } else {
+    currentComponent.value = DefaultComponent
+  }
+})
 </script>
 
 <template>
-  <div class="space-y-4">
-    <label v-if="label" class="block text-nott-white font-display uppercase text-center tracking-widest">
-      {{ label }}
-    </label>
-    <div 
-      class="grid gap-2"
-      :class="sides > 6 ? 'grid-cols-5' : 'grid-cols-2'"
-    >
-      <button
-        v-for="n in sides"
-        :key="n"
-        @click="emit('update:modelValue', sides === 10 ? n-1 : n)"
-        class="aspect-square rounded border transition-all duration-200 font-display text-xl flex items-center justify-center"
-        :class="[
-          getClasses(sides === 10 ? n-1 : n),
-          sides <= 6 ? 'aspect-video' : ''
-        ]"
-      >
-        {{ sides === 10 ? n-1 : n }}
-      </button>
-    </div>
-  </div>
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+    @update:modelValue="emit('update:modelValue', $event)"
+  >
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
+    </template>
+  </component>
 </template>

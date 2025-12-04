@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { getScenePrompt, cardPrompts } from '../data/scenePrompts'
-import type { Suit } from '../composables/useGameEngine'
-import Card from './Card.vue'
-import Button from './Button.vue'
-import Text from './Text.vue'
-import SelectionButton from './SelectionButton.vue'
+import { getScenePrompt, cardPrompts } from '../../data/scenePrompts'
+import type { Suit } from '../../composables/useGameEngine'
+import Card from '../Card.vue'
+import Button from '../Button.vue'
+import Text from '../Text.vue'
+import SelectionButton from '../SelectionButton.vue'
 
 const selectedSuit = ref<string | null>(null)
 const selectedRank = ref<number | null>(null)

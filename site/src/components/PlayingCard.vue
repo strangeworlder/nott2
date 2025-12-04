@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultPlayingCard from './defaults/PlayingCard.vue'
 
 interface Props {
   suit: string
@@ -9,56 +12,43 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const { selectedPlayset } = useLivePlay()
 
-const suitIcons: Record<string, string> = {
-  'Spades': '♠', 'Hearts': '♥', 'Clubs': '♣', 'Diamonds': '♦',
-}
+// Load all playset components eagerly or lazily
+// We use a glob import to find all potential overrides
+const playsetComponents = import.meta.glob('./playsets/**/PlayingCard.vue')
 
-// Fixed colors for white background card
-const suitColors: Record<string, string> = {
-  'Spades': '', 
-  'Hearts': 'text-nott-red', 
-  'Clubs': '', 
-  'Diamonds': 'text-nott-red',
-}
+const currentComponent = shallowRef(DefaultPlayingCard)
 
-const rankName = computed(() => {
-  if (props.rank === 1) return 'Ace'
-  if (props.rank === 11) return 'Jack'
-  if (props.rank === 12) return 'Queen'
-  if (props.rank === 13) return 'King'
-  return props.rank.toString()
-})
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultPlayingCard
+    return
+  }
 
-const rankChar = computed(() => {
-  return rankName.value[0]
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.PlayingCard) {
+    // Construct the expected path
+    const path = `./playsets/${playsetId}/PlayingCard.vue`
+    const loader = playsetComponents[path]
+    
+    if (loader) {
+      // It's an async component
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      console.warn(`Playset ${playsetId} requested PlayingCard override but file not found at ${path}`)
+      currentComponent.value = DefaultPlayingCard
+    }
+  } else {
+    currentComponent.value = DefaultPlayingCard
+  }
 })
 </script>
 
 <template>
-  <div 
-    class="relative w-64 aspect-[2/3] bg-nott-white text-nott-black rounded-lg shadow-[0_0_30px_rgba(255,0,0,0.2)] flex flex-col items-center justify-center border-4 border-nott-black overflow-hidden select-none transition-transform hover:scale-105 duration-300"
-    :class="{ 'ring-4 ring-nott-red ring-offset-2 ring-offset-black': selected }"
-  >
-    <!-- Corner Ranks -->
-    <div class="absolute top-2 left-2 text-2xl font-display" :class="suitColors[suit]">
-      {{ rankChar }}
-      <div class="text-xl">{{ suitIcons[suit] }}</div>
-    </div>
-    <div class="absolute bottom-2 right-2 text-2xl font-display rotate-180" :class="suitColors[suit]">
-      {{ rankChar }}
-      <div class="text-xl">{{ suitIcons[suit] }}</div>
-    </div>
-
-    <!-- Center Content -->
-    <div class="text-6xl" :class="suitColors[suit]">
-      {{ suitIcons[suit] }}
-    </div>
-    <div class="mt-4 text-2xl font-display uppercase tracking-widest text-nott-black">
-      {{ rankName }}
-    </div>
-    <div class="text-sm font-display uppercase tracking-widest text-nott-black/60">
-      {{ suit }}
-    </div>
-  </div>
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+  />
 </template>

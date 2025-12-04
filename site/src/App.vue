@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import RulesReference from './components/RulesReference.vue'
-import LivePlayHelper from './components/LivePlayHelper.vue'
-import DesignSystem from './components/DesignSystem.vue'
+import RulesReference from './components/rules/RulesReference.vue'
+import LivePlayHelper from './components/live-play/LivePlayHelper.vue'
+import DesignSystem from './components/dev/DesignSystem.vue'
 import Header from './components/Header.vue'
 import Navigation from './components/Navigation.vue'
 import NavButton from './components/NavButton.vue'

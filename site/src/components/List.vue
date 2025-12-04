@@ -1,65 +1,57 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/List.vue'
 
-const props = withDefaults(defineProps<{
+interface Props {
   as?: 'ul' | 'ol'
   variant?: 'disc' | 'decimal' | 'none'
   color?: 'muted' | 'white' | 'red'
   spacing?: 'sm' | 'md' | 'lg'
   inside?: boolean
-}>(), {
+}
+
+const props = withDefaults(defineProps<Props>(), {
   as: 'ul',
   color: 'muted',
   spacing: 'sm',
   inside: true
 })
 
-const classes = computed(() => {
-  const base = [
-    props.inside ? 'list-inside' : 'list-outside'
-  ]
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/List.vue')
+const currentComponent = shallowRef(DefaultComponent)
 
-  // Variant
-  if (props.variant) {
-    base.push(`list-${props.variant}`)
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
+  }
+
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.List) {
+    const path = `./playsets/${playsetId}/List.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
   } else {
-    base.push(props.as === 'ol' ? 'list-decimal' : 'list-disc')
+    currentComponent.value = DefaultComponent
   }
-
-  // Color
-  switch (props.color) {
-    case 'white':
-      base.push('text-nott-white')
-      break
-    case 'red':
-      base.push('text-nott-red')
-      break
-    case 'muted':
-    default:
-      base.push('text-nott-white/80')
-      break
-  }
-
-  // Spacing
-  switch (props.spacing) {
-    case 'md':
-      base.push('space-y-2')
-      break
-    case 'lg':
-      base.push('space-y-4')
-      break
-    case 'sm':
-    default:
-      base.push('space-y-1')
-      break
-  }
-
-  return base.join(' ')
 })
 </script>
 
 <template>
-  <component :is="as" :class="classes">
-    <slot />
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+  >
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
+    </template>
   </component>
 </template>

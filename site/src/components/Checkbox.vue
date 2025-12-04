@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/Checkbox.vue'
 
 interface Props {
   modelValue: boolean
@@ -12,31 +15,40 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
 }>()
 
-const inputId = computed(() => props.id || `checkbox-${Math.random().toString(36).substr(2, 9)}`)
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/Checkbox.vue')
+const currentComponent = shallowRef(DefaultComponent)
+
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
+  }
+
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.Checkbox) {
+    const path = `./playsets/${playsetId}/Checkbox.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
+  } else {
+    currentComponent.value = DefaultComponent
+  }
+})
 </script>
 
 <template>
-  <div class="flex items-start gap-4">
-    <div class="relative mt-1 w-6 h-6">
-      <input 
-        type="checkbox" 
-        :id="inputId" 
-        :checked="modelValue"
-        @change="emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
-        class="appearance-none w-full h-full rounded border border-nott-gray bg-nott-black checked:bg-nott-red focus:outline-none focus:ring-2 focus:ring-nott-red focus:ring-offset-1 focus:ring-offset-nott-black transition-colors cursor-pointer peer"
-      >
-      <svg 
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 text-nott-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" 
-        fill="none" 
-        viewBox="0 0 24 24" 
-        stroke="currentColor"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-      </svg>
-    </div>
-    <label v-if="label" :for="inputId" class="text-nott-white cursor-pointer select-none">
-      {{ label }}
-      <slot />
-    </label>
-  </div>
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+    @update:modelValue="emit('update:modelValue', $event)"
+  >
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
+    </template>
+  </component>
 </template>

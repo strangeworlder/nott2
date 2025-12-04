@@ -1,36 +1,50 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import Text from './Text.vue'
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/ListItem.vue'
 
-const props = defineProps<{
+interface Props {
   color?: string
   variant?: 'default' | 'ordered'
   index?: number
-}>()
+}
 
-const classes = computed(() => {
-  const base = []
-  
-  if (props.variant === 'ordered') {
-    base.push('flex items-start gap-2')
+const props = defineProps<Props>()
+
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/ListItem.vue')
+const currentComponent = shallowRef(DefaultComponent)
+
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
   }
 
-  if (props.color) {
-    base.push(props.color)
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.ListItem) {
+    const path = `./playsets/${playsetId}/ListItem.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
+  } else {
+    currentComponent.value = DefaultComponent
   }
-  
-  return base.join(' ')
 })
 </script>
 
 <template>
-  <li :class="classes">
-    <template v-if="variant === 'ordered' && index !== undefined">
-      <Text variant="label" color="red">{{ index + 1 }}.</Text>
-      <Text variant="body" as="span">
-        <slot />
-      </Text>
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+  >
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
     </template>
-    <slot v-else />
-  </li>
+  </component>
 </template>

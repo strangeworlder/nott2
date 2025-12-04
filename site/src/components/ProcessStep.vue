@@ -1,57 +1,52 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import Text from './Text.vue'
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/ProcessStep.vue'
 
-const props = withDefaults(defineProps<{
+interface Props {
   step: string | number
   variant?: 'success' | 'failure' | 'neutral'
   title?: string
-}>(), {
+}
+
+const props = withDefaults(defineProps<Props>(), {
   variant: 'neutral'
 })
 
-const styles = computed(() => {
-  switch (props.variant) {
-    case 'success':
-      return {
-        circle: 'border-nott-green/50 text-nott-green',
-        title: 'success' as const
-      }
-    case 'failure':
-      return {
-        circle: 'border-nott-red/50 text-nott-red',
-        title: 'red' as const
-      }
-    default:
-      return {
-        circle: 'border-nott-gray/50 text-nott-gray',
-        title: 'muted' as const
-      }
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/ProcessStep.vue')
+const currentComponent = shallowRef(DefaultComponent)
+
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
+  }
+
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.ProcessStep) {
+    const path = `./playsets/${playsetId}/ProcessStep.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
+  } else {
+    currentComponent.value = DefaultComponent
   }
 })
 </script>
 
 <template>
-  <div class="relative flex gap-6">
-    <!-- Step Circle -->
-    <div 
-      class="w-8 h-8 rounded-full bg-nott-black border flex items-center justify-center shrink-0 z-10 font-display transition-colors duration-300"
-      :class="styles.circle"
-    >
-      {{ step }}
-    </div>
-
-    <!-- Content -->
-    <div class="flex-1">
-      <Text 
-        v-if="title" 
-        variant="label" 
-        :color="styles.title" 
-        class="mb-1"
-      >
-        {{ title }}
-      </Text>
-      <slot></slot>
-    </div>
-  </div>
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+  >
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
+    </template>
+  </component>
 </template>
