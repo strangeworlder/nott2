@@ -16,6 +16,7 @@ watch(selectedPlayset, (newId) => {
 }, { immediate: true })
 
 const currentView = ref<'showcase' | 'rules' | 'play'>('play')
+const isDev = import.meta.env.DEV
 </script>
 
 <template>
@@ -34,7 +35,9 @@ const currentView = ref<'showcase' | 'rules' | 'play'>('play')
         >
           Rules Reference
         </NavButton>
+
         <NavButton 
+          v-if="isDev"
           @click="currentView = 'showcase'"
           :active="currentView === 'showcase'"
         >

@@ -40,7 +40,7 @@ const rankChar = computed(() => {
 
 <template>
   <div 
-    class="relative w-64 aspect-[2/3] bg-nott-white text-nott-black rounded-lg shadow-[0_0_30px_rgba(255,0,0,0.2)] flex flex-col items-center justify-center border-4 border-nott-black overflow-hidden select-none transition-transform hover:scale-105 duration-300"
+    class="relative w-64 aspect-[2/3] old-card-texture text-nott-black rounded-lg shadow-[0_0_30px_rgba(255,0,0,0.2)] flex flex-col items-center justify-center border-4 border-nott-black overflow-hidden select-none transition-transform hover:scale-105 duration-300"
     :class="{ 'ring-4 ring-nott-red ring-offset-2 ring-offset-black': selected }"
   >
     <template v-if="isJoker">
@@ -59,11 +59,11 @@ const rankChar = computed(() => {
     <template v-else-if="suit && rank">
       <!-- Corner Ranks -->
       <div class="absolute top-2 left-2 text-2xl font-display" :class="suitColors[suit]">
-        [{{ rankChar }}]
+        {{ rankChar }}
         <div class="text-xl">{{ suitIcons[suit] }}</div>
       </div>
       <div class="absolute bottom-2 right-2 text-2xl font-display rotate-180" :class="suitColors[suit]">
-        [{{ rankChar }}]
+        {{ rankChar }}
         <div class="text-xl">{{ suitIcons[suit] }}</div>
       </div>
 
@@ -80,3 +80,11 @@ const rankChar = computed(() => {
     </template>
   </div>
 </template>
+
+<style scoped>
+.old-card-texture {
+  background-color: #fdfbf7;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+  box-shadow: inset 0 0 40px rgba(139, 69, 19, 0.15), 0 0 30px rgba(255,0,0,0.2);
+}
+</style>

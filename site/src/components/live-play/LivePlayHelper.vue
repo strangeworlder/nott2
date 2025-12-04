@@ -40,6 +40,8 @@ watch(currentPhase, () => {
   window.scrollTo(0, 0)
 }, { flush: 'post' })
 
+
+const isDev = import.meta.env.DEV
 </script>
 
 <template>
@@ -107,7 +109,7 @@ watch(currentPhase, () => {
     />
 
     <!-- Debug Toggle -->
-    <div class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
+    <div v-if="isDev" class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
       <Button 
         @click="debugMode = !debugMode"
         variant="debug"
