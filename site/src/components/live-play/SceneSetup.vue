@@ -4,6 +4,7 @@ import { useLivePlay } from '../../composables/useLivePlay'
 
 import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
+import Separator from '../defaults/Separator.vue'
 import IngressText from '../IngressText.vue'
 import PlayingCard from '../PlayingCard.vue'
 
@@ -179,7 +180,8 @@ const explanationText = computed(() => {
       </div>
 
       <!-- Prompt Display (Only when card selected) -->
-      <div v-if="showPrompt" class="space-y-6 animate-fade-in border-t border-nott-gray/30 pt-8 mt-8">
+      <div v-if="showPrompt" class="space-y-6 animate-fade-in pt-8 mt-8">
+        <Separator />
         <div class="text-center">
              <Text variant="h3" color="red">{{ content.ui.promptTitle }}</Text>
         </div>

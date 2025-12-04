@@ -1,4 +1,30 @@
 <script setup lang="ts">
+/**
+ * Text
+ * 
+ * Philosophical:
+ * The Text component is the voice of the game. It ensures that every word spoken by 
+ * the interface adheres to the typographic hierarchy and aesthetic rules of the world. 
+ * It prevents "default font" leakage and enforces consistency in tone, whether it's 
+ * a shouting header or a whispered caption.
+ * 
+ * Technical:
+ * A highly configurable typography component.
+ * 
+ * Props:
+ * - variant (string): Typographic style ('hero', 'h1', 'body', etc.). Defaults to 'body'.
+ * - as (string): The HTML tag to render. Defaults based on variant.
+ * - color (string): Text color ('white', 'red', 'muted', 'success'). Defaults to 'white'.
+ * - glow (boolean): Whether to apply a text shadow glow.
+ * - border (string): Optional border style ('none', 'left', 'bottom').
+ * - align (string): Text alignment.
+ * - leading (string): Line height.
+ * - animation (string): Animation style ('pulse', 'none').
+ * 
+ * Slots:
+ * - default: The text content.
+ */
+
 import { computed } from 'vue'
 
 interface Props {

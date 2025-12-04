@@ -27,13 +27,4 @@ const { fullReset } = useLivePlay()
   </div>
 </template>
 
-<style scoped>
-.animate-fade-in {
-  animation: fadeIn 2s ease-out;
-}
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-</style>

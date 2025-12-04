@@ -1,0 +1,25 @@
+{
+    "ingress": "The dice provide insight into how the risky challenge of the goes. Now what remains is for you to narrate it out.",
+    "outcome": {
+        "success": {
+            "title": "Success",
+            "body": "The Active Character achieves their goal. Whatever challenge they faced, they push through.",
+            "caption": "Describe how they triumph over the horror."
+        },
+        "failure": {
+            "title": "Failure",
+            "body": "The Active Character fails. Whatever challenge they faced, they fall short.",
+            "caption": "Describe how the situation spirals out of control."
+        }
+    },
+    "effort": {
+        "title": "Effort",
+        "defaultTitle": "Effort Exerted",
+        "none": "No extra effort was pushed. The result stands on its own."
+    },
+    "instruction": {
+        "title": "Bring the Scene to a Close",
+        "body": "Work together to narrate the final moments of the scene based on these results. When the beat is finished, proceed to update the game state."
+    },
+    "buttonLabel": "Update Game State"
+}

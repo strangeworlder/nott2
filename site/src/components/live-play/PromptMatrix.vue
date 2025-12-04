@@ -135,13 +135,13 @@ const getRankLabel = (rank: number) => {
 
         <!-- First Time Toggle for Face Cards -->
         <div v-if="selectedRank && selectedRank > 10" class="flex justify-center animate-fade-in">
-          <button 
+          <Button 
             @click="isFirstTime = !isFirstTime"
-            class="text-xs uppercase tracking-widest px-4 py-2 rounded border transition-all duration-200"
-            :class="isFirstTime ? 'border-green-500 text-green-500 bg-green-500/10' : 'border-nott-white/30 text-nott-white/60 hover:border-nott-white hover:text-nott-white'"
+            size="xs"
+            :variant="isFirstTime ? 'primary' : 'ghost'"
           >
             {{ isFirstTime ? 'First Encounter' : 'Recurring Nightmare' }}
-          </button>
+          </Button>
         </div>
 
         <!-- Prompt Card -->

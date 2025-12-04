@@ -1,4 +1,26 @@
 <script setup lang="ts">
+/**
+ * DieSelector
+ * 
+ * Philosophical:
+ * The DieSelector bridges the gap between the digital interface and the tabletop 
+ * experience. It presents choices not as abstract numbers, but as physical die faces, 
+ * reinforcing the game's mechanics and theme. It turns a simple number selection into 
+ * a tactile, game-relevant action.
+ * 
+ * Technical:
+ * A grid of buttons representing die faces for selecting a number.
+ * 
+ * Props:
+ * - sides (number): The number of sides on the die (e.g., 6, 10).
+ * - modelValue (number | null): The currently selected value.
+ * - label (string): Optional label displayed above the selector.
+ * - color (string): Visual style ('white', 'red'). Defaults to 'white'.
+ * 
+ * Events:
+ * - update:modelValue: Emitted when a value is selected.
+ */
+
 interface Props {
   sides: number
   modelValue: number | null

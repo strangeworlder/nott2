@@ -1,4 +1,24 @@
 <script setup lang="ts">
+/**
+ * Toggle
+ * 
+ * Philosophical:
+ * A compact switch for binary states. Similar to a checkbox but often implies a more 
+ * immediate or system-level change (like a setting). It offers a clear visual distinction 
+ * between "ON" and "OFF" states.
+ * 
+ * Technical:
+ * A button-based toggle component.
+ * 
+ * Props:
+ * - modelValue (boolean): The state of the toggle.
+ * - labelOn (string): Label when true. Defaults to 'On'.
+ * - labelOff (string): Label when false. Defaults to 'Off'.
+ * 
+ * Events:
+ * - update:modelValue: Emitted when the toggle state changes.
+ */
+
 interface Props {
   modelValue: boolean
   labelOn?: string

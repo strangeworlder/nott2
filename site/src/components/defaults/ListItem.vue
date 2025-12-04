@@ -1,4 +1,24 @@
 <script setup lang="ts">
+/**
+ * ListItem
+ * 
+ * Philosophical:
+ * A single atom of information within a List structure. It represents one distinct 
+ * point, rule, or option. In ordered lists, it carries its own ordinality, emphasizing 
+ * sequence and progression.
+ * 
+ * Technical:
+ * A component for rendering individual list items.
+ * 
+ * Props:
+ * - color (string): Text color override.
+ * - variant (string): Style variant ('default', 'ordered').
+ * - index (number): The index of the item (for ordered lists).
+ * 
+ * Slots:
+ * - default: The content of the list item.
+ */
+
 import { computed } from 'vue'
 import Text from '../Text.vue'
 

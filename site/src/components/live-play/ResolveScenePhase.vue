@@ -3,9 +3,11 @@ import { useLivePlay } from '../../composables/useLivePlay'
 import Card from '../Card.vue'
 import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
+import Separator from '../defaults/Separator.vue'
 import IngressText from '../IngressText.vue'
-
 import ActionFooter from '../ActionFooter.vue'
+import { computed } from 'vue'
+import { getResolveScenePhaseContent } from '../../utils/contentLoader'
 
 const { 
   activeCard,
@@ -13,13 +15,16 @@ const {
   isFirstTime,
   isSuccess,
   effortResult,
-  rollEffort
+  rollEffort,
+  selectedPlayset
 } = useLivePlay()
 
 const emit = defineEmits<{
   (e: 'back'): void
   (e: 'next'): void
 }>()
+
+const content = computed(() => getResolveScenePhaseContent(selectedPlayset.value))
 </script>
 
 <template>
@@ -34,50 +39,50 @@ const emit = defineEmits<{
     />
 
     <IngressText>
-      The dice provide insight into how the risky challenge of the goes. Now what remains is for you to narrate it out.
+      <span v-html="content.ingress"></span>
     </IngressText>
 
     <div class="grid gap-6 md:grid-cols-2 mb-8">
       <!-- Outcome -->
-      <Card :title="isSuccess ? 'Success' : 'Failure'" :variant="isSuccess ? 'success' : 'failure'">
+      <Card :title="isSuccess ? content.outcome.success.title : content.outcome.failure.title" :variant="isSuccess ? 'success' : 'failure'">
         <div v-if="isSuccess">
           <Text variant="body" class="mb-4">
-            The Active Character achieves their goal. Whatever challenge they faced, they push through.
+            <span v-html="content.outcome.success.body"></span>
           </Text>
           <Text variant="caption" color="muted">
-            Describe how they triumph over the horror.
+            <span v-html="content.outcome.success.caption"></span>
           </Text>
         </div>
         <div v-else>
           <Text variant="body" class="mb-4">
-            The Active Character fails. Whatever challenge they faced, they fall short.
+            <span v-html="content.outcome.failure.body"></span>
           </Text>
           <Text variant="caption" color="muted">
-            Describe how the situation spirals out of control.
+            <span v-html="content.outcome.failure.caption"></span>
           </Text>
         </div>
       </Card>
 
       <!-- Effort / Sacrifice -->
-      <Card title="Effort" class="border-nott-gray/30">
+      <Card :title="content.effort.title" class="border-nott-gray/30">
         <div v-if="rollEffort">
-           <Text variant="h3" color="red" class="mb-2">{{ effortResult?.title || 'Effort Exerted' }}</Text>
-           <div class="h-px w-1/2 mx-auto bg-nott-red/30 my-2"></div>
+           <Text variant="h3" color="red" class="mb-2">{{ effortResult?.title || content.effort.defaultTitle }}</Text>
+           <Separator class="w-1/2 mx-auto my-2" />
            <Text variant="body" color="white">{{ effortResult?.mechanic }}</Text>
         </div>
         <div v-else>
-          <Text variant="body" color="muted">No extra effort was pushed. The result stands on its own.</Text>
+          <Text variant="body" color="muted">{{ content.effort.none }}</Text>
         </div>
       </Card>
     </div>
 
     <Card variant="instruction" class="text-center mb-12">
-      <Text variant="h3" class="mb-2">Bring the Scene to a Close</Text>
-      <Text variant="body" color="muted">Work together to narrate the final moments of the scene based on these results. When the beat is finished, proceed to update the game state.</Text>
+      <Text variant="h3" class="mb-2">{{ content.instruction.title }}</Text>
+      <Text variant="body" color="muted"><span v-html="content.instruction.body"></span></Text>
     </Card>
 
     <ActionFooter 
-      label="Update Game State"
+      :label="content.buttonLabel"
       @click="$emit('next')"
     />
   </div>

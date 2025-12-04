@@ -1,4 +1,22 @@
 <script setup lang="ts">
+/**
+ * Icon
+ * 
+ * Philosophical:
+ * Icons serve as visual shorthand, reducing cognitive load by replacing text with 
+ * universally (or contextually) recognized symbols. They allow for denser information 
+ * display and quicker scanning. In this text-heavy game, icons provide necessary 
+ * visual relief and immediate semantic cues.
+ * 
+ * Technical:
+ * A wrapper component for rendering SVG icons.
+ * 
+ * Props:
+ * - name (string): The name of the icon to render ('clock', 'users', 'supplies').
+ * - size (number | string): The size of the icon in pixels. Defaults to 24.
+ * - color (string): The color of the icon ('white', 'red', 'muted', 'success').
+ */
+
 import { computed } from 'vue'
 
 const props = defineProps<{

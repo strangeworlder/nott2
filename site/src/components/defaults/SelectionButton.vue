@@ -1,4 +1,26 @@
 <script setup lang="ts">
+/**
+ * SelectionButton
+ * 
+ * Philosophical:
+ * A tool for making specific, often exclusive, choices. Unlike the primary Button which 
+ * advances the state, the SelectionButton configures it. It is tactile and toggle-like, 
+ * allowing the user to "set" parameters before "executing" them.
+ * 
+ * Technical:
+ * A button component designed for selection/toggle states.
+ * 
+ * Props:
+ * - selected (boolean): Whether the button is in the selected state.
+ * - disabled (boolean): Whether the button is interactive.
+ * - variant (string): Shape variant ('default', 'square'). Defaults to 'default'.
+ * - color (string): Color variant ('default', 'red'). Defaults to 'default'.
+ * - size (string): Size variant ('sm', 'md'). Defaults to 'md'.
+ * 
+ * Slots:
+ * - default: The label or content of the button.
+ */
+
 import { computed } from 'vue'
 
 interface Props {

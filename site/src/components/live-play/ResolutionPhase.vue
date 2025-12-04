@@ -73,26 +73,26 @@ onMounted(() => {
                        </SelectionButton>
                    </div>
                 </div>
-                <!-- Else show static number -->
-                <div v-else class="text-2xl font-display text-nott-white">
-                  {{ trophyTop?.rank || 10 }}
+                 <!-- Else show static number -->
+                <div v-else>
+                  <Text variant="h2" color="white" leading="none">{{ trophyTop?.rank || 10 }}</Text>
                 </div>
              </div>
 
-             <div class="text-nott-red font-bold text-xl">+</div>
+             <Text variant="h3" color="red" class="font-bold">+</Text>
              
              <!-- Modifier -->
              <div class="text-center">
                 <Text variant="caption" color="muted">{{ content.targetDifficulty.mod }}</Text>
-                <div class="text-2xl font-display text-nott-white">{{ (targetDifficulty || 0) - (trophyTop?.rank || 0) }}</div>
+                <Text variant="h2" color="white" leading="none">{{ (targetDifficulty || 0) - (trophyTop?.rank || 0) }}</Text>
              </div>
              
-             <div class="text-nott-red font-bold text-xl">=</div>
+             <Text variant="h3" color="red" class="font-bold">=</Text>
              
              <!-- Total -->
              <div class="text-center">
                 <Text variant="caption" color="muted">{{ content.targetDifficulty.total }}</Text>
-                <div class="text-4xl font-display text-nott-red font-bold">{{ targetDifficulty }}</div>
+                <Text variant="h1" color="red" class="font-bold" leading="none">{{ targetDifficulty }}</Text>
              </div>
           </div>
           
@@ -103,7 +103,7 @@ onMounted(() => {
         <div v-else class="space-y-4 animate-fade-in">
            <div class="flex flex-col items-center justify-center gap-2">
               <Text variant="label" align="center">{{ content.targetDifficulty.numberCardTitle }}</Text>
-              <div class="text-6xl font-display text-nott-red font-bold">{{ selectedRank }}</div>
+              <Text variant="h1" color="red" class="font-bold" leading="none">{{ selectedRank }}</Text>
               <Text variant="caption" color="muted">{{ content.targetDifficulty.numberCardExplanation }}</Text>
            </div>
         </div>

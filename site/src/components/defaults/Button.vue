@@ -1,4 +1,28 @@
 <script setup lang="ts">
+/**
+ * Button
+ * 
+ * Philosophical:
+ * The Button is the primary agent of change in the interface. It represents a potential 
+ * action the user can take. The design of the button (variant, size) communicates the 
+ * weight and consequence of that action. Primary buttons are calls to adventure or 
+ * commitment, while secondary or ghost buttons offer options without demanding immediate 
+ * attention. The 'debug' variant serves as a meta-tool, breaking the fourth wall for 
+ * development purposes.
+ * 
+ * Technical:
+ * A versatile button component with multiple styles and sizes.
+ * 
+ * Props:
+ * - variant (string): Visual style ('primary', 'secondary', 'ghost', 'debug'). Defaults to 'primary'.
+ * - size (string): Size of the button ('xs', 'sm', 'md', 'lg', 'xl'). Defaults to 'md'.
+ * - disabled (boolean): Whether the button is interactive. Defaults to false.
+ * - block (boolean): Whether the button should take up the full width of its container. Defaults to false.
+ * 
+ * Slots:
+ * - default: The content of the button (text or icons).
+ */
+
 import { computed } from 'vue'
 
 interface Props {

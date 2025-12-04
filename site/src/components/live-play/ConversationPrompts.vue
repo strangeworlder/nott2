@@ -30,7 +30,7 @@ const currentQuestions = computed(() => {
     <Text variant="body" color="white" class="mb-4"><span v-html="intro"></span></Text>
     <List>
       <ListItem v-for="(question, index) in currentQuestions" :key="index">
-        <em>"{{ question }}"</em>
+        <Text as="span">"{{ question }}"</Text>
       </ListItem>
     </List>
   </Card>

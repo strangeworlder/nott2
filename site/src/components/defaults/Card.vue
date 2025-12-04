@@ -1,4 +1,29 @@
 <script setup lang="ts">
+/**
+ * Card
+ * 
+ * Philosophical:
+ * The Card is the fundamental unit of containment for distinct game concepts. It mimics 
+ * the physical metaphor of a card or a dossier, grouping related information (like a 
+ * character profile, a rule explanation, or a game event) into a single, digestible 
+ * entity. It separates "figure" from "ground," allowing the user to focus on specific 
+ * pieces of content one at a time. The optional glow effects add a layer of liveliness 
+ * and importance, suggesting the card is an active element in the game world.
+ * 
+ * Technical:
+ * A flexible container component with optional title, styling variants, and hover effects.
+ * 
+ * Props:
+ * - title (string): Optional title displayed at the top of the card.
+ * - interactive (boolean): Whether the card shows hover effects. Defaults to true.
+ * - variant (string): Visual style ('default', 'muted', 'highlighted', 'success', 'failure', 'instruction', 'ghost'). Defaults to 'default'.
+ * - noPadding (boolean): Removes default padding if true. Defaults to false.
+ * - center (boolean): Centers the content if true. Defaults to false.
+ * 
+ * Slots:
+ * - default: The main content of the card.
+ */
+
 import { computed } from 'vue'
 
 interface Props {

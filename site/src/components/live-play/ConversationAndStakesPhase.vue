@@ -45,13 +45,11 @@ const emit = defineEmits<{
 
     <div class="max-w-2xl mx-auto space-y-8 border-t border-nott-gray/20 pt-8 mb-12">
       <Card :title="content.steps.setScene.title">
-        <Text variant="body" color="white">
-          <span v-html="content.steps.setScene.activePlayer1"></span>
-          <div class="mb-4"></div>
-          <span v-html="content.steps.setScene.otherPlayers"></span>
-          <div class="mb-4"></div>
-          <span v-html="content.steps.setScene.activePlayer2"></span>
-        </Text>
+        <div class="space-y-4">
+          <Text variant="body" color="white" v-html="content.steps.setScene.activePlayer1" />
+          <Text variant="body" color="white" v-html="content.steps.setScene.otherPlayers" />
+          <Text variant="body" color="white" v-html="content.steps.setScene.activePlayer2" />
+        </div>
       </Card>
     </div>
     <div class="grid gap-6 md:grid-cols-2 mb-8">

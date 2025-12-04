@@ -322,8 +322,287 @@ export function getResolutionPhaseContent(playsetId?: string | null): Resolution
     };
 }
 
+export interface ResolveScenePhaseContent {
+    ingress: string;
+    outcome: {
+        success: {
+            title: string;
+            body: string;
+            caption: string;
+        };
+        failure: {
+            title: string;
+            body: string;
+            caption: string;
+        };
+    };
+    effort: {
+        title: string;
+        defaultTitle: string;
+        none: string;
+    };
+    instruction: {
+        title: string;
+        body: string;
+    };
+    buttonLabel: string;
+}
+
+export function getResolveScenePhaseContent(playsetId?: string | null): ResolveScenePhaseContent {
+    const data = loadData<any>('resolveScenePhase.json', playsetId);
+
+    return {
+        ingress: marked.parseInline(data.ingress) as string,
+        outcome: {
+            success: {
+                title: data.outcome.success.title,
+                body: marked.parseInline(data.outcome.success.body) as string,
+                caption: marked.parseInline(data.outcome.success.caption) as string
+            },
+            failure: {
+                title: data.outcome.failure.title,
+                body: marked.parseInline(data.outcome.failure.body) as string,
+                caption: marked.parseInline(data.outcome.failure.caption) as string
+            }
+        },
+        effort: data.effort,
+        instruction: {
+            title: data.instruction.title,
+            body: marked.parseInline(data.instruction.body) as string
+        },
+        buttonLabel: data.buttonLabel
+    };
+}
+
 export interface PlaysetConfig {
     overrides?: Record<string, boolean>;
+}
+
+export interface FalloutPhaseContent {
+    intro: string;
+    genrePoint: {
+        title: string;
+        body: string;
+        labelOn: string;
+        labelOff: string;
+        caption: string;
+    };
+    decks: {
+        title: string;
+        success: {
+            title: string;
+            caption: string;
+        };
+        failure: {
+            title: string;
+            caption: string;
+        };
+    };
+    jokers: {
+        red: {
+            victory: {
+                title: string;
+                body: string;
+                caption: string;
+            };
+            defeat: {
+                title: string;
+                body: string;
+                shuffle: string;
+            };
+        };
+        black: {
+            remove: {
+                title: string;
+                body: string;
+            };
+            success: {
+                title: string;
+                body: string;
+            };
+            failure: {
+                title: string;
+                body: string;
+            };
+        };
+    };
+    standard: {
+        success: {
+            trophy: {
+                title: string;
+                body: string;
+                caption: string;
+            };
+            reserve: {
+                title: string;
+                body: string;
+            };
+            weakness: {
+                title: string;
+                found: {
+                    title: string;
+                    caption: string;
+                    action: string;
+                };
+                known: {
+                    title: string;
+                    caption: string;
+                    action: string;
+                };
+            };
+            retaliate: {
+                title: string;
+                add: string;
+                empty: string;
+            };
+            remains: {
+                title: string;
+                body: string;
+            };
+        };
+        failure: {
+            threat: {
+                title: string;
+                body: string;
+            };
+            reserve: {
+                title: string;
+                body: string;
+            };
+            strikes: {
+                title: string;
+                body: string;
+            };
+            grow: {
+                title: string;
+                add: string;
+                empty: string;
+            };
+            remains: {
+                title: string;
+                body: string;
+            };
+        };
+    };
+    buttons: {
+        finish: string;
+        next: string;
+    };
+}
+
+export function getFalloutPhaseContent(playsetId?: string | null): FalloutPhaseContent {
+    const data = loadData<any>('falloutPhase.json', playsetId);
+
+    return {
+        intro: marked.parseInline(data.intro) as string,
+        genrePoint: data.genrePoint,
+        decks: data.decks,
+        jokers: {
+            red: {
+                victory: {
+                    title: data.jokers.red.victory.title,
+                    body: marked.parseInline(data.jokers.red.victory.body) as string,
+                    caption: marked.parseInline(data.jokers.red.victory.caption) as string
+                },
+                defeat: {
+                    title: data.jokers.red.defeat.title,
+                    body: marked.parseInline(data.jokers.red.defeat.body) as string,
+                    shuffle: marked.parseInline(data.jokers.red.defeat.shuffle) as string
+                }
+            },
+            black: {
+                remove: {
+                    title: data.jokers.black.remove.title,
+                    body: marked.parseInline(data.jokers.black.remove.body) as string
+                },
+                success: {
+                    title: data.jokers.black.success.title,
+                    body: marked.parseInline(data.jokers.black.success.body) as string
+                },
+                failure: {
+                    title: data.jokers.black.failure.title,
+                    body: marked.parseInline(data.jokers.black.failure.body) as string
+                }
+            }
+        },
+        standard: {
+            success: {
+                trophy: {
+                    title: data.standard.success.trophy.title,
+                    body: marked.parseInline(data.standard.success.trophy.body) as string,
+                    caption: marked.parseInline(data.standard.success.trophy.caption) as string
+                },
+                reserve: {
+                    title: data.standard.success.reserve.title,
+                    body: marked.parseInline(data.standard.success.reserve.body) as string
+                },
+                weakness: {
+                    title: data.standard.success.weakness.title,
+                    found: {
+                        title: marked.parseInline(data.standard.success.weakness.found.title) as string,
+                        caption: marked.parseInline(data.standard.success.weakness.found.caption) as string,
+                        action: marked.parseInline(data.standard.success.weakness.found.action) as string
+                    },
+                    known: {
+                        title: marked.parseInline(data.standard.success.weakness.known.title) as string,
+                        caption: marked.parseInline(data.standard.success.weakness.known.caption) as string,
+                        action: marked.parseInline(data.standard.success.weakness.known.action) as string
+                    }
+                },
+                retaliate: {
+                    title: data.standard.success.retaliate.title,
+                    add: marked.parseInline(data.standard.success.retaliate.add) as string,
+                    empty: marked.parseInline(data.standard.success.retaliate.empty) as string
+                },
+                remains: {
+                    title: data.standard.success.remains.title,
+                    body: marked.parseInline(data.standard.success.remains.body) as string
+                }
+            },
+            failure: {
+                threat: {
+                    title: data.standard.failure.threat.title,
+                    body: marked.parseInline(data.standard.failure.threat.body) as string
+                },
+                reserve: {
+                    title: data.standard.failure.reserve.title,
+                    body: marked.parseInline(data.standard.failure.reserve.body) as string
+                },
+                strikes: {
+                    title: data.standard.failure.strikes.title,
+                    body: marked.parseInline(data.standard.failure.strikes.body) as string
+                },
+                grow: {
+                    title: data.standard.failure.grow.title,
+                    add: marked.parseInline(data.standard.failure.grow.add) as string,
+                    empty: marked.parseInline(data.standard.failure.grow.empty) as string
+                },
+                remains: {
+                    title: data.standard.failure.remains.title,
+                    body: marked.parseInline(data.standard.failure.remains.body) as string
+                }
+            }
+        },
+        buttons: data.buttons
+    };
+}
+
+export interface ManualCardEntryContent {
+    title: string;
+    joker: {
+        title: string;
+        red: string;
+        black: string;
+        none: string;
+    };
+    buttons: {
+        cancel: string;
+        add: string;
+    };
+}
+
+export function getManualCardEntryContent(playsetId?: string | null): ManualCardEntryContent {
+    return loadData<ManualCardEntryContent>('manualCardEntry.json', playsetId);
 }
 
 export function getPlaysetConfig(playsetId?: string | null): PlaysetConfig {

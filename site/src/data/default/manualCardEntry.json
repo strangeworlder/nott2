@@ -1,0 +1,13 @@
+{
+    "title": "Select Drawn Card",
+    "joker": {
+        "title": "Or Joker?",
+        "red": "Red",
+        "black": "Black",
+        "none": "None"
+    },
+    "buttons": {
+        "cancel": "Cancel",
+        "add": "Add to Table"
+    }
+}

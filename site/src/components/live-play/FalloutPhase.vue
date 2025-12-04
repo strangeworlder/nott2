@@ -5,6 +5,8 @@ import Text from '../Text.vue'
 import Card from '../Card.vue'
 import ActionFooter from '../ActionFooter.vue'
 import ProcessStep from '../ProcessStep.vue'
+import { computed } from 'vue'
+import { getFalloutPhaseContent } from '../../utils/contentLoader'
 
 const { 
   isSuccess, 
@@ -20,41 +22,76 @@ const {
   playerGenrePoints,
   pendingFalloutRank,
   getRankName,
-  selectedJoker
+  selectedJoker,
+  selectedPlayset
 } = useLivePlay()
 
 const emit = defineEmits<{
   (e: 'back'): void
 }>()
+
+const content = computed(() => getFalloutPhaseContent(selectedPlayset.value))
+
+const genrePointCaption = computed(() => {
+  return content.value.genrePoint.caption
+    .replace('{table}', tableGenrePoints.value.toString())
+    .replace('{player}', playerGenrePoints.value.toString())
+})
+
+const trophyText = computed(() => {
+  return content.value.standard.success.trophy.body.replace('{card}', cardName.value)
+})
+
+const threatText = computed(() => {
+  return content.value.standard.failure.threat.body.replace('{card}', cardName.value)
+})
+
+const weaknessFoundCaption = computed(() => {
+  return content.value.standard.success.weakness.found.caption.replace('{suit}', selectedSuit.value || '')
+})
+
+const weaknessKnownCaption = computed(() => {
+  return content.value.standard.success.weakness.known.caption.replace('{suit}', selectedSuit.value || '')
+})
+
+const retaliateText = computed(() => {
+  if (!pendingFalloutRank.value) return ''
+  return content.value.standard.success.retaliate.add.replace('{rank}', getRankName(pendingFalloutRank.value))
+})
+
+const growText = computed(() => {
+  if (!pendingFalloutRank.value) return ''
+  return content.value.standard.failure.grow.add.replace('{rank}', getRankName(pendingFalloutRank.value))
+})
 </script>
 
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <Text class="mb-8" variant="quote" align="center" color="muted">
-      The dust settles. The game state changes. Update the decks and prepare for what comes next.
+      <span v-html="content.intro"></span>
     </Text>
 
     <div class="space-y-8 mb-12">
-      <Card title="Genre Point Checkpoint">
-        <Text align="center" variant="body">Did a player play into a trope, make a great roleplay choice, or terrify the table?</Text>
+      <Card :title="content.genrePoint.title">
+        <Text align="center" variant="body">{{ content.genrePoint.body }}</Text>
         <div class="mb-4 mt-4 text-center">
           <Toggle 
             :model-value="isGenrePointAwarded"
             @update:model-value="toggleGenrePointAward"
-            label-on="Genre Point Awarded"
-            label-off="Award Genre Point?"
+            :label-on="content.genrePoint.labelOn"
+            :label-off="content.genrePoint.labelOff"
             :disabled="!isGenrePointAwarded && tableGenrePoints === 0"
           />
         </div>
-        <Text align="center" variant="caption" color="muted">Tokens on Table: {{ tableGenrePoints }} | Tokens Held: {{ playerGenrePoints }}</Text>
+        <Text align="center" variant="caption" color="muted">{{ genrePointCaption }}</Text>
       </Card>
 
-      <Card title="Update Physical Decks">
+      <Card :title="content.decks.title">
         <div class="space-y-8">
           <div v-if="isSuccess" class="animate-fade-in">
-            <div class="text-center mb-8 border-b border-nott-green/30 pb-4">
-              <Text variant="h2" color="success" glow class="mb-2">SUCCESS</Text>
-              <Text variant="caption" color="muted">The character manages to accomplish their goal.</Text>
+            <div class="text-center mb-8">
+              <Text variant="h2" color="success" glow class="mb-2 border-b border-nott-green/30 pb-4 inline-block w-full">{{ content.decks.success.title }}</Text>
+              <Text variant="caption" color="muted">{{ content.decks.success.caption }}</Text>
             </div>
 
             <div class="space-y-6 relative">
@@ -68,19 +105,19 @@ const emit = defineEmits<{
                     v-if="selectedJoker === 'Red'" 
                     step="!" 
                     variant="success" 
-                    title="Victory"
+                    :title="content.jokers.red.victory.title"
                   >
-                    <Text variant="body">The Red Joker is defeated. You have survived the night.</Text>
-                    <Text variant="caption" color="muted" class="mt-2">Proceed to see your final score.</Text>
+                    <Text variant="body"><span v-html="content.jokers.red.victory.body"></span></Text>
+                    <Text variant="caption" color="muted" class="mt-2"><span v-html="content.jokers.red.victory.caption"></span></Text>
                   </ProcessStep>
 
                   <!-- Black Joker Success -->
                   <div v-else-if="selectedJoker === 'Black'" class="space-y-6">
-                    <ProcessStep step="1" variant="success" title="One Last Chance">
-                        <Text variant="body">Remove the <strong>Black Joker</strong> from the game.</Text>
+                    <ProcessStep step="1" variant="success" :title="content.jokers.black.remove.title">
+                        <Text variant="body"><span v-html="content.jokers.black.remove.body"></span></Text>
                     </ProcessStep>
-                    <ProcessStep step="2" variant="success" title="A Small Victory">
-                        <Text variant="body">Remove the highest Face Card from the Threat Deck.</Text>
+                    <ProcessStep step="2" variant="success" :title="content.jokers.black.success.title">
+                        <Text variant="body"><span v-html="content.jokers.black.success.body"></span></Text>
                     </ProcessStep>
                   </div>
               </template>
@@ -88,9 +125,9 @@ const emit = defineEmits<{
               <!-- Standard Card Success Handling -->
               <template v-else>
                   <!-- Step 1 -->
-                  <ProcessStep step="1" variant="success" title="Update Trophy Pile">
-                      <Text variant="body">Move the <strong>{{ cardName }}</strong> to the top of the Trophy Pile.</Text>
-                      <Text variant="caption" color="muted" class="mt-1 block">This becomes the new Base Difficulty for the next Face Card the characters face.</Text>
+                  <ProcessStep step="1" variant="success" :title="content.standard.success.trophy.title">
+                      <Text variant="body"><span v-html="trophyText"></span></Text>
+                      <Text variant="caption" color="muted" class="mt-1 block"><span v-html="content.standard.success.trophy.caption"></span></Text>
                   </ProcessStep>
                   
                   <!-- Step 2 (Number Card) -->
@@ -98,39 +135,39 @@ const emit = defineEmits<{
                     v-if="!isFaceCard" 
                     step="2" 
                     variant="success" 
-                    title="Add Reserve"
+                    :title="content.standard.success.reserve.title"
                   >
-                      <Text variant="body">Take the next card from the <strong>Number Reserve</strong> and add it to the bottom of the Threat Deck.</Text>
+                      <Text variant="body"><span v-html="content.standard.success.reserve.body"></span></Text>
                   </ProcessStep>
 
                   <!-- Face Card Steps -->
                   <template v-else>
                     <!-- Step 2 -->
-                    <ProcessStep step="2" variant="success" title="Check for Weakness">
+                    <ProcessStep step="2" variant="success" :title="content.standard.success.weakness.title">
                         <Card v-if="isFirstTime" variant="success" :interactive="false" class="p-1 mt-1">
-                          <Text variant="body" color="success" class="mb-1"><strong>Weakness Found!</strong></Text>
-                          <Text variant="caption" class="block mb-2">This is the first time you've defeated a {{ selectedSuit }} Face Card.</Text>
-                          <Text variant="body"><strong>Remove this card from the game.</strong></Text>
+                          <Text variant="body" color="success" class="mb-1"><strong><span v-html="content.standard.success.weakness.found.title"></span></strong></Text>
+                          <Text variant="caption" class="block mb-2"><span v-html="weaknessFoundCaption"></span></Text>
+                          <Text variant="body"><strong><span v-html="content.standard.success.weakness.found.action"></span></strong></Text>
                         </Card>
                         <Card v-else variant="failure" :interactive="false" class="p-1 mt-1">
-                          <Text variant="body" color="red" class="mb-1"><strong>Weakness Already Known</strong></Text>
-                          <Text variant="caption" class="block mb-2">You have already found the weakness for {{ selectedSuit }}.</Text>
-                          <Text variant="body"><strong>Shuffle this card back into the physical Threat Deck.</strong></Text>
+                          <Text variant="body" color="red" class="mb-1"><strong><span v-html="content.standard.success.weakness.known.title"></span></strong></Text>
+                          <Text variant="caption" class="block mb-2"><span v-html="weaknessKnownCaption"></span></Text>
+                          <Text variant="body"><strong><span v-html="content.standard.success.weakness.known.action"></span></strong></Text>
                         </Card>
                     </ProcessStep>
 
                     <!-- Step 3 -->
-                    <ProcessStep step="3" variant="success" title="The Killer Retaliates">
-                        <div v-if="effortResult" class="bg-nott-white/5 p-3 rounded mt-1 border border-nott-white/10">
+                    <ProcessStep step="3" variant="success" :title="content.standard.success.retaliate.title">
+                        <Card v-if="effortResult" variant="instruction" :interactive="false" class="mt-1">
                           <Text variant="body" class="mb-1"><strong>{{ effortResult.title }} ({{ effortResult.level }})</strong></Text>
-                          <Text v-if="pendingFalloutRank" variant="body">Add a random <strong>{{ getRankName(pendingFalloutRank) }}</strong> to the Threat Deck.</Text>
-                          <Text v-else variant="body" color="muted">No Face Cards left in reserve!</Text>
-                        </div>
+                          <Text v-if="pendingFalloutRank" variant="body"><span v-html="retaliateText"></span></Text>
+                          <Text v-else variant="body" color="muted">{{ content.standard.success.retaliate.empty }}</Text>
+                        </Card>
                     </ProcessStep>
                     
                     <!-- Step 4 -->
-                    <ProcessStep step="4" variant="success" title="The Threat Remains">
-                        <Text variant="body"><strong>Shuffle the entire Threat Deck and Trophy Pile.</strong></Text>
+                    <ProcessStep step="4" variant="success" :title="content.standard.success.remains.title">
+                        <Text variant="body"><strong><span v-html="content.standard.success.remains.body"></span></strong></Text>
                     </ProcessStep>
                   </template>
               </template>
@@ -138,9 +175,9 @@ const emit = defineEmits<{
           </div>
 
           <div v-else class="animate-fade-in">
-            <div class="text-center mb-8 border-b border-nott-red/30 pb-4">
-              <Text variant="h2" color="red" glow class="mb-2">FAILURE</Text>
-              <Text variant="caption" color="muted">The horror deepens...</Text>
+            <div class="text-center mb-8">
+              <Text variant="h2" color="red" glow class="mb-2 border-b border-nott-red/30 pb-4 inline-block w-full">{{ content.decks.failure.title }}</Text>
+              <Text variant="caption" color="muted">{{ content.decks.failure.caption }}</Text>
             </div>
 
             <div class="space-y-6 relative">
@@ -155,41 +192,41 @@ const emit = defineEmits<{
                         v-if="isSuccess" 
                         step="!" 
                         variant="failure" 
-                        title="Victory"
+                        :title="content.jokers.red.victory.title"
                     >
-                        <Text variant="body">The Red Joker is defeated. You have survived.</Text>
+                        <Text variant="body"><span v-html="content.jokers.red.victory.body"></span></Text>
                     </ProcessStep>
                     <ProcessStep 
                         v-else 
                         step="!" 
                         variant="failure" 
-                        title="The End"
+                        :title="content.jokers.red.defeat.title"
                     >
-                        <Text variant="body"><strong>Your character is killed.</strong></Text>
-                        <Text variant="body" class="mt-2">Shuffle the <strong>Red Joker</strong> back into the Threat Deck.</Text>
+                        <Text variant="body"><strong><span v-html="content.jokers.red.defeat.body"></span></strong></Text>
+                        <Text variant="body" class="mt-2"><span v-html="content.jokers.red.defeat.shuffle"></span></Text>
                     </ProcessStep>
                  </template>
 
                  <!-- Black Joker -->
                  <template v-else-if="selectedJoker === 'Black'">
-                    <ProcessStep step="1" variant="failure" title="One Last Chance">
-                        <Text variant="body">Remove the <strong>Black Joker</strong> from the game.</Text>
+                    <ProcessStep step="1" variant="failure" :title="content.jokers.black.remove.title">
+                        <Text variant="body"><span v-html="content.jokers.black.remove.body"></span></Text>
                     </ProcessStep>
                     <ProcessStep 
                         v-if="isSuccess" 
                         step="2" 
                         variant="failure" 
-                        title="A Small Victory"
+                        :title="content.jokers.black.success.title"
                     >
-                        <Text variant="body">Remove the highest Face Card from the Threat Deck.</Text>
+                        <Text variant="body"><span v-html="content.jokers.black.success.body"></span></Text>
                     </ProcessStep>
                     <ProcessStep 
                         v-else 
                         step="2" 
                         variant="failure" 
-                        title="The Horror Grows"
+                        :title="content.jokers.black.failure.title"
                     >
-                        <Text variant="body">Add a random <strong>King</strong> to the Threat Deck.</Text>
+                        <Text variant="body"><span v-html="content.jokers.black.failure.body"></span></Text>
                     </ProcessStep>
                  </template>
               </template>
@@ -197,8 +234,8 @@ const emit = defineEmits<{
               <!-- Standard Card Steps (Face or Number) -->
               <template v-else>
                   <!-- Step 1: Place Card -->
-                  <ProcessStep step="1" variant="failure" title="Threat Deck">
-                      <Text variant="body">Place the <strong>{{ cardName }}</strong> at the bottom of the Threat Deck.</Text>
+                  <ProcessStep step="1" variant="failure" :title="content.standard.failure.threat.title">
+                      <Text variant="body"><span v-html="threatText"></span></Text>
                   </ProcessStep>
 
                   <!-- Step 2 (Number Card) -->
@@ -206,22 +243,22 @@ const emit = defineEmits<{
                     v-if="!isFaceCard" 
                     step="2" 
                     variant="failure" 
-                    title="Add Reserve"
+                    :title="content.standard.failure.reserve.title"
                   >
-                      <Text variant="body">Take the next card from the <strong>Number Reserve</strong> and add it to the bottom of the Threat Deck.</Text>
+                      <Text variant="body"><span v-html="content.standard.failure.reserve.body"></span></Text>
                   </ProcessStep>
 
                   <!-- Face Card Steps -->
                   <template v-else>
-                    <ProcessStep step="2" variant="failure" title="The Killer Strikes">
-                        <Text variant="body">Mark 1 Strike on your character sheet.</Text>
+                    <ProcessStep step="2" variant="failure" :title="content.standard.failure.strikes.title">
+                        <Text variant="body"><span v-html="content.standard.failure.strikes.body"></span></Text>
                     </ProcessStep>
-                    <ProcessStep step="3" variant="failure" title="The Horror Grows">
-                        <Text v-if="pendingFalloutRank" variant="body">Add a random <strong>{{ getRankName(pendingFalloutRank) }}</strong> to the bottom of the Threat Deck.</Text>
-                        <Text v-else variant="body" color="muted">No Face Cards left in reserve!</Text>
+                    <ProcessStep step="3" variant="failure" :title="content.standard.failure.grow.title">
+                        <Text v-if="pendingFalloutRank" variant="body"><span v-html="growText"></span></Text>
+                        <Text v-else variant="body" color="muted">{{ content.standard.failure.grow.empty }}</Text>
                     </ProcessStep>
-                    <ProcessStep step="4" variant="failure" title="The Threat Remains">
-                        <Text variant="body"><strong>Shuffle the entire Threat Deck and Trophy Pile.</strong></Text>
+                    <ProcessStep step="4" variant="failure" :title="content.standard.failure.remains.title">
+                        <Text variant="body"><strong><span v-html="content.standard.failure.remains.body"></span></strong></Text>
                     </ProcessStep>
                   </template>
               </template>
@@ -232,9 +269,8 @@ const emit = defineEmits<{
     </div>
 
     <!-- Action Footer -->
-    <!-- ActionFooter -->
     <ActionFooter 
-      :label="(selectedJoker === 'Red' && isSuccess) ? 'Finish Game' : 'Start Next Scene'"
+      :label="(selectedJoker === 'Red' && isSuccess) ? content.buttons.finish : content.buttons.next"
       @click="startNextScene"
     />
   </div>

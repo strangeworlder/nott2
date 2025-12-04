@@ -1,4 +1,26 @@
 <script setup lang="ts">
+/**
+ * PlayingCard
+ * 
+ * Philosophical:
+ * The PlayingCard is the central totem of the game's aesthetic. It is not merely a 
+ * UI element but a diegetic object that anchors the digital game in the physical world 
+ * of cards, chance, and fate. It carries the weight of the game's core mechanic. 
+ * Its visual fidelity—the suits, the layout, the selection glow—is crucial for 
+ * maintaining the illusion of a tabletop experience.
+ * 
+ * Technical:
+ * A complex component rendering a standard playing card or Joker.
+ * 
+ * Props:
+ * - suit (string): The suit of the card ('Spades', 'Hearts', 'Clubs', 'Diamonds').
+ * - rank (number): The rank of the card (1-13).
+ * - isFace (boolean): Whether the card is a face card (deprecated/unused logic might exist).
+ * - selected (boolean): Whether the card is currently selected (highlighted).
+ * - isJoker (boolean): Whether the card is a Joker.
+ * - jokerColor (string): The color of the Joker ('Red', 'Black').
+ */
+
 import { computed } from 'vue'
 
 interface Props {

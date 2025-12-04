@@ -1,4 +1,23 @@
 <script setup lang="ts">
+/**
+ * NavButton
+ * 
+ * Philosophical:
+ * The NavButton represents a portal to another space within the application. Unlike 
+ * a standard Button which performs an action *here*, the NavButton transports the user 
+ * *there*. Its active state is highly visible, serving as a "you are here" marker 
+ * in the application's topology.
+ * 
+ * Technical:
+ * A specialized button component for navigation menus.
+ * 
+ * Props:
+ * - active (boolean): Whether this navigation item is currently active.
+ * 
+ * Slots:
+ * - default: The label of the navigation button.
+ */
+
 defineProps<{
   active?: boolean
 }>()

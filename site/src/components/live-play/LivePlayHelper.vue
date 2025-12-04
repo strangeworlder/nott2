@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useLivePlay } from '../../composables/useLivePlay'
 import Button from '../Button.vue'
-import LivePlayHeader from './LivePlayHeader.vue'
+import LivePlayHeader from '../LivePlayHeader.vue'
 
 // Import Steps
 import WelcomeScreen from './WelcomeScreen.vue'
@@ -30,6 +30,12 @@ const {
   getRankName,
   tableGenrePoints,
   playerGenrePoints,
+  trophyTop,
+  isTrophyTopRandomized,
+  cardName,
+  activeCard,
+  selectedJoker,
+  fullReset,
   nextPhase,
   prevPhase
 } = useLivePlay()
@@ -48,7 +54,17 @@ const isDev = import.meta.env.DEV
   <div class="min-h-screen bg-nott-black text-nott-white flex flex-col items-center p-4 md:p-8">
     
     <!-- New Header (Visible on all screens except Welcome and Win, though Welcome handles its own layout) -->
-    <LivePlayHeader v-if="currentPhase !== 'welcome' && currentPhase !== 'win'" />
+    <LivePlayHeader 
+      v-if="currentPhase !== 'welcome' && currentPhase !== 'win'"
+      :current-act="currentAct"
+      :current-phase="currentPhase"
+      :trophy-top="trophyTop"
+      :is-trophy-top-randomized="isTrophyTopRandomized"
+      :card-name="cardName"
+      :active-card="activeCard"
+      :selected-joker="selectedJoker"
+      :full-reset="fullReset"
+    />
 
     <!-- Phase: Welcome Screen -->
     <WelcomeScreen 

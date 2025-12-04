@@ -1,4 +1,26 @@
 <script setup lang="ts">
+/**
+ * List
+ * 
+ * Philosophical:
+ * The List imposes order on chaos. It groups related items—rules, inventory, options—into 
+ * a coherent structure. Whether ordered (sequential steps) or unordered (collections), 
+ * it allows the user to parse multiple distinct pieces of information as a single unit.
+ * 
+ * Technical:
+ * A flexible list container component supporting various styles and spacing.
+ * 
+ * Props:
+ * - as (string): The HTML tag to render ('ul', 'ol'). Defaults to 'ul'.
+ * - variant (string): Visual style ('disc', 'decimal', 'none').
+ * - color (string): Text color ('muted', 'white', 'red'). Defaults to 'muted'.
+ * - spacing (string): Vertical spacing between items ('sm', 'md', 'lg'). Defaults to 'sm'.
+ * - inside (boolean): Whether list markers are inside the content flow. Defaults to true.
+ * 
+ * Slots:
+ * - default: The list items (usually ListItem components).
+ */
+
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
