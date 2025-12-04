@@ -63,6 +63,10 @@ const growText = computed(() => {
   if (!pendingFalloutRank.value) return ''
   return content.value.standard.failure.grow.add.replace('{rank}', getRankName(pendingFalloutRank.value))
 })
+
+const isBreakingPoint = computed(() => {
+  return effortResult.value?.level === 4
+})
 </script>
 
 <template>
@@ -81,6 +85,7 @@ const growText = computed(() => {
             :label-on="content.genrePoint.labelOn"
             :label-off="content.genrePoint.labelOff"
             :disabled="!isGenrePointAwarded && tableGenrePoints === 0"
+            variant="switch"
           />
         </div>
         <Text align="center" variant="caption" color="muted">{{ genrePointCaption }}</Text>
@@ -170,6 +175,16 @@ const growText = computed(() => {
                         <Text variant="body"><strong><span v-html="content.standard.success.remains.body"></span></strong></Text>
                     </ProcessStep>
                   </template>
+
+                  <!-- Breaking Point Step (Success) -->
+                  <ProcessStep 
+                    v-if="isBreakingPoint" 
+                    step="!" 
+                    variant="failure" 
+                    title="BREAKING POINT"
+                  >
+                      <Text variant="body">The effort was too great. The Active Player takes a <strong>STRIKE</strong>.</Text>
+                  </ProcessStep>
               </template>
             </div>
           </div>
@@ -261,6 +276,16 @@ const growText = computed(() => {
                         <Text variant="body"><strong><span v-html="content.standard.failure.remains.body"></span></strong></Text>
                     </ProcessStep>
                   </template>
+
+                  <!-- Breaking Point Step (Failure) -->
+                  <ProcessStep 
+                    v-if="isBreakingPoint" 
+                    step="!" 
+                    variant="failure" 
+                    title="BREAKING POINT"
+                  >
+                      <Text variant="body">The effort was too great. The Active Player takes a <strong>STRIKE</strong>.</Text>
+                  </ProcessStep>
               </template>
             </div>
           </div>

@@ -2,6 +2,13 @@ import { ref, computed } from 'vue'
 import { effortScale } from '../data/rules'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 
+export interface Character {
+    id: Suit
+    name: string
+    strikes: number
+    isDead: boolean
+}
+
 export type LivePlayPhase =
     | 'welcome'
     | 'game-setup'
@@ -19,7 +26,14 @@ export type Playset = 'default' | 'summercamp'
 const visibleCards = ref<GameCard[]>([])
 const selectedCardId = ref<string | null>(null)
 
-const strikes = ref(0)
+const strikes = ref(0) // Global strike counter (legacy/total)
+const characters = ref<Character[]>([
+    { id: 'Spades', name: 'The Power', strikes: 0, isDead: false },
+    { id: 'Hearts', name: 'The Resolve', strikes: 0, isDead: false },
+    { id: 'Clubs', name: 'The Intellect', strikes: 0, isDead: false },
+    { id: 'Diamonds', name: 'The Finesse', strikes: 0, isDead: false }
+])
+const strikesToAssign = ref(0)
 const weaknessesFound = ref<Suit[]>([])
 const isEndgame = ref(false)
 const tableGenrePoints = ref(13)
@@ -168,6 +182,10 @@ export function useLivePlay() {
         return [...new Set(ranks)].sort((a, b) => b - a)
     })
 
+    const isGameOver = computed(() => {
+        return characters.value.every(c => c.isDead)
+    })
+
     // Methods
     const isRankAvailable = (rank: Rank) => {
         if (acesRemaining.value > 0) {
@@ -213,6 +231,9 @@ export function useLivePlay() {
             }
         }
     }
+
+
+
 
     const addNextReserve = () => {
         const nextRank = reserveQueue.value.shift()
@@ -305,13 +326,13 @@ export function useLivePlay() {
             // Refund
             isGenrePointUsed.value = false
             playerGenrePoints.value++
-            tableGenrePoints.value--
+            // Points come back from the void, not the table
         } else {
             // Use
             if (playerGenrePoints.value > 0) {
                 isGenrePointUsed.value = true
                 playerGenrePoints.value--
-                tableGenrePoints.value++
+                // Points go to the void, not the table
             }
         }
     }
@@ -355,10 +376,24 @@ export function useLivePlay() {
         isBlackJokerRemoved.value = false
         currentAct.value = 1
         selectedPlayset.value = null
+        characters.value = [
+            { id: 'Spades', name: 'The Power', strikes: 0, isDead: false },
+            { id: 'Hearts', name: 'The Resolve', strikes: 0, isDead: false },
+            { id: 'Clubs', name: 'The Intellect', strikes: 0, isDead: false },
+            { id: 'Diamonds', name: 'The Finesse', strikes: 0, isDead: false }
+        ]
+        strikesToAssign.value = 0
     }
 
     const startGame = () => {
         strikes.value = 0
+        characters.value = [
+            { id: 'Spades', name: 'The Power', strikes: 0, isDead: false },
+            { id: 'Hearts', name: 'The Resolve', strikes: 0, isDead: false },
+            { id: 'Clubs', name: 'The Intellect', strikes: 0, isDead: false },
+            { id: 'Diamonds', name: 'The Finesse', strikes: 0, isDead: false }
+        ]
+        strikesToAssign.value = 0
         weaknessesFound.value = []
         isEndgame.value = false
         isEndgameInitialized.value = false
@@ -558,7 +593,8 @@ export function useLivePlay() {
             }
 
             if (isFaceCard.value) {
-                strikes.value++
+                // strikes.value++ // Legacy
+                strikesToAssign.value++
                 addFaceCardToThreatDeck(13, rollEffort.value) // Add King
                 // Fix: Do NOT manually return the card here. shuffleThreatDeck returns ALL visible cards.
                 // if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
@@ -575,7 +611,13 @@ export function useLivePlay() {
                 if (!isEndgame.value) addNextReserve()
             }
         }
+
+        // Breaking Point Logic (Effort 4) - Always triggers a strike
+        if (rollEffort.value === 4) {
+            strikesToAssign.value++
+        }
     }
+
 
     const pendingFalloutRank = computed(() => {
         if (!isFaceCard.value) return null
@@ -764,12 +806,35 @@ export function useLivePlay() {
         }
     }
 
+    const assignStrike = (suit: Suit) => {
+        const char = characters.value.find(c => c.id === suit)
+        if (char && !char.isDead) {
+            char.strikes++
+            strikes.value++ // Keep global counter in sync for now
+            if (char.strikes >= 3) {
+                char.isDead = true
+            }
+
+            if (strikesToAssign.value > 0) {
+                strikesToAssign.value--
+            }
+
+            if (isGameOver.value) {
+                isGameWon.value = false // Just to be sure
+                currentPhase.value = 'win' // We'll reuse win screen or make a new one, but logic handles it
+            }
+        }
+    }
+
     return {
         // State
         activeCard, // Renamed from currentCard
         visibleCards, // New
         selectedCardId, // New
         strikes,
+        characters,
+        strikesToAssign,
+        isGameOver,
         weaknessesFound,
         isEndgame,
         isGameWon, // New
@@ -786,6 +851,7 @@ export function useLivePlay() {
         trophyTop,
         isTrophyTopRandomized,
         currentPhase,
+        currentAct,
         selectedJoker,
         sacrificeConfirmed,
         rollMain,
@@ -795,24 +861,21 @@ export function useLivePlay() {
         debugMode,
         tableGenrePoints,
         playerGenrePoints,
-        isGenrePointUsed,
-        isGenrePointAwarded,
-        currentAct,
         selectedPlayset,
-
-        // Computed
         selectedSuit,
         selectedRank,
         isFaceCard,
         isFirstTime,
         cardName,
-
         rollTotal,
         isSuccess,
         effortResult,
         availableTrophyRanks,
         isMiddleStackEmpty,
         hasFaceCardOnTable, // New
+        isGenrePointAwarded,
+        isGenrePointUsed,
+        pendingFalloutRank, // New
 
         // Methods
         isRankAvailable,
@@ -837,8 +900,9 @@ export function useLivePlay() {
         getNextValidCard, // New
         faceCardReserves, // New
         lastAddedFaceCardRank, // New
-        pendingFalloutRank, // New
         nextPhase, // New
-        prevPhase // New
+        prevPhase, // New
+        assignStrike // New
     }
 }
+

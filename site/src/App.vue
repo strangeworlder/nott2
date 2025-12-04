@@ -2,14 +2,15 @@
 import { ref, watch } from 'vue'
 import RulesReference from './components/rules/RulesReference.vue'
 import LivePlayHelper from './components/live-play/LivePlayHelper.vue'
+import StrikeAssignmentModal from './components/live-play/StrikeAssignmentModal.vue'
+import LoseScreen from './components/live-play/LoseScreen.vue'
 import DesignSystem from './components/dev/DesignSystem.vue'
 import Header from './components/Header.vue'
 import Navigation from './components/Navigation.vue'
 import NavButton from './components/NavButton.vue'
 import { useLivePlay } from './composables/useLivePlay'
 import { updateTheme } from './utils/theme'
-
-const { selectedPlayset } = useLivePlay()
+const { selectedPlayset, isGameWon, currentPhase } = useLivePlay()
 
 watch(selectedPlayset, (newId) => {
   updateTheme(newId)
@@ -65,11 +66,16 @@ const isDev = import.meta.env.DEV
         </div>
 
         <div v-else-if="currentView === 'play'" key="play">
-          <LivePlayHelper />
+          <div v-if="currentPhase === 'win' && !isGameWon">
+             <LoseScreen />
+          </div>
+          <LivePlayHelper v-else />
         </div>
 
 
       </Transition>
     </main>
+
+    <StrikeAssignmentModal />
   </div>
 </template>

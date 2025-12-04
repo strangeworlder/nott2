@@ -159,6 +159,10 @@ import Icon from '../Icon.vue'
               <Toggle :modelValue="false" />
             </div>
             <div class="flex gap-4 items-center">
+              <Toggle :modelValue="true" variant="switch" />
+              <Toggle :modelValue="false" variant="switch" />
+            </div>
+            <div class="flex gap-4 items-center">
               <Checkbox :modelValue="true" label="Checked" />
               <Checkbox :modelValue="false" label="Unchecked" />
             </div>

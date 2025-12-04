@@ -5,7 +5,7 @@ import { getPlaysetConfig } from '../utils/contentLoader'
 import DefaultComponent from './defaults/Icon.vue'
 
 interface Props {
-  name: 'clock' | 'users' | 'supplies'
+  name: 'clock' | 'users' | 'supplies' | 'Spades' | 'Hearts' | 'Clubs' | 'Diamonds'
   size?: number | string
   color?: 'white' | 'red' | 'muted' | 'success'
 }

@@ -16,11 +16,11 @@
     "reminders": {
         "genrePoint": {
             "title": "Genre Point?",
-            "labelOn": "Used a genre point",
-            "labelOff": "Didn't use a genre point",
+            "labelOn": "Genre Point Used",
+            "labelOff": "Use Genre Point",
             "countLabel": "Genre Points: ",
             "noneAvailable": "No genre points available.",
-            "description": "Genre points allow you to reroll both dice."
+            "description": "Genre points allow you to reroll both dice. The point is removed from the game."
         },
         "aptitude": {
             "title": "Aptitude?",
