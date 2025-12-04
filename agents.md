@@ -69,7 +69,20 @@
     - `src/App.vue`: Main layout.
     - `src/data/default`: Default location for JSON data files.
 
-### 3. Data Management
+### 3. Quality Assurance
+- **Build quality**:
+    - **Agent note** Run `npm run build` to ensure the build is stable after making possible breaking changes.
+- **Testing**:
+    - **Framework**: Vitest + @vue/test-utils.
+    - **Requirement**: All new components must include unit tests in a `__tests__` directory alongside the component.
+    - **Scope**: Test props, slots, events, and variant classes.
+    - **Agent Note**: When verifying tests, use `npm run test:ci` to run tests once without watch mode. This prevents the process from hanging.
+- **Git Hooks**:
+    - **Husky**: Configured to enforce quality standards.
+    - **Pre-commit**: Runs `npm run test:ci` to ensure no broken code is committed.
+    - **Pre-push**: Runs `npm run test:ci` to ensure the build is stable before pushing.
+
+### 4. Data Management
 - **Externalize Text**:
     - All substantial textual data (prompts, flavor text, rules text) must be stored in external JSON files (e.g., in `site/src/data/default`).
     - Do not hardcode long strings or content matrices within TypeScript/Vue files.
