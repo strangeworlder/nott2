@@ -27,7 +27,9 @@ const {
   playerGenrePoints,
   isGenrePointUsed,
   toggleGenrePointUsage,
-  selectedPlayset
+  selectedPlayset,
+  characters,
+  selectedSuit
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -41,6 +43,13 @@ onMounted(() => {
   // Reset dice when entering this phase
   rollMain.value = null
   rollEffort.value = null
+  rollEffort.value = null
+})
+
+const isAptitudeAvailable = computed(() => {
+    if (!selectedSuit.value) return true
+    const char = characters.value.find(c => c.id === selectedSuit.value)
+    return char ? !char.isDead : true
 })
 </script>
 
@@ -135,6 +144,7 @@ onMounted(() => {
                     @update:model-value="toggleGenrePointUsage"
                     :label-on="content.reminders.genrePoint.labelOn"
                     :label-off="content.reminders.genrePoint.labelOff"
+                    variant="switch"
                 />
                 <Text variant="caption" color="muted" class="mt-1">{{ content.reminders.genrePoint.countLabel }}{{ playerGenrePoints }}</Text>
             </div>
@@ -146,7 +156,13 @@ onMounted(() => {
           </Card>
           <Card class="text-center flex flex-col items-center justify-center">
             <Text variant="label" color="red" class="mb-1">{{ content.reminders.aptitude.title }}</Text>
-            <Text variant="caption" color="muted">{{ content.reminders.aptitude.description }}</Text>
+            <div v-if="isAptitudeAvailable">
+                <Text variant="caption" color="muted">{{ content.reminders.aptitude.description }}</Text>
+            </div>
+            <div v-else>
+                <Text variant="caption" color="red" class="font-bold uppercase line-through decoration-2">UNAVAILABLE</Text>
+                <Text variant="caption" color="muted">The {{ selectedSuit }} character is dead.</Text>
+            </div>
           </Card>
         </div>
 

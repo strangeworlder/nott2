@@ -2,6 +2,13 @@ import { ref, computed } from 'vue'
 import { effortScale } from '../data/rules'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 
+export interface Character {
+    id: Suit
+    name: string
+    strikes: number
+    isDead: boolean
+}
+
 export type LivePlayPhase =
     | 'welcome'
     | 'game-setup'
@@ -19,7 +26,14 @@ export type Playset = 'default' | 'summercamp'
 const visibleCards = ref<GameCard[]>([])
 const selectedCardId = ref<string | null>(null)
 
-const strikes = ref(0)
+const strikes = ref(0) // Global strike counter (legacy/total)
+const characters = ref<Character[]>([
+    { id: 'Spades', name: 'The Power', strikes: 0, isDead: false },
+    { id: 'Hearts', name: 'The Resolve', strikes: 0, isDead: false },
+    { id: 'Clubs', name: 'The Intellect', strikes: 0, isDead: false },
+    { id: 'Diamonds', name: 'The Finesse', strikes: 0, isDead: false }
+])
+const strikesToAssign = ref(0)
 const weaknessesFound = ref<Suit[]>([])
 const isEndgame = ref(false)
 const tableGenrePoints = ref(13)
@@ -34,8 +48,12 @@ const manualJoker = ref<'Red' | 'Black' | null>(null)
 
 // Deck Tracking State
 const acesRemaining = ref(4)
-// Middle Stack: 2s, 3s, 4s, and 1 Jack
-const middleStack = ref<Record<number, number>>({ 2: 4, 3: 4, 4: 4, 11: 1 })
+// Middle Stack: 2s, 3s, 4s, and 1 Jack (Active Deck)
+// Initialize all ranks to 0 to ensure keys exist for merging
+const middleStack = ref<Record<number, number>>({
+    1: 0, 2: 4, 3: 4, 4: 4, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
+    11: 1, 12: 0, 13: 0
+})
 // Bottom Stack: Reserves (5-10) + Returned Cards + Added Face Cards
 const bottomStack = ref<Record<number, number>>({
     1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
@@ -168,15 +186,17 @@ export function useLivePlay() {
         return [...new Set(ranks)].sort((a, b) => b - a)
     })
 
+    const isGameOver = computed(() => {
+        return characters.value.every(c => c.isDead)
+    })
+
     // Methods
     const isRankAvailable = (rank: Rank) => {
         if (acesRemaining.value > 0) {
             return rank === 1
         }
-        if (!isMiddleStackEmpty.value) {
-            return middleStack.value[rank] > 0
-        }
-        return bottomStack.value[rank] > 0
+        // Strict check: Only Middle Stack is available for drawing
+        return middleStack.value[rank] > 0
     }
 
     const isSuitAvailable = (rank: Rank, suit: Suit) => {
@@ -195,24 +215,43 @@ export function useLivePlay() {
             } else if (middleStack.value[rank] > 0) {
                 middleStack.value[rank]--
             } else {
-                bottomStack.value[rank]--
+                // Should not happen with strict isRankAvailable, but fallback to bottom if needed?
+                // No, enforce strictness. If it's not in middle, it shouldn't be drawn.
+                // But for safety/legacy:
+                if (bottomStack.value[rank] > 0) bottomStack.value[rank]--
             }
         } else if (action === 'add') {
-            if (rank >= 11 && rank <= 13) bottomStack.value[rank]++
+            // All added cards (Reserves or Penalties) go to Bottom Stack (Next Batch)
+            bottomStack.value[rank]++
         } else if (action === 'return') {
             drawnCards.value.delete(cardId)
 
             if (rank === 1) {
+                // Aces are special, they effectively return to "Aces Remaining" if returned?
+                // Or do they go to bottom stack?
+                // Logic says "Aces are removed from game" on success.
+                // If returned (failure/undo), they should probably go back to being available?
+                // "acesRemaining" is a special counter.
+                // Let's keep aces logic as is for now, or move to bottom stack?
+                // If I return an Ace, it implies it wasn't used.
+                // But if I fail, does it go to discard?
+                // "The rest of the game happens with the bottom stack".
+                // Let's put returned Aces into Bottom Stack to be safe, OR increment acesRemaining.
+                // Existing logic: acesRemaining++. Let's keep that for now to avoid breaking Ace logic.
+                // Wait, existing logic was: bottomStack.value[rank]++ for Ace return?
+                // Line 224: bottomStack.value[rank]++
+                // So Aces went to Bottom Stack on return.
                 bottomStack.value[rank]++
             }
-            else if (!isMiddleStackEmpty.value && ((rank >= 2 && rank <= 4) || rank === 11)) {
-                middleStack.value[rank]++
-            }
             else {
+                // All other returns go to Bottom Stack (Next Batch)
                 bottomStack.value[rank]++
             }
         }
     }
+
+
+
 
     const addNextReserve = () => {
         const nextRank = reserveQueue.value.shift()
@@ -223,16 +262,20 @@ export function useLivePlay() {
 
     const shuffleThreatDeck = () => {
         // Return all visible cards to the deck first
+        // This calls updateDeckState(..., 'return'), which puts them in Bottom Stack
         visibleCards.value.forEach(card => {
             updateDeckState(card.rank, card.suit, 'return')
         })
         visibleCards.value = []
         selectedCardId.value = null
 
-        for (const rank in middleStack.value) {
+        // Merge Bottom Stack into Middle Stack
+        for (const rank in bottomStack.value) {
             const r = Number(rank)
-            bottomStack.value[r] += middleStack.value[r]
-            middleStack.value[r] = 0
+            // Debug logging
+            // console.log(`Merging Rank ${r}: Middle=${middleStack.value[r]} + Bottom=${bottomStack.value[r]}`)
+            middleStack.value[r] += bottomStack.value[r]
+            bottomStack.value[r] = 0
         }
     }
 
@@ -305,13 +348,13 @@ export function useLivePlay() {
             // Refund
             isGenrePointUsed.value = false
             playerGenrePoints.value++
-            tableGenrePoints.value--
+            // Points come back from the void, not the table
         } else {
             // Use
             if (playerGenrePoints.value > 0) {
                 isGenrePointUsed.value = true
                 playerGenrePoints.value--
-                tableGenrePoints.value++
+                // Points go to the void, not the table
             }
         }
     }
@@ -332,7 +375,10 @@ export function useLivePlay() {
         weaknessesFound.value = []
         isEndgame.value = false
         acesRemaining.value = 4
-        middleStack.value = { 2: 4, 3: 4, 4: 4, 11: 1 }
+        middleStack.value = {
+            1: 0, 2: 4, 3: 4, 4: 4, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
+            11: 1, 12: 0, 13: 0
+        }
         bottomStack.value = {
             1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
             11: 0, 12: 0, 13: 0
@@ -355,10 +401,24 @@ export function useLivePlay() {
         isBlackJokerRemoved.value = false
         currentAct.value = 1
         selectedPlayset.value = null
+        characters.value = [
+            { id: 'Spades', name: 'The Power', strikes: 0, isDead: false },
+            { id: 'Hearts', name: 'The Resolve', strikes: 0, isDead: false },
+            { id: 'Clubs', name: 'The Intellect', strikes: 0, isDead: false },
+            { id: 'Diamonds', name: 'The Finesse', strikes: 0, isDead: false }
+        ]
+        strikesToAssign.value = 0
     }
 
     const startGame = () => {
         strikes.value = 0
+        characters.value = [
+            { id: 'Spades', name: 'The Power', strikes: 0, isDead: false },
+            { id: 'Hearts', name: 'The Resolve', strikes: 0, isDead: false },
+            { id: 'Clubs', name: 'The Intellect', strikes: 0, isDead: false },
+            { id: 'Diamonds', name: 'The Finesse', strikes: 0, isDead: false }
+        ]
+        strikesToAssign.value = 0
         weaknessesFound.value = []
         isEndgame.value = false
         isEndgameInitialized.value = false
@@ -366,7 +426,10 @@ export function useLivePlay() {
         isBlackJokerRemoved.value = false
         currentAct.value = 1
         acesRemaining.value = 4
-        middleStack.value = { 2: 4, 3: 4, 4: 4, 11: 1 }
+        middleStack.value = {
+            1: 0, 2: 4, 3: 4, 4: 4, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
+            11: 1, 12: 0, 13: 0
+        }
         bottomStack.value = {
             1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
             11: 0, 12: 0, 13: 0
@@ -558,7 +621,8 @@ export function useLivePlay() {
             }
 
             if (isFaceCard.value) {
-                strikes.value++
+                // strikes.value++ // Legacy
+                strikesToAssign.value++
                 addFaceCardToThreatDeck(13, rollEffort.value) // Add King
                 // Fix: Do NOT manually return the card here. shuffleThreatDeck returns ALL visible cards.
                 // if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
@@ -575,7 +639,13 @@ export function useLivePlay() {
                 if (!isEndgame.value) addNextReserve()
             }
         }
+
+        // Breaking Point Logic (Effort 4) - Always triggers a strike
+        if (rollEffort.value === 4) {
+            strikesToAssign.value++
+        }
     }
+
 
     const pendingFalloutRank = computed(() => {
         if (!isFaceCard.value) return null
@@ -630,21 +700,14 @@ export function useLivePlay() {
             if (availableSuit) return { rank: 1, suit: availableSuit }
         }
 
-        // 2. Check Middle Stack (2-4, 11)
+        // 2. Check Middle Stack (Active Deck)
         // We want to find the lowest rank that has cards available
-        const middleRanks = [2, 3, 4, 11]
-        for (const rank of middleRanks) {
-            if (middleStack.value[rank] > 0) {
-                const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
-                const availableSuit = suits.find(s => !drawnCards.value.has(`${rank}-${s}`))
-                if (availableSuit) return { rank: rank as Rank, suit: availableSuit }
-            }
-        }
+        // Iterate through all ranks present in middleStack
+        // Sort keys to ensure order? Keys are strings, but we want numeric order.
+        const ranks = Object.keys(middleStack.value).map(Number).sort((a, b) => a - b)
 
-        // 3. Check Bottom Stack
-        // Iterate through all ranks 1-13
-        for (let rank = 1; rank <= 13; rank++) {
-            if (bottomStack.value[rank] > 0) {
+        for (const rank of ranks) {
+            if (middleStack.value[rank] > 0) {
                 const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
                 const availableSuit = suits.find(s => !drawnCards.value.has(`${rank}-${s}`))
                 if (availableSuit) return { rank: rank as Rank, suit: availableSuit }
@@ -764,12 +827,35 @@ export function useLivePlay() {
         }
     }
 
+    const assignStrike = (suit: Suit) => {
+        const char = characters.value.find(c => c.id === suit)
+        if (char && !char.isDead) {
+            char.strikes++
+            strikes.value++ // Keep global counter in sync for now
+            if (char.strikes >= 3) {
+                char.isDead = true
+            }
+
+            if (strikesToAssign.value > 0) {
+                strikesToAssign.value--
+            }
+
+            if (isGameOver.value) {
+                isGameWon.value = false // Just to be sure
+                currentPhase.value = 'win' // We'll reuse win screen or make a new one, but logic handles it
+            }
+        }
+    }
+
     return {
         // State
         activeCard, // Renamed from currentCard
         visibleCards, // New
         selectedCardId, // New
         strikes,
+        characters,
+        strikesToAssign,
+        isGameOver,
         weaknessesFound,
         isEndgame,
         isGameWon, // New
@@ -786,6 +872,7 @@ export function useLivePlay() {
         trophyTop,
         isTrophyTopRandomized,
         currentPhase,
+        currentAct,
         selectedJoker,
         sacrificeConfirmed,
         rollMain,
@@ -795,24 +882,21 @@ export function useLivePlay() {
         debugMode,
         tableGenrePoints,
         playerGenrePoints,
-        isGenrePointUsed,
-        isGenrePointAwarded,
-        currentAct,
         selectedPlayset,
-
-        // Computed
         selectedSuit,
         selectedRank,
         isFaceCard,
         isFirstTime,
         cardName,
-
         rollTotal,
         isSuccess,
         effortResult,
         availableTrophyRanks,
         isMiddleStackEmpty,
         hasFaceCardOnTable, // New
+        isGenrePointAwarded,
+        isGenrePointUsed,
+        pendingFalloutRank, // New
 
         // Methods
         isRankAvailable,
@@ -837,8 +921,9 @@ export function useLivePlay() {
         getNextValidCard, // New
         faceCardReserves, // New
         lastAddedFaceCardRank, // New
-        pendingFalloutRank, // New
         nextPhase, // New
-        prevPhase // New
+        prevPhase, // New
+        assignStrike // New
     }
 }
+

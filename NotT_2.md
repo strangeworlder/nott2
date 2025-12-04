@@ -92,7 +92,7 @@ You are no heroes. You are just in the wrong place at the wrong time. You are th
 The Table starts with **13 Genre Points** in a central pool. These are the currency of the story.
 
 *   **Awarding**: Any player can award another player a Genre Point for playing into a horror trope ("I'll be right back!"), making a great roleplay choice, or genuinely terrifying the table. **(Use the app to track this at the end of the scene).**
-*   **Spending**: You can spend one Genre Point to save your skin. Spending a point allows you to **reroll your entire d13**. You must add a **+1** to that roll’s main die (the d10). **Warning**: You must accept the second result, even if it's worse. **(Toggle this in the Resolution Phase to track the spend).**
+*   **Spending**: You can spend one Genre Point to save your skin. Spending a point allows you to **reroll your entire d13**. You must add a **+1** to that roll’s main die (the d10). **Warning**: You must accept the second result, even if it's worse. **(Toggle this in the Resolution Phase to track the spend. The point is removed from the game).**
 
 ---
 

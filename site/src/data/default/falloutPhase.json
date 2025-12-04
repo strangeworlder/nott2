@@ -4,7 +4,7 @@
         "title": "Genre Point Checkpoint",
         "body": "Did a player play into a trope, make a great roleplay choice, or terrify the table?",
         "labelOn": "Genre Point Awarded",
-        "labelOff": "Award Genre Point?",
+        "labelOff": "Award Genre Point",
         "caption": "Tokens on Table: {table} | Tokens Held: {player}"
     },
     "decks": {
@@ -73,6 +73,29 @@
             "retaliate": {
                 "title": "The Killer Retaliates",
                 "add": "Add a random {rank} to the Threat Deck.",
+                "empty": "No Face Cards left in reserve!"
+            },
+            "remains": {
+                "title": "The Threat Remains",
+                "body": "Shuffle the entire Threat Deck and Trophy Pile."
+            }
+        },
+        "failure": {
+            "threat": {
+                "title": "Threat Deck",
+                "body": "Place the {card} at the bottom of the Threat Deck."
+            },
+            "reserve": {
+                "title": "Add Reserve",
+                "body": "Take the next card from the Number Reserve and add it to the bottom of the Threat Deck."
+            },
+            "strikes": {
+                "title": "The Killer Strikes",
+                "body": "Mark 1 Strike on your character sheet."
+            },
+            "grow": {
+                "title": "The Horror Grows",
+                "add": "Add a random {rank} to the bottom of the Threat Deck.",
                 "empty": "No Face Cards left in reserve!"
             },
             "remains": {

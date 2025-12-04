@@ -20,7 +20,7 @@
 import { computed } from 'vue'
 
 const props = defineProps<{
-  name: 'clock' | 'users' | 'supplies'
+  name: 'clock' | 'users' | 'supplies' | 'Spades' | 'Hearts' | 'Clubs' | 'Diamonds'
   size?: number | string
   color?: 'white' | 'red' | 'muted' | 'success'
 }>()
@@ -74,6 +74,25 @@ const classes = computed(() => {
       <line x1="2" y1="17" x2="7" y2="17"></line>
       <line x1="17" y1="17" x2="22" y2="17"></line>
       <line x1="17" y1="7" x2="22" y2="7"></line>
+    </template>
+
+    <!-- Suits -->
+    <template v-else-if="name === 'Spades'">
+      <path d="M12 22s5-3 5-8a5 5 0 0 0-10 0c0 5 5 8 5 8z" fill="currentColor"></path>
+      <path d="M12 22v-4" stroke="currentColor"></path>
+    </template>
+
+    <template v-else-if="name === 'Hearts'">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor" stroke="none"></path>
+    </template>
+
+    <template v-else-if="name === 'Clubs'">
+      <path d="M12 2C9 2 7 4 7 6c0 1.5 1 2.5 2 3-2 0-3 2-3 4 0 3 3 4 6 4s6-1 6-4c0-2-1-4-3-4 1-.5 2-1.5 2-3 0-2-2-4-5-4z" fill="currentColor"></path>
+      <path d="M12 17v5" stroke="currentColor"></path>
+    </template>
+
+    <template v-else-if="name === 'Diamonds'">
+      <path d="M12 2l-8 10 8 10 8-10z" fill="currentColor" stroke="none"></path>
     </template>
   </svg>
 </template>
