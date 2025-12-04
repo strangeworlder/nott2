@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import TrophyPileTop from './TrophyPileTop.vue'
+import TrophyPileTop from '../TrophyPileTop.vue'
 
 describe('TrophyPileTop.vue', () => {
     it('renders nothing when trophyTop is null', () => {

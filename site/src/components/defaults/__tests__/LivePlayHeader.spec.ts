@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import LivePlayHeader from './LivePlayHeader.vue'
+import LivePlayHeader from '../LivePlayHeader.vue'
 
 // Mock child components to isolate tests
-vi.mock('../CurrentThreat.vue', () => ({
+vi.mock('../../CurrentThreat.vue', () => ({
     default: { template: '<div class="mock-current-threat"></div>' }
 }))
-vi.mock('../TrophyPileTop.vue', () => ({
+vi.mock('../../TrophyPileTop.vue', () => ({
     default: { template: '<div class="mock-trophy-pile-top"></div>' }
 }))
 

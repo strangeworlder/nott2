@@ -56,6 +56,9 @@
     - **Data-Driven Templates**:
         - Content should be driven by data structures (arrays/objects).
         - Use `v-for` to render repeated elements (cards, list items, buttons) rather than hardcoding them.
+        - **Rich Text**: The `<Text>` component supports `v-html` directly. Do not wrap content in `<span>` tags just to use `v-html`.
+            - **Correct**: `<Text v-html="content.intro" />`
+            - **Incorrect**: `<Text><span v-html="content.intro"></span></Text>`
     - **Layout & Animation**:
         - Use standard CSS grid/flex layouts for structure.
         - Apply standard animation utility classes (e.g., `animate-fade-in`) to top-level containers for smooth entry.
@@ -95,6 +98,19 @@
 - **Rules**: Updates to game mechanics must be reflected in `NotT_2.md`.
 - **Workflows**: Common procedures (e.g., deployment, database migration) should be documented in `.agent/workflows/`.
 - **Components**: Every component must be thoroughly documented. Explain props, slots, events, and usage examples. This is non-negotiable for maintainability.
+    - **Documentation Structure**: Each component file must start with a comment block containing:
+        - **Philosophical**: A high-level explanation of the component's purpose, its role in the user experience, and the "feeling" it should convey. Why does this exist? What metaphor does it serve?
+        - **Technical**: A concise description of the component's functionality, followed by a list of Props, Events, and Slots.
+
+### 5. Component Architecture
+- **Defaults vs. Overrides**: The `site/src/components/defaults` directory contains the base implementation of components. These are the "standard" versions used unless a playset provides an override.
+- **Wrapper Components**: Components in `site/src/components` (e.g., `Button.vue`) act as wrappers. They dynamically load either the default component or a playset-specific version based on the current configuration.
+- **Wrapper Structure**:
+    1.  **Imports**: Import `defineAsyncComponent`, `shallowRef`, `watchEffect`, `useLivePlay`, `getPlaysetConfig`, and the default component.
+    2.  **Props**: Define and pass through all props.
+    3.  **Dynamic Loading**: Use `import.meta.glob` to find playset components.
+    4.  **Watcher**: Use `watchEffect` to check `selectedPlayset` and `getPlaysetConfig`. If an override exists, load it; otherwise, use the default.
+    5.  **Template**: Render the dynamic component using `<component :is="...">`, binding all props and forwarding all slots.
 
 ## Interaction Protocol
 1.  **Understand**: Read the user request and relevant files (`NotT_2.md`, source code).

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import CurrentThreat from './CurrentThreat.vue'
+import CurrentThreat from '../CurrentThreat.vue'
 
 describe('CurrentThreat.vue', () => {
     it('renders "No active threat" when no card or joker is active', () => {
