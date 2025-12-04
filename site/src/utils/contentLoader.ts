@@ -271,3 +271,53 @@ export interface SensoryPromptsContent {
 export function getSensoryPrompts(playsetId?: string | null): SensoryPromptsContent {
     return loadData<SensoryPromptsContent>('sensoryPrompts.json', playsetId);
 }
+
+export interface ResolutionPhaseContent {
+    intro: string;
+    targetDifficulty: {
+        title: string;
+        base: string;
+        mod: string;
+        total: string;
+        explanation: string;
+        numberCardTitle: string;
+        numberCardExplanation: string;
+    };
+    dice: {
+        main: string;
+        effort: string;
+    };
+    reminders: {
+        genrePoint: {
+            title: string;
+            labelOn: string;
+            labelOff: string;
+            countLabel: string;
+            noneAvailable: string;
+            description: string;
+        };
+        aptitude: {
+            title: string;
+            description: string;
+        };
+    };
+    results: {
+        totalResult: string;
+        success: string;
+        failure: string;
+    };
+    buttonText: string;
+}
+
+export function getResolutionPhaseContent(playsetId?: string | null): ResolutionPhaseContent {
+    const data = loadData<any>('resolutionPhase.json', playsetId);
+
+    return {
+        intro: marked.parseInline(data.intro) as string,
+        targetDifficulty: data.targetDifficulty,
+        dice: data.dice,
+        reminders: data.reminders,
+        results: data.results,
+        buttonText: data.buttonText
+    };
+}

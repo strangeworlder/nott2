@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Text from '../Text.vue'
-import Button from '../Button.vue'
+import ActionFooter from '../ActionFooter.vue'
 import Icon from '../Icon.vue'
 import Card from '../Card.vue'
 import { getWelcomeScreenContent } from '../../utils/contentLoader'
@@ -53,10 +53,9 @@ const content = getWelcomeScreenContent()
     </div>
 
     <!-- Action -->
-    <div class="pt-8 animate-pulse-slow">
-        <Button variant="primary" size="xl" @click="$emit('next')">
-            {{ content.buttonText }}
-        </Button>
-    </div>
+    <ActionFooter 
+      :label="content.buttonText"
+      @click="$emit('next')"
+    />
   </div>
 </template>

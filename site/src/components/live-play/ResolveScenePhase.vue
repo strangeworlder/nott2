@@ -3,7 +3,8 @@ import { useLivePlay } from '../../composables/useLivePlay'
 import Card from '../Card.vue'
 import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
-import Button from '../Button.vue'
+import IngressText from '../IngressText.vue'
+
 import ActionFooter from '../ActionFooter.vue'
 
 const { 
@@ -24,7 +25,6 @@ const emit = defineEmits<{
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
     <!-- Scene Prompt -->
-    <!-- Scene Prompt -->
     <ScenePrompt 
       v-if="activeCard || selectedJoker" 
       :card="activeCard" 
@@ -33,20 +33,28 @@ const emit = defineEmits<{
       class="mb-8" 
     />
 
-    <div class="mb-6 text-center">
-      <Text variant="quote" color="muted"><em>"The dice have spoken. Now, tell us how it happens."</em></Text>
-    </div>
+    <IngressText>
+      The dice provide insight into how the risky challenge of the goes. Now what remains is for you to narrate it out.
+    </IngressText>
 
     <div class="grid gap-6 md:grid-cols-2 mb-8">
       <!-- Outcome -->
       <Card :title="isSuccess ? 'Success' : 'Failure'" :variant="isSuccess ? 'success' : 'failure'">
         <div v-if="isSuccess">
-          <Text variant="body" class="mb-4">The characters achieve their goal. They survive, escape, or find what they were looking for.</Text>
-          <Text variant="caption" color="muted">Describe their triumph in the face of horror.</Text>
+          <Text variant="body" class="mb-4">
+            The Active Character achieves their goal. Whatever challenge they faced, they push through.
+          </Text>
+          <Text variant="caption" color="muted">
+            Describe how they triumph over the horror.
+          </Text>
         </div>
         <div v-else>
-          <Text variant="body" class="mb-4">The characters fail. The Killer catches up, the door is locked, or the clue is destroyed.</Text>
-          <Text variant="caption" color="muted">Describe how the situation spirals out of control.</Text>
+          <Text variant="body" class="mb-4">
+            The Active Character fails. Whatever challenge they faced, they fall short.
+          </Text>
+          <Text variant="caption" color="muted">
+            Describe how the situation spirals out of control.
+          </Text>
         </div>
       </Card>
 
@@ -68,16 +76,9 @@ const emit = defineEmits<{
       <Text variant="body" color="muted">Work together to narrate the final moments of the scene based on these results. When the beat is finished, proceed to update the game state.</Text>
     </Card>
 
-    <!-- Action Footer -->
-    <ActionFooter>
-      <Button 
-        size="lg"
-        variant="primary" 
-        @click="$emit('next')"
-        class="px-12"
-      >
-        Update Game State →
-      </Button>
-    </ActionFooter>
+    <ActionFooter 
+      label="Update Game State"
+      @click="$emit('next')"
+    />
   </div>
 </template>

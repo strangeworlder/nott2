@@ -44,7 +44,11 @@
 - **Frontend Principles**:
     - **Component-First Architecture**:
         - **Avoid Raw HTML**: Do not use raw HTML elements (`div`, `span`, `p`, `h1-h6`, `ul`, `li`, `button`) for UI primitives where a Design System component exists.
-        - **Text**: Always use the `<Text>` component with the appropriate `variant` (e.g., `h1`, `body`, `quote`, `label`) instead of `<p>` or heading tags.
+        - **Text**: Always use the `<Text>` component with the appropriate `variant` (e.g., `h1`, `body`, `label`) instead of `<p>` or heading tags.
+        - **Semantic Components**: Use specific components for specific semantic roles rather than generic components with variants.
+            - **Example**: Use `<IngressText>` for introductory text blocks instead of `<Text variant="quote">`.
+        - **Encapsulation**: Components should encapsulate their internal structure and logic. Consumers should pass data via props, not structural slots.
+            - **Example**: `<ActionFooter label="Next" />` instead of `<ActionFooter><Button>Next</Button></ActionFooter>`.
         - **Containers**: Use `<Card>` for grouping content sections.
         - **Lists**: Use `<List>` and `<ListItem>` for structured lists.
         - **Icons**: Use the `<Icon>` component instead of inline SVGs.

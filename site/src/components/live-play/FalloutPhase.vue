@@ -3,7 +3,7 @@ import { useLivePlay } from '../../composables/useLivePlay'
 import Toggle from '../Toggle.vue'
 import Text from '../Text.vue'
 import Card from '../Card.vue'
-import Button from '../Button.vue'
+import ActionFooter from '../ActionFooter.vue'
 import ProcessStep from '../ProcessStep.vue'
 
 const { 
@@ -232,15 +232,10 @@ const emit = defineEmits<{
     </div>
 
     <!-- Action Footer -->
-    <div class="flex justify-center pt-8 border-t border-nott-gray/30">
-      <Button 
-        size="lg"
-        variant="primary" 
-        @click="startNextScene"
-        class="px-12"
-      >
-        {{ (selectedJoker === 'Red' && isSuccess) ? 'Finish Game' : 'Start Next Scene →' }}
-      </Button>
-    </div>
+    <!-- ActionFooter -->
+    <ActionFooter 
+      :label="(selectedJoker === 'Red' && isSuccess) ? 'Finish Game' : 'Start Next Scene'"
+      @click="startNextScene"
+    />
   </div>
 </template>

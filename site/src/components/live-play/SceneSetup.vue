@@ -4,7 +4,7 @@ import { useLivePlay } from '../../composables/useLivePlay'
 
 import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
-import Button from '../Button.vue'
+import IngressText from '../IngressText.vue'
 import PlayingCard from '../PlayingCard.vue'
 
 import ActionFooter from '../ActionFooter.vue'
@@ -111,9 +111,7 @@ const explanationText = computed(() => {
 
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
-    <div class="mb-6 text-center">
-      <Text variant="quote" color="muted" v-html="explanationText"></Text>
-    </div>
+    <IngressText v-html="explanationText" />
 
     <div class="space-y-8 mb-12">
       
@@ -204,16 +202,11 @@ const explanationText = computed(() => {
     </div>
 
     <!-- Action Footer -->
-    <ActionFooter>
-      <Button 
-        size="lg"
-        variant="primary" 
-        @click="$emit('next')"
-        :disabled="!showPrompt"
-        class="px-12"
-      >
-        {{ content.ui.startButton }}
-      </Button>
-    </ActionFooter>
+    <!-- ActionFooter -->
+    <ActionFooter 
+      :label="content.ui.startButton"
+      :disabled="!showPrompt"
+      @click="$emit('next')"
+    />
   </div>
 </template>

@@ -4,8 +4,8 @@ import { useLivePlay } from '../../composables/useLivePlay'
 import Card from '../Card.vue'
 import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
+import IngressText from '../IngressText.vue'
 import Checkbox from '../Checkbox.vue'
-import Button from '../Button.vue'
 
 import ActionFooter from '../ActionFooter.vue'
 import ConversationPrompts from './ConversationPrompts.vue'
@@ -33,9 +33,7 @@ const emit = defineEmits<{
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
     
-    <Text class="mb-8" variant="quote" align="center" color="muted">
-      <span v-html="content.intro"></span>
-    </Text>
+    <IngressText v-html="content.intro" />
 
     <ScenePrompt 
       v-if="activeCard || selectedJoker" 
@@ -88,17 +86,11 @@ const emit = defineEmits<{
     </div>
 
     <!-- Action Footer -->
-    <ActionFooter>
-      <Button 
-        size="lg"
-        variant="primary" 
-        @click="$emit('next')"
-        :disabled="!sacrificeConfirmed"
-        class="px-12"
-      >
-        {{ content.ui.buttonText }}
-        →
-      </Button>
-    </ActionFooter>
+    <!-- ActionFooter -->
+    <ActionFooter 
+      :label="content.ui.buttonText"
+      :disabled="!sacrificeConfirmed"
+      @click="$emit('next')"
+    />
   </div>
 </template>
