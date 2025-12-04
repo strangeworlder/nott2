@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "npm run test:ci",
     "test:ci": "vitest run",
     "prepare": "husky"
   },
