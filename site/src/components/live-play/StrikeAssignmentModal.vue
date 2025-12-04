@@ -38,7 +38,7 @@ const isDead = (suit: string) => {
 </script>
 
 <template>
-  <div v-if="strikesToAssign > 0" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+  <div v-if="strikesToAssign > 0" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
     <Card class="w-full max-w-md border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.3)]">
       <div class="text-center space-y-6">
         <div>

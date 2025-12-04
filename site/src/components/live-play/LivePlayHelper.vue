@@ -136,7 +136,7 @@ const isDev = import.meta.env.DEV
     </div>
 
     <!-- Debug Panel -->
-    <div v-if="debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-nott-green p-2 font-mono border-t border-nott-green/30 overflow-x-auto z-50">
+    <div v-if="isDev && debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-nott-green p-2 font-mono border-t border-nott-green/30 overflow-x-auto z-50">
       <div class="flex gap-8 whitespace-nowrap">
         <div>
           <strong class="text-white">Phase:</strong> {{ currentPhase }}
