@@ -185,9 +185,11 @@ const explanationText = computed(() => {
         </div>
 
         <div v-if="selectedJoker" class="flex justify-center">
-             <div class="w-64 h-80 rounded-xl bg-nott-black border-2 border-nott-red flex items-center justify-center">
-                 <Text variant="h3" :color="selectedJoker === 'Red' ? 'red' : 'white'">{{ selectedJoker }} Joker</Text>
-             </div>
+             <PlayingCard 
+               :is-joker="true" 
+               :joker-color="selectedJoker" 
+               :selected="true"
+             />
         </div>
 
         <div v-if="activeCard || selectedJoker" class="max-w-2xl mx-auto">

@@ -5,10 +5,12 @@ import { getPlaysetConfig } from '../utils/contentLoader'
 import DefaultPlayingCard from './defaults/PlayingCard.vue'
 
 interface Props {
-  suit: string
-  rank: number
+  suit?: string
+  rank?: number
   isFace?: boolean
   selected?: boolean
+  isJoker?: boolean
+  jokerColor?: 'Red' | 'Black'
 }
 
 const props = defineProps<Props>()
