@@ -79,6 +79,13 @@ const isGenrePointAwarded = ref(false)
 const isGameWon = ref(false)
 const isBlackJokerRemoved = ref(false)
 
+// Removed Face Cards (Recycling Bin)
+const removedFaceCards = ref<Record<number, number>>({
+    11: 0,
+    12: 0,
+    13: 0
+})
+
 export function useLivePlay() {
 
     // Computed Helpers
@@ -331,6 +338,7 @@ export function useLivePlay() {
             11: 0, 12: 0, 13: 0
         }
         faceCardReserves.value = { 11: 3, 12: 4, 13: 4 }
+        removedFaceCards.value = { 11: 0, 12: 0, 13: 0 }
         reserveQueue.value = [
             5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10
         ]
@@ -364,6 +372,7 @@ export function useLivePlay() {
             11: 0, 12: 0, 13: 0
         }
         faceCardReserves.value = { 11: 3, 12: 4, 13: 4 }
+        removedFaceCards.value = { 11: 0, 12: 0, 13: 0 }
         reserveQueue.value = [
             5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10
         ]
@@ -397,12 +406,45 @@ export function useLivePlay() {
         }
     }
 
+    const removeHighestFaceCardFromDeck = () => {
+        // Try to remove from Bottom Stack first (Kings -> Queens -> Jacks)
+        if (bottomStack.value[13] > 0) {
+            bottomStack.value[13]--
+            removedFaceCards.value[13]++
+            return
+        }
+        if (bottomStack.value[12] > 0) {
+            bottomStack.value[12]--
+            removedFaceCards.value[12]++
+            return
+        }
+        if (bottomStack.value[11] > 0) {
+            bottomStack.value[11]--
+            removedFaceCards.value[11]++
+            return
+        }
+
+        // If not in bottom stack, check middle stack (only Jacks there)
+        if (middleStack.value[11] > 0) {
+            middleStack.value[11]--
+            removedFaceCards.value[11]++
+            return
+        }
+    }
+
     const addFaceCardToThreatDeck = (targetRank: number, effort: number | null = null) => {
         // Helper to try adding a specific rank
         const tryAdd = (rank: number): boolean => {
             if (faceCardReserves.value[rank as 11 | 12 | 13] > 0) {
                 faceCardReserves.value[rank as 11 | 12 | 13]--
                 updateDeckState(rank as Rank, 'Spades', 'add') // Suit doesn't matter for count, but we need one
+                lastAddedFaceCardRank.value = rank
+                return true
+            }
+            // Check recycling bin (removedFaceCards)
+            if (removedFaceCards.value[rank] > 0) {
+                removedFaceCards.value[rank]--
+                updateDeckState(rank as Rank, 'Spades', 'add')
                 lastAddedFaceCardRank.value = rank
                 return true
             }
@@ -449,17 +491,8 @@ export function useLivePlay() {
             }
             if (selectedJoker.value === 'Black') {
                 // Remove highest face card
-                // We need to find the highest rank in the threat deck (bottomStack + middleStack)
-                // Actually, "Removes the highest face card from the deck"
-                // We don't track individual cards in the deck perfectly, but we track counts.
-                // Let's try to remove a King, then Queen, then Jack from reserves/deck state.
-                // Since we don't have a "deck" array, we just decrement the counts in bottomStack/middleStack?
-                // Or just assume it's done narratively?
-                // The instructions say "Removes the highest face card from the deck".
-                // We should probably try to decrement a King from bottomStack if possible.
+                removeHighestFaceCardFromDeck()
 
-                // For now, we'll just handle the Joker removal itself.
-                // The instruction text will tell the user what to do.
                 selectedJoker.value = null // Removed from game
                 isBlackJokerRemoved.value = true
                 return
@@ -475,7 +508,8 @@ export function useLivePlay() {
                             currentPhase.value = 'act-setup'
                         }
                         // CRITICAL FIX: Remove the weakness card from visibleCards so it isn't returned to the deck
-                        visibleCards.value = visibleCards.value.filter(c => c.id !== activeCard.value?.id)
+                        const cardToRemoveId = activeCard.value.id
+                        visibleCards.value = visibleCards.value.filter(c => c.id !== cardToRemoveId)
                     }
                 } else {
                     // Fix: Do NOT manually return the card here. shuffleThreatDeck returns ALL visible cards.
@@ -498,10 +532,13 @@ export function useLivePlay() {
             } else {
                 if (!isEndgame.value) addNextReserve()
                 if (activeCard.value) {
-                    trophyPile.value.push(activeCard.value)
-                    revealHiddenTen()
-                    trophyTop.value = activeCard.value
-                    isTrophyTopRandomized.value = false
+                    // Rule Change: Aces are removed from the game on success, not added to trophy pile
+                    if (activeCard.value.rank !== 1) {
+                        trophyPile.value.push(activeCard.value)
+                        revealHiddenTen()
+                        trophyTop.value = activeCard.value
+                        isTrophyTopRandomized.value = false
+                    }
                 }
             }
         } else {

@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, computed } from 'vue'
 import Card from '../Card.vue'
 import Text from '../Text.vue'
 import Button from '../Button.vue'
 import SelectionButton from '../SelectionButton.vue'
+import Separator from '../defaults/Separator.vue'
 import type { Suit, Rank } from '../../composables/useGameEngine'
+import { getManualCardEntryContent } from '../../utils/contentLoader'
+import { useLivePlay } from '../../composables/useLivePlay'
 
 const props = defineProps<{
   manualRank: Rank
@@ -24,6 +27,9 @@ const emit = defineEmits<{
   (e: 'cancel'): void
   (e: 'confirm'): void
 }>()
+
+const { selectedPlayset } = useLivePlay()
+const content = computed(() => getManualCardEntryContent(selectedPlayset.value))
 
 const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
 const ranks: { label: string, value: Rank }[] = [
@@ -52,7 +58,7 @@ const suitIcons: Record<string, string> = {
     <Card>
       <div class="space-y-6">
         <div class="space-y-2">
-          <Text variant="label">Select Drawn Card</Text>
+          <Text variant="label">{{ content.title }}</Text>
           
           <!-- Rank Grid -->
           <div class="grid grid-cols-5 gap-2">
@@ -85,8 +91,9 @@ const suitIcons: Record<string, string> = {
           </div>
         </div>
 
-        <div v-if="isEndgame" class="border-t border-nott-gray/30 pt-4">
-          <Text variant="label" class="mb-2">Or Joker?</Text>
+        <Separator v-if="isEndgame" />
+        <div v-if="isEndgame">
+          <Text variant="label" class="mb-2">{{ content.joker.title }}</Text>
           <div class="flex gap-4 justify-center">
             <SelectionButton
               @click="emit('update:manualJoker', 'Red')"
@@ -94,7 +101,7 @@ const suitIcons: Record<string, string> = {
               color="red"
               class="flex-1"
             >
-              Red
+              {{ content.joker.red }}
             </SelectionButton>
             <SelectionButton
               @click="emit('update:manualJoker', 'Black')"
@@ -103,7 +110,7 @@ const suitIcons: Record<string, string> = {
               color="default"
               class="flex-1"
             >
-              Black
+              {{ content.joker.black }}
             </SelectionButton>
             <SelectionButton
               @click="emit('update:manualJoker', null)"
@@ -111,20 +118,20 @@ const suitIcons: Record<string, string> = {
               color="default"
               class="flex-1 text-nott-gray"
             >
-              None
+              {{ content.joker.none }}
             </SelectionButton>
           </div>
         </div>
 
         <div class="flex gap-2 mt-4">
-          <Button variant="secondary" class="flex-1" @click="emit('cancel')">Cancel</Button>
+          <Button variant="secondary" class="flex-1" @click="emit('cancel')">{{ content.buttons.cancel }}</Button>
           <Button 
             variant="primary"
             class="flex-1"
             @click="emit('confirm')"
             :disabled="!isValidAddition"
           >
-            Add to Table
+            {{ content.buttons.add }}
           </Button>
         </div>
       </div>

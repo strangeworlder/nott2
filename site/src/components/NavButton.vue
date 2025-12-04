@@ -1,20 +1,48 @@
 <script setup lang="ts">
-defineProps<{
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/NavButton.vue'
+
+interface Props {
   active?: boolean
-}>()
+}
+
+const props = defineProps<Props>()
+
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/NavButton.vue')
+const currentComponent = shallowRef(DefaultComponent)
+
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
+  }
+
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.NavButton) {
+    const path = `./playsets/${playsetId}/NavButton.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
+  } else {
+    currentComponent.value = DefaultComponent
+  }
+})
 </script>
 
 <template>
-  <button 
-    class="relative text-nott-white hover:text-nott-red transition-all duration-300 font-display uppercase tracking-wider px-6 py-2 border border-transparent hover:border-nott-red/50 group"
-    :class="{ 
-      'text-nott-red border-nott-red bg-nott-red/10 shadow-[0_0_15px_rgba(var(--color-nott-red),0.4)]': active 
-    }"
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
   >
-    <span v-if="active" class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] opacity-0 animate-fade-in">◆</span>
-    <span :class="{ 'translate-x-1': active }" class="transition-transform duration-300 inline-block">
-      <slot />
-    </span>
-    <span v-if="active" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] opacity-0 animate-fade-in">◆</span>
-  </button>
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
+    </template>
+  </component>
 </template>

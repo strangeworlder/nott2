@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/Card.vue'
 
 interface Props {
   title?: string
@@ -16,72 +19,39 @@ const props = withDefaults(defineProps<Props>(), {
   center: false
 })
 
-const containerClasses = computed(() => {
-  const base = 'relative bg-nott-black border rounded-lg h-full flex flex-col transition-colors duration-300'
-  const padding = props.noPadding ? '' : 'p-6'
-  const align = props.center ? 'items-center text-center' : ''
-  
-  const variants = {
-    default: 'border-nott-gray',
-    muted: 'border-nott-gray/50 bg-nott-black/50',
-    highlighted: 'border-nott-red shadow-[0_0_15px_rgba(220,38,38,0.2)]',
-    success: 'border-nott-green/30 bg-green-900/10',
-    failure: 'border-nott-red/30 bg-nott-red/5',
-    instruction: 'border-nott-white/10 bg-nott-white/5',
-    ghost: 'border-transparent bg-transparent'
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/Card.vue')
+const currentComponent = shallowRef(DefaultComponent)
+
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
   }
 
-  return `${base} ${padding} ${align} ${variants[props.variant]}`
-})
-
-const glowClasses = computed(() => {
-  const base = 'absolute -inset-0.5 rounded-lg blur opacity-25 transition duration-1000'
-  
-  const variants = {
-    default: 'bg-gradient-to-r from-nott-red to-nott-gray',
-    muted: 'bg-nott-gray hidden',
-    highlighted: 'bg-nott-red opacity-50',
-    success: 'bg-nott-green',
-    failure: 'bg-nott-red',
-    instruction: 'bg-nott-white hidden',
-    ghost: 'hidden'
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.Card) {
+    const path = `./playsets/${playsetId}/Card.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
+  } else {
+    currentComponent.value = DefaultComponent
   }
-
-  return `${base} ${variants[props.variant]}`
-})
-
-const titleClasses = computed(() => {
-  const base = 'text-xl font-display mb-4 border-b pb-2'
-  
-  const variants = {
-    default: 'text-nott-white border-nott-red/30',
-    muted: 'text-nott-white/60 border-nott-gray/30',
-    highlighted: 'text-nott-white border-nott-red',
-    success: 'text-nott-green border-nott-green/30',
-    failure: 'text-nott-red border-nott-red/30',
-    instruction: 'text-nott-white border-nott-white/10',
-    ghost: 'text-nott-white border-nott-gray/30'
-  }
-
-  return `${base} ${variants[props.variant]}`
 })
 </script>
 
 <template>
-  <div class="relative group">
-    <!-- Card Border/Glow -->
-    <div 
-      :class="[glowClasses, { 'group-hover:opacity-50 group-hover:duration-200': interactive && variant !== 'muted' }]"
-    ></div>
-    
-    <!-- Card Content -->
-    <div :class="containerClasses">
-      <h3 v-if="title" :class="titleClasses">
-        {{ title }}
-      </h3>
-      <div class="text-nott-white/80 font-body flex-grow">
-        <slot />
-      </div>
-    </div>
-  </div>
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+  >
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
+    </template>
+  </component>
 </template>

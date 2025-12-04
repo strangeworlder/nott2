@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Text from '../Text.vue'
-import Button from '../Button.vue'
+import IngressText from '../IngressText.vue'
 import ActionFooter from '../ActionFooter.vue'
 import SelectionButton from '../SelectionButton.vue'
 import Card from '../Card.vue'
@@ -26,12 +26,8 @@ const selectedPlaysetDetails = computed(() => {
 
 <template>
   <div class="w-full mx-auto animate-fade-in flex flex-col items-center justify-center min-h-[50vh]">
-    <div class="mb-6 text-center">
-      <Text variant="h1" color="red" class="mb-4">{{ content.title }}</Text>
-      <Text variant="quote" color="muted" class="max-w-xl mx-auto">
-        <span v-html="content.intro"></span>
-      </Text>
-    </div>
+    <Text variant="h1" color="red" class="mb-4 text-center">{{ content.title }}</Text>
+    <IngressText class="max-w-xl mx-auto" v-html="content.intro" />
 
     <div class="mb-8 w-full max-w-md space-y-4">
       <Text variant="h3" class="text-center">{{ content.playsetSelectionTitle }}</Text>
@@ -64,15 +60,10 @@ const selectedPlaysetDetails = computed(() => {
       </div>
     </div>
 
-    <ActionFooter>
-      <Button 
-        size="xl"
-        variant="primary" 
-        :disabled="!selectedPlayset"
-        @click="$emit('next')"
-      >
-        {{ content.buttonText }}
-      </Button>
-    </ActionFooter>
+    <ActionFooter
+      :label="content.buttonText"
+      :disabled="!selectedPlayset"
+      @click="$emit('next')"
+    />
   </div>
 </template>

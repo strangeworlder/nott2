@@ -1,0 +1,111 @@
+{
+    "intro": "The dust settles. The game state changes. Update the decks and prepare for what comes next.",
+    "genrePoint": {
+        "title": "Genre Point Checkpoint",
+        "body": "Did a player play into a trope, make a great roleplay choice, or terrify the table?",
+        "labelOn": "Genre Point Awarded",
+        "labelOff": "Award Genre Point?",
+        "caption": "Tokens on Table: {table} | Tokens Held: {player}"
+    },
+    "decks": {
+        "title": "Update Physical Decks",
+        "success": {
+            "title": "SUCCESS",
+            "caption": "The character manages to accomplish their goal."
+        },
+        "failure": {
+            "title": "FAILURE",
+            "caption": "The horror deepens..."
+        }
+    },
+    "jokers": {
+        "red": {
+            "victory": {
+                "title": "Victory",
+                "body": "The Red Joker is defeated. You have survived the night.",
+                "caption": "Proceed to see your final score."
+            },
+            "defeat": {
+                "title": "The End",
+                "body": "Your character is killed.",
+                "shuffle": "Shuffle the Red Joker back into the Threat Deck."
+            }
+        },
+        "black": {
+            "remove": {
+                "title": "One Last Chance",
+                "body": "Remove the Black Joker from the game."
+            },
+            "success": {
+                "title": "A Small Victory",
+                "body": "Remove the highest Face Card from the Threat Deck."
+            },
+            "failure": {
+                "title": "The Horror Grows",
+                "body": "Add a random King to the Threat Deck."
+            }
+        }
+    },
+    "standard": {
+        "success": {
+            "trophy": {
+                "title": "Update Trophy Pile",
+                "body": "Move the {card} to the top of the Trophy Pile.",
+                "caption": "This becomes the new Base Difficulty for the next Face Card the characters face."
+            },
+            "reserve": {
+                "title": "Add Reserve",
+                "body": "Take the next card from the Number Reserve and add it to the bottom of the Threat Deck."
+            },
+            "weakness": {
+                "title": "Check for Weakness",
+                "found": {
+                    "title": "Weakness Found!",
+                    "caption": "This is the first time you've defeated a {suit} Face Card.",
+                    "action": "Remove this card from the game."
+                },
+                "known": {
+                    "title": "Weakness Already Known",
+                    "caption": "You have already found the weakness for {suit}.",
+                    "action": "Shuffle this card back into the physical Threat Deck."
+                }
+            },
+            "retaliate": {
+                "title": "The Killer Retaliates",
+                "add": "Add a random {rank} to the Threat Deck.",
+                "empty": "No Face Cards left in reserve!"
+            },
+            "remains": {
+                "title": "The Threat Remains",
+                "body": "Shuffle the entire Threat Deck and Trophy Pile."
+            }
+        },
+        "failure": {
+            "threat": {
+                "title": "Threat Deck",
+                "body": "Place the {card} at the bottom of the Threat Deck."
+            },
+            "reserve": {
+                "title": "Add Reserve",
+                "body": "Take the next card from the Number Reserve and add it to the bottom of the Threat Deck."
+            },
+            "strikes": {
+                "title": "The Killer Strikes",
+                "body": "Mark 1 Strike on your character sheet."
+            },
+            "grow": {
+                "title": "The Horror Grows",
+                "add": "Add a random {rank} to the bottom of the Threat Deck.",
+                "empty": "No Face Cards left in reserve!"
+            },
+            "remains": {
+                "title": "The Threat Remains",
+                "body": "Shuffle the entire Threat Deck and Trophy Pile."
+            }
+        }
+    },
+    "buttons": {
+        "finish": "Finish Game",
+        "next": "Start Next Scene"
+    }
+}

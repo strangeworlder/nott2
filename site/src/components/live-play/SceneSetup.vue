@@ -4,7 +4,8 @@ import { useLivePlay } from '../../composables/useLivePlay'
 
 import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
-import Button from '../Button.vue'
+import Separator from '../defaults/Separator.vue'
+import IngressText from '../IngressText.vue'
 import PlayingCard from '../PlayingCard.vue'
 
 import ActionFooter from '../ActionFooter.vue'
@@ -111,9 +112,7 @@ const explanationText = computed(() => {
 
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
-    <div class="mb-6 text-center">
-      <Text variant="quote" color="muted" v-html="explanationText"></Text>
-    </div>
+    <IngressText v-html="explanationText" />
 
     <div class="space-y-8 mb-12">
       
@@ -181,15 +180,18 @@ const explanationText = computed(() => {
       </div>
 
       <!-- Prompt Display (Only when card selected) -->
-      <div v-if="showPrompt" class="space-y-6 animate-fade-in border-t border-nott-gray/30 pt-8 mt-8">
+      <div v-if="showPrompt" class="space-y-6 animate-fade-in pt-8 mt-8">
+        <Separator />
         <div class="text-center">
              <Text variant="h3" color="red">{{ content.ui.promptTitle }}</Text>
         </div>
 
         <div v-if="selectedJoker" class="flex justify-center">
-             <div class="w-64 h-80 rounded-xl bg-nott-black border-2 border-nott-red flex items-center justify-center">
-                 <Text variant="h3" :color="selectedJoker === 'Red' ? 'red' : 'white'">{{ selectedJoker }} Joker</Text>
-             </div>
+             <PlayingCard 
+               :is-joker="true" 
+               :joker-color="selectedJoker" 
+               :selected="true"
+             />
         </div>
 
         <div v-if="activeCard || selectedJoker" class="max-w-2xl mx-auto">
@@ -204,16 +206,11 @@ const explanationText = computed(() => {
     </div>
 
     <!-- Action Footer -->
-    <ActionFooter>
-      <Button 
-        size="lg"
-        variant="primary" 
-        @click="$emit('next')"
-        :disabled="!showPrompt"
-        class="px-12"
-      >
-        {{ content.ui.startButton }}
-      </Button>
-    </ActionFooter>
+    <!-- ActionFooter -->
+    <ActionFooter 
+      :label="content.ui.startButton"
+      :disabled="!showPrompt"
+      @click="$emit('next')"
+    />
   </div>
 </template>

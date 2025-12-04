@@ -2,11 +2,13 @@
 import { useLivePlay } from '../../composables/useLivePlay'
 import Card from '../Card.vue'
 import Text from '../Text.vue'
+import IngressText from '../IngressText.vue'
 import Toggle from '../Toggle.vue'
 import DieSelector from '../DieSelector.vue'
 import SelectionButton from '../SelectionButton.vue'
-import Button from '../Button.vue'
 import ActionFooter from '../ActionFooter.vue'
+import { computed, onMounted } from 'vue'
+import { getResolutionPhaseContent } from '../../utils/contentLoader'
 
 const { 
   rollMain, 
@@ -24,7 +26,8 @@ const {
   setTrophyTop,
   playerGenrePoints,
   isGenrePointUsed,
-  toggleGenrePointUsage
+  toggleGenrePointUsage,
+  selectedPlayset
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -32,7 +35,7 @@ const emit = defineEmits<{
   (e: 'next'): void
 }>()
 
-import { onMounted } from 'vue'
+const content = computed(() => getResolutionPhaseContent(selectedPlayset.value))
 
 onMounted(() => {
   // Reset dice when entering this phase
@@ -43,19 +46,17 @@ onMounted(() => {
 
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
-    <div class="mb-6 text-center">
-      <Text variant="quote" color="muted">Roll the d13 (d10 + d4). Compare your total to the Difficulty. The d4 also determines your Effort—how well you succeed or how badly you fail.</Text>
-    </div>
+    <IngressText v-html="content.intro" />
 
     <div class="max-w-2xl mx-auto space-y-8 mb-12">
       
         <div v-if="isFaceCard || selectedJoker" class="space-y-4 animate-fade-in">
-          <Text variant="label" align="center">Target Difficulty Calculation</Text>
+          <Text variant="label" align="center">{{ content.targetDifficulty.title }}</Text>
           
           <div class="flex justify-center items-center gap-4">
              <!-- Base Difficulty -->
              <div class="text-center">
-                <Text variant="caption" color="muted">Base</Text>
+                <Text variant="caption" color="muted">{{ content.targetDifficulty.base }}</Text>
                 
                 <!-- If randomized, show button list -->
                 <div v-if="isTrophyTopRandomized && availableTrophyRanks.length > 1" class="flex flex-col items-center gap-2">
@@ -72,38 +73,38 @@ onMounted(() => {
                        </SelectionButton>
                    </div>
                 </div>
-                <!-- Else show static number -->
-                <div v-else class="text-2xl font-display text-nott-white">
-                  {{ trophyTop?.rank || 10 }}
+                 <!-- Else show static number -->
+                <div v-else>
+                  <Text variant="h2" color="white" leading="none">{{ trophyTop?.rank || 10 }}</Text>
                 </div>
              </div>
 
-             <div class="text-nott-red font-bold text-xl">+</div>
+             <Text variant="h3" color="red" class="font-bold">+</Text>
              
              <!-- Modifier -->
              <div class="text-center">
-                <Text variant="caption" color="muted">Mod</Text>
-                <div class="text-2xl font-display text-nott-white">{{ (targetDifficulty || 0) - (trophyTop?.rank || 0) }}</div>
+                <Text variant="caption" color="muted">{{ content.targetDifficulty.mod }}</Text>
+                <Text variant="h2" color="white" leading="none">{{ (targetDifficulty || 0) - (trophyTop?.rank || 0) }}</Text>
              </div>
              
-             <div class="text-nott-red font-bold text-xl">=</div>
+             <Text variant="h3" color="red" class="font-bold">=</Text>
              
              <!-- Total -->
              <div class="text-center">
-                <Text variant="caption" color="muted">Total</Text>
-                <div class="text-4xl font-display text-nott-red font-bold">{{ targetDifficulty }}</div>
+                <Text variant="caption" color="muted">{{ content.targetDifficulty.total }}</Text>
+                <Text variant="h1" color="red" class="font-bold" leading="none">{{ targetDifficulty }}</Text>
              </div>
           </div>
           
-          <Text variant="caption" color="muted" class="text-center">Base + Modifier (J=1, Q=2, K=3)</Text>
+          <Text variant="caption" color="muted" class="text-center">{{ content.targetDifficulty.explanation }}</Text>
         </div>
 
         <!-- Target Difficulty (Number Cards) -->
         <div v-else class="space-y-4 animate-fade-in">
            <div class="flex flex-col items-center justify-center gap-2">
-              <Text variant="label" align="center">Target Difficulty</Text>
-              <div class="text-6xl font-display text-nott-red font-bold">{{ selectedRank }}</div>
-              <Text variant="caption" color="muted">Roll equal to or higher than the card rank.</Text>
+              <Text variant="label" align="center">{{ content.targetDifficulty.numberCardTitle }}</Text>
+              <Text variant="h1" color="red" class="font-bold" leading="none">{{ selectedRank }}</Text>
+              <Text variant="caption" color="muted">{{ content.targetDifficulty.numberCardExplanation }}</Text>
            </div>
         </div>
 
@@ -112,38 +113,40 @@ onMounted(() => {
         <DieSelector 
           :sides="10"
           v-model="rollMain"
-          label="d10 (Main Die)"
+          :label="content.dice.main"
         />
 
         <!-- d4 Input -->
         <DieSelector 
           :sides="4"
           v-model="rollEffort"
-          label="d4 (Effort Die)"
+          :label="content.dice.effort"
           color="red"
         />
       </div>
 
         <!-- Reminders -->
         <div class="grid grid-cols-2 gap-4">
-          <Card class="text-center flex flex-col items-center justify-center gap-2 !p-4">
-            <Text variant="label" color="red" class="mb-1">Genre Point?</Text>
+          <Card class="text-center flex flex-col items-center justify-center gap-2">
+            <Text variant="label" color="red" class="mb-1">{{ content.reminders.genrePoint.title }}</Text>
             <div v-if="playerGenrePoints > 0 || isGenrePointUsed">
                 <Toggle 
                     :model-value="isGenrePointUsed"
                     @update:model-value="toggleGenrePointUsage"
-                    label-on="Used a genre point"
-                    label-off="Didn't use a genre point"
+                    :label-on="content.reminders.genrePoint.labelOn"
+                    :label-off="content.reminders.genrePoint.labelOff"
                 />
-                <Text variant="caption" color="muted" class="mt-1">Tokens Available: {{ playerGenrePoints }}</Text>
+                <Text variant="caption" color="muted" class="mt-1">{{ content.reminders.genrePoint.countLabel }}{{ playerGenrePoints }}</Text>
             </div>
             <div v-else>
-                <Text variant="caption" color="muted">No tokens available.</Text>
+                <Text variant="caption" color="muted">{{ content.reminders.genrePoint.noneAvailable }}</Text>
             </div>
+            <Text variant="caption" color="muted" class="mt-2">{{ content.reminders.genrePoint.description }}</Text>
+
           </Card>
-          <Card class="text-center flex flex-col items-center justify-center !p-4">
-            <Text variant="label" color="red" class="mb-1">Aptitude?</Text>
-            <Text variant="caption" color="muted">If Suit matches Aptitude: +1 to Push (Risk), -1 for Safety (Control).</Text>
+          <Card class="text-center flex flex-col items-center justify-center">
+            <Text variant="label" color="red" class="mb-1">{{ content.reminders.aptitude.title }}</Text>
+            <Text variant="caption" color="muted">{{ content.reminders.aptitude.description }}</Text>
           </Card>
         </div>
 
@@ -153,14 +156,14 @@ onMounted(() => {
           class="text-center transition-all duration-500"
           :variant="isSuccess ? 'success' : 'failure'"
         >
-          <Text variant="label" color="muted" class="mb-2">Total Result: {{ rollTotal }} vs {{ (isFaceCard || selectedJoker) ? targetDifficulty : selectedRank }}</Text>
+          <Text variant="label" color="muted" class="mb-2">{{ content.results.totalResult }}{{ rollTotal }} vs {{ (isFaceCard || selectedJoker) ? targetDifficulty : selectedRank }}</Text>
           <Text 
             variant="quote"
             :color="isSuccess ? 'success' : 'red'"
             glow
             class="mb-2 tracking-tighter"
           >
-            {{ isSuccess ? 'SUCCESS' : 'FAILURE' }}
+            {{ isSuccess ? content.results.success : content.results.failure }}
           </Text>
         </Card>
 
@@ -177,16 +180,11 @@ onMounted(() => {
     </div>
 
     <!-- Action Footer -->
-    <ActionFooter>
-      <Button 
-        size="lg"
-        variant="primary" 
-        @click="$emit('next')"
-        :disabled="!(rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true))"
-        class="px-12"
-      >
-        Resolve Scene →
-      </Button>
-    </ActionFooter>
+    <!-- ActionFooter -->
+    <ActionFooter 
+      :label="content.buttonText"
+      :disabled="!(rollMain !== null && rollEffort !== null && ((isFaceCard || selectedJoker) ? targetDifficulty !== null : true))"
+      @click="$emit('next')"
+    />
   </div>
 </template>

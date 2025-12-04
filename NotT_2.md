@@ -206,7 +206,7 @@ After the narration is complete, update the decks.
 3.  **Shuffling**: If a rule triggers a shuffle of the Threat Deck, shuffle **all visible cards** back into the deck, then draw two new ones.
 
 ### Number Cards (Deck Evolution)
-*   **On a Success**: The Threat Card is removed and placed on top of the **Trophy Pile**. This sets a new Base Difficulty for the Killer. The Director then adds the next card from the **Number Reserve** to the bottom of the Threat Deck.
+*   **On a Success**: The Threat Card is removed and placed on top of the **Trophy Pile**. This sets a new Base Difficulty for the Killer. The Director then adds the next card from the **Number Reserve** to the bottom of the Threat Deck. **Exception**: If the Threat Card was an **Ace**, it is removed from the game loop and given to the player as a reminder of their Aptitude instead of going to the Trophy Pile.
 *   **On a Failure**: You stumble. The Threat Card is placed on the **bottom of the Threat Deck** to haunt you again later. The Director adds the next card from the **Number Reserve** to the bottom of the deck to accompany it.
 
 ### Face cards (Facing the Killer)

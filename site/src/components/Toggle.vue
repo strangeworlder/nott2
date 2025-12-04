@@ -1,24 +1,54 @@
 <script setup lang="ts">
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/Toggle.vue'
+
 interface Props {
   modelValue: boolean
   labelOn?: string
   labelOff?: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
 }>()
+
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/Toggle.vue')
+const currentComponent = shallowRef(DefaultComponent)
+
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
+  }
+
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.Toggle) {
+    const path = `./playsets/${playsetId}/Toggle.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
+  } else {
+    currentComponent.value = DefaultComponent
+  }
+})
 </script>
 
 <template>
-  <button 
-    @click="emit('update:modelValue', !modelValue)"
-    class="text-xs uppercase tracking-widest px-4 py-2 rounded border transition-all duration-200"
-    :class="modelValue 
-      ? 'border-green-500 text-green-500 bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.2)]' 
-      : 'border-nott-white/30 text-nott-white/60 hover:border-nott-white hover:text-nott-white'"
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+    @update:modelValue="emit('update:modelValue', $event)"
   >
-    {{ modelValue ? (labelOn || 'On') : (labelOff || 'Off') }}
-  </button>
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
+    </template>
+  </component>
 </template>

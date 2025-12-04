@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import RulesReference from './components/RulesReference.vue'
-import LivePlayHelper from './components/LivePlayHelper.vue'
-import DesignSystem from './components/DesignSystem.vue'
+import RulesReference from './components/rules/RulesReference.vue'
+import LivePlayHelper from './components/live-play/LivePlayHelper.vue'
+import DesignSystem from './components/dev/DesignSystem.vue'
 import Header from './components/Header.vue'
 import Navigation from './components/Navigation.vue'
 import NavButton from './components/NavButton.vue'
@@ -16,6 +16,7 @@ watch(selectedPlayset, (newId) => {
 }, { immediate: true })
 
 const currentView = ref<'showcase' | 'rules' | 'play'>('play')
+const isDev = import.meta.env.DEV
 </script>
 
 <template>
@@ -34,7 +35,9 @@ const currentView = ref<'showcase' | 'rules' | 'play'>('play')
         >
           Rules Reference
         </NavButton>
+
         <NavButton 
+          v-if="isDev"
           @click="currentView = 'showcase'"
           :active="currentView === 'showcase'"
         >

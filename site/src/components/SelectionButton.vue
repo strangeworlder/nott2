@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
+import { useLivePlay } from '../composables/useLivePlay'
+import { getPlaysetConfig } from '../utils/contentLoader'
+import DefaultComponent from './defaults/SelectionButton.vue'
 
 interface Props {
   selected?: boolean
@@ -17,36 +20,39 @@ const props = withDefaults(defineProps<Props>(), {
   size: 'md'
 })
 
-const classes = computed(() => {
-  const base = 'border font-display transition-all duration-200 flex items-center justify-center focus:outline-none'
-  
-  const variants = {
-    default: 'rounded px-4',
-    square: 'rounded w-full aspect-square'
+const { selectedPlayset } = useLivePlay()
+const playsetComponents = import.meta.glob('./playsets/**/SelectionButton.vue')
+const currentComponent = shallowRef(DefaultComponent)
+
+watchEffect(() => {
+  const playsetId = selectedPlayset.value
+  if (!playsetId || playsetId === 'default') {
+    currentComponent.value = DefaultComponent
+    return
   }
 
-  const sizes = {
-    sm: props.variant === 'square' ? 'h-8 text-sm' : 'h-8 text-sm',
-    md: props.variant === 'square' ? 'h-10 text-lg' : 'h-12 text-lg'
+  const config = getPlaysetConfig(playsetId)
+  if (config.overrides?.SelectionButton) {
+    const path = `./playsets/${playsetId}/SelectionButton.vue`
+    const loader = playsetComponents[path]
+    if (loader) {
+      currentComponent.value = defineAsyncComponent(loader as any)
+    } else {
+      currentComponent.value = DefaultComponent
+    }
+  } else {
+    currentComponent.value = DefaultComponent
   }
-
-  const colors = {
-    default: props.selected 
-      ? 'bg-nott-white border-nott-white text-nott-black' 
-      : 'bg-nott-black border-nott-gray text-nott-white hover:border-nott-white/50',
-    red: props.selected
-      ? 'bg-nott-red border-nott-red text-white'
-      : 'bg-nott-black border-nott-gray text-nott-white hover:border-nott-red/50'
-  }
-
-  const disabledState = props.disabled ? 'opacity-20 cursor-not-allowed' : 'cursor-pointer'
-
-  return `${base} ${variants[props.variant]} ${sizes[props.size]} ${colors[props.color]} ${disabledState}`
 })
 </script>
 
 <template>
-  <button :class="classes" :disabled="disabled">
-    <slot />
-  </button>
+  <component 
+    :is="currentComponent" 
+    v-bind="props"
+  >
+    <template v-for="(_, name) in $slots" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps || {}" />
+    </template>
+  </component>
 </template>

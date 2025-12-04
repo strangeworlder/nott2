@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useLivePlay } from '../../composables/useLivePlay'
-import Button from '../Button.vue'
+import ActionFooter from '../ActionFooter.vue'
 import Text from '../Text.vue'
 
 const { fullReset } = useLivePlay()
@@ -18,21 +18,13 @@ const { fullReset } = useLivePlay()
       </Text>
 
       <div class="pt-12">
-        <Button variant="primary" size="xl" @click="fullReset">
-          Play Again
-        </Button>
+        <ActionFooter 
+          label="Play Again"
+          @click="fullReset"
+        />
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-.animate-fade-in {
-  animation: fadeIn 2s ease-out;
-}
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-</style>

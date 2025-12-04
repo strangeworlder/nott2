@@ -1,0 +1,36 @@
+{
+    "intro": "The dice determined how the risky attempt goes. Roll the d13 (d10 + d4). Compare your total to the Difficulty. The d4 also determines your Effort - how well you succeed or how badly you fail.",
+    "targetDifficulty": {
+        "title": "Target Difficulty Calculation",
+        "base": "Base",
+        "mod": "Mod",
+        "total": "Total",
+        "explanation": "Base + Modifier (J=1, Q=2, K=3)",
+        "numberCardTitle": "Target Difficulty",
+        "numberCardExplanation": "Roll equal to or higher than the card rank."
+    },
+    "dice": {
+        "main": "d10 (Main Die)",
+        "effort": "d4 (Effort Die)"
+    },
+    "reminders": {
+        "genrePoint": {
+            "title": "Genre Point?",
+            "labelOn": "Used a genre point",
+            "labelOff": "Didn't use a genre point",
+            "countLabel": "Genre Points: ",
+            "noneAvailable": "No genre points available.",
+            "description": "Genre points allow you to reroll both dice."
+        },
+        "aptitude": {
+            "title": "Aptitude?",
+            "description": "If Suit matches Aptitude you can shift the effort die result up or down by one."
+        }
+    },
+    "results": {
+        "totalResult": "Total Result: ",
+        "success": "SUCCESS",
+        "failure": "FAILURE"
+    },
+    "buttonText": "Resolve Scene"
+}

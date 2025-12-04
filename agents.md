@@ -44,7 +44,11 @@
 - **Frontend Principles**:
     - **Component-First Architecture**:
         - **Avoid Raw HTML**: Do not use raw HTML elements (`div`, `span`, `p`, `h1-h6`, `ul`, `li`, `button`) for UI primitives where a Design System component exists.
-        - **Text**: Always use the `<Text>` component with the appropriate `variant` (e.g., `h1`, `body`, `quote`, `label`) instead of `<p>` or heading tags.
+        - **Text**: Always use the `<Text>` component with the appropriate `variant` (e.g., `h1`, `body`, `label`) instead of `<p>` or heading tags.
+        - **Semantic Components**: Use specific components for specific semantic roles rather than generic components with variants.
+            - **Example**: Use `<IngressText>` for introductory text blocks instead of `<Text variant="quote">`.
+        - **Encapsulation**: Components should encapsulate their internal structure and logic. Consumers should pass data via props, not structural slots.
+            - **Example**: `<ActionFooter label="Next" />` instead of `<ActionFooter><Button>Next</Button></ActionFooter>`.
         - **Containers**: Use `<Card>` for grouping content sections.
         - **Lists**: Use `<List>` and `<ListItem>` for structured lists.
         - **Icons**: Use the `<Icon>` component instead of inline SVGs.
@@ -52,6 +56,9 @@
     - **Data-Driven Templates**:
         - Content should be driven by data structures (arrays/objects).
         - Use `v-for` to render repeated elements (cards, list items, buttons) rather than hardcoding them.
+        - **Rich Text**: The `<Text>` component supports `v-html` directly. Do not wrap content in `<span>` tags just to use `v-html`.
+            - **Correct**: `<Text v-html="content.intro" />`
+            - **Incorrect**: `<Text><span v-html="content.intro"></span></Text>`
     - **Layout & Animation**:
         - Use standard CSS grid/flex layouts for structure.
         - Apply standard animation utility classes (e.g., `animate-fade-in`) to top-level containers for smooth entry.
@@ -65,7 +72,20 @@
     - `src/App.vue`: Main layout.
     - `src/data/default`: Default location for JSON data files.
 
-### 3. Data Management
+### 3. Quality Assurance
+- **Build quality**:
+    - **Agent note** Run `npm run build` to ensure the build is stable after making possible breaking changes.
+- **Testing**:
+    - **Framework**: Vitest + @vue/test-utils.
+    - **Requirement**: All new components must include unit tests in a `__tests__` directory alongside the component.
+    - **Scope**: Test props, slots, events, and variant classes.
+    - **Agent Note**: When verifying tests, use `npm run test:ci` to run tests once without watch mode. This prevents the process from hanging.
+- **Git Hooks**:
+    - **Husky**: Configured to enforce quality standards.
+    - **Pre-commit**: Runs `npm run test:ci` to ensure no broken code is committed.
+    - **Pre-push**: Runs `npm run test:ci` to ensure the build is stable before pushing.
+
+### 4. Data Management
 - **Externalize Text**:
     - All substantial textual data (prompts, flavor text, rules text) must be stored in external JSON files (e.g., in `site/src/data/default`).
     - Do not hardcode long strings or content matrices within TypeScript/Vue files.
@@ -78,6 +98,19 @@
 - **Rules**: Updates to game mechanics must be reflected in `NotT_2.md`.
 - **Workflows**: Common procedures (e.g., deployment, database migration) should be documented in `.agent/workflows/`.
 - **Components**: Every component must be thoroughly documented. Explain props, slots, events, and usage examples. This is non-negotiable for maintainability.
+    - **Documentation Structure**: Each component file must start with a comment block containing:
+        - **Philosophical**: A high-level explanation of the component's purpose, its role in the user experience, and the "feeling" it should convey. Why does this exist? What metaphor does it serve?
+        - **Technical**: A concise description of the component's functionality, followed by a list of Props, Events, and Slots.
+
+### 5. Component Architecture
+- **Defaults vs. Overrides**: The `site/src/components/defaults` directory contains the base implementation of components. These are the "standard" versions used unless a playset provides an override.
+- **Wrapper Components**: Components in `site/src/components` (e.g., `Button.vue`) act as wrappers. They dynamically load either the default component or a playset-specific version based on the current configuration.
+- **Wrapper Structure**:
+    1.  **Imports**: Import `defineAsyncComponent`, `shallowRef`, `watchEffect`, `useLivePlay`, `getPlaysetConfig`, and the default component.
+    2.  **Props**: Define and pass through all props.
+    3.  **Dynamic Loading**: Use `import.meta.glob` to find playset components.
+    4.  **Watcher**: Use `watchEffect` to check `selectedPlayset` and `getPlaysetConfig`. If an override exists, load it; otherwise, use the default.
+    5.  **Template**: Render the dynamic component using `<component :is="...">`, binding all props and forwarding all slots.
 
 ## Interaction Protocol
 1.  **Understand**: Read the user request and relevant files (`NotT_2.md`, source code).

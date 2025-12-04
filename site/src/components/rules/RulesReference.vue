@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import PromptMatrix from './PromptMatrix.vue'
+import PromptMatrix from '../live-play/PromptMatrix.vue'
 import FalloutReference from './FalloutReference.vue'
 import BasicRules from './BasicRules.vue'
 import CharacterRules from './CharacterRules.vue'
-import Navigation from './Navigation.vue'
-import NavButton from './NavButton.vue'
+import Navigation from '../Navigation.vue'
+import NavButton from '../NavButton.vue'
 
 const activeTab = ref<'basic' | 'characters' | 'prompts' | 'fallout'>('basic')
 </script>

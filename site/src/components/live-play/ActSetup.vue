@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Card from '../Card.vue'
 import Text from '../Text.vue'
-import Button from '../Button.vue'
+import IngressText from '../IngressText.vue'
 import ActionFooter from '../ActionFooter.vue'
 import List from '../List.vue'
 import ListItem from '../ListItem.vue'
@@ -23,14 +23,10 @@ const content = computed(() => getActSetupContent(props.act, selectedPlayset.val
 
 <template>
   <div v-if="content" class="w-full max-w-4xl mx-auto animate-fade-in">
-    <div class="mb-6 text-center">
-      <Text variant="h2" color="red" class="mb-2" align="center">
-        {{ content.title }}
-      </Text>
-      <Text variant="quote" align="center" color="muted">
-        <span v-html="content.quote"></span>
-      </Text>
-    </div>
+    <Text variant="h2" color="red" class="mb-2 text-center block">
+      {{ content.title }}
+    </Text>
+    <IngressText v-html="content.quote" />
 
     <div :class="{'grid gap-6 md:grid-cols-2 mb-12': content.sections.length > 1, 'max-w-2xl mx-auto mb-12': content.sections.length === 1}">
         <Card 
@@ -56,15 +52,10 @@ const content = computed(() => getActSetupContent(props.act, selectedPlayset.val
     </div>
 
     <!-- Action Footer -->
-    <ActionFooter>
-      <Button 
-        size="xl"
-        variant="primary" 
-        @click="$emit('next')"
-      >
-        {{ content.buttonText }}
-        →
-      </Button>
-    </ActionFooter>
+    <!-- ActionFooter -->
+    <ActionFooter 
+      :label="content.buttonText"
+      @click="$emit('next')"
+    />
   </div>
 </template>

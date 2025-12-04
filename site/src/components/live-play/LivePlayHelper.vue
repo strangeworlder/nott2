@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useLivePlay } from '../composables/useLivePlay'
-import Button from './Button.vue'
-import LivePlayHeader from './live-play/LivePlayHeader.vue'
+import { useLivePlay } from '../../composables/useLivePlay'
+import Button from '../Button.vue'
+import LivePlayHeader from '../LivePlayHeader.vue'
 
 // Import Steps
-import WelcomeScreen from './live-play/WelcomeScreen.vue'
-import GameSetup from './live-play/GameSetup.vue'
-import ActSetup from './live-play/ActSetup.vue'
-import SceneSetup from './live-play/SceneSetup.vue'
-import ConversationAndStakesPhase from './live-play/ConversationAndStakesPhase.vue'
-import ResolutionPhase from './live-play/ResolutionPhase.vue'
-import ResolveScenePhase from './live-play/ResolveScenePhase.vue'
-import FalloutPhase from './live-play/FalloutPhase.vue'
-import WinScreen from './live-play/WinScreen.vue'
+import WelcomeScreen from './WelcomeScreen.vue'
+import GameSetup from './GameSetup.vue'
+import ActSetup from './ActSetup.vue'
+import SceneSetup from './SceneSetup.vue'
+import ConversationAndStakesPhase from './ConversationAndStakesPhase.vue'
+import ResolutionPhase from './ResolutionPhase.vue'
+import ResolveScenePhase from './ResolveScenePhase.vue'
+import FalloutPhase from './FalloutPhase.vue'
+import WinScreen from './WinScreen.vue'
 
 const { 
   currentPhase, 
@@ -30,6 +30,12 @@ const {
   getRankName,
   tableGenrePoints,
   playerGenrePoints,
+  trophyTop,
+  isTrophyTopRandomized,
+  cardName,
+  activeCard,
+  selectedJoker,
+  fullReset,
   nextPhase,
   prevPhase
 } = useLivePlay()
@@ -40,13 +46,25 @@ watch(currentPhase, () => {
   window.scrollTo(0, 0)
 }, { flush: 'post' })
 
+
+const isDev = import.meta.env.DEV
 </script>
 
 <template>
   <div class="min-h-screen bg-nott-black text-nott-white flex flex-col items-center p-4 md:p-8">
     
     <!-- New Header (Visible on all screens except Welcome and Win, though Welcome handles its own layout) -->
-    <LivePlayHeader v-if="currentPhase !== 'welcome' && currentPhase !== 'win'" />
+    <LivePlayHeader 
+      v-if="currentPhase !== 'welcome' && currentPhase !== 'win'"
+      :current-act="currentAct"
+      :current-phase="currentPhase"
+      :trophy-top="trophyTop"
+      :is-trophy-top-randomized="isTrophyTopRandomized"
+      :card-name="cardName"
+      :active-card="activeCard"
+      :selected-joker="selectedJoker"
+      :full-reset="fullReset"
+    />
 
     <!-- Phase: Welcome Screen -->
     <WelcomeScreen 
@@ -107,7 +125,7 @@ watch(currentPhase, () => {
     />
 
     <!-- Debug Toggle -->
-    <div class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
+    <div v-if="isDev" class="fixed bottom-4 right-4 z-50" :class="{ 'mb-24': debugMode }">
       <Button 
         @click="debugMode = !debugMode"
         variant="debug"

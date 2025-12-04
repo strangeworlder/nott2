@@ -4,8 +4,8 @@ import { useLivePlay } from '../../composables/useLivePlay'
 import Card from '../Card.vue'
 import ScenePrompt from './ScenePrompt.vue'
 import Text from '../Text.vue'
+import IngressText from '../IngressText.vue'
 import Checkbox from '../Checkbox.vue'
-import Button from '../Button.vue'
 
 import ActionFooter from '../ActionFooter.vue'
 import ConversationPrompts from './ConversationPrompts.vue'
@@ -33,9 +33,7 @@ const emit = defineEmits<{
 <template>
   <div class="w-full max-w-4xl mx-auto animate-fade-in">
     
-    <Text class="mb-8" variant="quote" align="center" color="muted">
-      <span v-html="content.intro"></span>
-    </Text>
+    <IngressText v-html="content.intro" />
 
     <ScenePrompt 
       v-if="activeCard || selectedJoker" 
@@ -47,13 +45,11 @@ const emit = defineEmits<{
 
     <div class="max-w-2xl mx-auto space-y-8 border-t border-nott-gray/20 pt-8 mb-12">
       <Card :title="content.steps.setScene.title">
-        <Text variant="body" color="white">
-          <span v-html="content.steps.setScene.activePlayer1"></span>
-          <div class="mb-4"></div>
-          <span v-html="content.steps.setScene.otherPlayers"></span>
-          <div class="mb-4"></div>
-          <span v-html="content.steps.setScene.activePlayer2"></span>
-        </Text>
+        <div class="space-y-4">
+          <Text variant="body" color="white" v-html="content.steps.setScene.activePlayer1" />
+          <Text variant="body" color="white" v-html="content.steps.setScene.otherPlayers" />
+          <Text variant="body" color="white" v-html="content.steps.setScene.activePlayer2" />
+        </div>
       </Card>
     </div>
     <div class="grid gap-6 md:grid-cols-2 mb-8">
@@ -88,17 +84,11 @@ const emit = defineEmits<{
     </div>
 
     <!-- Action Footer -->
-    <ActionFooter>
-      <Button 
-        size="lg"
-        variant="primary" 
-        @click="$emit('next')"
-        :disabled="!sacrificeConfirmed"
-        class="px-12"
-      >
-        {{ content.ui.buttonText }}
-        →
-      </Button>
-    </ActionFooter>
+    <!-- ActionFooter -->
+    <ActionFooter 
+      :label="content.ui.buttonText"
+      :disabled="!sacrificeConfirmed"
+      @click="$emit('next')"
+    />
   </div>
 </template>

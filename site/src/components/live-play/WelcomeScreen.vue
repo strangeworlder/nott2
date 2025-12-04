@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import Text from '../Text.vue'
-import Button from '../Button.vue'
+import ActionFooter from '../ActionFooter.vue'
 import Icon from '../Icon.vue'
 import Card from '../Card.vue'
+import Separator from '../defaults/Separator.vue'
 import { getWelcomeScreenContent } from '../../utils/contentLoader'
 
 defineEmits(['next'])
@@ -32,7 +33,9 @@ const content = getWelcomeScreenContent()
     </div>
 
     <!-- Info Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full px-4 border-t border-b border-nott-gray/30 py-8">
+    <div class="w-full px-4 py-8">
+      <Separator />
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <Card 
             v-for="(item, index) in content.infoGrid" 
             :key="index"
@@ -50,13 +53,14 @@ const content = getWelcomeScreenContent()
                 </div>
             </div>
         </Card>
+      </div>
+      <Separator />
     </div>
 
     <!-- Action -->
-    <div class="pt-8 animate-pulse-slow">
-        <Button variant="primary" size="xl" @click="$emit('next')">
-            {{ content.buttonText }}
-        </Button>
-    </div>
+    <ActionFooter 
+      :label="content.buttonText"
+      @click="$emit('next')"
+    />
   </div>
 </template>
