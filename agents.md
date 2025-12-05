@@ -118,3 +118,12 @@
 3.  **Execute**: Implement changes iteratively.
 4.  **Verify**: Ensure the application builds and runs as expected.
 5.  **Reflect**: Update `walkthrough.md` with results.
+
+### 6. Rules Modules
+- **Philosophy**: Playsets define the "flavor" of the horror experience. While some changes are purely cosmetic (text/style), others fundamentally alter the mechanics to suit a specific sub-genre (e.g., "Final Girl" mechanics for Slasher films). Rules Modules encapsulate these mechanical variances, allowing them to be mixed, matched, or toggled independently of the core playset.
+- **Practicality**:
+    - **Configuration**: Modules are enabled via the `rulesModules` object in a playset's `config.json`.
+    - **Implementation**:
+        - Logic resides in the core game engine (`useLivePlay.ts`).
+        - Check for active modules using `getPlaysetConfig(selectedPlayset.value).rulesModules?.moduleName`.
+        - **Encapsulation**: Create dedicated functions for module logic (e.g., `checkFinalGirlCondition`) and call them at relevant hook points (e.g., `assignStrike`, `applyGameStateUpdates`). This prevents the core loop from becoming a spaghetti of if-statements.
