@@ -376,6 +376,7 @@ export function getResolveScenePhaseContent(playsetId?: string | null): ResolveS
 
 export interface PlaysetConfig {
     overrides?: Record<string, boolean>;
+    rulesModules?: Record<string, boolean>;
 }
 
 export interface FalloutPhaseContent {

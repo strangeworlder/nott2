@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { effortScale } from '../data/rules'
+import { getPlaysetConfig } from '../utils/contentLoader'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 
 export interface Character {
@@ -843,6 +844,25 @@ export function useLivePlay() {
             if (isGameOver.value) {
                 isGameWon.value = false // Just to be sure
                 currentPhase.value = 'win' // We'll reuse win screen or make a new one, but logic handles it
+            } else {
+                // Check Rules Modules
+                checkFinalGirlCondition()
+            }
+        }
+    }
+
+    const checkFinalGirlCondition = () => {
+        const config = getPlaysetConfig(selectedPlayset.value)
+        if (config.rulesModules?.finalGirl) {
+            // "if there is only one Aptitude without 3 (or more) strikes"
+            const survivors = characters.value.filter(c => c.strikes < 3)
+            if (survivors.length === 1) {
+                // Trigger Act 3 if not already there
+                if (currentAct.value < 3) {
+                    isEndgame.value = true
+                    currentAct.value = 3
+                    currentPhase.value = 'act-setup'
+                }
             }
         }
     }

@@ -1,5 +1,8 @@
 {
     "overrides": {
         "PlayingCard": true
+    },
+    "rulesModules": {
+        "finalGirl": true
     }
 }
