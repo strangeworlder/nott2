@@ -92,11 +92,13 @@ export interface WelcomeScreenContent {
 
 export function getGameSetupContent(playsetId?: string | null): GameSetupContent {
     const data = loadData<any>('gameSetup.json', playsetId);
+    const playsets = getAvailablePlaysets();
+
     return {
         title: data.title,
         intro: marked.parseInline(data.intro) as string,
         playsetSelectionTitle: data.playsetSelectionTitle,
-        playsets: data.playsets,
+        playsets: playsets,
         buttonText: data.buttonText
     };
 }
@@ -375,8 +377,23 @@ export function getResolveScenePhaseContent(playsetId?: string | null): ResolveS
 }
 
 export interface PlaysetConfig {
+    name?: string;
+    description?: string;
+    details?: {
+        label: string;
+        items: string[];
+    }[];
     overrides?: Record<string, boolean>;
     rulesModules?: Record<string, boolean>;
+}
+
+export interface RulesModuleDefinition {
+    label: string;
+    description: string;
+}
+
+export interface RulesModulesContent {
+    [key: string]: RulesModuleDefinition;
 }
 
 export interface FalloutPhaseContent {
@@ -608,4 +625,38 @@ export function getManualCardEntryContent(playsetId?: string | null): ManualCard
 
 export function getPlaysetConfig(playsetId?: string | null): PlaysetConfig {
     return loadData<PlaysetConfig>('config.json', playsetId);
+}
+
+export function getRulesModuleDefinitions(playsetId?: string | null): RulesModulesContent {
+    return loadData<RulesModulesContent>('rulesModules.json', playsetId);
+}
+
+export function getAvailablePlaysets(): PlaysetData[] {
+    const playsets: PlaysetData[] = [];
+
+    for (const path in dataFiles) {
+        if (path.endsWith('config.json')) {
+            const parts = path.split('/');
+            const id = parts[parts.length - 2];
+
+            const module = dataFiles[path] as { default: PlaysetConfig };
+            const config = module.default;
+
+            if (config.name && config.description && config.details) {
+                playsets.push({
+                    id: id,
+                    name: config.name,
+                    description: config.description,
+                    details: config.details
+                });
+            }
+        }
+    }
+
+    // Ensure default is first
+    return playsets.sort((a, b) => {
+        if (a.id === 'default') return -1;
+        if (b.id === 'default') return 1;
+        return a.name.localeCompare(b.name);
+    });
 }

@@ -45,6 +45,7 @@
     - **Component-First Architecture**:
         - **Avoid Raw HTML**: Do not use raw HTML elements (`div`, `span`, `p`, `h1-h6`, `ul`, `li`, `button`) for UI primitives where a Design System component exists.
         - **Text**: Always use the `<Text>` component with the appropriate `variant` (e.g., `h1`, `body`, `label`) instead of `<p>` or heading tags.
+            - **Strict Styling**: Do NOT use utility classes (e.g., `font-bold`, `text-red-400`) on the `<Text>` component to override its styles. Use the provided props (`variant`, `color`, `weight` if available) to achieve the desired look. If a style is missing, consult the user if they want to add the new style to the design system, but never add it yourself.
         - **Semantic Components**: Use specific components for specific semantic roles rather than generic components with variants.
             - **Example**: Use `<IngressText>` for introductory text blocks instead of `<Text variant="quote">`.
         - **Encapsulation**: Components should encapsulate their internal structure and logic. Consumers should pass data via props, not structural slots.
@@ -118,12 +119,3 @@
 3.  **Execute**: Implement changes iteratively.
 4.  **Verify**: Ensure the application builds and runs as expected.
 5.  **Reflect**: Update `walkthrough.md` with results.
-
-### 6. Rules Modules
-- **Philosophy**: Playsets define the "flavor" of the horror experience. While some changes are purely cosmetic (text/style), others fundamentally alter the mechanics to suit a specific sub-genre (e.g., "Final Girl" mechanics for Slasher films). Rules Modules encapsulate these mechanical variances, allowing them to be mixed, matched, or toggled independently of the core playset.
-- **Practicality**:
-    - **Configuration**: Modules are enabled via the `rulesModules` object in a playset's `config.json`.
-    - **Implementation**:
-        - Logic resides in the core game engine (`useLivePlay.ts`).
-        - Check for active modules using `getPlaysetConfig(selectedPlayset.value).rulesModules?.moduleName`.
-        - **Encapsulation**: Create dedicated functions for module logic (e.g., `checkFinalGirlCondition`) and call them at relevant hook points (e.g., `assignStrike`, `applyGameStateUpdates`). This prevents the core loop from becoming a spaghetti of if-statements.

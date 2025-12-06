@@ -1,56 +1,7 @@
 {
     "title": "Welcome to the Game",
-    "intro": "Prepare yourself for a night of horror. First thing we are going to do is select a playset. If this is the first time you are playing, we recommend choosing the Summercamp Slasher playset. The Generic Slasher playset leaves a lot for you to decide about the game and a blank canvas might be intimidating for new players.",
+    "intro": "Prepare yourself for a night of horror. First thing we are going to do is select a playset. If this is the first time you are playing, we recommend choosing the Summer Camp Massacre playset. The Generic Slasher playset leaves a lot for you to decide about the game and a blank canvas might be intimidating for new players.",
     "playsetSelectionTitle": "Select Playset",
-    "playsets": [
-        {
-            "id": "default",
-            "name": "Generic Slasher",
-            "description": "A classic slasher setup. No specific tropes enforced, just you and the killer.",
-            "details": [
-                {
-                    "label": "Content Warnings",
-                    "items": [
-                        "Violence",
-                        "Gore",
-                        "Death"
-                    ]
-                },
-                {
-                    "label": "Touchstones",
-                    "items": [
-                        "Halloween",
-                        "Friday the 13th",
-                        "Scream"
-                    ]
-                }
-            ]
-        },
-        {
-            "id": "summercamp",
-            "name": "Summercamp Slasher",
-            "description": "Counselors, cabins, and a killer in the woods. The quintessential slasher setting.",
-            "details": [
-                {
-                    "label": "Content Warnings",
-                    "items": [
-                        "Violence",
-                        "Gore",
-                        "Death",
-                        "Teen peril"
-                    ]
-                },
-                {
-                    "label": "Touchstones",
-                    "items": [
-                        "Friday the 13th",
-                        "Sleepaway Camp",
-                        "The Burning",
-                        "Fear Street: 1978"
-                    ]
-                }
-            ]
-        }
-    ],
+    "playsets": [],
     "buttonText": "Begin Setup"
 }

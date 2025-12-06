@@ -1,0 +1,22 @@
+{
+    "name": "Generic Slasher",
+    "description": "A classic slasher setup. No specific tropes enforced, just you and the killer.",
+    "details": [
+        {
+            "label": "Content Warnings",
+            "items": [
+                "Violence",
+                "Gore",
+                "Death"
+            ]
+        },
+        {
+            "label": "Touchstones",
+            "items": [
+                "Halloween",
+                "Friday the 13th",
+                "Scream"
+            ]
+        }
+    ]
+}
