@@ -304,6 +304,12 @@ export function useLivePlay() {
             if (!visibleCards.value.find(c => c.id === newCard.id)) {
                 visibleCards.value.push(newCard)
                 updateDeckState(manualRank.value, manualSuit.value, 'draw')
+
+                // Final Girl Module: Face Cards trigger a strike immediately
+                const config = getPlaysetConfig(selectedPlayset.value)
+                if (config.rulesModules?.finalGirl && manualRank.value > 10) {
+                    strikesToAssign.value++
+                }
             }
         }
     }
