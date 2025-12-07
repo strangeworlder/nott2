@@ -42,6 +42,8 @@ interface Props {
   cardName?: string
   activeCard?: Card | null
   selectedJoker?: 'Red' | 'Black' | null
+  act3Countdown?: number
+  acesRemaining?: number
   fullReset: () => void
 }
 
@@ -83,6 +85,12 @@ const showContext = computed(() => {
         <Text variant="caption" color="muted" class="uppercase tracking-wider">
           {{ phaseName }}
         </Text>
+        <template v-if="act3Countdown !== undefined && acesRemaining === 0 && currentAct < 3">
+          <Separator orientation="vertical" class="h-4 mx-0" />
+          <Text variant="caption" color="muted" class="uppercase tracking-wider">
+            {{ act3Countdown }} hours to Act 3
+          </Text>
+        </template>
       </div>
       <Button variant="ghost" @click="fullReset" class="text-xs px-2 py-1 h-auto text-nott-gray hover:text-nott-red">
         Reset Game

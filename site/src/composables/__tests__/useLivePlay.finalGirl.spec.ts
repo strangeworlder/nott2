@@ -15,7 +15,12 @@ describe('useLivePlay - Final Girl Module', () => {
         manualSuit,
         selectedPlayset,
         visibleCards,
-        fullReset
+        fullReset,
+        assignStrike,
+        currentAct,
+        isEndgame,
+        jokersAdded,
+        areJokersAvailable
     } = useLivePlay()
 
     beforeEach(() => {
@@ -42,41 +47,52 @@ describe('useLivePlay - Final Girl Module', () => {
         expect(visibleCards.value.length).toBe(1)
     })
 
-    it('should NOT assign a strike when a Number Card is drawn and Final Girl module is active', () => {
+    it('should trigger Act 3 and add Jokers when only 1 survivor remains', () => {
         // Setup Final Girl module active
         selectedPlayset.value = 'summercamp'
         vi.mocked(contentLoader.getPlaysetConfig).mockReturnValue({
             rulesModules: { finalGirl: true }
         })
 
-        // Setup Number Card (10)
-        manualRank.value = 10
-        manualSuit.value = 'Spades'
+        // Kill 3 characters
+        assignStrike('Spades')
+        assignStrike('Spades')
+        assignStrike('Spades') // Dead
 
-        // Action
-        addVisibleCard()
+        assignStrike('Hearts')
+        assignStrike('Hearts')
+        assignStrike('Hearts') // Dead
+
+        assignStrike('Clubs')
+        assignStrike('Clubs')
+        assignStrike('Clubs') // Dead
 
         // Assert
-        expect(strikesToAssign.value).toBe(0)
-        expect(visibleCards.value.length).toBe(1)
+        expect(currentAct.value).toBe(3)
+        expect(isEndgame.value).toBe(true)
+        expect(jokersAdded.value).toBe(true)
+        expect(areJokersAvailable.value).toBe(true)
     })
 
-    it('should NOT assign a strike when a Face Card is drawn and Final Girl module is INACTIVE', () => {
-        // Setup Final Girl module inactive
-        selectedPlayset.value = 'default'
+    it('should NOT trigger Act 3 when more than 1 survivor remains', () => {
+        // Setup Final Girl module active
+        selectedPlayset.value = 'summercamp'
         vi.mocked(contentLoader.getPlaysetConfig).mockReturnValue({
-            rulesModules: { finalGirl: false }
+            rulesModules: { finalGirl: true }
         })
 
-        // Setup Face Card (Jack)
-        manualRank.value = 11
-        manualSuit.value = 'Spades'
+        // Kill 2 characters
+        assignStrike('Spades')
+        assignStrike('Spades')
+        assignStrike('Spades') // Dead
 
-        // Action
-        addVisibleCard()
+        assignStrike('Hearts')
+        assignStrike('Hearts')
+        assignStrike('Hearts') // Dead
 
         // Assert
-        expect(strikesToAssign.value).toBe(0)
-        expect(visibleCards.value.length).toBe(1)
+        expect(currentAct.value).toBe(1)
+        expect(isEndgame.value).toBe(false)
+        expect(jokersAdded.value).toBe(false)
     })
 })

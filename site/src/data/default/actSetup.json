@@ -57,12 +57,24 @@
             {
                 "title": "Prepare for the End",
                 "steps": [
-                    "**Remove Number Cards:** Take all Number Cards out of the Threat Deck.",
+                    "**Remove Number Cards:** Take all Number Cards out of the Threat Deck."
+                ]
+            }
+        ],
+        "buttonText": "Start the Finale"
+    },
+    "jokers": {
+        "title": "The Jokers",
+        "quote": "The Killer is desperate. They are pulling out all the stops.",
+        "sections": [
+            {
+                "title": "Add the Jokers",
+                "steps": [
                     "**Add Jokers:** Shuffle both the Red and Black Jokers into the remaining Face Cards.",
                     "**The Goal:** Survive until the Red Joker appears, then defeat it to win."
                 ]
             }
         ],
-        "buttonText": "Start the Finale"
+        "buttonText": "Fight for your Life"
     }
 }

@@ -33,7 +33,8 @@ const {
   currentAct,
   isBlackJokerRemoved,
   isFirstTime,
-  selectedPlayset
+  selectedPlayset,
+  areJokersAvailable
 } = useLivePlay()
 
 const emit = defineEmits<{
@@ -170,6 +171,7 @@ const explanationText = computed(() => {
           v-model:manualJoker="manualJoker"
           :is-endgame="isEndgame"
           :is-black-joker-removed="isBlackJokerRemoved"
+          :are-jokers-available="areJokersAvailable"
           :is-valid-addition="isValidAddition"
           :is-rank-available="isRankAvailable"
           :is-suit-available="isSuitAvailable"

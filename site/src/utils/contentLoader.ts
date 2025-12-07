@@ -103,7 +103,7 @@ export function getGameSetupContent(playsetId?: string | null): GameSetupContent
     };
 }
 
-export function getActSetupContent(act: number, playsetId?: string | null): ActSetupContent | null {
+export function getActSetupContent(act: number | string, playsetId?: string | null): ActSetupContent | null {
     const data = loadData<any>('actSetup.json', playsetId);
     const actData = data[act.toString()];
 

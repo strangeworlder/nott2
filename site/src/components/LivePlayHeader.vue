@@ -17,6 +17,8 @@ interface Props {
   cardName?: string
   activeCard?: Card | null
   selectedJoker?: 'Red' | 'Black' | null
+  act3Countdown?: number
+  acesRemaining?: number
   fullReset: () => void
 }
 
