@@ -1,30 +1,44 @@
 <script setup lang="ts">
-import { useLivePlay } from '../../composables/useLivePlay'
-import ActionFooter from '../ActionFooter.vue'
-import Text from '../Text.vue'
+/**
+ * WinScreen
+ *
+ * Philosophical:
+ * The WinScreen is catharsis—the release of tension after surviving the Night.
+ * It celebrates the players' victory over the horror, acknowledging their triumph
+ * with gravitas. The screen should feel earned, providing closure and a sense of
+ * accomplishment after the perilous journey.
+ *
+ * Technical:
+ * A full-screen victory display component.
+ *
+ * Props:
+ * (None - uses useLivePlay composable for reset)
+ */
 
-const { fullReset } = useLivePlay()
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getWinScreenContent } from '../../utils/contentLoader';
+
+const { fullReset, selectedPlayset } = useLivePlay();
+const content = getWinScreenContent(selectedPlayset.value);
 </script>
 
 <template>
   <div class="fixed inset-0 z-50 bg-nott-black flex flex-col items-center justify-center p-8 text-center animate-fade-in">
     <div class="max-w-2xl space-y-8">
-      <Text variant="hero" color="red" class="mb-4">SURVIVED</Text>
+      <Text variant="hero" color="red" class="mb-4">{{ content.title }}</Text>
       
       <Text variant="quote" color="muted">
-        The night is over. The Red Joker has fallen.
+        {{ content.subtitle }}
         <br>
-        You have survived the Night of the Thirteenth.
+        {{ content.body }}
       </Text>
 
       <div class="pt-12">
         <ActionFooter 
-          label="Play Again"
+          :label="content.buttonText"
           @click="fullReset"
         />
       </div>
     </div>
   </div>
 </template>
-
-

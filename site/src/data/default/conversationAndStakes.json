@@ -8,9 +8,9 @@
     "steps": {
         "setScene": {
             "title": "1. Set the scene",
-            "activePlayer1": "**Active player:**<br/>Based on the scene prompt, above, describe where this scene is taking place.",
-            "otherPlayers": "**Other players:**<br/>Describe the situation and the characters in the scene.",
-            "activePlayer2": "**Active player:**<br/>Their character will be on the front and center of the scene."
+            "activePlayer1": "**Active player:**  \nBased on the scene prompt, above, describe where this scene is taking place.",
+            "otherPlayers": "**Other players:**  \nDescribe the situation and the characters in the scene.",
+            "activePlayer2": "**Active player:**  \nTheir character will be on the front and center of the scene."
         },
         "focusCamera": {
             "title": "2. Focus the Camera",

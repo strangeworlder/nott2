@@ -52,21 +52,37 @@ Arrange the table so everyone can see the cards. This is your board, your map, a
 
 ### The Threat Deck
 The horror starts small, but it is always there.
-**To Build It**: Shuffle the **2s, 3s, 4s, and one Jack** together. Place this deck **face down** on the table.
-**The Prologue**: Place the **four Aces** on top of this stack **face up**.
+**To Build It**:
+1.  **Separate**: Take the **Face Cards** (Jacks, Queens, Kings), **Aces**, and **Jokers** aside.
+2.  **Shuffle Numbers**: Shuffle the remaining Number Cards (2-10).
+3.  **Deal**: Deal **8 number cards** face down to form the base of the Threat Deck.
+4.  **Add Jack**: Add **one Jack** to this pile and shuffle it again. (Note: Only Jacks can appear in Act 1).
+5.  **The Prologue**: Place the **four Aces** on top of this stack **face up**.
 
 These Aces represent the prologue. While they are in play, there is only one card visible—the top Ace. Once the Aces are resolved and discarded, you will **draw two cards** from the top of the Threat Deck and place them face up. From that point on, there will be two paths visible at all times.
 
 ### The Reserves
-The remaining cards are not part of the deck yet. They are waiting in the wings. Set them aside in five distinct piles:
-*   **Number Reserve**: 5s through 10s, arranged in order.
+The remaining cards are not part of the deck yet. They are waiting in the wings.
+*   **Number Reserve**: The remaining **14 number cards** form the Number Reserve. Keep them face down. (One will be moved to the Trophy Pile at the start of Act 1)
 *   **Face Card Reserves**: The remaining Jacks, Queens, and Kings, sorted into their own piles.
 *   **The two Jokers**: Kept separate and face up, watching. They are for the final act.
 
 ### The Trophy Pile
-To begin the night with a sense of dread, take the **bottom card** (which should be a random 10) from the Number Reserve and place it **face-up** next to the Threat Deck. This starts the **Trophy Pile**.
+To begin the night with a sense of dread, take the **top card** from the Number Reserve and place it **face-up** next to the Threat Deck. This starts the **Trophy Pile**.
 
-The Trophy Pile is stacked **face up**, so that the top card of it is always visible. This card is crucial: it sets the **Base Difficulty** for any Test against the Killer. As you succeed, you will add cards to this pile, potentially raising or lowering the stakes for the next confrontation.
+> **Classic Setup**: If you are playing with the "Classic Setup" module (e.g., Generic Slasher Classic), use the original curated setup: Threat Deck (2s, 3s, 4s, 1 Jack), Number Reserve (5s-10s), and a random 10 for the Trophy Pile.
+
+### The Trophy Pile
+To begin the night with a sense of dread, you must seed the Trophy Pile.
+*   **Standard Setup**: Take the top card from the **Number Reserve**. The deck shuffle is random. Turn it face up. This is your starting Trophy Card.
+*   **Classic Setup**: If playing a Classic Module, the Trophy Pile starts with a specific random 10 (e.g., 10-Spades).
+
+The Trophy Pile moves the story forward. The **Top Card** of this pile sets the **Base Difficulty** for any Test against a **Face Card** or a **Joker**.
+*   **Number Cards**: Have a static difficulty equal to their Rank (2-10).
+*   **Face Cards**: Difficulty = Trophy Top Rank + Modifier (+1 J, +2 Q, +3 K).
+*   **Jokers**: Difficulty = Trophy Top Rank + 0.
+
+As you succeed, you will add cards to this pile, changing the difficulty for the next confrontation.
 
 ---
 
@@ -107,13 +123,18 @@ The Killer is a presence, a shadow, but not acting in any way. We get to learn a
 
 ### Act 2: The Horror Story
 The Killer is now a part of the story. This is the actual horror movie. People will die.
-*   **Duration**: From the resolution of the first Face Card until **four weaknesses are found**.
+*   **Duration**: From the resolution of the first Face Card until **four weaknesses are found** OR **13 cards have been added from the Reserve**.
 *   **Rules**: The stakes are higher. The Killer is hunting. Every Face Card is a battle for survival.
 
-### Act 3: The Finale
-The explosive finale of the horror movie. The mask comes off, or the monster grows to full size.
-*   **Duration**: From the moment the fourth weakness is found until the end of the game.
-*   **Rules**: See "Act 3: The Finale" section below.
+### Act 3: The Climax
+The explosive climax of the horror movie. The mask comes off, or the monster grows to full size.
+*   **Duration**: Triggers when **four weaknesses are found** OR **13 cards have been added from the Reserve**.
+*   **Rules**: All Number Cards are removed from the Threat Deck. Only Face Cards remain.
+
+### The Finale
+The true ending.
+*   **Trigger**: Occurs when **four weaknesses are found**.
+*   **Rules**: The Jokers are added to the Threat Deck.
 
 ---
 
@@ -206,17 +227,21 @@ After the narration is complete, update the decks.
 3.  **Shuffling**: If a rule triggers a shuffle of the Threat Deck, shuffle **all visible cards** back into the deck, then draw two new ones.
 
 ### Number Cards (Deck Evolution)
-*   **On a Success**: The Threat Card is removed and placed on top of the **Trophy Pile**. This sets a new Base Difficulty for the Killer. The Director then adds the next card from the **Number Reserve** to the bottom of the Threat Deck. **Exception**: If the Threat Card was an **Ace**, it is removed from the game loop and given to the player as a reminder of their Aptitude instead of going to the Trophy Pile.
+### Number Cards (Deck Evolution)
+*   **On a Success**: The Threat Card is removed and placed on top of the **Trophy Pile**. This sets a new Base Difficulty for the Killer. The Director then adds the next card from the **Number Reserve** to the bottom of the Threat Deck. **Note**: Aces (Rank 1) also go to the Trophy Pile on success.
 *   **On a Failure**: You stumble. The Threat Card is placed on the **bottom of the Threat Deck** to haunt you again later. The Director adds the next card from the **Number Reserve** to the bottom of the deck to accompany it.
 
 ### Face cards (Facing the Killer)
 Success against the Killer is always costly.
 
 **Determining Difficulty**
-The difficulty for a Face Card test is determined by adding the **Trophy Pile's top card** to the modifier from the face card in question:
-*   **Jack**: +1
-*   **Queen**: +2
-*   **King**: +3
+*   **Number Cards**: Difficulty is simply the **Rank** of the card (2-10). Aces are Rank 1.
+*   **Face Cards**: The difficulty is determined by adding the **Trophy Pile's top card** to the modifier from the face card:
+    *   **Jack**: +1
+    *   **Queen**: +2
+    *   **King**: +3
+*   **Jokers**: The difficulty is determined by adding the **Trophy Pile's top card** to the modifier from the face card:
+    *   **Joker**: +0
 
 **The Consequences**
 Based on your Effort (the d4), another face card from Face Card Reserves is added from the reserve to the Threat Deck. The Killer learns from you.
@@ -230,7 +255,7 @@ Based on your Effort (the d4), another face card from Face Card Reserves is adde
 *   **No Face Cards?** Do not add any card.
 
 **Finding a Weakness**
-If this was the **first time** a face card of its suit (♠, ♥, ♣, ♦) was defeated (you’ve succeeded in a test against it), you’ve found a **weakness** of the Killer. The Threat Card is removed from the game. **Doing this for all four suits triggers Act 3: The Finale.**
+If this was the **first time** a face card of its suit (♠, ♥, ♣, ♦) was defeated (you’ve succeeded in a test against it), you’ve found a **weakness** of the Killer. The Threat Card is removed from the game. **Doing this for all four suits triggers The Finale (adding Jokers).**
 
 If you had already defeated a card of that suit, the Threat Card is not removed, but remains in the Threat Deck.
 
@@ -254,10 +279,15 @@ When you get your **third Strike**, the character’s story is over. In a genre-
 
 ---
 
-## Act 3: The Finale
+## Act 3: The Climax
 
-Should you survive long enough to defeat a face card from all four suits, the night reaches its bloody climax.
-**Setup**: Remove all number cards from the Threat Deck, leaving only the monstrous face cards. Both **Jokers** are shuffled into this deck of horrors.
+The night reaches its bloody climax.
+**Setup**: Remove all number cards from the Threat Deck, leaving only the monstrous face cards.
+
+## The Finale
+
+Should you survive long enough to defeat a face card from all four suits, the true ending begins.
+**Setup**: Both **Jokers** are shuffled into the Threat Deck.
 
 When a Joker is revealed, its effect is triggered **immediately**. For any Joker-activated Test, first **shuffle the Trophy Pile**; the value of its top card becomes the Difficulty.
 

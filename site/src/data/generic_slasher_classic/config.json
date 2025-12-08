@@ -18,5 +18,8 @@
                 "Scream"
             ]
         }
-    ]
+    ],
+    "rulesModules": {
+        "classicSetup": true
+    }
 }

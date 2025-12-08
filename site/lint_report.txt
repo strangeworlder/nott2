@@ -1,0 +1,1175 @@
+﻿
+> site@0.0.0 lint:max
+> biome check --max-diagnostics 500 .
+
+npm : biome.json:2:14 deserialize ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöü
+At line:1 char:1
++ npm run lint:max 2>&1 | Out-File -Encoding utf8 lint_report.txt
++ ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (biome.json:2:14...ΓöüΓöüΓöüΓöüΓöü:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+  i The configuration schema version does not match the CLI version 2.3.8
+  
+    1 Γöé {
+  > 2 Γöé   "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+      Γöé              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    3 Γöé   "linter": {
+    4 Γöé     "enabled": true,
+  
+  i   Expected:                     2.3.8
+      Found:                        2.0.0
+  
+  
+  i Run the command biome migrate to migrate the configuration file.
+  
+
+src\App.vue:6:26 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable isGameWon is unused.
+  
+    4 Γöé import { updateTheme } from './utils/theme';
+    5 Γöé 
+  > 6 Γöé const { selectedPlayset, isGameWon, currentPhase } = useLivePlay();
+      Γöé                          ^^^^^^^^^
+    7 Γöé 
+    8 Γöé watch(
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\App.vue:6:37 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable currentPhase is unused.
+  
+    4 Γöé import { updateTheme } from './utils/theme';
+    5 Γöé 
+  > 6 Γöé const { selectedPlayset, isGameWon, currentPhase } = useLivePlay();
+      Γöé                                     ^^^^^^^^^^^^
+    7 Γöé 
+    8 Γöé watch(
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ConversationAndStakesPhase.vue:27:9 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöü
+
+  ! This variable sacrificeConfirmed is unused.
+  
+    25 Γöé import { getConversationAndStakesContent } from '../../utils/contentLoader';
+    26 Γöé 
+  > 27 Γöé const { sacrificeConfirmed, currentAct, activeCard, selectedJoker, isFirstTime, selectedPlayset } =
+       Γöé         ^^^^^^^^^^^^^^^^^^
+    28 Γöé   useLivePlay();
+    29 Γöé 
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ConversationAndStakesPhase.vue:27:41 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöü
+
+  ! This variable activeCard is unused.
+  
+    25 Γöé import { getConversationAndStakesContent } from '../../utils/contentLoader';
+    26 Γöé 
+  > 27 Γöé const { sacrificeConfirmed, currentAct, activeCard, selectedJoker, isFirstTime, selectedPlayset } =
+       Γöé                                         ^^^^^^^^^^
+    28 Γöé   useLivePlay();
+    29 Γöé 
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ConversationAndStakesPhase.vue:27:53 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöü
+
+  ! This variable selectedJoker is unused.
+  
+    25 Γöé import { getConversationAndStakesContent } from '../../utils/contentLoader';
+    26 Γöé 
+  > 27 Γöé const { sacrificeConfirmed, currentAct, activeCard, selectedJoker, isFirstTime, selectedPlayset } =
+       Γöé                                                     ^^^^^^^^^^^^^
+    28 Γöé   useLivePlay();
+    29 Γöé 
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ConversationAndStakesPhase.vue:27:68 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöü
+
+  ! This variable isFirstTime is unused.
+  
+    25 Γöé import { getConversationAndStakesContent } from '../../utils/contentLoader';
+    26 Γöé 
+  > 27 Γöé const { sacrificeConfirmed, currentAct, activeCard, selectedJoker, isFirstTime, selectedPlayset } =
+       Γöé                                                                    ^^^^^^^^^^^
+    28 Γöé   useLivePlay();
+    29 Γöé 
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\FalloutPhase.vue:30:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable isFaceCard is unused.
+  
+    28 Γöé   isSuccess,
+    29 Γöé   cardName,
+  > 30 Γöé   isFaceCard,
+       Γöé   ^^^^^^^^^^
+    31 Γöé   isFirstTime,
+    32 Γöé   selectedSuit,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\FalloutPhase.vue:31:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable isFirstTime is unused.
+  
+    29 Γöé   cardName,
+    30 Γöé   isFaceCard,
+  > 31 Γöé   isFirstTime,
+       Γöé   ^^^^^^^^^^^
+    32 Γöé   selectedSuit,
+    33 Γöé   effortResult,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\FalloutPhase.vue:35:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable toggleGenrePointAward is unused.
+  
+    33 Γöé   effortResult,
+    34 Γöé   startNextScene,
+  > 35 Γöé   toggleGenrePointAward,
+       Γöé   ^^^^^^^^^^^^^^^^^^^^^
+    36 Γöé   isGenrePointAwarded,
+    37 Γöé   tableGenrePoints,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\FalloutPhase.vue:36:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable isGenrePointAwarded is unused.
+  
+    34 Γöé   startNextScene,
+    35 Γöé   toggleGenrePointAward,
+  > 36 Γöé   isGenrePointAwarded,
+       Γöé   ^^^^^^^^^^^^^^^^^^^
+    37 Γöé   tableGenrePoints,
+    38 Γöé   playerGenrePoints,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:43:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable fullReset is unused.
+  
+    41 Γöé   activeCard,
+    42 Γöé   selectedJoker,
+  > 43 Γöé   fullReset,
+       Γöé   ^^^^^^^^^
+    44 Γöé   nextPhase,
+    45 Γöé   prevPhase,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:48:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable acesRemaining is unused.
+  
+    46 Γöé   jokersAdded,
+    47 Γöé   act3Countdown,
+  > 48 Γöé   acesRemaining,
+       Γöé   ^^^^^^^^^^^^^
+    49 Γöé } = useLivePlay();
+    50 Γöé 
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:24:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable currentAct is unused.
+  
+    22 Γöé const {
+    23 Γöé   currentPhase,
+  > 24 Γöé   currentAct,
+       Γöé   ^^^^^^^^^^
+    25 Γöé   isEndgame,
+    26 Γöé   startEndgame,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:25:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable isEndgame is unused.
+  
+    23 Γöé   currentPhase,
+    24 Γöé   currentAct,
+  > 25 Γöé   isEndgame,
+       Γöé   ^^^^^^^^^
+    26 Γöé   startEndgame,
+    27 Γöé   startGame,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:26:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable startEndgame is unused.
+  
+    24 Γöé   currentAct,
+    25 Γöé   isEndgame,
+  > 26 Γöé   startEndgame,
+       Γöé   ^^^^^^^^^^^^
+    27 Γöé   startGame,
+    28 Γöé   debugMode,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:27:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable startGame is unused.
+  
+    25 Γöé   isEndgame,
+    26 Γöé   startEndgame,
+  > 27 Γöé   startGame,
+       Γöé   ^^^^^^^^^
+    28 Γöé   debugMode,
+    29 Γöé   middleStack,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:28:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable debugMode is unused.
+  
+    26 Γöé   startEndgame,
+    27 Γöé   startGame,
+  > 28 Γöé   debugMode,
+       Γöé   ^^^^^^^^^
+    29 Γöé   middleStack,
+    30 Γöé   bottomStack,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:29:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable middleStack is unused.
+  
+    27 Γöé   startGame,
+    28 Γöé   debugMode,
+  > 29 Γöé   middleStack,
+       Γöé   ^^^^^^^^^^^
+    30 Γöé   bottomStack,
+    31 Γöé   reserveQueue,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:30:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable bottomStack is unused.
+  
+    28 Γöé   debugMode,
+    29 Γöé   middleStack,
+  > 30 Γöé   bottomStack,
+       Γöé   ^^^^^^^^^^^
+    31 Γöé   reserveQueue,
+    32 Γöé   trophyPile,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:31:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable reserveQueue is unused.
+  
+    29 Γöé   middleStack,
+    30 Γöé   bottomStack,
+  > 31 Γöé   reserveQueue,
+       Γöé   ^^^^^^^^^^^^
+    32 Γöé   trophyPile,
+    33 Γöé   weaknessesFound,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:32:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable trophyPile is unused.
+  
+    30 Γöé   bottomStack,
+    31 Γöé   reserveQueue,
+  > 32 Γöé   trophyPile,
+       Γöé   ^^^^^^^^^^
+    33 Γöé   weaknessesFound,
+    34 Γöé   strikes,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:33:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable weaknessesFound is unused.
+  
+    31 Γöé   reserveQueue,
+    32 Γöé   trophyPile,
+  > 33 Γöé   weaknessesFound,
+       Γöé   ^^^^^^^^^^^^^^^
+    34 Γöé   strikes,
+    35 Γöé   getRankName,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:34:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable strikes is unused.
+  
+    32 Γöé   trophyPile,
+    33 Γöé   weaknessesFound,
+  > 34 Γöé   strikes,
+       Γöé   ^^^^^^^
+    35 Γöé   getRankName,
+    36 Γöé   tableGenrePoints,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:35:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable getRankName is unused.
+  
+    33 Γöé   weaknessesFound,
+    34 Γöé   strikes,
+  > 35 Γöé   getRankName,
+       Γöé   ^^^^^^^^^^^
+    36 Γöé   tableGenrePoints,
+    37 Γöé   playerGenrePoints,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:37:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable playerGenrePoints is unused.
+  
+    35 Γöé   getRankName,
+    36 Γöé   tableGenrePoints,
+  > 37 Γöé   playerGenrePoints,
+       Γöé   ^^^^^^^^^^^^^^^^^
+    38 Γöé   trophyTop,
+    39 Γöé   isTrophyTopRandomized,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:38:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable trophyTop is unused.
+  
+    36 Γöé   tableGenrePoints,
+    37 Γöé   playerGenrePoints,
+  > 38 Γöé   trophyTop,
+       Γöé   ^^^^^^^^^
+    39 Γöé   isTrophyTopRandomized,
+    40 Γöé   cardName,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:39:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable isTrophyTopRandomized is unused.
+  
+    37 Γöé   playerGenrePoints,
+    38 Γöé   trophyTop,
+  > 39 Γöé   isTrophyTopRandomized,
+       Γöé   ^^^^^^^^^^^^^^^^^^^^^
+    40 Γöé   cardName,
+    41 Γöé   activeCard,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:40:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable cardName is unused.
+  
+    38 Γöé   trophyTop,
+    39 Γöé   isTrophyTopRandomized,
+  > 40 Γöé   cardName,
+       Γöé   ^^^^^^^^
+    41 Γöé   activeCard,
+    42 Γöé   selectedJoker,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:41:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable activeCard is unused.
+  
+    39 Γöé   isTrophyTopRandomized,
+    40 Γöé   cardName,
+  > 41 Γöé   activeCard,
+       Γöé   ^^^^^^^^^^
+    42 Γöé   selectedJoker,
+    43 Γöé   fullReset,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:42:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable selectedJoker is unused.
+  
+    40 Γöé   cardName,
+    41 Γöé   activeCard,
+  > 42 Γöé   selectedJoker,
+       Γöé   ^^^^^^^^^^^^^
+    43 Γöé   fullReset,
+    44 Γöé   nextPhase,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:44:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable nextPhase is unused.
+  
+    42 Γöé   selectedJoker,
+    43 Γöé   fullReset,
+  > 44 Γöé   nextPhase,
+       Γöé   ^^^^^^^^^
+    45 Γöé   prevPhase,
+    46 Γöé   jokersAdded,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:45:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable prevPhase is unused.
+  
+    43 Γöé   fullReset,
+    44 Γöé   nextPhase,
+  > 45 Γöé   prevPhase,
+       Γöé   ^^^^^^^^^
+    46 Γöé   jokersAdded,
+    47 Γöé   act3Countdown,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:46:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable jokersAdded is unused.
+  
+    44 Γöé   nextPhase,
+    45 Γöé   prevPhase,
+  > 46 Γöé   jokersAdded,
+       Γöé   ^^^^^^^^^^^
+    47 Γöé   act3Countdown,
+    48 Γöé   acesRemaining,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:47:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable act3Countdown is unused.
+  
+    45 Γöé   prevPhase,
+    46 Γöé   jokersAdded,
+  > 47 Γöé   act3Countdown,
+       Γöé   ^^^^^^^^^^^^^
+    48 Γöé   acesRemaining,
+    49 Γöé } = useLivePlay();
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LivePlayHelper.vue:36:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöü
+
+  ! This variable tableGenrePoints is unused.
+  
+    34 Γöé   strikes,
+    35 Γöé   getRankName,
+  > 36 Γöé   tableGenrePoints,
+       Γöé   ^^^^^^^^^^^^^^^^
+    37 Γöé   playerGenrePoints,
+    38 Γöé   trophyTop,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\LoseScreen.vue:21:9 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable fullReset is unused.
+  
+    19 Γöé import { getLoseScreenContent } from '../../utils/contentLoader';
+    20 Γöé 
+  > 21 Γöé const { fullReset, selectedPlayset } = useLivePlay();
+       Γöé         ^^^^^^^^^
+    22 Γöé const content = getLoseScreenContent(selectedPlayset.value);
+    23 Γöé </script>
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ManualCardEntry.vue:59:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable isRankAvailable is unused.
+  
+    57 Γöé   areJokersAvailable,
+    58 Γöé   isValidAddition,
+  > 59 Γöé   isRankAvailable,
+       Γöé   ^^^^^^^^^^^^^^^
+    60 Γöé   isSuitAvailable,
+    61 Γöé } = toRefs(props);
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ManualCardEntry.vue:57:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable areJokersAvailable is unused.
+  
+    55 Γöé   isEndgame,
+    56 Γöé   isBlackJokerRemoved,
+  > 57 Γöé   areJokersAvailable,
+       Γöé   ^^^^^^^^^^^^^^^^^^
+    58 Γöé   isValidAddition,
+    59 Γöé   isRankAvailable,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ManualCardEntry.vue:52:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable manualRank is unused.
+  
+    51 Γöé const {
+  > 52 Γöé   manualRank,
+       Γöé   ^^^^^^^^^^
+    53 Γöé   manualSuit,
+    54 Γöé   manualJoker,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ManualCardEntry.vue:60:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable isSuitAvailable is unused.
+  
+    58 Γöé   isValidAddition,
+    59 Γöé   isRankAvailable,
+  > 60 Γöé   isSuitAvailable,
+       Γöé   ^^^^^^^^^^^^^^^
+    61 Γöé } = toRefs(props);
+    62 Γöé 
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ManualCardEntry.vue:53:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable manualSuit is unused.
+  
+    51 Γöé const {
+    52 Γöé   manualRank,
+  > 53 Γöé   manualSuit,
+       Γöé   ^^^^^^^^^^
+    54 Γöé   manualJoker,
+    55 Γöé   isEndgame,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ManualCardEntry.vue:54:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable manualJoker is unused.
+  
+    52 Γöé   manualRank,
+    53 Γöé   manualSuit,
+  > 54 Γöé   manualJoker,
+       Γöé   ^^^^^^^^^^^
+    55 Γöé   isEndgame,
+    56 Γöé   isBlackJokerRemoved,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ManualCardEntry.vue:55:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable isEndgame is unused.
+  
+    53 Γöé   manualSuit,
+    54 Γöé   manualJoker,
+  > 55 Γöé   isEndgame,
+       Γöé   ^^^^^^^^^
+    56 Γöé   isBlackJokerRemoved,
+    57 Γöé   areJokersAvailable,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ManualCardEntry.vue:56:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable isBlackJokerRemoved is unused.
+  
+    54 Γöé   manualJoker,
+    55 Γöé   isEndgame,
+  > 56 Γöé   isBlackJokerRemoved,
+       Γöé   ^^^^^^^^^^^^^^^^^^^
+    57 Γöé   areJokersAvailable,
+    58 Γöé   isValidAddition,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:44:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable toggleGenrePointUsage is unused.
+  
+    42 Γöé   playerGenrePoints,
+    43 Γöé   isGenrePointUsed,
+  > 44 Γöé   toggleGenrePointUsage,
+       Γöé   ^^^^^^^^^^^^^^^^^^^^^
+    45 Γöé   selectedPlayset,
+    46 Γöé   characters,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:31:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable isFaceCard is unused.
+  
+    29 Γöé   rollMain,
+    30 Γöé   rollEffort,
+  > 31 Γöé   isFaceCard,
+       Γöé   ^^^^^^^^^^
+    32 Γöé   selectedJoker,
+    33 Γöé   targetDifficulty,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:32:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable selectedJoker is unused.
+  
+    30 Γöé   rollEffort,
+    31 Γöé   isFaceCard,
+  > 32 Γöé   selectedJoker,
+       Γöé   ^^^^^^^^^^^^^
+    33 Γöé   targetDifficulty,
+    34 Γöé   isSuccess,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:33:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable targetDifficulty is unused.
+  
+    31 Γöé   isFaceCard,
+    32 Γöé   selectedJoker,
+  > 33 Γöé   targetDifficulty,
+       Γöé   ^^^^^^^^^^^^^^^^
+    34 Γöé   isSuccess,
+    35 Γöé   rollTotal,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:34:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable isSuccess is unused.
+  
+    32 Γöé   selectedJoker,
+    33 Γöé   targetDifficulty,
+  > 34 Γöé   isSuccess,
+       Γöé   ^^^^^^^^^
+    35 Γöé   rollTotal,
+    36 Γöé   selectedRank,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:35:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable rollTotal is unused.
+  
+    33 Γöé   targetDifficulty,
+    34 Γöé   isSuccess,
+  > 35 Γöé   rollTotal,
+       Γöé   ^^^^^^^^^
+    36 Γöé   selectedRank,
+    37 Γöé   effortResult,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:36:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable selectedRank is unused.
+  
+    34 Γöé   isSuccess,
+    35 Γöé   rollTotal,
+  > 36 Γöé   selectedRank,
+       Γöé   ^^^^^^^^^^^^
+    37 Γöé   effortResult,
+    38 Γöé   isTrophyTopRandomized,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:37:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable effortResult is unused.
+  
+    35 Γöé   rollTotal,
+    36 Γöé   selectedRank,
+  > 37 Γöé   effortResult,
+       Γöé   ^^^^^^^^^^^^
+    38 Γöé   isTrophyTopRandomized,
+    39 Γöé   availableTrophyRanks,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:38:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable isTrophyTopRandomized is unused.
+  
+    36 Γöé   selectedRank,
+    37 Γöé   effortResult,
+  > 38 Γöé   isTrophyTopRandomized,
+       Γöé   ^^^^^^^^^^^^^^^^^^^^^
+    39 Γöé   availableTrophyRanks,
+    40 Γöé   trophyTop,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:39:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable availableTrophyRanks is unused.
+  
+    37 Γöé   effortResult,
+    38 Γöé   isTrophyTopRandomized,
+  > 39 Γöé   availableTrophyRanks,
+       Γöé   ^^^^^^^^^^^^^^^^^^^^
+    40 Γöé   trophyTop,
+    41 Γöé   setTrophyTop,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:40:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable trophyTop is unused.
+  
+    38 Γöé   isTrophyTopRandomized,
+    39 Γöé   availableTrophyRanks,
+  > 40 Γöé   trophyTop,
+       Γöé   ^^^^^^^^^
+    41 Γöé   setTrophyTop,
+    42 Γöé   playerGenrePoints,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:41:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable setTrophyTop is unused.
+  
+    39 Γöé   availableTrophyRanks,
+    40 Γöé   trophyTop,
+  > 41 Γöé   setTrophyTop,
+       Γöé   ^^^^^^^^^^^^
+    42 Γöé   playerGenrePoints,
+    43 Γöé   isGenrePointUsed,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:42:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable playerGenrePoints is unused.
+  
+    40 Γöé   trophyTop,
+    41 Γöé   setTrophyTop,
+  > 42 Γöé   playerGenrePoints,
+       Γöé   ^^^^^^^^^^^^^^^^^
+    43 Γöé   isGenrePointUsed,
+    44 Γöé   toggleGenrePointUsage,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolutionPhase.vue:43:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöü
+
+  ! This variable isGenrePointUsed is unused.
+  
+    41 Γöé   setTrophyTop,
+    42 Γöé   playerGenrePoints,
+  > 43 Γöé   isGenrePointUsed,
+       Γöé   ^^^^^^^^^^^^^^^^
+    44 Γöé   toggleGenrePointUsage,
+    45 Γöé   selectedPlayset,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolveScenePhase.vue:32:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöü
+
+  ! This variable rollEffort is unused.
+  
+    30 Γöé   isSuccess,
+    31 Γöé   effortResult,
+  > 32 Γöé   rollEffort,
+       Γöé   ^^^^^^^^^^
+    33 Γöé   selectedPlayset,
+    34 Γöé } = useLivePlay();
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolveScenePhase.vue:27:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöü
+
+  ! This variable activeCard is unused.
+  
+    26 Γöé const {
+  > 27 Γöé   activeCard,
+       Γöé   ^^^^^^^^^^
+    28 Γöé   selectedJoker,
+    29 Γöé   isFirstTime,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolveScenePhase.vue:28:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöü
+
+  ! This variable selectedJoker is unused.
+  
+    26 Γöé const {
+    27 Γöé   activeCard,
+  > 28 Γöé   selectedJoker,
+       Γöé   ^^^^^^^^^^^^^
+    29 Γöé   isFirstTime,
+    30 Γöé   isSuccess,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolveScenePhase.vue:29:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöü
+
+  ! This variable isFirstTime is unused.
+  
+    27 Γöé   activeCard,
+    28 Γöé   selectedJoker,
+  > 29 Γöé   isFirstTime,
+       Γöé   ^^^^^^^^^^^
+    30 Γöé   isSuccess,
+    31 Γöé   effortResult,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolveScenePhase.vue:30:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöü
+
+  ! This variable isSuccess is unused.
+  
+    28 Γöé   selectedJoker,
+    29 Γöé   isFirstTime,
+  > 30 Γöé   isSuccess,
+       Γöé   ^^^^^^^^^
+    31 Γöé   effortResult,
+    32 Γöé   rollEffort,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\ResolveScenePhase.vue:31:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöü
+
+  ! This variable effortResult is unused.
+  
+    29 Γöé   isFirstTime,
+    30 Γöé   isSuccess,
+  > 31 Γöé   effortResult,
+       Γöé   ^^^^^^^^^^^^
+    32 Γöé   rollEffort,
+    33 Γöé   selectedPlayset,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\SceneSetup.vue:45:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable isBlackJokerRemoved is unused.
+  
+    43 Γöé   getNextValidCard,
+    44 Γöé   currentAct,
+  > 45 Γöé   isBlackJokerRemoved,
+       Γöé   ^^^^^^^^^^^^^^^^^^^
+    46 Γöé   isFirstTime,
+    47 Γöé   selectedPlayset,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\SceneSetup.vue:46:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable isFirstTime is unused.
+  
+    44 Γöé   currentAct,
+    45 Γöé   isBlackJokerRemoved,
+  > 46 Γöé   isFirstTime,
+       Γöé   ^^^^^^^^^^^
+    47 Γöé   selectedPlayset,
+    48 Γöé   areJokersAvailable,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\SceneSetup.vue:48:3 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable areJokersAvailable is unused.
+  
+    46 Γöé   isFirstTime,
+    47 Γöé   selectedPlayset,
+  > 48 Γöé   areJokersAvailable,
+       Γöé   ^^^^^^^^^^^^^^^^^^
+    49 Γöé } = useLivePlay();
+    50 Γöé 
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\StrikeAssignmentModal.vue:27:9 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öü
+
+  ! This variable characters is unused.
+  
+    25 Γöé import { getStrikeAssignmentContent } from '../../utils/contentLoader';
+    26 Γöé 
+  > 27 Γöé const { characters, assignStrike, strikesToAssign, selectedPlayset } = useLivePlay();
+       Γöé         ^^^^^^^^^^
+    28 Γöé const content = getStrikeAssignmentContent(selectedPlayset.value);
+    29 Γöé 
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\live-play\WinScreen.vue:21:9 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This variable fullReset is unused.
+  
+    19 Γöé import { getWinScreenContent } from '../../utils/contentLoader';
+    20 Γöé 
+  > 21 Γöé const { fullReset, selectedPlayset } = useLivePlay();
+       Γöé         ^^^^^^^^^
+    22 Γöé const content = getWinScreenContent(selectedPlayset.value);
+    23 Γöé </script>
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\composables\__tests__\useLivePlay.act3.spec.ts:18:5 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öü
+
+  ! This variable areJokersAvailable is unused.
+  
+    16 Γöé     isEndgame,
+    17 Γöé     jokersAdded,
+  > 18 Γöé     areJokersAvailable,
+       Γöé     ^^^^^^^^^^^^^^^^^^
+    19 Γöé     weaknessesFound,
+    20 Γöé     selectedPlayset,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\composables\__tests__\useLivePlay.act3.spec.ts:19:5 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öü
+
+  ! This variable weaknessesFound is unused.
+  
+    17 Γöé     jokersAdded,
+    18 Γöé     areJokersAvailable,
+  > 19 Γöé     weaknessesFound,
+Checked 112 files in 325ms. No fixes applied.
+Found 3 errors.
+Found 72 warnings.
+Found 1 info.
+       Γöé     ^^^^^^^^^^^^^^^
+    20 Γöé     selectedPlayset,
+    21 Γöé     addNextReserve,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\composables\__tests__\useLivePlay.act3.spec.ts:24:5 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öü
+
+  ! This variable activeCard is unused.
+  
+    22 Γöé     cardsAddedFromReserve,
+    23 Γöé     act3Countdown,
+  > 24 Γöé     activeCard,
+       Γöé     ^^^^^^^^^^
+    25 Γöé     visibleCards,
+    26 Γöé     selectedCardId,
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+package.json format ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Formatter would have printed the following content:
+  
+    37 37 Γöé       "vue-tsc": "^1.8.22"
+    38 38 Γöé     }
+    39    Γöé - }
+       39 Γöé + }
+       40 Γöé + 
+  
+
+src\composables\useGameEngine.ts:60:13 lint/suspicious/useIterableCallbackReturn ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù This callback passed to forEach() iterable method should not return a value.
+  
+    58 Γöé     const reserveCards: Card[] = [];
+    59 Γöé     for (let r = 5; r <= 10; r++) {
+  > 60 Γöé       SUITS.forEach((s) => reserveCards.push(createCard(s, r as Rank)));
+       Γöé             ^^^^^^^
+    61 Γöé     }
+    62 Γöé     // Rules say "Trophy Pile: Place a random 10 from Reserve face up to start."
+  
+  i Either remove this return or remove the returned value.
+  
+    58 Γöé     const reserveCards: Card[] = [];
+    59 Γöé     for (let r = 5; r <= 10; r++) {
+  > 60 Γöé       SUITS.forEach((s) => reserveCards.push(createCard(s, r as Rank)));
+       Γöé                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    61 Γöé     }
+    62 Γöé     // Rules say "Trophy Pile: Place a random 10 from Reserve face up to start."
+  
+
+src\composables\useGameEngine.ts:75:13 lint/suspicious/useIterableCallbackReturn ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù This callback passed to forEach() iterable method should not return a value.
+  
+    73 Γöé     const lowNumbers: Card[] = [];
+    74 Γöé     for (let r = 2; r <= 4; r++) {
+  > 75 Γöé       SUITS.forEach((s) => lowNumbers.push(createCard(s, r as Rank)));
+       Γöé             ^^^^^^^
+    76 Γöé     }
+    77 Γöé 
+  
+  i Either remove this return or remove the returned value.
+  
+    73 Γöé     const lowNumbers: Card[] = [];
+    74 Γöé     for (let r = 2; r <= 4; r++) {
+  > 75 Γöé       SUITS.forEach((s) => lowNumbers.push(createCard(s, r as Rank)));
+       Γöé                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    76 Γöé     }
+    77 Γöé 
+  
+
+check ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Some errors were emitted while running checks.
+  
+

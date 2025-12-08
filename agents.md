@@ -17,6 +17,7 @@
 - **Build Tool**: Vite.
 - **Styling**: Tailwind CSS (configured in `tailwind.config.js`).
 - **State Management**: Vue Reactivity System (ref, reactive, computed).
+- **Architecture Pattern**: Shared State Singleton (for Game Logic). State lives in `gameState.ts`, logic in modules (`deckLogic.ts`, `phaseLogic.ts`), exposed via Facade (`useLivePlay.ts`).
 
 ## Ways of Working
 
@@ -73,6 +74,13 @@
     - `src/App.vue`: Main layout.
     - `src/data/default`: Default location for JSON data files.
 
+### 2.5 File Size & Refactoring
+- **Threshold**: Files exceeding **300 lines** are candidates for refactoring.
+- **Strategy**:
+    - **Logic**: Split large composables by domain (e.g., `deckLogic`, `phaseLogic`). Use a Shared State module (`gameState.ts`) to prevent circular dependencies.
+    - **Components**: Extract sub-components (e.g., `StrikeAssignmentModal.vue` is better than a giant modal inside `LivePlayHelper.vue`).
+    - **Facade Pattern**: Main entry points (like `useLivePlay.ts`) should act as simplified wrappers/exporters for the underlying modules.
+
 ### 3. Quality Assurance
 - **Build quality**:
     - **Agent note** Run `npm run build` to ensure the build is stable after making possible breaking changes.
@@ -91,12 +99,23 @@
     - All substantial textual data (prompts, flavor text, rules text) must be stored in external JSON files (e.g., in `site/src/data/default`).
     - Do not hardcode long strings or content matrices within TypeScript/Vue files.
     - This separation allows for easier content updates, localization, and the creation of alternative "Playsets" without modifying code.
+    - **Playset Philosophy**: Playsets are **overrides**, not copies.
+        - A new playset should start **empty** (except for `config.json`).
+        - Only include files or properties that *differ* from the default.
+        - The `contentLoader` merges playset data on top of the default data.
+        - **Never** copy the entire default data set to a new playset directory.
     - Use `marked` to parse Markdown content from JSON files to allow for rich text formatting.
 - **Dynamic Content**:
     - Avoid hardcoding lists or grids of items in templates.
     - Use `v-for` loops to iterate over data arrays.
     - Store metadata like icon names in the data and bind them dynamically in the component.
-- **Rules**: Updates to game mechanics must be reflected in `NotT_2.md`.
+- **Rules & Playsets**:
+    - **Core Rules**: Defined in `NotT_2.md`. Updates to game mechanics must be reflected here first.
+    - **Rules Modules**: Game logic variations (e.g., "Classic Setup" or "Final Girl Rules") should be implemented as Rules Modules.
+        - Define flags in `playsetConfig` (e.g., `rulesModules: { classicSetup: true }`).
+        - Use these flags in `deckLogic`/`phaseLogic` to branch behavior.
+        - This prevents forking the entire codebase for minor rule tweaks.
+    - **Data-Driven**: Avoid hardcoding lists. Use `v-for`.
 - **Workflows**: Common procedures (e.g., deployment, database migration) should be documented in `.agent/workflows/`.
 - **Components**: Every component must be thoroughly documented. Explain props, slots, events, and usage examples. This is non-negotiable for maintainability.
     - **Documentation Structure**: Each component file must start with a comment block containing:

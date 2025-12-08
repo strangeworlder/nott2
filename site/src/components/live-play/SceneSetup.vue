@@ -1,26 +1,44 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useLivePlay } from '../../composables/useLivePlay'
+/**
+ * SceneSetup
+ *
+ * Philosophical:
+ * SceneSetup is where the threat manifests. Players draw cards from the Threat Deck,
+ * and the interface reveals what horror awaits. This moment should feel tense—like
+ * peeling back the veil on something dangerous. The component must balance the
+ * mechanical (tracking card state) with the narrative (building anticipation).
+ *
+ * Technical:
+ * A phase component for drawing threat cards and selecting the active threat.
+ * Handles joker selection and displays scene prompts.
+ *
+ * Props:
+ * (None - uses useLivePlay composable directly)
+ *
+ * Events:
+ * - back: Emitted when the user wants to return to the previous phase.
+ * - next: Emitted when the user proceeds with the selected threat.
+ */
 
-import ScenePrompt from './ScenePrompt.vue'
-import Text from '../Text.vue'
-import Separator from '../defaults/Separator.vue'
-import IngressText from '../IngressText.vue'
-import PlayingCard from '../PlayingCard.vue'
+import { computed, ref, watch } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getSceneSetupContent } from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Separator from '../defaults/Separator.vue';
+import IngressText from '../IngressText.vue';
+import PlayingCard from '../PlayingCard.vue';
+import Text from '../Text.vue';
+import ManualCardEntry from './ManualCardEntry.vue';
+import ScenePrompt from './ScenePrompt.vue';
 
-import ActionFooter from '../ActionFooter.vue'
-import ManualCardEntry from './ManualCardEntry.vue'
-import { getSceneSetupContent } from '../../utils/contentLoader'
-
-
-const { 
-  activeCard, 
+const {
+  activeCard,
   visibleCards,
   selectedCardId,
-  selectedJoker, 
-  manualSuit, 
-  manualRank, 
-  manualJoker, 
+  selectedJoker,
+  manualSuit,
+  manualRank,
+  manualJoker,
   isEndgame,
 
   isRankAvailable,
@@ -34,81 +52,97 @@ const {
   isBlackJokerRemoved,
   isFirstTime,
   selectedPlayset,
-  areJokersAvailable
-} = useLivePlay()
+  areJokersAvailable,
+} = useLivePlay();
 
 const emit = defineEmits<{
-  (e: 'back'): void
-  (e: 'next'): void
-}>()
+  (e: 'back'): void;
+  (e: 'next'): void;
+}>();
 
-const content = computed(() => getSceneSetupContent(selectedPlayset.value))
+const content = computed(() => getSceneSetupContent(selectedPlayset.value));
 
-const isAddingCard = ref(false)
+const isAddingCard = ref(false);
 const targetVisibleCount = computed(() => {
   // If there are Aces remaining in the deck, OR if there is an Ace currently on the table, target is 1.
   // We only move to 2 cards when all Aces are cleared from play.
-  const hasAceOnTable = visibleCards.value.some(c => c.rank === 1)
-  return (acesRemaining.value > 0 || hasAceOnTable) ? 1 : 2
-})
+  const hasAceOnTable = visibleCards.value.some((c) => c.rank === 1);
+  return acesRemaining.value > 0 || hasAceOnTable ? 1 : 2;
+});
 
 const canAddMore = computed(() => {
   // Cannot add more if a Face Card is on the table (unless it's the only card and we are just starting? No, rule says no draw)
-  if (hasFaceCardOnTable.value) return false
-  return visibleCards.value.length < targetVisibleCount.value
-})
+  if (hasFaceCardOnTable.value) return false;
+  return visibleCards.value.length < targetVisibleCount.value;
+});
 
 const isSelectionEnabled = computed(() => {
-    // Can only select if we are NOT waiting to add more cards
-    return !canAddMore.value
-})
+  // Can only select if we are NOT waiting to add more cards
+  return !canAddMore.value;
+});
 
 // Auto-select if only one card is visible AND selection is enabled
-watch([visibleCards, isSelectionEnabled], ([newCards, enabled]) => {
-  if (enabled && newCards.length === 1 && !selectedCardId.value) {
-    selectCard(newCards[0].id)
-  }
-}, { immediate: true })
+watch(
+  [visibleCards, isSelectionEnabled],
+  ([newCards, enabled]) => {
+    if (enabled && newCards.length === 1 && !selectedCardId.value) {
+      selectCard(newCards[0].id);
+    }
+  },
+  { immediate: true }
+);
 
 const startAddCard = () => {
-    // Pre-fill with smart default
-    const next = getNextValidCard()
-    manualRank.value = next.rank
-    manualSuit.value = next.suit
-    isAddingCard.value = true
-}
+  // Pre-fill with smart default
+  const next = getNextValidCard();
+
+  if (next.suit === 'Unknown') {
+    // If unknown, we don't pre-fill. User must identify.
+    // We set rank to 0 (or 1 as default) but don't lock it?
+    // ManualCardEntry needs to know we are "Identifying" a card?
+    // Or just let them pick anything.
+    // Let's default to 2 of Spades (lowest number card) to avoid "Ace" confusion if Aces are gone.
+    manualRank.value = 2;
+    manualSuit.value = 'Spades';
+  } else {
+    manualRank.value = next.rank;
+    manualSuit.value = next.suit;
+  }
+
+  isAddingCard.value = true;
+};
 
 const confirmAddCard = () => {
-  addVisibleCard()
-  isAddingCard.value = false
-}
+  addVisibleCard();
+  isAddingCard.value = false;
+};
 
 const isValidAddition = computed(() => {
-  if (manualJoker.value) return true
-  return isRankAvailable(manualRank.value) && isSuitAvailable(manualRank.value, manualSuit.value)
-})
+  if (manualJoker.value) return true;
+  return isRankAvailable(manualRank.value) && isSuitAvailable(manualRank.value, manualSuit.value);
+});
 
 const showPrompt = computed(() => {
-  return !!activeCard.value || !!selectedJoker.value
-})
+  return !!activeCard.value || !!selectedJoker.value;
+});
 
 const handleCardClick = (id: string) => {
-    if (isSelectionEnabled.value) {
-        selectCard(id)
-    }
-}
+  if (isSelectionEnabled.value) {
+    selectCard(id);
+  }
+};
 
 const explanationText = computed(() => {
   if (acesRemaining.value > 0) {
-    return content.value.explanations.aces
-  }
-  
-  if (currentAct.value === 3 || isEndgame.value) {
-    return content.value.explanations.finale
+    return content.value.explanations.aces;
   }
 
-  return content.value.explanations.default
-})
+  if (currentAct.value === 3 || isEndgame.value) {
+    return content.value.explanations.finale;
+  }
+
+  return content.value.explanations.default;
+});
 </script>
 
 <template>
@@ -161,6 +195,9 @@ const explanationText = computed(() => {
           <Button variant="secondary" @click="startAddCard">
             {{ content.ui.drawButton }}
           </Button>
+          <div v-if="getNextValidCard().suit === 'Unknown'" class="mt-2 text-center">
+             <Text variant="caption" color="muted">{{ content.ui.unknownCardHint }}</Text>
+          </div>
         </div>
 
         <!-- Card Input Interface -->

@@ -1,0 +1,12 @@
+{
+    "resetButton": "Reset Game",
+    "act3CountdownLabel": "{count} hours to Act 3",
+    "trophyPile": {
+        "label": "Top of the Trophy Pile",
+        "unknown": "Unknown"
+    },
+    "currentThreat": {
+        "label": "Current Threat",
+        "noThreat": "No active threat"
+    }
+}

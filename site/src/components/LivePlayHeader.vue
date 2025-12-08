@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
-import { useLivePlay } from '../composables/useLivePlay'
-import { getPlaysetConfig } from '../utils/contentLoader'
-import DefaultComponent from './defaults/LivePlayHeader.vue'
+import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
+import { useLivePlay } from '../composables/useLivePlay';
+import { getPlaysetConfig } from '../utils/contentLoader';
+import DefaultComponent from './defaults/LivePlayHeader.vue';
 
 interface Card {
-  suit: string
-  rank: number
+  suit: string;
+  rank: number;
 }
 
 interface Props {
-  currentAct: number
-  currentPhase: string
-  trophyTop?: Card | null
-  isTrophyTopRandomized?: boolean
-  cardName?: string
-  activeCard?: Card | null
-  selectedJoker?: 'Red' | 'Black' | null
-  act3Countdown?: number
-  acesRemaining?: number
-  fullReset: () => void
+  currentAct: number;
+  currentPhase: string;
+  trophyTop?: Card | null;
+  isTrophyTopRandomized?: boolean;
+  cardName?: string;
+  activeCard?: Card | null;
+  selectedJoker?: 'Red' | 'Black' | null;
+  act3Countdown?: number | null;
+  acesRemaining?: number;
+  fullReset: () => void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -28,32 +28,32 @@ const props = withDefaults(defineProps<Props>(), {
   cardName: '',
   activeCard: null,
   selectedJoker: null,
-})
+});
 
-const { selectedPlayset } = useLivePlay()
-const playsetComponents = import.meta.glob('./playsets/**/LivePlayHeader.vue')
-const currentComponent = shallowRef(DefaultComponent)
+const { selectedPlayset } = useLivePlay();
+const playsetComponents = import.meta.glob('./playsets/**/LivePlayHeader.vue');
+const currentComponent = shallowRef<Component>(DefaultComponent);
 
 watchEffect(() => {
-  const playsetId = selectedPlayset.value
+  const playsetId = selectedPlayset.value;
   if (!playsetId || playsetId === 'default') {
-    currentComponent.value = DefaultComponent
-    return
+    currentComponent.value = DefaultComponent;
+    return;
   }
 
-  const config = getPlaysetConfig(playsetId)
+  const config = getPlaysetConfig(playsetId);
   if (config.overrides?.LivePlayHeader) {
-    const path = `./playsets/${playsetId}/LivePlayHeader.vue`
-    const loader = playsetComponents[path]
+    const path = `./playsets/${playsetId}/LivePlayHeader.vue`;
+    const loader = playsetComponents[path];
     if (loader) {
-      currentComponent.value = defineAsyncComponent(loader as any)
+      currentComponent.value = defineAsyncComponent(loader as () => Promise<Component>);
     } else {
-      currentComponent.value = DefaultComponent
+      currentComponent.value = DefaultComponent;
     }
   } else {
-    currentComponent.value = DefaultComponent
+    currentComponent.value = DefaultComponent;
   }
-})
+});
 </script>
 
 <template>

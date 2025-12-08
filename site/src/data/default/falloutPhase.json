@@ -48,6 +48,10 @@
     },
     "standard": {
         "success": {
+            "ace": {
+                "title": "Aptitude Proven",
+                "body": "Remove the Ace from the game."
+            },
             "trophy": {
                 "title": "Update Trophy Pile",
                 "body": "Move the {card} to the top of the Trophy Pile.",
@@ -102,33 +106,15 @@
                 "title": "The Threat Remains",
                 "body": "Shuffle the entire Threat Deck and Trophy Pile."
             }
-        },
-        "failure": {
-            "threat": {
-                "title": "Threat Deck",
-                "body": "Place the {card} at the bottom of the Threat Deck."
-            },
-            "reserve": {
-                "title": "Add Reserve",
-                "body": "Take the next card from the Number Reserve and add it to the bottom of the Threat Deck."
-            },
-            "strikes": {
-                "title": "The Killer Strikes",
-                "body": "Mark 1 Strike on your character sheet."
-            },
-            "grow": {
-                "title": "The Horror Grows",
-                "add": "Add a random {rank} to the bottom of the Threat Deck.",
-                "empty": "No Face Cards left in reserve!"
-            },
-            "remains": {
-                "title": "The Threat Remains",
-                "body": "Shuffle the entire Threat Deck and Trophy Pile."
-            }
         }
     },
     "buttons": {
         "finish": "Finish Game",
-        "next": "Start Next Scene"
+        "next": "Start Next Scene",
+        "assignStrikes": "ASSIGN STRIKES AND START NEXT SCENE"
+    },
+    "breakingPoint": {
+        "title": "BREAKING POINT",
+        "body": "The effort was too great. The Active Player takes a **STRIKE**."
     }
 }

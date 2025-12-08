@@ -1,40 +1,40 @@
 <script setup lang="ts">
 /**
  * Icon
- * 
+ *
  * Philosophical:
- * Icons serve as visual shorthand, reducing cognitive load by replacing text with 
- * universally (or contextually) recognized symbols. They allow for denser information 
- * display and quicker scanning. In this text-heavy game, icons provide necessary 
+ * Icons serve as visual shorthand, reducing cognitive load by replacing text with
+ * universally (or contextually) recognized symbols. They allow for denser information
+ * display and quicker scanning. In this text-heavy game, icons provide necessary
  * visual relief and immediate semantic cues.
- * 
+ *
  * Technical:
  * A wrapper component for rendering SVG icons.
- * 
+ *
  * Props:
  * - name (string): The name of the icon to render ('clock', 'users', 'supplies').
  * - size (number | string): The size of the icon in pixels. Defaults to 24.
  * - color (string): The color of the icon ('white', 'red', 'muted', 'success').
  */
 
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps<{
-  name: 'clock' | 'users' | 'supplies' | 'Spades' | 'Hearts' | 'Clubs' | 'Diamonds'
-  size?: number | string
-  color?: 'white' | 'red' | 'muted' | 'success'
-}>()
+  name: 'clock' | 'users' | 'supplies' | 'Spades' | 'Hearts' | 'Clubs' | 'Diamonds';
+  size?: number | string;
+  color?: 'white' | 'red' | 'muted' | 'success';
+}>();
 
-const iconSize = computed(() => props.size || 24)
+const iconSize = computed(() => props.size || 24);
 
 const classes = computed(() => {
-  const base = ['inline-block']
-  if (props.color === 'white') base.push('text-nott-white')
-  if (props.color === 'red') base.push('text-nott-red')
-  if (props.color === 'muted') base.push('text-nott-white/60')
-  if (props.color === 'success') base.push('text-nott-green')
-  return base.join(' ')
-})
+  const base = ['inline-block'];
+  if (props.color === 'white') base.push('text-nott-white');
+  if (props.color === 'red') base.push('text-nott-red');
+  if (props.color === 'muted') base.push('text-nott-white/60');
+  if (props.color === 'success') base.push('text-nott-green');
+  return base.join(' ');
+});
 </script>
 
 <template>

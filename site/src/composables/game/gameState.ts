@@ -1,0 +1,174 @@
+import { computed, ref } from 'vue';
+import type { Card as GameCard, Rank, Suit } from '../useGameEngine';
+
+// --------------------------------------------------------------------------------
+// Type Definitions
+// --------------------------------------------------------------------------------
+
+export type LivePlayPhase =
+  | 'welcome'
+  | 'game-setup'
+  | 'act-setup'
+  | 'trophy-setup'
+  | 'scene-setup'
+  | 'conversation-stakes'
+  | 'resolution'
+  | 'resolve-scene'
+  | 'fallout'
+  | 'win';
+
+export interface Character {
+  id: string;
+  name: string;
+  strikes: number;
+  isDead: boolean;
+}
+
+export interface LivePlayCard extends GameCard {
+  name: string;
+  description: string;
+  type: 'number' | 'face';
+}
+
+// --------------------------------------------------------------------------------
+// Shared State (Singleton)
+// --------------------------------------------------------------------------------
+
+// Core Data
+export const visibleCards = ref<LivePlayCard[]>([]);
+export const selectedCardId = ref<string | null>(null);
+export const selectedJoker = ref<'Red' | 'Black' | null>(null);
+
+export const activeCard = computed(() => {
+  if (selectedJoker.value) return null;
+  if (!selectedCardId.value) return null;
+  return visibleCards.value.find((c) => c.id === selectedCardId.value) || null;
+});
+
+export const isFaceCard = computed(() => {
+  return activeCard.value?.type === 'face' || (activeCard.value?.rank || 0) > 10;
+});
+
+// Game Stats
+export const strikes = ref(0);
+export const characters = ref<Character[]>([
+  { id: 'Spades', name: 'The Power', strikes: 0, isDead: false },
+  { id: 'Hearts', name: 'The Resolve', strikes: 0, isDead: false },
+  { id: 'Clubs', name: 'The Intellect', strikes: 0, isDead: false },
+  { id: 'Diamonds', name: 'The Finesse', strikes: 0, isDead: false },
+]);
+export const strikesToAssign = ref(0);
+export const weaknessesFound = ref<Suit[]>([]);
+export const isEndgame = ref(false);
+export const tableGenrePoints = ref(13);
+export const playerGenrePoints = ref(0);
+export const currentAct = ref(1);
+export const selectedPlayset = ref<string | null>(null);
+export const currentPhase = ref<LivePlayPhase>('welcome');
+
+// Manual Input
+export const manualSuit = ref<Suit>('Spades');
+export const manualRank = ref<Rank>(1);
+export const manualJoker = ref<'Red' | 'Black' | null>(null);
+export const manualOverride = ref(false);
+export const debugMode = ref(false);
+
+// Act 3
+export const act3Countdown = computed(() => {
+  if (currentAct.value >= 3) return null;
+  return 13 - cardsAddedFromReserve.value;
+});
+
+// Deck State
+export const acesRemaining = ref(4);
+export const middleStack = ref<Record<number, number>>({
+  1: 0,
+  2: 4,
+  3: 4,
+  4: 4,
+  5: 0,
+  6: 0,
+  7: 0,
+  8: 0,
+  9: 0,
+  10: 0,
+  11: 1,
+  12: 0,
+  13: 0,
+});
+export const bottomStack = ref<Record<number, number>>({
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+  6: 0,
+  7: 0,
+  8: 0,
+  9: 0,
+  10: 0,
+  11: 0,
+  12: 0,
+  13: 0,
+});
+export const reserveQueue = ref<number[]>([
+  5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10,
+]);
+export const drawnCards = ref<Set<string>>(new Set());
+export const trophyPile = ref<LivePlayCard[]>([]);
+export const trophyTop = ref<LivePlayCard | null>(null);
+export const isTrophyTopRandomized = ref(true);
+
+export const faceCardReserves = ref({
+  11: 3,
+  12: 4,
+  13: 4,
+});
+export const lastAddedFaceCardRank = ref<number | null>(null);
+export const removedFaceCards = ref<Record<number, number>>({
+  11: 0,
+  12: 0,
+  13: 0,
+});
+
+export const unknownThreatCards = ref(0);
+export const unknownBottomStack = ref(0);
+export const unknownReserveCards = ref(0);
+
+// Known cards at bottom of deck (by card ID like "10-Hearts") - can't be drawn until shuffle
+export const knownBottomStackCards = ref<Set<string>>(new Set());
+
+// Resolution State
+// selectedJoker is defined above due to hoisting needs for activeCard
+export const sacrificeConfirmed = ref(false);
+export const rollMain = ref<number | null>(null);
+export const rollEffort = ref<number | null>(null);
+
+export const isGenrePointUsed = ref(false);
+export const isGenrePointAwarded = ref(false);
+
+export const isEndgameInitialized = ref(false);
+export const isGameWon = ref(false);
+export const isBlackJokerRemoved = ref(false);
+export const jokersAdded = ref(false);
+export const cardsAddedFromReserve = ref(0);
+
+// Computed
+export const areJokersAvailable = computed(() => {
+  return jokersAdded.value;
+});
+
+export const isGameOver = computed(() => {
+  return characters.value.every((c) => c.isDead) || isGameWon.value;
+});
+
+export const isMiddleStackEmpty = computed(() => {
+  return (
+    Object.values(middleStack.value).every((count) => count === 0) && unknownThreatCards.value === 0
+  );
+});
+
+export const isSuccess = computed(() => {
+  // Basic fallback; specific success logic is in useLivePlay.ts wrapper around checks
+  return false;
+});

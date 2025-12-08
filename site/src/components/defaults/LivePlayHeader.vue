@@ -1,16 +1,16 @@
 <script setup lang="ts">
 /**
  * LivePlayHeader
- * 
+ *
  * Philosophical:
  * The Live Play Header is the HUD (Heads-Up Display) for the ongoing narrative. It anchors
  * the player in the current moment (Act, Phase) and provides immediate access to critical
  * game state information (Current Threat, Trophy Pile). It is the dashboard from which
  * the player navigates the chaos.
- * 
+ *
  * Technical:
  * Displays the current Act, Phase, Reset button, and context-sensitive game state info.
- * 
+ *
  * Props:
  * - currentAct (number): The current Act number.
  * - currentPhase (string): The current Phase identifier.
@@ -22,29 +22,30 @@
  * - fullReset (function): Function to reset the game state.
  */
 
-import { computed } from 'vue'
-import Text from '../Text.vue'
-import Button from '../Button.vue'
-import Separator from './Separator.vue'
-import CurrentThreat from '../CurrentThreat.vue'
-import TrophyPileTop from '../TrophyPileTop.vue'
+import { computed } from 'vue';
+import { getLivePlayHeaderContent } from '../../utils/contentLoader';
+import Button from '../Button.vue';
+import CurrentThreat from '../CurrentThreat.vue';
+import Text from '../Text.vue';
+import TrophyPileTop from '../TrophyPileTop.vue';
+import Separator from './Separator.vue';
 
 interface Card {
-  suit: string
-  rank: number
+  suit: string;
+  rank: number;
 }
 
 interface Props {
-  currentAct: number
-  currentPhase: string
-  trophyTop?: Card | null
-  isTrophyTopRandomized?: boolean
-  cardName?: string
-  activeCard?: Card | null
-  selectedJoker?: 'Red' | 'Black' | null
-  act3Countdown?: number
-  acesRemaining?: number
-  fullReset: () => void
+  currentAct: number;
+  currentPhase: string;
+  trophyTop?: Card | null;
+  isTrophyTopRandomized?: boolean;
+  cardName?: string;
+  activeCard?: Card | null;
+  selectedJoker?: 'Red' | 'Black' | null;
+  act3Countdown?: number;
+  acesRemaining?: number;
+  fullReset: () => void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -53,24 +54,42 @@ const props = withDefaults(defineProps<Props>(), {
   cardName: '',
   activeCard: null,
   selectedJoker: null,
-})
+});
+
+const content = getLivePlayHeaderContent();
+
+const act3CountdownText = computed(() => {
+  return content.act3CountdownLabel.replace('{count}', (props.act3Countdown ?? 0).toString());
+});
 
 const phaseName = computed(() => {
   switch (props.currentPhase) {
-    case 'game-setup': return 'Game Setup'
-    case 'scene-setup': return 'Scene Setup'
-    case 'conversation-stakes': return 'The Conversation & Setting The Stakes'
-    case 'resolution': return 'Resolution'
-    case 'resolve-scene': return 'Narrate The Results'
-    case 'fallout': return 'Deck Management'
-    case 'win': return 'Victory'
-    default: return ''
+    case 'game-setup':
+      return 'Game Setup';
+    case 'scene-setup':
+      return 'Scene Setup';
+    case 'conversation-stakes':
+      return 'The Conversation & Setting The Stakes';
+    case 'resolution':
+      return 'Resolution';
+    case 'resolve-scene':
+      return 'Narrate The Results';
+    case 'fallout':
+      return 'Deck Management';
+    case 'trophy-setup':
+      return 'Trophy Pile Setup';
+    case 'win':
+      return 'Victory';
+    default:
+      return '';
   }
-})
+});
 
 const showContext = computed(() => {
-  return ['conversation-stakes', 'resolution', 'resolve-scene', 'fallout'].includes(props.currentPhase)
-})
+  return ['conversation-stakes', 'resolution', 'resolve-scene', 'fallout'].includes(
+    props.currentPhase
+  );
+});
 </script>
 
 <template>
@@ -88,12 +107,12 @@ const showContext = computed(() => {
         <template v-if="act3Countdown !== undefined && acesRemaining === 0 && currentAct < 3">
           <Separator orientation="vertical" class="h-4 mx-0" />
           <Text variant="caption" color="muted" class="uppercase tracking-wider">
-            {{ act3Countdown }} hours to Act 3
+            {{ act3CountdownText }}
           </Text>
         </template>
       </div>
       <Button variant="ghost" @click="fullReset" class="text-xs px-2 py-1 h-auto text-nott-gray hover:text-nott-red">
-        Reset Game
+        {{ content.resetButton }}
       </Button>
     </div>
 

@@ -1,0 +1,34 @@
+{
+    "1": {
+        "sections": [
+            {
+                "title": "Build the Decks (Classic)",
+                "intro": "Manually build the decks:",
+                "steps": [
+                    "**Number Reserves:** Shuffle 5s. Repeat with 6s, 7s, 8s, 9s, 10s. Stack them face-down so that 5s are on top and 10s on the bottom.",
+                    "**Face Reserves:** Shuffle Jacks. Repeat with Queens and Kings. Put them each in their own pile face-down.",
+                    "**Threat Deck:** Shuffle 2s, 3s and 4s and top card of the Jacks reserve pile together. Place facedown to form the Threat Deck. Shuffle 4 Aces and place them on top of the deck face up.",
+                    "**Trophy Pile:** Draw from the bottom of the Number Reserves. This is a 10. Place it face up to form the Trophy Pile."
+                ]
+            },
+            {
+                "title": "Create Characters",
+                "steps": [
+                    "Choose a Name and Archetype.",
+                    "Answer: \"Why are you here?\"",
+                    "Select an Aptitude (Power, Resolve, Intellect, Finesse)."
+                ],
+                "footer": "**Optional:** You can create the characters on the fly by choosing the order in which you play out the first four scenes and let the four Aces determine your Apitudes."
+            },
+            {
+                "title": "The Introduction",
+                "intro": "The first act will establish the player characters and hint at the Killer.",
+                "steps": [
+                    "**Establishing Shots:** The aces are there to showcase the player characters' aptitudes. The character with matching aptitude will be the one to act with each of them. It is impossible to fail the test and since they are aimed at your own Aptitudes, the worst effort that can happen is overexertion.",
+                    "**First tests:** After the Aces, you will draw and lay out two cards on the table from the top of the Threat Deck. These are the two possible scenes for you to tackle.",
+                    "**The Killer Strikes:** Once you draw a Face card (Jack in the case of Act 1) from the the Threat Deck, you cannot draw more cards from it as long as the Jack is on the table. If there was a card there, you can deal with that first and leave the Jack on the table so the next player will have to deal with it. The difficulty of the test is the current top of the Trophy Pile plus 1 (or, +1 for Jacks, +2 for Queens, +3 for Kings). Once you've had this first confrontation with the Killer, Act 2 will begin."
+                ]
+            }
+        ]
+    }
+}

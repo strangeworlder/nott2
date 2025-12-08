@@ -1,73 +1,140 @@
 <script setup lang="ts">
-import { useLivePlay } from '../../composables/useLivePlay'
-import Toggle from '../Toggle.vue'
-import Text from '../Text.vue'
-import Card from '../Card.vue'
-import ActionFooter from '../ActionFooter.vue'
-import ProcessStep from '../ProcessStep.vue'
-import { computed } from 'vue'
-import { getFalloutPhaseContent } from '../../utils/contentLoader'
-import StrikeAssignmentModal from './StrikeAssignmentModal.vue'
+/**
+ * FalloutPhase
+ *
+ * Philosophical:
+ * The Fallout Phase is the aftermath—where victories are consolidated and defeats
+ * exact their toll. It serves as the mechanical housekeeping phase, but narratively
+ * it's the moment of reckoning. Trophy cards are claimed, threats grow stronger,
+ * and the deck state shifts. This phase turns abstract outcomes into tangible
+ * changes in game state, preparing the world for the next scene.
+ *
+ * Technical:
+ * A phase component that guides players through post-resolution deck management.
+ * Displays different instructions based on success/failure and card type.
+ *
+ * Props:
+ * (None - uses useLivePlay composable directly)
+ *
+ * Events:
+ * - back: Emitted when the user wants to return to the previous phase.
+ */
 
-const { 
-  isSuccess, 
-  cardName, 
-  isFaceCard, 
-  isFirstTime, 
-  selectedSuit, 
+import { computed, ref, watch } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getFalloutPhaseContent } from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Card from '../Card.vue';
+import ProcessStep from '../ProcessStep.vue';
+import Text from '../Text.vue';
+import Toggle from '../Toggle.vue';
+import StrikeAssignmentModal from './StrikeAssignmentModal.vue';
+
+const {
+  isSuccess,
+  cardName,
+  isFaceCard,
+  isFirstTime,
+  selectedSuit,
   effortResult,
   startNextScene,
   toggleGenrePointAward,
   isGenrePointAwarded,
   tableGenrePoints,
   playerGenrePoints,
-  pendingFalloutRank,
   getRankName,
   selectedJoker,
-  selectedPlayset
-} = useLivePlay()
+  selectedPlayset,
+  selectedRank,
+  pendingFalloutRank,
+  strikesToAssign,
+} = useLivePlay();
 
-const emit = defineEmits<{
-  (e: 'back'): void
-}>()
+const emit = defineEmits<(e: 'back') => void>();
 
-const content = computed(() => getFalloutPhaseContent(selectedPlayset.value))
+const content = computed(() => getFalloutPhaseContent(selectedPlayset.value));
+
+const isAssigningStrikes = ref(false);
+
+const hasStrikesToAssign = computed(() => (strikesToAssign.value || 0) > 0);
+
+const buttonLabel = computed(() => {
+  if (selectedJoker.value === 'Red' && isSuccess.value) {
+    return content.value.buttons.finish;
+  }
+
+  if (hasStrikesToAssign.value) {
+    return content.value.buttons.assignStrikes;
+  }
+
+  return content.value.buttons.next;
+});
+
+const handleAction = () => {
+  if (hasStrikesToAssign.value) {
+    isAssigningStrikes.value = true;
+  } else {
+    startNextScene();
+  }
+};
+
+// Auto-proceed to next scene after all strikes are assigned
+watch(hasStrikesToAssign, (hasStrikes) => {
+  if (!hasStrikes && isAssigningStrikes.value) {
+    isAssigningStrikes.value = false;
+    startNextScene();
+  }
+});
 
 const genrePointCaption = computed(() => {
   return content.value.genrePoint.caption
     .replace('{table}', tableGenrePoints.value.toString())
-    .replace('{player}', playerGenrePoints.value.toString())
-})
+    .replace('{player}', playerGenrePoints.value.toString());
+});
 
 const trophyText = computed(() => {
-  return content.value.standard.success.trophy.body.replace('{card}', cardName.value)
-})
+  return content.value.standard.success.trophy.body.replace('{card}', cardName.value);
+});
+
+const isAce = computed(() => selectedRank.value === 1);
 
 const threatText = computed(() => {
-  return content.value.standard.failure.threat.body.replace('{card}', cardName.value)
-})
+  return content.value.standard.failure.threat.body.replace('{card}', cardName.value);
+});
 
 const weaknessFoundCaption = computed(() => {
-  return content.value.standard.success.weakness.found.caption.replace('{suit}', selectedSuit.value || '')
-})
+  return content.value.standard.success.weakness.found.caption.replace(
+    '{suit}',
+    selectedSuit.value || ''
+  );
+});
 
 const weaknessKnownCaption = computed(() => {
-  return content.value.standard.success.weakness.known.caption.replace('{suit}', selectedSuit.value || '')
-})
+  return content.value.standard.success.weakness.known.caption.replace(
+    '{suit}',
+    selectedSuit.value || ''
+  );
+});
 
 const retaliateText = computed(() => {
-  if (!pendingFalloutRank.value) return ''
-  return content.value.standard.success.retaliate.add.replace('{rank}', getRankName(pendingFalloutRank.value))
-})
+  if (!pendingFalloutRank.value) return '';
+  return content.value.standard.success.retaliate.add.replace(
+    '{rank}',
+    getRankName(pendingFalloutRank.value)
+  );
+});
 
 const growText = computed(() => {
-  if (!pendingFalloutRank.value) return ''
-  return content.value.standard.failure.grow.add.replace('{rank}', getRankName(pendingFalloutRank.value))
-})
+  if (!pendingFalloutRank.value) return '';
+  return content.value.standard.failure.grow.add.replace(
+    '{rank}',
+    getRankName(pendingFalloutRank.value)
+  );
+});
 
 const isBreakingPoint = computed(() => {
-  return effortResult.value?.level === 4
-})
+  return effortResult.value?.level === 4;
+});
 </script>
 
 <template>
@@ -130,51 +197,51 @@ const isBreakingPoint = computed(() => {
 
               <!-- Standard Card Success Handling -->
               <template v-else>
-                  <!-- Step 1 -->
-                  <ProcessStep step="1" variant="success" :title="content.standard.success.trophy.title">
-                      <Text variant="body"><span v-html="trophyText"></span></Text>
-                      <Text variant="caption" color="muted" class="mt-1 block"><span v-html="content.standard.success.trophy.caption"></span></Text>
-                  </ProcessStep>
-                  
-                  <!-- Step 2 (Number Card) -->
-                  <ProcessStep 
-                    v-if="!isFaceCard" 
-                    step="2" 
-                    variant="success" 
-                    :title="content.standard.success.reserve.title"
-                  >
-                      <Text variant="body"><span v-html="content.standard.success.reserve.body"></span></Text>
-                  </ProcessStep>
+                  <!-- Ace Success -->
+                  <template v-if="isAce">
+                      <ProcessStep step="1" variant="success" :title="content.standard.success.ace?.title">
+                          <Text variant="body"><span v-html="content.standard.success.ace?.body"></span></Text>
+                      </ProcessStep>
+                  </template>
 
-                  <!-- Face Card Steps -->
+                  <!-- Number Card Success -->
+                  <template v-else-if="!isFaceCard">
+                      <ProcessStep step="1" variant="success" :title="content.standard.success.trophy.title">
+                          <Text variant="body"><span v-html="trophyText"></span></Text>
+                          <Text variant="caption" color="muted" class="mt-1 block"><span v-html="content.standard.success.trophy.caption"></span></Text>
+                      </ProcessStep>
+                      
+                      <ProcessStep step="2" variant="success" :title="content.standard.success.reserve.title">
+                          <Text variant="body"><span v-html="content.standard.success.reserve.body"></span></Text>
+                      </ProcessStep>
+                  </template>
+
+                  <!-- Face Card Success -->
                   <template v-else>
-                    <!-- Step 2 -->
-                    <ProcessStep step="2" variant="success" :title="content.standard.success.weakness.title">
-                        <Card v-if="isFirstTime" variant="success" :interactive="false" class="p-1 mt-1">
-                          <Text variant="body" color="success" class="mb-1"><strong><span v-html="content.standard.success.weakness.found.title"></span></strong></Text>
-                          <Text variant="caption" class="block mb-2"><span v-html="weaknessFoundCaption"></span></Text>
-                          <Text variant="body"><strong><span v-html="content.standard.success.weakness.found.action"></span></strong></Text>
-                        </Card>
-                        <Card v-else variant="failure" :interactive="false" class="p-1 mt-1">
-                          <Text variant="body" color="red" class="mb-1"><strong><span v-html="content.standard.success.weakness.known.title"></span></strong></Text>
-                          <Text variant="caption" class="block mb-2"><span v-html="weaknessKnownCaption"></span></Text>
-                          <Text variant="body"><strong><span v-html="content.standard.success.weakness.known.action"></span></strong></Text>
-                        </Card>
-                    </ProcessStep>
+                      <ProcessStep step="1" variant="success" :title="content.standard.success.weakness.title">
+                          <Card v-if="isFirstTime" variant="success" :interactive="false" class="p-1 mt-1">
+                            <Text variant="body" color="success" class="mb-1"><strong><span v-html="content.standard.success.weakness.found.title"></span></strong></Text>
+                            <Text variant="caption" class="block mb-2"><span v-html="weaknessFoundCaption"></span></Text>
+                            <Text variant="body"><strong><span v-html="content.standard.success.weakness.found.action"></span></strong></Text>
+                          </Card>
+                          <Card v-else variant="failure" :interactive="false" class="p-1 mt-1">
+                            <Text variant="body" color="red" class="mb-1"><strong><span v-html="content.standard.success.weakness.known.title"></span></strong></Text>
+                            <Text variant="caption" class="block mb-2"><span v-html="weaknessKnownCaption"></span></Text>
+                            <Text variant="body"><strong><span v-html="content.standard.success.weakness.known.action"></span></strong></Text>
+                          </Card>
+                      </ProcessStep>
 
-                    <!-- Step 3 -->
-                    <ProcessStep step="3" variant="success" :title="content.standard.success.retaliate.title">
-                        <Card v-if="effortResult" variant="instruction" :interactive="false" class="mt-1">
-                          <Text variant="body" class="mb-1"><strong>{{ effortResult.title }} ({{ effortResult.level }})</strong></Text>
-                          <Text v-if="pendingFalloutRank" variant="body"><span v-html="retaliateText"></span></Text>
-                          <Text v-else variant="body" color="muted">{{ content.standard.success.retaliate.empty }}</Text>
-                        </Card>
-                    </ProcessStep>
-                    
-                    <!-- Step 4 -->
-                    <ProcessStep step="4" variant="success" :title="content.standard.success.remains.title">
-                        <Text variant="body"><strong><span v-html="content.standard.success.remains.body"></span></strong></Text>
-                    </ProcessStep>
+                      <ProcessStep step="2" variant="success" :title="content.standard.success.retaliate.title">
+                          <Card v-if="effortResult" variant="instruction" :interactive="false" class="mt-1">
+                            <Text variant="body" class="mb-1"><strong>{{ effortResult.title }} ({{ effortResult.level }})</strong></Text>
+                            <Text v-if="pendingFalloutRank" variant="body"><span v-html="retaliateText"></span></Text>
+                            <Text v-else variant="body" color="muted">{{ content.standard.success.retaliate.empty }}</Text>
+                          </Card>
+                      </ProcessStep>
+                      
+                      <ProcessStep step="3" variant="success" :title="content.standard.success.remains.title">
+                          <Text variant="body"><strong><span v-html="content.standard.success.remains.body"></span></strong></Text>
+                      </ProcessStep>
                   </template>
 
                   <!-- Breaking Point Step (Success) -->
@@ -182,9 +249,9 @@ const isBreakingPoint = computed(() => {
                     v-if="isBreakingPoint" 
                     step="!" 
                     variant="failure" 
-                    title="BREAKING POINT"
+                    :title="content.breakingPoint.title"
                   >
-                      <Text variant="body">The effort was too great. The Active Player takes a <strong>STRIKE</strong>.</Text>
+                      <Text variant="body"><span v-html="content.breakingPoint.body"></span></Text>
                   </ProcessStep>
               </template>
             </div>
@@ -283,9 +350,9 @@ const isBreakingPoint = computed(() => {
                     v-if="isBreakingPoint" 
                     step="!" 
                     variant="failure" 
-                    title="BREAKING POINT"
+                    :title="content.breakingPoint.title"
                   >
-                      <Text variant="body">The effort was too great. The Active Player takes a <strong>STRIKE</strong>.</Text>
+                      <Text variant="body"><span v-html="content.breakingPoint.body"></span></Text>
                   </ProcessStep>
               </template>
             </div>
@@ -296,10 +363,10 @@ const isBreakingPoint = computed(() => {
 
     <!-- Action Footer -->
     <ActionFooter 
-      :label="(selectedJoker === 'Red' && isSuccess) ? content.buttons.finish : content.buttons.next"
-      @click="startNextScene"
+      :label="buttonLabel"
+      @click="handleAction"
     />
 
-    <StrikeAssignmentModal />
+    <StrikeAssignmentModal v-if="isAssigningStrikes && hasStrikesToAssign" />
   </div>
 </template>

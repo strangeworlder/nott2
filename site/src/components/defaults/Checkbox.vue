@@ -1,39 +1,37 @@
 <script setup lang="ts">
 /**
  * Checkbox
- * 
+ *
  * Philosophical:
- * The Checkbox represents a binary choice, a commitment to a specific state or condition. 
- * Unlike a button which triggers an action, the checkbox modifies the context in which 
- * actions occur. It allows the user to opt-in, confirm understanding, or toggle a 
+ * The Checkbox represents a binary choice, a commitment to a specific state or condition.
+ * Unlike a button which triggers an action, the checkbox modifies the context in which
+ * actions occur. It allows the user to opt-in, confirm understanding, or toggle a
  * boolean property of the game state.
- * 
+ *
  * Technical:
  * A custom-styled checkbox component with an optional label.
- * 
+ *
  * Props:
  * - modelValue (boolean): The checked state of the checkbox.
  * - label (string): Optional text label displayed next to the checkbox.
  * - id (string): Optional ID for the input. If not provided, a random ID is generated.
- * 
+ *
  * Events:
  * - update:modelValue: Emitted when the checkbox state changes.
  */
 
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 interface Props {
-  modelValue: boolean
-  label?: string
-  id?: string
+  modelValue: boolean;
+  label?: string;
+  id?: string;
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-}>()
+const props = defineProps<Props>();
+const emit = defineEmits<(e: 'update:modelValue', value: boolean) => void>();
 
-const inputId = computed(() => props.id || `checkbox-${Math.random().toString(36).substr(2, 9)}`)
+const inputId = computed(() => props.id || `checkbox-${Math.random().toString(36).substr(2, 9)}`);
 </script>
 
 <template>

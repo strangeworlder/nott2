@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { basicRules, characterRules } from '../../data/rules'
-import Card from '../Card.vue'
-import List from '../List.vue'
-import ListItem from '../ListItem.vue'
+import { basicRules, characterRules } from '../../data/rules';
+import Card from '../Card.vue';
+import List from '../List.vue';
+import ListItem from '../ListItem.vue';
 </script>
 
 <template>

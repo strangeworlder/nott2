@@ -1,0 +1,9 @@
+{
+    "title": "ASSIGN {count} STRIKE{plural}",
+    "subtitle": "The Active Player gains a Strike.",
+    "pendingLabel": "PENDING STRIKES: {count}",
+    "eliminatedLabel": "ELIMINATED",
+    "assignAllLabel": "Assign all {count} strikes to this character?",
+    "confirmButton": "CONFIRM STRIKE",
+    "confirmAllButton": "CONFIRM {count} STRIKES"
+}

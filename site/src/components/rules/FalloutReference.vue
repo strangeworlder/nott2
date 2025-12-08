@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { effortScale } from '../../data/rules'
-import Card from '../Card.vue'
-import Text from '../Text.vue'
+import { effortScale } from '../../data/rules';
+import Card from '../Card.vue';
+import Text from '../Text.vue';
 </script>
 
 <template>

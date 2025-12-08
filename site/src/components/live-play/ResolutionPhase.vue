@@ -1,24 +1,46 @@
 <script setup lang="ts">
-import { useLivePlay } from '../../composables/useLivePlay'
-import Card from '../Card.vue'
-import Text from '../Text.vue'
-import IngressText from '../IngressText.vue'
-import Toggle from '../Toggle.vue'
-import DieSelector from '../DieSelector.vue'
-import SelectionButton from '../SelectionButton.vue'
-import ActionFooter from '../ActionFooter.vue'
-import { computed, onMounted } from 'vue'
-import { getResolutionPhaseContent } from '../../utils/contentLoader'
+/**
+ * ResolutionPhase
+ *
+ * Philosophical:
+ * The Resolution Phase is the crucible—where dice are rolled and fate is decided.
+ * It distills the preceding narrative tension into cold, mechanical numbers. The
+ * interface must balance the gravity of this moment (success vs. failure, life vs.
+ * death) with clarity of information. Every element here—the difficulty display,
+ * the dice input, the result card—works together to create a climactic reveal.
+ *
+ * Technical:
+ * A phase component for rolling dice and determining the outcome of a scene.
+ * Displays target difficulty, dice selectors, and the final result.
+ *
+ * Props:
+ * (None - uses useLivePlay composable directly)
+ *
+ * Events:
+ * - back: Emitted when the user wants to return to the previous phase.
+ * - next: Emitted when the user proceeds to the next phase.
+ */
 
-const { 
-  rollMain, 
-  rollEffort, 
-  isFaceCard, 
-  selectedJoker, 
-  targetDifficulty, 
-  isSuccess, 
-  rollTotal, 
-  selectedRank, 
+import { computed, onMounted } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getResolutionPhaseContent } from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Card from '../Card.vue';
+import DieSelector from '../DieSelector.vue';
+import IngressText from '../IngressText.vue';
+import SelectionButton from '../SelectionButton.vue';
+import Text from '../Text.vue';
+import Toggle from '../Toggle.vue';
+
+const {
+  rollMain,
+  rollEffort,
+  isFaceCard,
+  selectedJoker,
+  targetDifficulty,
+  isSuccess,
+  rollTotal,
+  selectedRank,
   effortResult,
   isTrophyTopRandomized,
   availableTrophyRanks,
@@ -29,28 +51,32 @@ const {
   toggleGenrePointUsage,
   selectedPlayset,
   characters,
-  selectedSuit
-} = useLivePlay()
+  selectedSuit,
+} = useLivePlay();
 
 const emit = defineEmits<{
-  (e: 'back'): void
-  (e: 'next'): void
-}>()
+  (e: 'back'): void;
+  (e: 'next'): void;
+}>();
 
-const content = computed(() => getResolutionPhaseContent(selectedPlayset.value))
+const content = computed(() => getResolutionPhaseContent(selectedPlayset.value));
 
 onMounted(() => {
   // Reset dice when entering this phase
-  rollMain.value = null
-  rollEffort.value = null
-  rollEffort.value = null
-})
+  rollMain.value = null;
+  rollEffort.value = null;
+  rollEffort.value = null;
+});
 
 const isAptitudeAvailable = computed(() => {
-    if (!selectedSuit.value) return true
-    const char = characters.value.find(c => c.id === selectedSuit.value)
-    return char ? !char.isDead : true
-})
+  if (!selectedSuit.value) return true;
+  const char = characters.value.find((c) => c.id === selectedSuit.value);
+  return char ? !char.isDead : true;
+});
+
+const aptitudeDeadText = computed(() => {
+  return content.value.reminders.aptitude.deadMessage.replace('{suit}', selectedSuit.value || '');
+});
 </script>
 
 <template>
@@ -160,8 +186,8 @@ const isAptitudeAvailable = computed(() => {
                 <Text variant="caption" color="muted">{{ content.reminders.aptitude.description }}</Text>
             </div>
             <div v-else>
-                <Text variant="caption" color="red" class="font-bold uppercase line-through decoration-2">UNAVAILABLE</Text>
-                <Text variant="caption" color="muted">The {{ selectedSuit }} character is dead.</Text>
+                <Text variant="caption" color="red" class="font-bold uppercase line-through decoration-2">{{ content.reminders.aptitude.unavailable }}</Text>
+                <Text variant="caption" color="muted">{{ aptitudeDeadText }}</Text>
             </div>
           </Card>
         </div>

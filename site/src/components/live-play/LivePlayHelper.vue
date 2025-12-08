@@ -1,25 +1,43 @@
 <script setup lang="ts">
-import { useLivePlay } from '../../composables/useLivePlay'
-import Button from '../Button.vue'
-import LivePlayHeader from '../LivePlayHeader.vue'
+/**
+ * LivePlayHelper
+ *
+ * Philosophical:
+ * The LivePlayHelper is the stage manager—the behind-the-scenes orchestrator that
+ * directs the flow of the entire live play experience. It decides which scene
+ * (phase component) is visible, manages transitions between acts, and maintains
+ * the ever-present header. It is invisible to the player but essential to the
+ * coherence of the journey.
+ *
+ * Technical:
+ * The main container component that renders the appropriate phase based on game state.
+ * Manages phase transitions, header display, and debug tools.
+ *
+ * Props:
+ * (None - uses useLivePlay composable for all state)
+ */
 
+import { useLivePlay } from '../../composables/useLivePlay';
+import Button from '../Button.vue';
+import LivePlayHeader from '../LivePlayHeader.vue';
+import ActSetup from './ActSetup.vue';
+import ConversationAndStakesPhase from './ConversationAndStakesPhase.vue';
+import FalloutPhase from './FalloutPhase.vue';
+import GameSetup from './GameSetup.vue';
+import ResolutionPhase from './ResolutionPhase.vue';
+import ResolveScenePhase from './ResolveScenePhase.vue';
+import SceneSetup from './SceneSetup.vue';
+import TrophySetup from './TrophySetup.vue';
 // Import Steps
-import WelcomeScreen from './WelcomeScreen.vue'
-import GameSetup from './GameSetup.vue'
-import ActSetup from './ActSetup.vue'
-import SceneSetup from './SceneSetup.vue'
-import ConversationAndStakesPhase from './ConversationAndStakesPhase.vue'
-import ResolutionPhase from './ResolutionPhase.vue'
-import ResolveScenePhase from './ResolveScenePhase.vue'
-import FalloutPhase from './FalloutPhase.vue'
-import WinScreen from './WinScreen.vue'
+import WelcomeScreen from './WelcomeScreen.vue';
+import WinScreen from './WinScreen.vue';
 
-const { 
-  currentPhase, 
+const {
+  currentPhase,
   currentAct,
-  isEndgame, 
+  isEndgame,
   startEndgame,
-  startGame, 
+  startGame,
   debugMode,
   middleStack,
   bottomStack,
@@ -40,17 +58,20 @@ const {
   prevPhase,
   jokersAdded,
   act3Countdown,
-  acesRemaining
-} = useLivePlay()
+  acesRemaining,
+} = useLivePlay();
 
-import { watch } from 'vue'
+import { watch } from 'vue';
 
-watch(currentPhase, () => {
-  window.scrollTo(0, 0)
-}, { flush: 'post' })
+watch(
+  currentPhase,
+  () => {
+    window.scrollTo(0, 0);
+  },
+  { flush: 'post' }
+);
 
-
-const isDev = import.meta.env.DEV
+const isDev = import.meta.env.DEV;
 </script>
 
 <template>
@@ -95,6 +116,12 @@ const isDev = import.meta.env.DEV
     <SceneSetup 
       v-if="currentPhase === 'scene-setup'"
       @back="prevPhase"
+      @next="nextPhase"
+    />
+
+    <!-- Phase: Trophy Setup -->
+    <TrophySetup 
+      v-if="currentPhase === 'trophy-setup'"
       @next="nextPhase"
     />
 
