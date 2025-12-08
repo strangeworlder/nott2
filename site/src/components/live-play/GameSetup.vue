@@ -5,7 +5,7 @@ import ActionFooter from '../ActionFooter.vue'
 import SelectionButton from '../SelectionButton.vue'
 import Card from '../Card.vue'
 import { useLivePlay, type Playset } from '../../composables/useLivePlay'
-import { getGameSetupContent } from '../../utils/contentLoader'
+import { getGameSetupContent, getPlaysetConfig, getRulesModuleDefinitions } from '../../utils/contentLoader'
 import { computed } from 'vue'
 
 const { selectedPlayset } = useLivePlay()
@@ -21,6 +21,14 @@ const selectPlayset = (playsetId: string) => {
 
 const selectedPlaysetDetails = computed(() => {
     return content.value.playsets.find((p: any) => p.id === selectedPlayset.value)
+})
+
+const selectedPlaysetConfig = computed(() => {
+    return getPlaysetConfig(selectedPlayset.value)
+})
+
+const rulesDefinitions = computed(() => {
+    return getRulesModuleDefinitions(selectedPlayset.value)
 })
 </script>
 
@@ -54,6 +62,16 @@ const selectedPlaysetDetails = computed(() => {
               <Text variant="caption" color="muted">
                 {{ detail.items.join(', ') }}
               </Text>
+            </div>
+
+            <div v-if="selectedPlaysetConfig?.rulesModules" class="pt-2 border-t border-red-900/30">
+                <Text variant="label" color="red" class="mb-2">Special Rules</Text>
+                <div v-for="(isEnabled, key) in selectedPlaysetConfig.rulesModules" :key="key" class="mb-2">
+                    <template v-if="isEnabled && rulesDefinitions[key]">
+                        <Text variant="label" color="red">{{ rulesDefinitions[key].label }}</Text>
+                        <Text variant="caption" color="muted">{{ rulesDefinitions[key].description }}</Text>
+                    </template>
+                </div>
             </div>
           </div>
         </Card>

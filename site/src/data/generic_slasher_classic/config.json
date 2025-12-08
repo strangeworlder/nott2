@@ -1,0 +1,22 @@
+{
+    "name": "Generic Slasher (classic)",
+    "description": "The classic ruleset, preserving the original game mechanics.",
+    "details": [
+        {
+            "label": "Content Warnings",
+            "items": [
+                "Violence",
+                "Gore",
+                "Death"
+            ]
+        },
+        {
+            "label": "Touchstones",
+            "items": [
+                "Halloween",
+                "Friday the 13th",
+                "Scream"
+            ]
+        }
+    ]
+}

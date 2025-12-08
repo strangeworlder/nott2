@@ -45,6 +45,7 @@
     - **Component-First Architecture**:
         - **Avoid Raw HTML**: Do not use raw HTML elements (`div`, `span`, `p`, `h1-h6`, `ul`, `li`, `button`) for UI primitives where a Design System component exists.
         - **Text**: Always use the `<Text>` component with the appropriate `variant` (e.g., `h1`, `body`, `label`) instead of `<p>` or heading tags.
+            - **Strict Styling**: Do NOT use utility classes (e.g., `font-bold`, `text-red-400`) on the `<Text>` component to override its styles. Use the provided props (`variant`, `color`, `weight` if available) to achieve the desired look. If a style is missing, consult the user if they want to add the new style to the design system, but never add it yourself.
         - **Semantic Components**: Use specific components for specific semantic roles rather than generic components with variants.
             - **Example**: Use `<IngressText>` for introductory text blocks instead of `<Text variant="quote">`.
         - **Encapsulation**: Components should encapsulate their internal structure and logic. Consumers should pass data via props, not structural slots.

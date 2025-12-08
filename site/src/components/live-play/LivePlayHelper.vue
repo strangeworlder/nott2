@@ -37,7 +37,10 @@ const {
   selectedJoker,
   fullReset,
   nextPhase,
-  prevPhase
+  prevPhase,
+  jokersAdded,
+  act3Countdown,
+  acesRemaining
 } = useLivePlay()
 
 import { watch } from 'vue'
@@ -64,6 +67,8 @@ const isDev = import.meta.env.DEV
       :active-card="activeCard"
       :selected-joker="selectedJoker"
       :full-reset="fullReset"
+      :act3-countdown="act3Countdown"
+      :aces-remaining="acesRemaining"
     />
 
     <!-- Phase: Welcome Screen -->
@@ -82,6 +87,7 @@ const isDev = import.meta.env.DEV
     <ActSetup 
       v-if="currentPhase === 'act-setup'"
       :act="currentAct"
+      :setup-key="jokersAdded ? 'jokers' : undefined"
       @next="isEndgame ? startEndgame() : (currentAct === 1 ? startGame() : nextPhase())"
     />
 

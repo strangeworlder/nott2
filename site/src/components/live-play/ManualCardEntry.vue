@@ -15,6 +15,7 @@ const props = defineProps<{
   manualJoker: 'Red' | 'Black' | null
   isEndgame: boolean
   isBlackJokerRemoved: boolean
+  areJokersAvailable: boolean
   isValidAddition: boolean
   isRankAvailable: (rank: Rank) => boolean
   isSuitAvailable: (rank: Rank, suit: Suit) => boolean
@@ -91,8 +92,8 @@ const suitIcons: Record<string, string> = {
           </div>
         </div>
 
-        <Separator v-if="isEndgame" />
-        <div v-if="isEndgame">
+        <Separator v-if="areJokersAvailable" />
+        <div v-if="areJokersAvailable">
           <Text variant="label" class="mb-2">{{ content.joker.title }}</Text>
           <div class="flex gap-4 justify-center">
             <SelectionButton

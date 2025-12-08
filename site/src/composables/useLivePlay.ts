@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { effortScale } from '../data/rules'
+import { getPlaysetConfig } from '../utils/contentLoader'
 import type { Card as GameCard, Suit, Rank } from './useGameEngine'
 
 export interface Character {
@@ -96,6 +97,8 @@ const isEndgameInitialized = ref(false)
 const isGenrePointAwarded = ref(false)
 const isGameWon = ref(false)
 const isBlackJokerRemoved = ref(false)
+const jokersAdded = ref(false)
+const cardsAddedFromReserve = ref(0)
 
 // Removed Face Cards (Recycling Bin)
 const removedFaceCards = ref<Record<number, number>>({
@@ -257,6 +260,12 @@ export function useLivePlay() {
         const nextRank = reserveQueue.value.shift()
         if (nextRank) {
             bottomStack.value[nextRank]++
+            cardsAddedFromReserve.value++
+
+            // Act 2 Timer: Trigger Act 3 after 13 cards from reserve
+            if (cardsAddedFromReserve.value >= 13 && currentAct.value < 3) {
+                startAct3()
+            }
         }
     }
 
@@ -303,6 +312,12 @@ export function useLivePlay() {
             if (!visibleCards.value.find(c => c.id === newCard.id)) {
                 visibleCards.value.push(newCard)
                 updateDeckState(manualRank.value, manualSuit.value, 'draw')
+
+                // Final Girl Module: Face Cards trigger a strike immediately
+                const config = getPlaysetConfig(selectedPlayset.value)
+                if (config.rulesModules?.finalGirl && manualRank.value > 10) {
+                    strikesToAssign.value++
+                }
             }
         }
     }
@@ -399,6 +414,8 @@ export function useLivePlay() {
         isEndgameInitialized.value = false
         isGameWon.value = false
         isBlackJokerRemoved.value = false
+        jokersAdded.value = false
+        cardsAddedFromReserve.value = 0
         currentAct.value = 1
         selectedPlayset.value = null
         characters.value = [
@@ -424,6 +441,8 @@ export function useLivePlay() {
         isEndgameInitialized.value = false
         isGameWon.value = false
         isBlackJokerRemoved.value = false
+        jokersAdded.value = false
+        cardsAddedFromReserve.value = 0
         currentAct.value = 1
         acesRemaining.value = 4
         middleStack.value = {
@@ -544,7 +563,23 @@ export function useLivePlay() {
         }
     }
 
+    const startAct3 = () => {
+        currentAct.value = 3
+        isEndgame.value = true
+        currentPhase.value = 'act-setup'
+    }
+
+    const triggerJokerEvent = () => {
+        jokersAdded.value = true
+        currentPhase.value = 'act-setup'
+    }
+
     const applyGameStateUpdates = () => {
+        // Breaking Point Logic: Effort 4 always causes a strike
+        if (rollEffort.value === 4) {
+            strikesToAssign.value++
+        }
+
         if (isSuccess.value) {
             // Joker Success Logic
             if (selectedJoker.value === 'Red') {
@@ -566,9 +601,13 @@ export function useLivePlay() {
                     if (activeCard.value) {
                         weaknessesFound.value.push(activeCard.value.suit)
                         if (weaknessesFound.value.length === 4) {
-                            isEndgame.value = true
-                            currentAct.value = 3
-                            currentPhase.value = 'act-setup'
+                            // Automatic Joker Trigger
+                            triggerJokerEvent()
+
+                            // Ensure Act 3 is started if not already
+                            if (currentAct.value < 3) {
+                                startAct3()
+                            }
                         }
                         // CRITICAL FIX: Remove the weakness card from visibleCards so it isn't returned to the deck
                         const cardToRemoveId = activeCard.value.id
@@ -593,7 +632,8 @@ export function useLivePlay() {
                     currentAct.value = 2
                 }
             } else {
-                if (!isEndgame.value) addNextReserve()
+                // Ace Rule: Aces do not trigger a reserve add
+                if (!isEndgame.value && activeCard.value?.rank !== 1) addNextReserve()
                 if (activeCard.value) {
                     // Rule Change: Aces are removed from the game on success, not added to trophy pile
                     if (activeCard.value.rank !== 1) {
@@ -616,8 +656,8 @@ export function useLivePlay() {
                 // Add King
                 addFaceCardToThreatDeck(13)
                 selectedJoker.value = null // Removed from game
-                isBlackJokerRemoved.value = true
-                return
+                shuffleThreatDeck()
+                shuffleTrophyPile()
             }
 
             if (isFaceCard.value) {
@@ -630,22 +670,17 @@ export function useLivePlay() {
                 shuffleThreatDeck()
                 shuffleTrophyPile()
 
-                // Act 1 -> Act 2 Transition
-                if (currentAct.value === 1) {
-                    currentAct.value = 2
-                }
             } else {
-                if (activeCard.value) updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
-                if (!isEndgame.value) addNextReserve()
+                // Ace Rule: Only return non-Aces to the deck
+                if (activeCard.value && activeCard.value.rank !== 1) {
+                    updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return')
+                }
+
+                // Ace Rule: Aces do not trigger a reserve add
+                if (!isEndgame.value && activeCard.value?.rank !== 1) addNextReserve()
             }
         }
-
-        // Breaking Point Logic (Effort 4) - Always triggers a strike
-        if (rollEffort.value === 4) {
-            strikesToAssign.value++
-        }
     }
-
 
     const pendingFalloutRank = computed(() => {
         if (!isFaceCard.value) return null
@@ -739,6 +774,8 @@ export function useLivePlay() {
         currentPhase.value = 'scene-setup'
         isEndgameInitialized.value = true
     }
+
+
 
     const startNextScene = () => {
         applyGameStateUpdates()
@@ -843,9 +880,43 @@ export function useLivePlay() {
             if (isGameOver.value) {
                 isGameWon.value = false // Just to be sure
                 currentPhase.value = 'win' // We'll reuse win screen or make a new one, but logic handles it
+            } else {
+                // Check Rules Modules
+                checkFinalGirlCondition()
             }
         }
     }
+
+    const checkFinalGirlCondition = () => {
+        const config = getPlaysetConfig(selectedPlayset.value)
+        if (config.rulesModules?.finalGirl) {
+            // "if there is only one Aptitude without 3 (or more) strikes"
+            const survivors = characters.value.filter(c => c.strikes < 3)
+            if (survivors.length === 1) {
+                // Trigger Act 3 if not already there
+                if (currentAct.value < 3) {
+                    startAct3()
+                    // In Final Girl, Jokers are added immediately in Act 3
+                    jokersAdded.value = true
+                }
+            }
+        }
+    }
+
+    const areJokersAvailable = computed(() => {
+        if (jokersAdded.value) return true
+
+        const config = getPlaysetConfig(selectedPlayset.value)
+        if (currentAct.value === 3 && config.rulesModules?.finalGirl) {
+            return true
+        }
+
+        return false
+    })
+
+    const act3Countdown = computed(() => {
+        return Math.max(0, 13 - cardsAddedFromReserve.value)
+    })
 
     return {
         // State
@@ -860,6 +931,10 @@ export function useLivePlay() {
         isEndgame,
         isGameWon, // New
         isBlackJokerRemoved, // New
+        jokersAdded, // New
+        areJokersAvailable, // New
+        act3Countdown, // New
+        cardsAddedFromReserve, // New
         manualSuit,
         manualRank,
         manualJoker,
@@ -911,6 +986,8 @@ export function useLivePlay() {
         reset,
         fullReset,
         startGame,
+        startAct3, // New
+        triggerJokerEvent, // New
         startEndgame, // New
         applyGameStateUpdates,
         startNextScene,

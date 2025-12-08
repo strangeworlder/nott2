@@ -1,5 +1,30 @@
 {
+    "name": "Summer Camp Massacre",
+    "description": "Counselors, cabins, and a killer in the woods. The quintessential slasher setting.",
+    "details": [
+        {
+            "label": "Content Warnings",
+            "items": [
+                "Violence",
+                "Gore",
+                "Death",
+                "Teen peril"
+            ]
+        },
+        {
+            "label": "Touchstones",
+            "items": [
+                "Friday the 13th",
+                "Sleepaway Camp",
+                "The Burning",
+                "Fear Street: 1978"
+            ]
+        }
+    ],
     "overrides": {
         "PlayingCard": true
+    },
+    "rulesModules": {
+        "finalGirl": true
     }
 }

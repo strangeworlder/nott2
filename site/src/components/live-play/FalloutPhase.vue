@@ -7,6 +7,7 @@ import ActionFooter from '../ActionFooter.vue'
 import ProcessStep from '../ProcessStep.vue'
 import { computed } from 'vue'
 import { getFalloutPhaseContent } from '../../utils/contentLoader'
+import StrikeAssignmentModal from './StrikeAssignmentModal.vue'
 
 const { 
   isSuccess, 
@@ -298,5 +299,7 @@ const isBreakingPoint = computed(() => {
       :label="(selectedJoker === 'Red' && isSuccess) ? content.buttons.finish : content.buttons.next"
       @click="startNextScene"
     />
+
+    <StrikeAssignmentModal />
   </div>
 </template>
