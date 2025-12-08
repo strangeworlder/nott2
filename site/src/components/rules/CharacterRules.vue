@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { characterRules } from '../../data/rules'
-import Card from '../Card.vue'
-import Text from '../Text.vue'
-import List from '../List.vue'
-import ListItem from '../ListItem.vue'
+import { characterRules } from '../../data/rules';
+import Card from '../Card.vue';
+import List from '../List.vue';
+import ListItem from '../ListItem.vue';
+import Text from '../Text.vue';
 
 const suitIcons: Record<string, string> = {
-  'Spades': '♠',
-  'Hearts': '♥',
-  'Clubs': '♣',
-  'Diamonds': '♦',
-}
+  Spades: '♠',
+  Hearts: '♥',
+  Clubs: '♣',
+  Diamonds: '♦',
+};
 
 const suitColors: Record<string, string> = {
-  'Spades': '',
-  'Hearts': 'text-nott-red',
-  'Clubs': '',
-  'Diamonds': 'text-nott-red',
-}
+  Spades: '',
+  Hearts: 'text-nott-red',
+  Clubs: '',
+  Diamonds: 'text-nott-red',
+};
 </script>
 
 <template>

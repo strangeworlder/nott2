@@ -1,54 +1,52 @@
 <script setup lang="ts">
 /**
  * DieSelector
- * 
+ *
  * Philosophical:
- * The DieSelector bridges the gap between the digital interface and the tabletop 
- * experience. It presents choices not as abstract numbers, but as physical die faces, 
- * reinforcing the game's mechanics and theme. It turns a simple number selection into 
+ * The DieSelector bridges the gap between the digital interface and the tabletop
+ * experience. It presents choices not as abstract numbers, but as physical die faces,
+ * reinforcing the game's mechanics and theme. It turns a simple number selection into
  * a tactile, game-relevant action.
- * 
+ *
  * Technical:
  * A grid of buttons representing die faces for selecting a number.
- * 
+ *
  * Props:
  * - sides (number): The number of sides on the die (e.g., 6, 10).
  * - modelValue (number | null): The currently selected value.
  * - label (string): Optional label displayed above the selector.
  * - color (string): Visual style ('white', 'red'). Defaults to 'white'.
- * 
+ *
  * Events:
  * - update:modelValue: Emitted when a value is selected.
  */
 
 interface Props {
-  sides: number
-  modelValue: number | null
-  label?: string
-  color?: 'white' | 'red'
+  sides: number;
+  modelValue: number | null;
+  label?: string;
+  color?: 'white' | 'red';
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  color: 'white'
-})
+  color: 'white',
+});
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: number): void
-}>()
+const emit = defineEmits<(e: 'update:modelValue', value: number) => void>();
 
 const getClasses = (n: number) => {
-  const isSelected = props.modelValue === n
-  
+  const isSelected = props.modelValue === n;
+
   if (props.color === 'white') {
     return isSelected
       ? 'bg-nott-white text-nott-black border-nott-white shadow-[0_0_10px_rgba(255,255,255,0.5)]'
-      : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-white hover:text-nott-white'
+      : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-white hover:text-nott-white';
   } else {
     return isSelected
       ? 'bg-nott-red text-nott-white border-nott-red shadow-[0_0_10px_rgba(138,0,0,0.5)]'
-      : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-red hover:text-nott-white'
+      : 'bg-nott-black border-nott-gray text-nott-white/60 hover:border-nott-red hover:text-nott-white';
   }
-}
+};
 </script>
 
 <template>

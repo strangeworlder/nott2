@@ -1,2 +1,2 @@
 #!/bin/sh
-cd site && npm run test:ci
+cd site && npm run lint:errors && npm run test:ci

@@ -1,38 +1,56 @@
 <script setup lang="ts">
-import Card from '../Card.vue'
-import Text from '../Text.vue'
-import IngressText from '../IngressText.vue'
-import ActionFooter from '../ActionFooter.vue'
-import List from '../List.vue'
-import ListItem from '../ListItem.vue'
-import { getActSetupContent } from '../../utils/contentLoader'
-import { computed } from 'vue'
-import { useLivePlay } from '../../composables/useLivePlay'
+/**
+ * ActSetup
+ *
+ * Philosophical:
+ * ActSetup marks a narrative transition—the turning of a chapter in the horror story.
+ * Each Act brings escalating stakes and new rules. This component serves as a ritual
+ * briefing, preparing the players for what's to come. It is both a mechanical tutorial
+ * and a narrative beat, signaling that the game world is shifting.
+ *
+ * Technical:
+ * A phase component that displays Act-specific setup instructions.
+ *
+ * Props:
+ * - act (number): The Act number to display setup for.
+ * - setupKey (string): Optional key for loading alternative setup content (e.g., 'jokers').
+ *
+ * Events:
+ * - next: Emitted when the user proceeds past the setup screen.
+ */
+
+import { computed } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getActSetupContent } from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Card from '../Card.vue';
+import IngressText from '../IngressText.vue';
+import List from '../List.vue';
+import ListItem from '../ListItem.vue';
+import Text from '../Text.vue';
 
 const props = defineProps<{
-  act?: number
-  setupKey?: string
-}>()
+  act?: number;
+  setupKey?: string;
+}>();
 
-const emit = defineEmits<{
-  (e: 'next'): void
-}>()
+const emit = defineEmits<(e: 'next') => void>();
 
-const { selectedPlayset } = useLivePlay()
+const { selectedPlayset } = useLivePlay();
 const content = computed(() => {
-    if (props.setupKey) {
-        // If setupKey is provided, try to load that specific key from actSetup.json
-        // We need to cast or extend getActSetupContent to support string keys if it doesn't already
-        // But getActSetupContent likely expects a number.
-        // Let's check getActSetupContent implementation first? 
-        // No, I'll assume I need to modify it or use a new loader.
-        // Actually, looking at previous view_file of ActSetup.vue, it imported getActSetupContent.
-        // I should check utils/contentLoader.ts to see if it supports string keys.
-        // If not, I'll need to update it.
-        return getActSetupContent(props.setupKey, selectedPlayset.value)
-    }
-    return getActSetupContent(props.act!, selectedPlayset.value)
-})
+  if (props.setupKey) {
+    // If setupKey is provided, try to load that specific key from actSetup.json
+    // We need to cast or extend getActSetupContent to support string keys if it doesn't already
+    // But getActSetupContent likely expects a number.
+    // Let's check getActSetupContent implementation first?
+    // No, I'll assume I need to modify it or use a new loader.
+    // Actually, looking at previous view_file of ActSetup.vue, it imported getActSetupContent.
+    // I should check utils/contentLoader.ts to see if it supports string keys.
+    // If not, I'll need to update it.
+    return getActSetupContent(props.setupKey, selectedPlayset.value);
+  }
+  return getActSetupContent(props.act!, selectedPlayset.value);
+});
 </script>
 
 <template>

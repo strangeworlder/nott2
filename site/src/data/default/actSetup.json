@@ -7,10 +7,9 @@
                 "title": "Build the Decks",
                 "intro": "Manually build the decks:",
                 "steps": [
-                    "**Number Reserves:** Shuffle 5s. Repeat with 6s, 7s, 8s, 9s, 10s. Stack them face-down so that 5s are on top and 10s on the bottom.",
-                    "**Face Reserves:** Shuffle Jacks. Repeat with Queens and Kings. Put them each in their own pile face-down.",
-                    "**Threat Deck:** Shuffle 2s, 3s and 4s and top card of the Jacks reserve pile together. Place facedown to form the Threat Deck. Shuffle 4 Aces and place them on top of the deck face up.",
-                    "**Trophy Pile:** Draw from the bottom of the Number Reserves. This is a 10. Place it face up to form the Trophy Pile."
+                    "**Threat Deck:** Separate Face Cards, Aces, and Jokers. Shuffle Number Cards (2-10). Deal 8 face down for the Threat Deck. Add 1 Jack and shuffle again. Place 4 Aces face up on top.",
+                    "**Reserves:** Deal 14 of the remaining Number Cards to form the Number Reserve. Keep Face Cards and Jokers in separate piles.",
+                    "**Trophy Pile:** Take the top card from the Number Reserve and place it face up to start the Trophy Pile."
                 ]
             },
             {

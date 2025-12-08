@@ -1,30 +1,50 @@
 <script setup lang="ts">
-import { useLivePlay } from '../../composables/useLivePlay'
-import Card from '../Card.vue'
-import ScenePrompt from './ScenePrompt.vue'
-import Text from '../Text.vue'
-import Separator from '../defaults/Separator.vue'
-import IngressText from '../IngressText.vue'
-import ActionFooter from '../ActionFooter.vue'
-import { computed } from 'vue'
-import { getResolveScenePhaseContent } from '../../utils/contentLoader'
+/**
+ * ResolveScenePhase
+ *
+ * Philosophical:
+ * ResolveScenePhase is the narrative climax—where the dice have spoken and now
+ * the story must answer. It presents the outcome (success or failure) and guides
+ * players on how to narrate the resolution. This is where mechanics become memory,
+ * where numbers transform into harrowing scenes of survival or defeat.
+ *
+ * Technical:
+ * A phase component that displays the outcome and effort result for narration.
+ *
+ * Props:
+ * (None - uses useLivePlay composable directly)
+ *
+ * Events:
+ * - back: Emitted when the user wants to return to the previous phase.
+ * - next: Emitted when the user proceeds to fallout.
+ */
 
-const { 
+import { computed } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getResolveScenePhaseContent } from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Card from '../Card.vue';
+import Separator from '../defaults/Separator.vue';
+import IngressText from '../IngressText.vue';
+import Text from '../Text.vue';
+import ScenePrompt from './ScenePrompt.vue';
+
+const {
   activeCard,
   selectedJoker,
   isFirstTime,
   isSuccess,
   effortResult,
   rollEffort,
-  selectedPlayset
-} = useLivePlay()
+  selectedPlayset,
+} = useLivePlay();
 
 const emit = defineEmits<{
-  (e: 'back'): void
-  (e: 'next'): void
-}>()
+  (e: 'back'): void;
+  (e: 'next'): void;
+}>();
 
-const content = computed(() => getResolveScenePhaseContent(selectedPlayset.value))
+const content = computed(() => getResolveScenePhaseContent(selectedPlayset.value));
 </script>
 
 <template>

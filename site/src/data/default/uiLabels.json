@@ -1,0 +1,16 @@
+{
+    "suitSelector": {
+        "title": "Select Suit"
+    },
+    "rankSelector": {
+        "title": "Select Rank"
+    },
+    "promptMatrix": {
+        "firstEncounter": "First Encounter",
+        "recurringNightmare": "Recurring Nightmare",
+        "selectRankHint": "Select a rank to reveal the prompt..."
+    },
+    "unknownCard": {
+        "hint": "Draw a card from the deck and identify it."
+    }
+}

@@ -1,35 +1,58 @@
 <script setup lang="ts">
-import Text from '../Text.vue'
-import IngressText from '../IngressText.vue'
-import ActionFooter from '../ActionFooter.vue'
-import SelectionButton from '../SelectionButton.vue'
-import Card from '../Card.vue'
-import { useLivePlay, type Playset } from '../../composables/useLivePlay'
-import { getGameSetupContent, getPlaysetConfig, getRulesModuleDefinitions } from '../../utils/contentLoader'
-import { computed } from 'vue'
+/**
+ * GameSetup
+ *
+ * Philosophical:
+ * GameSetup is where players choose their instrument of terror. The Playset selection
+ * is more than configuration—it's a commitment to a specific narrative flavor. Each
+ * Playset brings its own horror tropes, settings, and mechanical tweaks. This
+ * component must convey the identity of each option while making the selection
+ * process feel momentous rather than bureaucratic.
+ *
+ * Technical:
+ * A phase component for selecting the game playset and displaying its details.
+ *
+ * Props:
+ * (None - uses useLivePlay composable directly)
+ *
+ * Events:
+ * - next: Emitted when the user confirms their playset selection.
+ */
 
-const { selectedPlayset } = useLivePlay()
-const content = computed(() => getGameSetupContent(selectedPlayset.value))
+import { computed } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import {
+  getGameSetupContent,
+  getPlaysetConfig,
+  getRulesModuleDefinitions,
+  type PlaysetData,
+} from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Card from '../Card.vue';
+import IngressText from '../IngressText.vue';
+import SelectionButton from '../SelectionButton.vue';
+import Text from '../Text.vue';
 
-const emit = defineEmits<{
-  (e: 'next'): void
-}>()
+const { selectedPlayset } = useLivePlay();
+const content = computed(() => getGameSetupContent(selectedPlayset.value));
+
+defineEmits<(e: 'next') => void>();
 
 const selectPlayset = (playsetId: string) => {
-  selectedPlayset.value = playsetId as Playset
-}
+  selectedPlayset.value = playsetId;
+};
 
 const selectedPlaysetDetails = computed(() => {
-    return content.value.playsets.find((p: any) => p.id === selectedPlayset.value)
-})
+  return content.value.playsets.find((p: PlaysetData) => p.id === selectedPlayset.value);
+});
 
 const selectedPlaysetConfig = computed(() => {
-    return getPlaysetConfig(selectedPlayset.value)
-})
+  return getPlaysetConfig(selectedPlayset.value);
+});
 
 const rulesDefinitions = computed(() => {
-    return getRulesModuleDefinitions(selectedPlayset.value)
-})
+  return getRulesModuleDefinitions(selectedPlayset.value);
+});
 </script>
 
 <template>

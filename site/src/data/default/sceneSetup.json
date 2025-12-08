@@ -2,7 +2,7 @@
     "explanations": {
         "aces": "The game begins with the four Aces. The Active Player, who is the one with the matching Aptitude to the Ace, draws it and deals with the establishing shot that cannot be failed, immediately. The Suit is the nature of the threat.",
         "finale": "We are in the Finale. The deck is thin, and the Killer constantly breathing down your neck. Each card drawn is a confrontation with the Killer. The active player draws a card and uses that as a scene prompt as before.",
-        "default": "The Active Player draws the next Scene prompt from the Threat Deck. If the card is a Face Card the player cannot draw another card until the Face Card is dealt with, even if it is the only card available. The Suit is the nature of the threat, the Number is the severity."
+        "default": "The Active Player draws maximum of two cards from the Threat Deck and places them on the table. The player then chooses one as the next Scene they want to deal with. If a Face Card is on the table, the player cannot draw another card until the Face Card is dealt with, even if it is the only card available. The Suit is the nature of the threat, the Number is the severity."
     },
     "guidance": {
         "draw": "Draw cards to populate the table...",
@@ -15,6 +15,7 @@
         "selectedLabel": "SELECTED",
         "drawButton": "+ Draw Card",
         "promptTitle": "Scene Prompt Selected",
-        "startButton": "Start the Scene"
+        "startButton": "Start the Scene",
+        "unknownCardHint": "Draw a card from the deck and identify it."
     }
 }

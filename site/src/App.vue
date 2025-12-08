@@ -1,27 +1,31 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import RulesReference from './components/rules/RulesReference.vue'
-import LivePlayHelper from './components/live-play/LivePlayHelper.vue'
-import StrikeAssignmentModal from './components/live-play/StrikeAssignmentModal.vue'
-import LoseScreen from './components/live-play/LoseScreen.vue'
-import DesignSystem from './components/dev/DesignSystem.vue'
-import Header from './components/Header.vue'
-import Navigation from './components/Navigation.vue'
-import NavButton from './components/NavButton.vue'
-import { useLivePlay } from './composables/useLivePlay'
-import { updateTheme } from './utils/theme'
-const { selectedPlayset, isGameWon, currentPhase } = useLivePlay()
+import { ref, watch } from 'vue';
+import DesignSystem from './components/dev/DesignSystem.vue';
+import Header from './components/Header.vue';
+import LivePlayHelper from './components/live-play/LivePlayHelper.vue';
+import LoseScreen from './components/live-play/LoseScreen.vue';
+import NavButton from './components/NavButton.vue';
+import Navigation from './components/Navigation.vue';
+import RulesReference from './components/rules/RulesReference.vue';
+import { useLivePlay } from './composables/useLivePlay';
+import { updateTheme } from './utils/theme';
 
-watch(selectedPlayset, (newId) => {
-  updateTheme(newId)
-}, { immediate: true })
+const { selectedPlayset, isGameWon, currentPhase } = useLivePlay();
 
-const currentView = ref<'showcase' | 'rules' | 'play'>('play')
-const isDev = import.meta.env.DEV
+watch(
+  selectedPlayset,
+  (newId) => {
+    updateTheme(newId);
+  },
+  { immediate: true }
+);
+
+const currentView = ref<'showcase' | 'rules' | 'play'>('play');
+const isDev = import.meta.env.DEV;
 </script>
 
 <template>
-  <div class="min-h-screen bg-nott-black p-4 md:p-8 font-body selection:bg-nott-red selection:text-white max-w-[960px] mx-auto">
+  <div class="min-h-screen bg-nott-black p-4 md:p-8 font-body selection:bg-nott-red selection:text-white max-w-[960px] mx-auto">xx
     <Header>
       <Navigation>
         <NavButton 
@@ -76,6 +80,5 @@ const isDev = import.meta.env.DEV
       </Transition>
     </main>
 
-    <StrikeAssignmentModal />
   </div>
 </template>

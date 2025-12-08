@@ -1,33 +1,58 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useLivePlay } from '../../composables/useLivePlay'
-import Card from '../Card.vue'
-import ScenePrompt from './ScenePrompt.vue'
-import Text from '../Text.vue'
-import IngressText from '../IngressText.vue'
-import Checkbox from '../Checkbox.vue'
+/**
+ * ConversationAndStakesPhase
+ *
+ * Philosophical:
+ * This phase is the calm before the storm—the character-building interlude where
+ * players develop their protagonists through dialogue and set the stakes for the
+ * upcoming confrontation. It emphasizes that this is a collaborative storytelling
+ * game, not just a mechanical exercise. The conversation prompts spark creativity;
+ * the stakes commitment ensures investment in the outcome.
+ *
+ * Technical:
+ * A phase component for roleplay guidance and stakes confirmation.
+ *
+ * Props:
+ * (None - uses useLivePlay composable directly)
+ *
+ * Events:
+ * - back: Emitted when the user wants to return to the previous phase.
+ * - next: Emitted when the user proceeds to resolution.
+ */
 
-import ActionFooter from '../ActionFooter.vue'
-import ConversationPrompts from './ConversationPrompts.vue'
-import { getConversationAndStakesContent } from '../../utils/contentLoader'
+import { computed } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getConversationAndStakesContent } from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Card from '../Card.vue';
+import Checkbox from '../Checkbox.vue';
+import IngressText from '../IngressText.vue';
+import Text from '../Text.vue';
+import ConversationPrompts from './ConversationPrompts.vue';
+import ScenePrompt from './ScenePrompt.vue';
 
-const { sacrificeConfirmed, currentAct, activeCard, selectedJoker, isFirstTime, selectedPlayset } = useLivePlay()
+const { sacrificeConfirmed, currentAct, activeCard, selectedJoker, isFirstTime, selectedPlayset } =
+  useLivePlay();
 
-const content = computed(() => getConversationAndStakesContent(selectedPlayset.value))
+const content = computed(() => getConversationAndStakesContent(selectedPlayset.value));
 
 const actDescription = computed(() => {
   switch (currentAct.value) {
-    case 1: return content.value.actDescriptions["1"]
-    case 2: return content.value.actDescriptions["2"]
-    case 3: return content.value.actDescriptions["3"]
-    default: return ""
+    case 1:
+      return content.value.actDescriptions['1'];
+    case 2:
+      return content.value.actDescriptions['2'];
+    case 3:
+      return content.value.actDescriptions['3'];
+    default:
+      return '';
   }
-})
+});
 
 const emit = defineEmits<{
-  (e: 'back'): void
-  (e: 'next'): void
-}>()
+  (e: 'back'): void;
+  (e: 'next'): void;
+}>();
 </script>
 
 <template>

@@ -24,7 +24,9 @@
         },
         "aptitude": {
             "title": "Aptitude?",
-            "description": "If Suit matches Aptitude you can shift the effort die result up or down by one."
+            "description": "If Suit matches Aptitude you can shift the effort die result up or down by one.",
+            "unavailable": "UNAVAILABLE",
+            "deadMessage": "The {suit} character is dead."
         }
     },
     "results": {

@@ -1,40 +1,71 @@
 <script setup lang="ts">
-import { useLivePlay } from '../../composables/useLivePlay'
-import Card from '../Card.vue'
-import Text from '../Text.vue'
-import SelectionButton from '../SelectionButton.vue'
-import ActionFooter from '../ActionFooter.vue'
-import Icon from '../Icon.vue'
-import { ref, computed } from 'vue'
+/**
+ * StrikeAssignmentModal
+ *
+ * Philosophical:
+ * The StrikeAssignmentModal represents a moment of consequence. When the horror finally
+ * catches up, this modal demands attention—forcing the player to acknowledge the damage
+ * and choose which character bears the brunt. Its urgency is reflected in its visual
+ * prominence: a red-bordered overlay that cannot be ignored. It is the narrative beat
+ * where survival becomes tangibly more difficult.
+ *
+ * Technical:
+ * A modal overlay for assigning strikes to characters after a failed encounter.
+ *
+ * Props:
+ * (None - uses useLivePlay composable directly)
+ *
+ * Internal State:
+ * - selectedSuit: The currently selected character to receive the strike.
+ * - assignAll: Whether to assign all pending strikes to one character.
+ */
 
-const { characters, assignStrike, strikesToAssign } = useLivePlay()
+import { computed, ref } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getStrikeAssignmentContent } from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Card from '../Card.vue';
+import Icon, { type IconName } from '../Icon.vue';
+import SelectionButton from '../SelectionButton.vue';
+import Text from '../Text.vue';
 
-const selectedSuit = ref<string | null>(null)
-const assignAll = ref(false)
+const { characters, assignStrike, strikesToAssign, selectedPlayset } = useLivePlay();
+const content = getStrikeAssignmentContent(selectedPlayset.value);
+
+const selectedSuit = ref<string | null>(null);
+const assignAll = ref(false);
 
 const confirmStrike = () => {
-    if (selectedSuit.value) {
-        const count = assignAll.value ? strikesToAssign.value : 1
-        for (let i = 0; i < count; i++) {
-            assignStrike(selectedSuit.value as any)
-        }
-        selectedSuit.value = null
-        assignAll.value = false
+  if (selectedSuit.value) {
+    const count = assignAll.value ? strikesToAssign.value : 1;
+    for (let i = 0; i < count; i++) {
+      assignStrike(selectedSuit.value as string);
     }
-}
+    selectedSuit.value = null;
+    assignAll.value = false;
+  }
+};
 
-const getCharacterName = (suit: string) => {
-    return characters.value.find(c => c.id === suit)?.name || ''
-}
+const titleText = computed(() => {
+  return content.title
+    .replace('{count}', strikesToAssign.value.toString())
+    .replace('{plural}', strikesToAssign.value > 1 ? 'S' : '');
+});
 
-const getStrikes = (suit: string) => {
-    return characters.value.find(c => c.id === suit)?.strikes || 0
-}
+const pendingText = computed(() => {
+  return content.pendingLabel.replace('{count}', strikesToAssign.value.toString());
+});
 
-const isDead = (suit: string) => {
-    return characters.value.find(c => c.id === suit)?.isDead || false
-}
+const assignAllText = computed(() => {
+  return content.assignAllLabel.replace('{count}', strikesToAssign.value.toString());
+});
 
+const confirmButtonText = computed(() => {
+  if (assignAll.value) {
+    return content.confirmAllButton.replace('{count}', strikesToAssign.value.toString());
+  }
+  return content.confirmButton;
+});
 </script>
 
 <template>
@@ -43,11 +74,11 @@ const isDead = (suit: string) => {
       <div class="text-center space-y-6">
         <div>
             <Text variant="h2" color="red" class="mb-2">
-                ASSIGN {{ strikesToAssign }} STRIKE{{ strikesToAssign > 1 ? 'S' : '' }}
+                {{ titleText }}
             </Text>
-            <Text variant="body" color="white">The Active Player gains a Strike.</Text>
+            <Text variant="body" color="white">{{ content.subtitle }}</Text>
             <Text v-if="strikesToAssign > 1" variant="caption" color="red" class="mt-2 font-bold animate-pulse">
-                PENDING STRIKES: {{ strikesToAssign }}
+                {{ pendingText }}
             </Text>
         </div>
 
@@ -61,7 +92,7 @@ const isDead = (suit: string) => {
                 class="h-auto py-4 flex flex-col gap-2"
             >
                 <div class="flex items-center justify-center gap-2">
-                    <Icon :name="char.id as any" class="w-6 h-6" />
+                    <Icon :name="char.id as IconName" class="w-6 h-6" />
                     <Text variant="label" :color="char.isDead ? 'muted' : 'white'">{{ char.name }}</Text>
                 </div>
                 
@@ -77,7 +108,7 @@ const isDead = (suit: string) => {
                     ></div>
                 </div>
 
-                <Text v-if="char.isDead" variant="caption" color="red" class="font-bold uppercase">ELIMINATED</Text>
+                <Text v-if="char.isDead" variant="caption" color="red" class="font-bold uppercase">{{ content.eliminatedLabel }}</Text>
             </SelectionButton>
         </div>
 
@@ -89,12 +120,12 @@ const isDead = (suit: string) => {
                 class="w-4 h-4 text-nott-red bg-nott-black border-nott-gray focus:ring-nott-red rounded"
             >
             <label for="assignAll" class="text-white text-sm cursor-pointer select-none">
-                Assign all {{ strikesToAssign }} strikes to this character?
+                {{ assignAllText }}
             </label>
         </div>
 
         <ActionFooter 
-            :label="assignAll ? `CONFIRM ${strikesToAssign} STRIKES` : 'CONFIRM STRIKE'"
+            :label="confirmButtonText"
             :disabled="!selectedSuit"
             @click="confirmStrike"
         />

@@ -1,32 +1,32 @@
 <script setup lang="ts">
 /**
  * Badge
- * 
+ *
  * Philosophical:
- * Badges are small, high-signal visual indicators used to categorize, label, or 
- * highlight specific attributes of an item. They are designed to be scanned quickly, 
- * providing immediate context without interrupting the flow of reading. In the game's 
- * UI, they often represent status effects, tags, or specific mechanical properties 
+ * Badges are small, high-signal visual indicators used to categorize, label, or
+ * highlight specific attributes of an item. They are designed to be scanned quickly,
+ * providing immediate context without interrupting the flow of reading. In the game's
+ * UI, they often represent status effects, tags, or specific mechanical properties
  * that need to stand out from body text.
- * 
+ *
  * Technical:
  * A small inline-flex component for displaying short labels.
- * 
+ *
  * Props:
- * - variant (string): The visual style ('default', 'outline', 'red', 'success', 'danger'). 
+ * - variant (string): The visual style ('default', 'outline', 'red', 'success', 'danger').
  *   Determines the color and border style. Defaults to 'default'.
- * 
+ *
  * Slots:
  * - default: The content of the badge (usually text).
  */
 
 interface Props {
-  variant?: 'default' | 'outline' | 'red' | 'success' | 'danger'
+  variant?: 'default' | 'outline' | 'red' | 'success' | 'danger';
 }
 
 withDefaults(defineProps<Props>(), {
-  variant: 'default'
-})
+  variant: 'default',
+});
 </script>
 
 <template>

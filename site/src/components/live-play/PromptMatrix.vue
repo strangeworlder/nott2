@@ -1,60 +1,84 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { getScenePrompt, cardPrompts } from '../../data/scenePrompts'
-import type { Suit } from '../../composables/useGameEngine'
-import Card from '../Card.vue'
-import Button from '../Button.vue'
-import Text from '../Text.vue'
-import SelectionButton from '../SelectionButton.vue'
+/**
+ * PromptMatrix
+ *
+ * Philosophical:
+ * The PromptMatrix is a reference tool—a way to explore all possible prompts
+ * outside of active gameplay. It serves both as a cheat sheet for quick lookups
+ * and as a preview of the narrative possibilities the deck holds. For designers
+ * and GMs, it's a window into the game's creative engine.
+ *
+ * Technical:
+ * An interactive grid for exploring all card/suit prompt combinations.
+ *
+ * Props:
+ * (None - internal state only)
+ *
+ * Internal State:
+ * - selectedSuit: The currently selected suit filter.
+ * - selectedRank: The currently selected rank.
+ * - isFirstTime: Toggle for Face Card first encounter variant.
+ */
 
-const selectedSuit = ref<string | null>(null)
-const selectedRank = ref<number | null>(null)
-const isFirstTime = ref(true)
+import { computed, ref } from 'vue';
+import type { Suit } from '../../composables/useGameEngine';
+import { cardPrompts, getScenePrompt } from '../../data/scenePrompts';
+import { getUiLabelsContent } from '../../utils/contentLoader';
+import Button from '../Button.vue';
+import Card from '../Card.vue';
+import SelectionButton from '../SelectionButton.vue';
+import Text from '../Text.vue';
+
+const content = getUiLabelsContent();
+
+const selectedSuit = ref<string | null>(null);
+const selectedRank = ref<number | null>(null);
+const isFirstTime = ref(true);
 
 const suitIcons: Record<string, string> = {
-  'Spades': '♠',
-  'Hearts': '♥',
-  'Clubs': '♣',
-  'Diamonds': '♦',
-}
+  Spades: '♠',
+  Hearts: '♥',
+  Clubs: '♣',
+  Diamonds: '♦',
+};
 
 const suitColors: Record<string, string> = {
-  'Spades': '',
-  'Hearts': 'text-nott-red',
-  'Clubs': '',
-  'Diamonds': 'text-nott-red',
-}
+  Spades: '',
+  Hearts: 'text-nott-red',
+  Clubs: '',
+  Diamonds: 'text-nott-red',
+};
 
 const currentSuitData = computed(() => {
-  return cardPrompts.suits.find(p => p.suit === selectedSuit.value)
-})
+  return cardPrompts.suits.find((p) => p.suit === selectedSuit.value);
+});
 
 // Filter out Joker for the UI matrix
 const displaySuits = computed(() => {
-  return cardPrompts.suits.filter(s => s.suit !== 'Joker')
-})
+  return cardPrompts.suits.filter((s) => s.suit !== 'Joker');
+});
 
 const currentPrompt = computed(() => {
-  if (!selectedSuit.value || !selectedRank.value) return null
+  if (!selectedSuit.value || !selectedRank.value) return null;
 
   // Use the shared helper
-  const card = { rank: selectedRank.value, suit: selectedSuit.value as Suit }
-  return getScenePrompt(card, null, isFirstTime.value)
-})
+  const card = { rank: selectedRank.value, suit: selectedSuit.value as Suit };
+  return getScenePrompt(card, null, isFirstTime.value);
+});
 
 const selectSuit = (suit: string) => {
-  selectedSuit.value = suit
-  selectedRank.value = null // Reset rank when suit changes
-  isFirstTime.value = true
-}
+  selectedSuit.value = suit;
+  selectedRank.value = null; // Reset rank when suit changes
+  isFirstTime.value = true;
+};
 
 const getRankLabel = (rank: number) => {
-  if (rank === 1) return 'A'
-  if (rank === 11) return 'J'
-  if (rank === 12) return 'Q'
-  if (rank === 13) return 'K'
-  return rank.toString()
-}
+  if (rank === 1) return 'A';
+  if (rank === 11) return 'J';
+  if (rank === 12) return 'Q';
+  if (rank === 13) return 'K';
+  return rank.toString();
+};
 </script>
 
 <template>
@@ -140,7 +164,7 @@ const getRankLabel = (rank: number) => {
             size="xs"
             :variant="isFirstTime ? 'primary' : 'ghost'"
           >
-            {{ isFirstTime ? 'First Encounter' : 'Recurring Nightmare' }}
+            {{ isFirstTime ? content.promptMatrix.firstEncounter : content.promptMatrix.recurringNightmare }}
           </Button>
         </div>
 
@@ -154,7 +178,7 @@ const getRankLabel = (rank: number) => {
            </Card>
         </div>
         <div v-else class="text-center text-nott-white/40 italic mt-8">
-          <Text variant="caption" color="muted">Select a rank to reveal the prompt...</Text>
+          <Text variant="caption" color="muted">{{ content.promptMatrix.selectRankHint }}</Text>
         </div>
       </div>
     </Transition>

@@ -1,41 +1,52 @@
 <script setup lang="ts">
-import { defineAsyncComponent, shallowRef, watchEffect } from 'vue'
-import { useLivePlay } from '../composables/useLivePlay'
-import { getPlaysetConfig } from '../utils/contentLoader'
-import DefaultComponent from './defaults/Badge.vue'
+/**
+ * Badge (Wrapper)
+ *
+ * Technical:
+ * A wrapper component that dynamically loads either the default Badge implementation
+ * or a playset-specific override. This enables visual customization per playset
+ * while maintaining a consistent API.
+ *
+ * Props: See defaults/Badge.vue for full prop documentation.
+ */
+
+import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
+import { useLivePlay } from '../composables/useLivePlay';
+import { getPlaysetConfig } from '../utils/contentLoader';
+import DefaultComponent from './defaults/Badge.vue';
 
 interface Props {
-  variant?: 'default' | 'outline' | 'red' | 'success' | 'danger'
+  variant?: 'default' | 'outline' | 'red' | 'success' | 'danger';
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  variant: 'default'
-})
+  variant: 'default',
+});
 
-const { selectedPlayset } = useLivePlay()
-const playsetComponents = import.meta.glob('./playsets/**/Badge.vue')
-const currentComponent = shallowRef(DefaultComponent)
+const { selectedPlayset } = useLivePlay();
+const playsetComponents = import.meta.glob('./playsets/**/Badge.vue');
+const currentComponent = shallowRef<Component>(DefaultComponent);
 
 watchEffect(() => {
-  const playsetId = selectedPlayset.value
+  const playsetId = selectedPlayset.value;
   if (!playsetId || playsetId === 'default') {
-    currentComponent.value = DefaultComponent
-    return
+    currentComponent.value = DefaultComponent;
+    return;
   }
 
-  const config = getPlaysetConfig(playsetId)
+  const config = getPlaysetConfig(playsetId);
   if (config.overrides?.Badge) {
-    const path = `./playsets/${playsetId}/Badge.vue`
-    const loader = playsetComponents[path]
+    const path = `./playsets/${playsetId}/Badge.vue`;
+    const loader = playsetComponents[path];
     if (loader) {
-      currentComponent.value = defineAsyncComponent(loader as any)
+      currentComponent.value = defineAsyncComponent(loader as () => Promise<Component>);
     } else {
-      currentComponent.value = DefaultComponent
+      currentComponent.value = DefaultComponent;
     }
   } else {
-    currentComponent.value = DefaultComponent
+    currentComponent.value = DefaultComponent;
   }
-})
+});
 </script>
 
 <template>

@@ -1,14 +1,33 @@
 <script setup lang="ts">
-import Text from '../Text.vue'
-import ActionFooter from '../ActionFooter.vue'
-import Icon from '../Icon.vue'
-import Card from '../Card.vue'
-import Separator from '../defaults/Separator.vue'
-import { getWelcomeScreenContent } from '../../utils/contentLoader'
+/**
+ * WelcomeScreen
+ *
+ * Philosophical:
+ * The WelcomeScreen is the threshold—the moment before the horror begins. It sets
+ * the tone, provides context, and offers a last breath of normalcy before the
+ * players are plunged into the Night. Its purpose is immersion: to make players
+ * feel they are about to experience something special and dangerous.
+ *
+ * Technical:
+ * A landing page component that displays game introduction and requirements.
+ *
+ * Props:
+ * (None - uses content from contentLoader)
+ *
+ * Events:
+ * - next: Emitted when the user starts the game.
+ */
 
-defineEmits(['next'])
+import { getWelcomeScreenContent } from '../../utils/contentLoader';
+import ActionFooter from '../ActionFooter.vue';
+import Card from '../Card.vue';
+import Separator from '../defaults/Separator.vue';
+import Icon from '../Icon.vue';
+import Text from '../Text.vue';
 
-const content = getWelcomeScreenContent()
+defineEmits(['next']);
+
+const content = getWelcomeScreenContent();
 </script>
 
 <template>
@@ -44,7 +63,7 @@ const content = getWelcomeScreenContent()
             :center="true"
         >
             <div class="flex flex-col items-center justify-start space-y-3">
-                <Icon :name="item.icon as any" size="32" color="red" />
+                <Icon :name="item.icon as unknown as IconName" size="32" color="red" />
                 <div class="space-y-1">
                     <Text variant="label" color="muted">{{ item.label }}</Text>
                     <Text variant="body">
