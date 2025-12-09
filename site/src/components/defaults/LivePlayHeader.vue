@@ -45,6 +45,7 @@ interface Props {
   selectedJoker?: 'Red' | 'Black' | null;
   act3Countdown?: number;
   acesRemaining?: number;
+  availableTrophyRanks?: number[];
   fullReset: () => void;
 }
 
@@ -129,7 +130,8 @@ const showContext = computed(() => {
       <!-- Difficulty Info -->
       <TrophyPileTop 
         :trophy-top="trophyTop" 
-        :is-randomized="isTrophyTopRandomized" 
+        :is-randomized="isTrophyTopRandomized"
+        :available-trophy-ranks="availableTrophyRanks" 
       />
 
     </div>
