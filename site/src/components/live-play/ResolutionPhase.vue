@@ -93,10 +93,11 @@ const aptitudeDeadText = computed(() => {
 const needsTrophySelection = computed(() => {
   // Only applies for face cards/jokers when the trophy top is randomized
   if (!isFaceCard.value && !selectedJoker.value) return false;
-  if (!isTrophyTopRandomized.value) return false;
+
   if (availableTrophyRanks.value.length <= 1) return false;
-  // Trophy selection needed if no rank is selected yet
-  return !trophyTop.value?.rank;
+
+  // If randomized, we ALWAYS need selection (because selection turns off randomization)
+  return isTrophyTopRandomized.value;
 });
 </script>
 
