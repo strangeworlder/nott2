@@ -2,7 +2,7 @@ import { getPlaysetConfig } from '../../utils/contentLoader';
 import type { Suit } from '../useGameEngine';
 import {
   addCardToTrophyPile,
-  addFaceCardToThreatDeck,
+  addFaceCardFromReserve,
   addNextReserve,
   getNextValidCard,
   removeHighestFaceCardFromDeck,
@@ -20,10 +20,10 @@ import {
   currentPhase,
   drawnCards,
   faceCardReserves,
+  falloutCard,
   isBlackJokerRemoved,
   isEndgame,
   isEndgameInitialized,
-  isFaceCard,
   isGameWon,
   isGenrePointAwarded,
   isGenrePointUsed,
@@ -356,80 +356,127 @@ export const toggleGenrePointAward = () => {
 };
 
 export const applyGameStateUpdates = () => {
+  // Save activeCard for Fallout usage (persistence through shuffle)
+  falloutCard.value = activeCard.value;
+
   // Breaking Point Logic
   if (rollEffort.value === 4) {
     strikesToAssign.value++;
   }
 
-  if (isSuccess.value) {
-    // Joker Success
-    if (selectedJoker.value === 'Red') {
+  const success = isSuccess.value;
+
+  if (selectedJoker.value) {
+    handleJokerResolution(success);
+  } else if (activeCard.value) {
+    // 1. Ace
+    if (activeCard.value.rank === 1) {
+      handleAceResolution(success);
+    }
+    // 2. Number Card (2-10)
+    else if (activeCard.value.type === 'number' && activeCard.value.rank <= 10) {
+      handleNumberCardResolution(success);
+    }
+    // 3. Face Card
+    else {
+      handleFaceResolution(success);
+    }
+  }
+
+  // 4. Act 3 Trigger (Global Rule: If we add enough cards)
+  if (!isEndgame.value && activeCard.value?.rank !== 1 && !selectedJoker.value) {
+    // Logic from old code: "if !isEndgame && rank != 1"
+    // Added "!selectedJoker" because Jokers don't draw from reserve typically?
+    // Actually standard rules say reserve adds on success/failure for Number cards.
+    // Handlers will call addNextReserve() if appropriate.
+    // But we need to check if Act 3 triggered AFTER that.
+    if (cardsAddedFromReserve.value >= 13 && currentAct.value < 3) {
+      startAct3();
+    }
+  }
+};
+
+const handleJokerResolution = (success: boolean) => {
+  if (selectedJoker.value === 'Red') {
+    if (success) {
       isGameWon.value = true;
       currentPhase.value = 'win';
-      return;
     }
-    if (selectedJoker.value === 'Black') {
+    // Failure = Death (Handled by UI/Rules text usually? Or do we kill character here?)
+    // "Character Dies." -> assignStrike(active)?
+    // Let's leave UI to handle narrative unless we want to force kill.
+  } else if (selectedJoker.value === 'Black') {
+    if (success) {
       removeHighestFaceCardFromDeck();
-      selectedJoker.value = null;
-      triggerJokerEvent();
-      return;
+    } else {
+      // Failure: Add King
+      addFaceCardFromReserve('King');
+    }
+    isBlackJokerRemoved.value = true;
+    shuffleThreatDeck();
+    shuffleTrophyPile();
+    selectedJoker.value = null; // Clear selection
+    triggerJokerEvent(); // Logic to proceed?
+  }
+};
+
+const handleAceResolution = (success: boolean) => {
+  if (success) {
+    // Remove from game. Do NOT add to Trophy Pile.
+    // It stays in 'drawnCards' (so effectively removed from deck).
+    // Decrement Aces Remaining?
+    // acesRemaining is decremented on DRAW. So we are good.
+  } else {
+    // Failure: Return to bottom
+    updateDeckState(activeCard.value!.rank, activeCard.value!.suit, 'return');
+  }
+};
+
+const handleNumberCardResolution = (success: boolean) => {
+  if (success) {
+    addCardToTrophyPile(activeCard.value!);
+    addNextReserve();
+  } else {
+    updateDeckState(activeCard.value!.rank, activeCard.value!.suit, 'return');
+    addNextReserve();
+  }
+};
+
+const handleFaceResolution = (success: boolean) => {
+  if (success) {
+    // 1. Weakness Check (Global)
+    // "First time defeating a suit -> Remove it."
+    if (!weaknessesFound.value.includes(activeCard.value!.suit)) {
+      // weaknessesFound.value.push(activeCard.value!.suit); <--- REMOVED
+      // finding is deferred to startNextScene to allow UI to say "Found!"
+      // Remove (Do not return to deck)
+    } else {
+      updateDeckState(activeCard.value!.rank, activeCard.value!.suit, 'return');
     }
 
-    // Standard Success
-    if (activeCard.value) {
-      // Number Cards (Rank 2-10) and Aces (Rank 1) go to Trophy Pile on success
-      if (activeCard.value.type === 'number' || activeCard.value.rank === 1) {
-        addCardToTrophyPile(activeCard.value);
-      } else {
-        // Face Cards are returned (if not defeated/weakness logic handles removal separately?
-        // Wait, "First time defeating a suit removes it (Weakness Found). If already defeated, it stays in deck."
-        // Face Card Logic handles deck updates internally via `removeHighestFaceCardFromDeck`?
-        // No, that's for Black Joker success.
-        // Standard Face Card Success: "1-2 adds a Jack... First time defeating a suit removes it."
-        // This logic is missing here properly?
-        // Actually `applyGameStateUpdates` doesn't seem to implement the Face Card Success logic fully here?
-        // Ah, let's look at `isFaceCard.value` check below in Failure block.
-        // But this block is `if (isSuccess.value)`.
-        // For Face Cards success:
-        // We need to implement Face Card Success logic here too if it's missing.
-        // But for now, fixing Number Cards.
-        updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return');
-      }
-    }
-
-    if (!isEndgame.value && activeCard.value?.rank !== 1) {
-      const act3Triggered = addNextReserve();
-      if (act3Triggered) startAct3();
+    // 2. Add Reserve (The Killer Learns)
+    const effortLevel = rollEffort.value || 0;
+    if (effortLevel >= 3) {
+      addFaceCardFromReserve('Queen');
+    } else {
+      addFaceCardFromReserve('Jack');
     }
   } else {
     // Failure
-    if (selectedJoker.value) {
-      shuffleThreatDeck();
-      shuffleTrophyPile();
-      return;
-    }
+    // Gain a Strike (in addition to any Breaking Point strike)
+    strikesToAssign.value++;
 
-    if (isFaceCard.value) {
-      strikesToAssign.value++;
-      addFaceCardToThreatDeck(13, rollEffort.value); // Add King
+    updateDeckState(activeCard.value!.rank, activeCard.value!.suit, 'return');
+    addFaceCardFromReserve('King');
 
-      if (currentAct.value === 1) {
-        currentAct.value = 2;
-      }
-
-      shuffleThreatDeck();
-      shuffleTrophyPile();
-    } else {
-      if (activeCard.value && activeCard.value.rank !== 1) {
-        updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return');
-      }
-
-      if (!isEndgame.value && activeCard.value?.rank !== 1) {
-        const act3Triggered = addNextReserve();
-        if (act3Triggered) startAct3();
-      }
+    if (currentAct.value === 1) {
+      currentAct.value = 2;
     }
   }
+
+  // Always shuffle after Face Card
+  shuffleThreatDeck();
+  shuffleTrophyPile();
 };
 
 export const startNextScene = () => {
@@ -437,12 +484,28 @@ export const startNextScene = () => {
 
   if (isGameWon.value) return;
 
+  // Deferred Weakness Update
+  // If we had a successful Face Card resolution that WASN'T returned to deck, it's a new weakness.
+  if (
+    falloutCard.value &&
+    (falloutCard.value.type === 'face' || falloutCard.value.rank > 10) &&
+    !weaknessesFound.value.includes(falloutCard.value.suit) &&
+    isSuccess.value
+  ) {
+    // Double check: Did we return it?
+    // If we returned it, it's not in drawnCards (or is in bottomStack logic).
+    // But simpler: Check our logic criteria again.
+    // If Success + Not in Weakness -> We didn't return it.
+    weaknessesFound.value.push(falloutCard.value.suit);
+  }
+
   if (selectedCardId.value) {
     visibleCards.value = visibleCards.value.filter((c) => c.id !== selectedCardId.value);
   }
 
   // Reset Scene State
   selectedCardId.value = null;
+  falloutCard.value = null; // Clear persistence
   selectedJoker.value = null;
   manualJoker.value = null;
   sacrificeConfirmed.value = false;

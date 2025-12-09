@@ -50,7 +50,7 @@ const {
   getNextValidCard,
   currentAct,
   isBlackJokerRemoved,
-  isFirstTime,
+  isWelcomePhase,
   selectedPlayset,
   areJokersAvailable,
 } = useLivePlay();
@@ -237,7 +237,7 @@ const explanationText = computed(() => {
           <ScenePrompt 
             :card="activeCard" 
             :selected-joker="selectedJoker"
-            :is-first-time="isFirstTime"
+            :is-welcome-phase="isWelcomePhase"
           />
         </div>
       </div>

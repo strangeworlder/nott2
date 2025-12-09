@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import { effortScale } from '../../data/rules';
 import type { Card as GameCard, Rank, Suit } from '../useGameEngine';
 
 // --------------------------------------------------------------------------------
@@ -37,9 +38,11 @@ export interface LivePlayCard extends GameCard {
 // Core Data
 export const visibleCards = ref<LivePlayCard[]>([]);
 export const selectedCardId = ref<string | null>(null);
+export const falloutCard = ref<LivePlayCard | null>(null);
 export const selectedJoker = ref<'Red' | 'Black' | null>(null);
 
 export const activeCard = computed(() => {
+  if (currentPhase.value === 'fallout') return falloutCard.value;
   if (selectedJoker.value) return null;
   if (!selectedCardId.value) return null;
   return visibleCards.value.find((c) => c.id === selectedCardId.value) || null;
@@ -168,7 +171,48 @@ export const isMiddleStackEmpty = computed(() => {
   );
 });
 
+export const rollTotal = computed(() => {
+  if (rollMain.value === null) return null;
+  return (rollMain.value || 0) + (rollEffort.value || 0);
+});
+
+export const effortResult = computed(() => {
+  if (!rollEffort.value) return null;
+  // Safety check for index
+  const index = (rollEffort.value - 1) as 0 | 1 | 2 | 3;
+  if (index < 0 || index >= effortScale.length) return null;
+  return effortScale[index];
+});
+
+// Helper for Difficulty
+const getDifficulty = () => {
+  const rank = activeCard.value?.rank;
+  if (!rank) return 0;
+
+  // Number Cards (1-10) use their own rank as difficulty
+  if (rank <= 10) return rank;
+
+  // Face Cards (11+) use the Trophy Pile + Modifier
+  const base =
+    !trophyTop.value || (trophyTop.value.rank as number) === 0 ? 0 : trophyTop.value.rank;
+  let modifier = 0;
+  if (rank === 11) modifier = 1;
+  if (rank === 12) modifier = 2;
+  if (rank === 13) modifier = 3;
+
+  return base + modifier;
+};
+
+export const targetDifficulty = computed(() => {
+  return getDifficulty();
+});
+
 export const isSuccess = computed(() => {
-  // Basic fallback; specific success logic is in useLivePlay.ts wrapper around checks
-  return false;
+  if (selectedJoker.value === 'Red') return true;
+  if (selectedJoker.value === 'Black') return false;
+
+  if (!rollTotal.value) return false;
+
+  const target = targetDifficulty.value;
+  return rollTotal.value >= target;
 });

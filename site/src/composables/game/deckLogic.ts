@@ -270,62 +270,80 @@ export const revealHiddenTen = () => {
   }
 };
 
-export const addFaceCardToThreatDeck = (targetRank: number, effort: number | null = null) => {
-  // Helper to try adding a specific rank
+export const addFaceCardFromReserve = (targetType: 'Jack' | 'Queen' | 'King'): boolean => {
   const tryAdd = (rank: number): boolean => {
+    // Check specific reserve first
     if (faceCardReserves.value[rank as 11 | 12 | 13] > 0) {
       faceCardReserves.value[rank as 11 | 12 | 13]--;
+      lastAddedFaceCardRank.value = rank;
 
       if (isClassicMode()) {
-        updateDeckState(rank as Rank, 'Spades', 'add');
+        updateDeckState(rank as Rank, 'Spades', 'add'); // Classic adds Spades by default or random? Logic implies Spades is placeholder for "A Jack" until drawn?
+        // Actually updateDeckState 'add' just increments bottomStack count. Suit allows 'Spades' as generic container if we don't track suits in stack.
+        // Wait, standard Face Cards have no suit in reserve?
+        // Game says "Add a random Jack".
+        // updateDeckState 'add' increases bottomStack[rank].
+        // When we draw, we check available suits.
+        // So yes, generic add is fine.
       } else {
         unknownBottomStack.value++;
       }
-
-      lastAddedFaceCardRank.value = rank;
       return true;
     }
-    // Check recycling bin (removedFaceCards)
-    if (removedFaceCards.value[rank] > 0) {
-      removedFaceCards.value[rank]--;
 
-      if (isClassicMode()) {
-        updateDeckState(rank as Rank, 'Spades', 'add');
-      } else {
-        unknownBottomStack.value++;
-      }
-
-      lastAddedFaceCardRank.value = rank;
-      return true;
-    }
+    // Check recycling bin (removedFaceCards) - The prompt implies reserves, but usually games cycle.
+    // "If Reserve empty: Jack->Queen->King->None"
+    // It does NOT say "Reshuffle graveyard".
+    // So if reserve is empty, we look for HIGHER tier.
     return false;
   };
 
-  if (targetRank === 11) {
-    // Jack
-    if (tryAdd(11)) return;
-    if (tryAdd(12)) return;
-    if (tryAdd(13)) return; // Fallback to King?
-    // Actually if both Jack and Queen are out, adding a Jack just fails?
-    // Logic: "(If Reserve empty: Jack->Queen->King->None)"
-    tryAdd(13);
-    // Wait, if Jack empty, try Queen. If Queen empty, try King.
-  } else if (targetRank === 12) {
-    // Queen
-    if (tryAdd(12)) return;
-    if (tryAdd(13)) return;
-    tryAdd(11);
-  } else if (targetRank === 13) {
-    // King
-    if (tryAdd(13)) return;
-    if (effort && effort <= 2) {
-      if (tryAdd(11)) return;
-      tryAdd(12);
-    } else {
-      if (tryAdd(12)) return;
-      tryAdd(11);
-    }
+  // Logic:
+  // 1-2 (Controlled/Pushing) -> Add Jack.
+  // 3-4 (Overexertion/Breaking) -> Add Queen.
+  // Failure -> Add King.
+
+  // Fallback Chain:
+  // Jack -> Queen -> King -> None
+  // Queen -> King -> Jack -> None
+  // King -> Queen -> Jack -> None ?
+  // Rules Rule 254:
+  // "No Jacks? Add a Queen instead."
+  // "No Queens? Add a King instead."
+  // "No Kings? Add a Jack or Queen instead."
+
+  if (targetType === 'Jack') {
+    if (tryAdd(11)) return true;
+    if (tryAdd(12)) return true;
+    if (tryAdd(13)) return true;
+  } else if (targetType === 'Queen') {
+    if (tryAdd(12)) return true;
+    if (tryAdd(13)) return true;
+    if (tryAdd(11)) return true;
+  } else if (targetType === 'King') {
+    if (tryAdd(13)) return true;
+    if (tryAdd(12)) return true;
+    if (tryAdd(11)) return true;
   }
+
+  return false;
+};
+
+// Deprecated or can comprise:
+export const addFaceCardToThreatDeck = (targetRank: number, effort: number | null = null) => {
+  // Mapping old calls to new Logic if needed, or just remove.
+  // We will update phaseLogic to use addFaceCardFromReserve directly.
+  // Keeping this stub or removing it?
+  // Let's replace it with the new one entirely if no other callers exist.
+  // Only usage likely in phaseLogic.
+  let type: 'Jack' | 'Queen' | 'King' = 'Jack';
+  if (targetRank === 12) type = 'Queen';
+  if (targetRank === 13) type = 'King';
+
+  // Effort overload override?
+  if (effort && effort >= 3) type = 'Queen';
+
+  addFaceCardFromReserve(type);
 };
 
 export const removeHighestFaceCardFromDeck = () => {

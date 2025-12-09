@@ -28,12 +28,16 @@ import Text from '../Text.vue';
 const props = defineProps<{
   card?: { rank: number; suit: Suit } | null;
   selectedJoker?: 'Red' | 'Black' | null;
-  isFirstTime?: boolean;
+  isWelcomePhase?: boolean;
   label?: string;
 }>();
 
 const promptText = computed(() => {
-  return getScenePrompt(props.card || null, props.selectedJoker || null, props.isFirstTime ?? true);
+  return getScenePrompt(
+    props.card || null,
+    props.selectedJoker || null,
+    props.isWelcomePhase ?? true
+  );
 });
 </script>
 
