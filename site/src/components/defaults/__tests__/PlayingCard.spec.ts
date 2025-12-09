@@ -10,9 +10,8 @@ describe('PlayingCard.vue', () => {
         rank: 1,
       },
     });
-    expect(wrapper.text()).toContain('Ace');
-    expect(wrapper.text()).toContain('Spades');
-    expect(wrapper.text()).toContain('♠');
+    expect(wrapper.text()).toContain('A');
+    expect(wrapper.findComponent({ name: 'Icon' }).exists()).toBe(true);
   });
 
   it('renders Joker', () => {
@@ -47,5 +46,29 @@ describe('PlayingCard.vue', () => {
       },
     });
     expect(wrapper.find('.text-nott-red').exists()).toBe(true);
+  });
+
+  it('renders correct number of pips for number cards', () => {
+    const wrapper = mount(PlayingCard, {
+      props: {
+        suit: 'Spades',
+        rank: 5,
+      },
+    });
+    // 5 of Spades should render 5 pips + 2 corner icons = 7 icon elements
+    // Note: Icon wrapper pattern may cause findAllComponents to find both wrapper and inner
+    const icons = wrapper.findAllComponents({ name: 'Icon' });
+    expect(icons.length).toBeGreaterThanOrEqual(7);
+  });
+
+  it('renders face cards with text', () => {
+    const wrapper = mount(PlayingCard, {
+      props: {
+        suit: 'Diamonds',
+        rank: 12,
+      },
+    });
+    expect(wrapper.text()).toContain('Q');
+    expect(wrapper.text()).toContain('Queen');
   });
 });

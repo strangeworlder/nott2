@@ -10,7 +10,8 @@
  * maintaining the illusion of a tabletop experience.
  *
  * Technical:
- * A complex component rendering a standard playing card or Joker.
+ * A complex component rendering a standard playing card or Joker with realistic
+ * pip layouts matching actual playing cards.
  *
  * Props:
  * - suit (string): The suit of the card ('Spades', 'Hearts', 'Clubs', 'Diamonds').
@@ -22,6 +23,9 @@
  */
 
 import { computed } from 'vue';
+import Icon from '../Icon.vue';
+
+type SuitName = 'Spades' | 'Hearts' | 'Clubs' | 'Diamonds';
 
 interface Props {
   suit?: string;
@@ -34,32 +38,137 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const suitIcons: Record<string, string> = {
-  Spades: '♠',
-  Hearts: '♥',
-  Clubs: '♣',
-  Diamonds: '♦',
-};
-
-// Fixed colors for white background card
+// Suit color classes
 const suitColors: Record<string, string> = {
-  Spades: '',
+  Spades: 'text-nott-black',
   Hearts: 'text-nott-red',
-  Clubs: '',
+  Clubs: 'text-nott-black',
   Diamonds: 'text-nott-red',
 };
 
 const rankName = computed(() => {
   if (!props.rank) return '';
-  if (props.rank === 1) return 'Ace';
-  if (props.rank === 11) return 'Jack';
-  if (props.rank === 12) return 'Queen';
-  if (props.rank === 13) return 'King';
+  if (props.rank === 1) return 'A';
+  if (props.rank === 11) return 'J';
+  if (props.rank === 12) return 'Q';
+  if (props.rank === 13) return 'K';
   return props.rank.toString();
 });
 
-const rankChar = computed(() => {
-  return rankName.value[0];
+const isFaceCard = computed(() => props.rank && props.rank >= 11 && props.rank <= 13);
+const isAce = computed(() => props.rank === 1);
+
+// Pip positions for each rank (coordinates as percentages)
+// Grid is conceptually 3 columns x 5 rows
+const pipLayouts: Record<number, { x: number; y: number; rotate?: boolean }[]> = {
+  // Ace - 1 large center
+  1: [{ x: 50, y: 50 }],
+
+  // 2 - top and bottom center
+  2: [
+    { x: 50, y: 20 },
+    { x: 50, y: 80, rotate: true },
+  ],
+
+  // 3 - top, center, bottom
+  3: [
+    { x: 50, y: 20 },
+    { x: 50, y: 50 },
+    { x: 50, y: 80, rotate: true },
+  ],
+
+  // 4 - four corners
+  4: [
+    { x: 30, y: 20 },
+    { x: 70, y: 20 },
+    { x: 30, y: 80, rotate: true },
+    { x: 70, y: 80, rotate: true },
+  ],
+
+  // 5 - four corners + center
+  5: [
+    { x: 30, y: 20 },
+    { x: 70, y: 20 },
+    { x: 50, y: 50 },
+    { x: 30, y: 80, rotate: true },
+    { x: 70, y: 80, rotate: true },
+  ],
+
+  // 6 - two columns of 3
+  6: [
+    { x: 30, y: 20 },
+    { x: 70, y: 20 },
+    { x: 30, y: 50 },
+    { x: 70, y: 50 },
+    { x: 30, y: 80, rotate: true },
+    { x: 70, y: 80, rotate: true },
+  ],
+
+  // 7 - six + one center-top
+  7: [
+    { x: 30, y: 20 },
+    { x: 70, y: 20 },
+    { x: 50, y: 35 },
+    { x: 30, y: 50 },
+    { x: 70, y: 50 },
+    { x: 30, y: 80, rotate: true },
+    { x: 70, y: 80, rotate: true },
+  ],
+
+  // 8 - six + two center
+  8: [
+    { x: 30, y: 20 },
+    { x: 70, y: 20 },
+    { x: 50, y: 35 },
+    { x: 30, y: 50 },
+    { x: 70, y: 50 },
+    { x: 50, y: 65, rotate: true },
+    { x: 30, y: 80, rotate: true },
+    { x: 70, y: 80, rotate: true },
+  ],
+
+  // 9 - eight + center
+  9: [
+    { x: 30, y: 15 },
+    { x: 70, y: 15 },
+    { x: 30, y: 38 },
+    { x: 70, y: 38 },
+    { x: 50, y: 50 },
+    { x: 30, y: 62, rotate: true },
+    { x: 70, y: 62, rotate: true },
+    { x: 30, y: 85, rotate: true },
+    { x: 70, y: 85, rotate: true },
+  ],
+
+  // 10 - 4+2+4 pattern
+  10: [
+    { x: 30, y: 15 },
+    { x: 70, y: 15 },
+    { x: 50, y: 28 },
+    { x: 30, y: 38 },
+    { x: 70, y: 38 },
+    { x: 30, y: 62, rotate: true },
+    { x: 70, y: 62, rotate: true },
+    { x: 50, y: 72, rotate: true },
+    { x: 30, y: 85, rotate: true },
+    { x: 70, y: 85, rotate: true },
+  ],
+
+  // Face cards - single large center (handled differently in template)
+  11: [{ x: 50, y: 50 }],
+  12: [{ x: 50, y: 50 }],
+  13: [{ x: 50, y: 50 }],
+};
+
+const currentPipLayout = computed(() => {
+  if (!props.rank) return [];
+  return pipLayouts[props.rank] || [];
+});
+
+const pipSize = computed(() => {
+  if (isAce.value) return 64;
+  if (isFaceCard.value) return 80;
+  return 28;
 });
 </script>
 
@@ -82,25 +191,49 @@ const rankChar = computed(() => {
     </template>
 
     <template v-else-if="suit && rank">
-      <!-- Corner Ranks -->
-      <div class="absolute top-2 left-2 text-2xl font-display" :class="suitColors[suit]">
-        {{ rankChar }}
-        <div class="text-xl">{{ suitIcons[suit] }}</div>
+      <!-- Corner Ranks - Top Left -->
+      <div class="absolute top-2 left-2 flex flex-col items-center" :class="suitColors[suit]">
+        <span class="text-xl font-display font-bold leading-none">{{ rankName }}</span>
+        <Icon :name="suit as SuitName" :size="16" />
       </div>
-      <div class="absolute bottom-2 right-2 text-2xl font-display rotate-180" :class="suitColors[suit]">
-        {{ rankChar }}
-        <div class="text-xl">{{ suitIcons[suit] }}</div>
+      
+      <!-- Corner Ranks - Bottom Right (inverted) -->
+      <div class="absolute bottom-2 right-2 flex flex-col items-center rotate-180" :class="suitColors[suit]">
+        <span class="text-xl font-display font-bold leading-none">{{ rankName }}</span>
+        <Icon :name="suit as SuitName" :size="16" />
       </div>
 
-      <!-- Center Content -->
-      <div class="text-6xl" :class="suitColors[suit]">
-        {{ suitIcons[suit] }}
-      </div>
-      <div class="mt-4 text-2xl font-display uppercase tracking-widest text-nott-black">
-        {{ rankName }}
-      </div>
-      <div class="text-sm font-display uppercase tracking-widest text-nott-black/60">
-        {{ suit }}
+      <!-- Pip Area -->
+      <div class="absolute inset-0 mx-8 my-10" :class="suitColors[suit]">
+        <!-- Face Card - Large centered icon with text -->
+        <template v-if="isFaceCard">
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <Icon :name="suit as SuitName" :size="pipSize" />
+            <div class="mt-2 text-2xl font-display uppercase tracking-widest text-nott-black/80">
+              {{ rank === 11 ? 'Jack' : rank === 12 ? 'Queen' : 'King' }}
+            </div>
+          </div>
+        </template>
+        
+        <!-- Ace - Large centered icon -->
+        <template v-else-if="isAce">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <Icon :name="suit as SuitName" :size="pipSize" />
+          </div>
+        </template>
+        
+        <!-- Number Cards - Pip layout -->
+        <template v-else>
+          <Icon
+            v-for="(pip, i) in currentPipLayout"
+            :key="i"
+            :name="suit as SuitName"
+            :size="pipSize"
+            class="absolute -translate-x-1/2 -translate-y-1/2"
+            :class="{ 'rotate-180': pip.rotate }"
+            :style="{ left: `${pip.x}%`, top: `${pip.y}%` }"
+          />
+        </template>
       </div>
     </template>
   </div>

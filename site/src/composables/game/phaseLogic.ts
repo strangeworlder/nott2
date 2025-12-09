@@ -449,7 +449,7 @@ const handleJokerResolution = (success: boolean) => {
     isBlackJokerRemoved.value = true;
     shuffleThreatDeck();
     shuffleTrophyPile();
-    selectedJoker.value = null; // Clear selection
+    // NOTE: selectedJoker is cleared in startNextScene() to preserve it for FalloutPhase display
     triggerJokerEvent(); // Logic to proceed?
   }
 };

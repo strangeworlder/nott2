@@ -16,6 +16,7 @@ import {
   manualRank,
   manualSuit,
   middleStack,
+  removedFaceCardIds,
   removedFaceCards,
   reserveQueue,
   selectedCardId,
@@ -89,6 +90,11 @@ export const isRankAvailable = (rank: Rank) => {
 
 export const isSuitAvailable = (rank: Rank, suit: Suit) => {
   const cardId = `${rank}-${suit}`;
+
+  // 0. Permanently removed face cards (weakness discovery or Black Joker success)
+  if (rank > 10 && removedFaceCardIds.value.has(cardId)) {
+    return false;
+  }
 
   // 1. Directly Drawn?
   if (drawnCards.value.has(cardId)) return false;
