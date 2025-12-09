@@ -121,7 +121,8 @@ export function useLivePlay() {
   // We just return them below from the imports.
 
   const availableTrophyRanks = computed(() => {
-    return trophyPile.value.map((c) => c.rank).filter((r) => r > 0);
+    const ranks = trophyPile.value.map((c) => c.rank).filter((r) => r > 0);
+    return [...new Set(ranks)];
   });
 
   const hasFaceCardOnTable = computed(() => {

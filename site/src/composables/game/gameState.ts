@@ -223,9 +223,7 @@ export const targetDifficulty = computed(() => {
 });
 
 export const isSuccess = computed(() => {
-  if (selectedJoker.value === 'Red') return true;
-  if (selectedJoker.value === 'Black') return false;
-
+  // Both Jokers require a roll against Trophy Top difficulty (per NotT_2.md rules)
   if (!rollTotal.value) return false;
 
   const target = targetDifficulty.value;

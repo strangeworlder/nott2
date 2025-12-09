@@ -283,15 +283,6 @@ const isWeaknessJustFound = computed(() => {
                  <!-- Red Joker -->
                  <template v-if="selectedJoker === 'Red'">
                     <ProcessStep 
-                        v-if="isSuccess" 
-                        step="!" 
-                        variant="failure" 
-                        :title="content.jokers.red.victory.title"
-                    >
-                        <Text variant="body"><span v-html="content.jokers.red.victory.body"></span></Text>
-                    </ProcessStep>
-                    <ProcessStep 
-                        v-else 
                         step="!" 
                         variant="failure" 
                         :title="content.jokers.red.defeat.title"
@@ -307,15 +298,6 @@ const isWeaknessJustFound = computed(() => {
                         <Text variant="body"><span v-html="content.jokers.black.remove.body"></span></Text>
                     </ProcessStep>
                     <ProcessStep 
-                        v-if="isSuccess" 
-                        step="2" 
-                        variant="failure" 
-                        :title="content.jokers.black.success.title"
-                    >
-                        <Text variant="body"><span v-html="content.jokers.black.success.body"></span></Text>
-                    </ProcessStep>
-                    <ProcessStep 
-                        v-else 
                         step="2" 
                         variant="failure" 
                         :title="content.jokers.black.failure.title"

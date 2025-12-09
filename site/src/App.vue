@@ -25,7 +25,7 @@ const isDev = import.meta.env.DEV;
 </script>
 
 <template>
-  <div class="min-h-screen bg-nott-black p-4 md:p-8 font-body selection:bg-nott-red selection:text-white max-w-[960px] mx-auto">xx
+  <div class="min-h-screen bg-nott-black p-4 md:p-8 font-body selection:bg-nott-red selection:text-white max-w-[960px] mx-auto">
     <Header>
       <Navigation>
         <NavButton 

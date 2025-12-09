@@ -91,7 +91,10 @@ export const nextPhase = () => {
       break;
     case 'resolve-scene':
       applyGameStateUpdates();
-      currentPhase.value = 'fallout';
+      // Don't transition to fallout if the game was just won (e.g., Red Joker victory)
+      if (currentPhase.value !== 'win') {
+        currentPhase.value = 'fallout';
+      }
       break;
     case 'fallout':
       startNextScene();
@@ -275,6 +278,10 @@ export const startEndgame = () => {
     bottomStack.value[i] = 0;
   }
   reserveQueue.value = [];
+
+  // Clear unknown number cards (for random/non-classic mode)
+  unknownThreatCards.value[0] = 0;
+  unknownBottomStack.value[0] = 0;
   rollMain.value = null;
   rollEffort.value = null;
   isGenrePointUsed.value = false;
