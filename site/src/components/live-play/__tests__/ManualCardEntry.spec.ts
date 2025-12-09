@@ -30,19 +30,21 @@ describe('ManualCardEntry.vue', () => {
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('disables ranks based on isRankAvailable prop', async () => {
+  it('hides rank categories when no cards in that category are available', async () => {
+    // Ace (rank 1) is unavailable - the entire aces category should be hidden
     const isRankAvailableMock = vi.fn((rank: Rank) => rank !== 1);
     const wrapper = mount(ManualCardEntry, {
       props: createProps({ isRankAvailable: isRankAvailableMock }),
     });
 
-    // Find Ace button (Rank 1)
+    // Find buttons
     const buttons = wrapper.findAllComponents({ name: 'SelectionButton' });
     const aceButton = buttons.find((b) => b.text().trim() === 'A');
     const twoButton = buttons.find((b) => b.text().trim() === '2');
 
-    expect(aceButton?.props('disabled')).toBe(true);
-    expect(twoButton?.props('disabled')).toBe(false);
+    // Ace button should not exist (category hidden), Two button should exist
+    expect(aceButton).toBeUndefined();
+    expect(twoButton).toBeDefined();
 
     // Validation: verify mock was called
     expect(isRankAvailableMock).toHaveBeenCalledWith(1);

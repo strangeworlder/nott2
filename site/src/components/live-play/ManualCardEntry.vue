@@ -67,6 +67,18 @@ const {
 
 const isAddDisabled = computed(() => !isValidAddition.value);
 
+// Category availability - hide categories with no available cards
+const hasAvailableAces = computed(() => isRankAvailable.value(1));
+const hasAvailableNumberCards = computed(() =>
+  [2, 3, 4, 5, 6, 7, 8, 9, 10].some((r) => isRankAvailable.value(r as Rank))
+);
+const hasAvailableFaceCards = computed(() =>
+  [11, 12, 13].some((r) => isRankAvailable.value(r as Rank))
+);
+const hasAvailableJokers = computed(
+  () => areJokersAvailable.value && (!isBlackJokerRemoved.value || true) // Red joker is always available if jokers are available
+);
+
 const emit = defineEmits<{
   (e: 'update:manualRank', value: Rank): void;
   (e: 'update:manualSuit', value: Suit): void;
@@ -95,6 +107,11 @@ const ranks: { label: string; value: Rank }[] = [
   { label: 'K', value: 13 },
 ];
 
+// Split ranks into categories for display
+const aceRanks = ranks.filter((r) => r.value === 1);
+const numberRanks = ranks.filter((r) => r.value >= 2 && r.value <= 10);
+const faceRanks = ranks.filter((r) => r.value >= 11 && r.value <= 13);
+
 const suitIcons: Record<string, string> = {
   Spades: '♠',
   Hearts: '♥',
@@ -110,14 +127,44 @@ const suitIcons: Record<string, string> = {
         <div class="space-y-2">
           <Text variant="label">{{ content.title }}</Text>
           
-          <!-- Rank Grid -->
-          <div class="grid grid-cols-5 gap-2">
+          <!-- Aces -->
+          <div v-if="hasAvailableAces && !manualJoker" class="grid grid-cols-5 gap-2">
             <SelectionButton 
-              v-for="r in ranks" 
+              v-for="r in aceRanks" 
               :key="r.value"
               @click="emit('update:manualRank', r.value)"
               :selected="manualRank === r.value"
-              :disabled="!isRankAvailable(r.value) || !!manualJoker"
+              :disabled="!isRankAvailable(r.value)"
+              variant="square"
+              color="red"
+            >
+              {{ r.label }}
+            </SelectionButton>
+          </div>
+
+          <!-- Number Cards (2-10) -->
+          <div v-if="hasAvailableNumberCards && !manualJoker" class="grid grid-cols-5 gap-2">
+            <SelectionButton 
+              v-for="r in numberRanks" 
+              :key="r.value"
+              @click="emit('update:manualRank', r.value)"
+              :selected="manualRank === r.value"
+              :disabled="!isRankAvailable(r.value)"
+              variant="square"
+              color="red"
+            >
+              {{ r.label }}
+            </SelectionButton>
+          </div>
+
+          <!-- Face Cards (J, Q, K) -->
+          <div v-if="hasAvailableFaceCards && !manualJoker" class="grid grid-cols-5 gap-2">
+            <SelectionButton 
+              v-for="r in faceRanks" 
+              :key="r.value"
+              @click="emit('update:manualRank', r.value)"
+              :selected="manualRank === r.value"
+              :disabled="!isRankAvailable(r.value)"
               variant="square"
               color="red"
             >
@@ -141,8 +188,8 @@ const suitIcons: Record<string, string> = {
           </div>
         </div>
 
-        <Separator v-if="areJokersAvailable" />
-        <div v-if="areJokersAvailable">
+        <Separator v-if="hasAvailableJokers" />
+        <div v-if="hasAvailableJokers">
           <Text variant="label" class="mb-2">{{ content.joker.title }}</Text>
           <div class="flex gap-4 justify-center">
             <SelectionButton
@@ -154,9 +201,9 @@ const suitIcons: Record<string, string> = {
               {{ content.joker.red }}
             </SelectionButton>
             <SelectionButton
+              v-if="!isBlackJokerRemoved"
               @click="emit('update:manualJoker', 'Black')"
               :selected="manualJoker === 'Black'"
-              :disabled="isBlackJokerRemoved"
               color="default"
               class="flex-1"
             >

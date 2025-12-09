@@ -81,6 +81,15 @@ const isAptitudeAvailable = computed(() => {
 const aptitudeDeadText = computed(() => {
   return content.value.reminders.aptitude.deadMessage.replace('{suit}', selectedSuit.value || '');
 });
+
+const needsTrophySelection = computed(() => {
+  // Only applies for face cards/jokers when the trophy top is randomized
+  if (!isFaceCard.value && !selectedJoker.value) return false;
+  if (!isTrophyTopRandomized.value) return false;
+  if (availableTrophyRanks.value.length <= 1) return false;
+  // Trophy selection needed if no rank is selected yet
+  return !trophyTop.value?.rank;
+});
 </script>
 
 <template>
@@ -147,7 +156,16 @@ const aptitudeDeadText = computed(() => {
            </div>
         </div>
 
-      <div class="grid md:grid-cols-2 gap-8">
+      <!-- Dice Blocked Message -->
+      <div v-if="needsTrophySelection" class="text-center p-4 border border-nott-red/50 rounded bg-nott-red/10 animate-fade-in">
+        <Text variant="label" color="red" class="mb-2">Identify Trophy Card First</Text>
+        <Text variant="caption" color="muted">Select the card on top of the Trophy Pile above before entering dice results.</Text>
+      </div>
+
+      <div 
+        class="grid md:grid-cols-2 gap-8 transition-opacity duration-300"
+        :class="needsTrophySelection ? 'opacity-30 pointer-events-none' : ''"
+      >
         <!-- d10 Input -->
         <DieSelector 
           :sides="10"
