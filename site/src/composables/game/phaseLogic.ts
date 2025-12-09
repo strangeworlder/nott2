@@ -21,6 +21,7 @@ import {
   drawnCards,
   faceCardReserves,
   falloutCard,
+  identifiedCards,
   isBlackJokerRemoved,
   isEndgame,
   isEndgameInitialized,
@@ -35,6 +36,7 @@ import {
   manualRank,
   manualSuit,
   middleStack,
+  pendingActSetups,
   playerGenrePoints,
   removedFaceCards,
   reserveQueue,
@@ -168,10 +170,11 @@ export const fullReset = () => {
     12: 0,
     13: 0,
   };
-  unknownThreatCards.value = 0;
-  unknownBottomStack.value = 0;
+  unknownThreatCards.value = { 0: 0, 11: 0, 12: 0, 13: 0 };
+  unknownBottomStack.value = { 0: 0, 11: 0, 12: 0, 13: 0 };
   unknownReserveCards.value = 0;
   knownBottomStackCards.value = new Set();
+  identifiedCards.value = new Set();
 
   faceCardReserves.value = { 11: 3, 12: 4, 13: 4 };
   lastAddedFaceCardRank.value = null;
@@ -201,15 +204,19 @@ export const fullReset = () => {
   strikesToAssign.value = 0;
   tableGenrePoints.value = 13;
   playerGenrePoints.value = 0;
+  pendingActSetups.value = [];
 };
+
 export const startGame = () => {
   const config = getPlaysetConfig(selectedPlayset.value);
 
   if (config.rulesModules?.classicSetup) {
-    unknownThreatCards.value = 0;
+    unknownThreatCards.value = { 0: 0, 11: 0, 12: 0, 13: 0 };
+    unknownBottomStack.value = { 0: 0, 11: 0, 12: 0, 13: 0 };
     unknownReserveCards.value = 0;
   } else {
-    unknownThreatCards.value = 8;
+    unknownThreatCards.value = { 0: 8, 11: 1, 12: 0, 13: 0 };
+    // Initializes Middle Stack to empty (We rely on unknownThreatCards for the initial draw now)
     middleStack.value = {
       1: 0,
       2: 0,
@@ -221,7 +228,7 @@ export const startGame = () => {
       8: 0,
       9: 0,
       10: 0,
-      11: 1,
+      11: 0,
       12: 0,
       13: 0,
     };
@@ -255,6 +262,8 @@ export const startGame = () => {
 export const startAct3 = () => {
   currentAct.value = 3;
   isEndgame.value = true;
+  // Queue the Act 3 screen
+  pendingActSetups.value.push('3');
   currentPhase.value = 'act-setup';
 };
 
@@ -278,7 +287,25 @@ export const startEndgame = () => {
 
 export const triggerJokerEvent = () => {
   jokersAdded.value = true;
+  // Queue the Jokers screen
+  pendingActSetups.value.push('jokers');
   currentPhase.value = 'act-setup';
+};
+
+// Consume the first item from the pending act setups queue
+export const consumePendingActSetup = (): string | null => {
+  if (pendingActSetups.value.length === 0) return null;
+  return pendingActSetups.value.shift() || null;
+};
+
+// Peek at the first item without consuming
+export const peekPendingActSetup = (): string | null => {
+  return pendingActSetups.value[0] || null;
+};
+
+// Check if there are more pending act setups
+export const hasMorePendingActSetups = (): boolean => {
+  return pendingActSetups.value.length > 0;
 };
 
 // --------------------------------------------------------------------------------
@@ -447,11 +474,12 @@ const handleFaceResolution = (success: boolean) => {
     // 1. Weakness Check (Global)
     // "First time defeating a suit -> Remove it."
     if (!weaknessesFound.value.includes(activeCard.value!.suit)) {
-      // weaknessesFound.value.push(activeCard.value!.suit); <--- REMOVED
-      // finding is deferred to startNextScene to allow UI to say "Found!"
-      // Remove (Do not return to deck)
+      // Remove from visibleCards so shuffleThreatDeck doesn't return it to deck
+      visibleCards.value = visibleCards.value.filter((c) => c.id !== activeCard.value!.id);
     } else {
-      updateDeckState(activeCard.value!.rank, activeCard.value!.suit, 'return');
+      // Repeat Weakness: Return to Deck.
+      // We do NOTHING here. The card remains in visibleCards.
+      // shuffleThreatDeck() will iterate visibleCards and return them to the deck.
     }
 
     // 2. Add Reserve (The Killer Learns)
@@ -466,7 +494,10 @@ const handleFaceResolution = (success: boolean) => {
     // Gain a Strike (in addition to any Breaking Point strike)
     strikesToAssign.value++;
 
-    updateDeckState(activeCard.value!.rank, activeCard.value!.suit, 'return');
+    // Return to Deck:
+    // We do NOTHING here. The card remains in visibleCards.
+    // shuffleThreatDeck() will iterate visibleCards and return them to the deck.
+
     addFaceCardFromReserve('King');
 
     if (currentAct.value === 1) {
@@ -475,6 +506,7 @@ const handleFaceResolution = (success: boolean) => {
   }
 
   // Always shuffle after Face Card
+  // This will return all remaining visible cards (the current Face Card) to the deck.
   shuffleThreatDeck();
   shuffleTrophyPile();
 };
@@ -497,6 +529,28 @@ export const startNextScene = () => {
     // But simpler: Check our logic criteria again.
     // If Success + Not in Weakness -> We didn't return it.
     weaknessesFound.value.push(falloutCard.value.suit);
+
+    // Check if all 4 weaknesses found -> Trigger Act 3 AND Finale (add Jokers)
+    if (weaknessesFound.value.length >= 4) {
+      // Only start Act 3 if not already in progress
+      if (currentAct.value < 3) {
+        currentAct.value = 3;
+        isEndgame.value = true;
+        // Queue Act 3 screen
+        pendingActSetups.value.push('3');
+      }
+      // Add Jokers if not already added
+      if (!jokersAdded.value) {
+        jokersAdded.value = true;
+        // Queue Jokers screen
+        pendingActSetups.value.push('jokers');
+      }
+      // Go to act-setup phase to show the queued screens
+      if (pendingActSetups.value.length > 0) {
+        currentPhase.value = 'act-setup';
+        return; // Exit early to show act setup screens first
+      }
+    }
   }
 
   if (selectedCardId.value) {

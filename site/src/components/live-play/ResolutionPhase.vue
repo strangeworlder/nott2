@@ -68,7 +68,11 @@ onMounted(() => {
   rollEffort.value = null;
 });
 
+const isAptitudeUnavailableDueToJoker = computed(() => !!selectedJoker.value);
+
 const isAptitudeAvailable = computed(() => {
+  // No aptitude advantage against a Joker
+  if (selectedJoker.value) return false;
   if (!selectedSuit.value) return true;
   const char = characters.value.find((c) => c.id === selectedSuit.value);
   return char ? !char.isDead : true;
@@ -184,6 +188,10 @@ const aptitudeDeadText = computed(() => {
             <Text variant="label" color="red" class="mb-1">{{ content.reminders.aptitude.title }}</Text>
             <div v-if="isAptitudeAvailable">
                 <Text variant="caption" color="muted">{{ content.reminders.aptitude.description }}</Text>
+            </div>
+            <div v-else-if="isAptitudeUnavailableDueToJoker">
+                <Text variant="caption" color="red" class="font-bold uppercase line-through decoration-2">{{ content.reminders.aptitude.unavailable }}</Text>
+                <Text variant="caption" color="muted">{{ content.reminders.aptitude.jokerMessage }}</Text>
             </div>
             <div v-else>
                 <Text variant="caption" color="red" class="font-bold uppercase line-through decoration-2">{{ content.reminders.aptitude.unavailable }}</Text>

@@ -26,7 +26,8 @@
             "title": "Aptitude?",
             "description": "If Suit matches Aptitude you can shift the effort die result up or down by one.",
             "unavailable": "UNAVAILABLE",
-            "deadMessage": "The {suit} character is dead."
+            "deadMessage": "The {suit} character is dead.",
+            "jokerMessage": "No-one gets an edge for the final confrontation."
         }
     },
     "results": {

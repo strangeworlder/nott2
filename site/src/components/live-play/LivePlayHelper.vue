@@ -22,6 +22,7 @@ import Button from '../Button.vue';
 import LivePlayHeader from '../LivePlayHeader.vue';
 import ActSetup from './ActSetup.vue';
 import ConversationAndStakesPhase from './ConversationAndStakesPhase.vue';
+import DebugPanel from './DebugPanel.vue';
 import FalloutPhase from './FalloutPhase.vue';
 import GameSetup from './GameSetup.vue';
 import ResolutionPhase from './ResolutionPhase.vue';
@@ -39,15 +40,6 @@ const {
   startEndgame,
   startGame,
   debugMode,
-  middleStack,
-  bottomStack,
-  reserveQueue,
-  trophyPile,
-  weaknessesFound,
-  strikes,
-  getRankName,
-  tableGenrePoints,
-  playerGenrePoints,
   trophyTop,
   isTrophyTopRandomized,
   cardName,
@@ -59,9 +51,12 @@ const {
   jokersAdded,
   act3Countdown,
   acesRemaining,
+  pendingActSetups,
+  consumePendingActSetup,
+  hasMorePendingActSetups,
 } = useLivePlay();
 
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 
 watch(
   currentPhase,
@@ -72,6 +67,40 @@ watch(
 );
 
 const isDev = import.meta.env.DEV;
+
+// Computed: Get the current setup key from the pending queue, or fall back to act number
+const currentSetupKey = computed(() => {
+  // If there are pending act setups in the queue, use the first one
+  if (pendingActSetups.value.length > 0) {
+    return pendingActSetups.value[0];
+  }
+  // Fall back to legacy behavior: check jokersAdded flag
+  if (jokersAdded.value) {
+    return 'jokers';
+  }
+  return undefined;
+});
+
+// Handler for when user proceeds from act setup
+const handleActSetupNext = () => {
+  // Consume the current setup from the queue
+  consumePendingActSetup();
+
+  // If there are more pending setups, stay on act-setup phase
+  if (hasMorePendingActSetups()) {
+    // Phase is already 'act-setup', so just let the component re-render with new key
+    return;
+  }
+
+  // No more pending setups, proceed normally
+  if (isEndgame.value) {
+    startEndgame();
+  } else if (currentAct.value === 1) {
+    startGame();
+  } else {
+    nextPhase();
+  }
+};
 </script>
 
 <template>
@@ -108,8 +137,8 @@ const isDev = import.meta.env.DEV;
     <ActSetup 
       v-if="currentPhase === 'act-setup'"
       :act="currentAct"
-      :setup-key="jokersAdded ? 'jokers' : undefined"
-      @next="isEndgame ? startEndgame() : (currentAct === 1 ? startGame() : nextPhase())"
+      :setup-key="currentSetupKey"
+      @next="handleActSetupNext"
     />
 
     <!-- Phase: Scene Setup (Draw Threat) -->
@@ -168,48 +197,7 @@ const isDev = import.meta.env.DEV;
       </Button>
     </div>
 
-    <!-- Debug Panel -->
-    <div v-if="isDev && debugMode" class="fixed bottom-0 left-0 right-0 bg-black/90 text-xs text-nott-green p-2 font-mono border-t border-nott-green/30 overflow-x-auto z-50">
-      <div class="flex gap-8 whitespace-nowrap">
-        <div>
-          <strong class="text-white">Phase:</strong> {{ currentPhase }}
-        </div>
-        <div>
-          <strong class="text-white">Middle Stack ({{ Object.values(middleStack).reduce((a, b) => a + b, 0) }}):</strong>
-          <span v-for="(count, rank) in middleStack" :key="rank" class="ml-2">
-            {{ rank }}:{{ count }}
-          </span>
-        </div>
-        <div>
-          <strong class="text-white">Bottom Stack ({{ Object.values(bottomStack).reduce((a, b) => a + b, 0) }}):</strong>
-          <span v-for="(count, rank) in bottomStack" :key="rank" class="ml-2">
-            <span v-if="count > 0">{{ rank }}:{{ count }}</span>
-          </span>
-        </div>
-        <div>
-          <strong class="text-white">Reserve Queue ({{ reserveQueue.length }}):</strong>
-          {{ reserveQueue.join(', ') }}
-        </div>
-        <div>
-          <strong class="text-white">Trophy Pile ({{ trophyPile.length }}):</strong>
-          <span v-for="card in trophyPile" :key="card.id" class="ml-1">
-            {{ getRankName(card.rank) }}{{ card.suit[0] }}
-          </span>
-        </div>
-        <div>
-          <strong class="text-white">Weaknesses:</strong>
-          {{ weaknessesFound.join(', ') }}
-        </div>
-        <div>
-          <strong class="text-white">Strikes:</strong> {{ strikes }}
-        </div>
-        <div>
-          <strong class="text-white">Table GP:</strong> {{ tableGenrePoints }}
-        </div>
-        <div>
-          <strong class="text-white">Player GP:</strong> {{ playerGenrePoints }}
-        </div>
-      </div>
-    </div>
+    <!-- Debug Panel Component -->
+    <DebugPanel v-if="isDev && debugMode" />
   </div>
 </template>

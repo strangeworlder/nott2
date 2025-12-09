@@ -134,12 +134,17 @@ export const removedFaceCards = ref<Record<number, number>>({
   13: 0,
 });
 
-export const unknownThreatCards = ref(0);
-export const unknownBottomStack = ref(0);
+export const unknownThreatCards = ref<Record<number, number>>({ 0: 0, 11: 0, 12: 0, 13: 0 });
+export const unknownBottomStack = ref<Record<number, number>>({ 0: 0, 11: 0, 12: 0, 13: 0 });
 export const unknownReserveCards = ref(0);
 
 // Known cards at bottom of deck (by card ID like "10-Hearts") - can't be drawn until shuffle
+// Known cards at bottom of deck (by card ID like "10-Hearts") - can't be drawn until shuffle
 export const knownBottomStackCards = ref<Set<string>>(new Set());
+
+// Persistent set of all cards that have been revealed/identified in this game.
+// Used to track which specific suits are "in play" vs which are generic "Unknowns".
+export const identifiedCards = ref<Set<string>>(new Set());
 
 // Resolution State
 // selectedJoker is defined above due to hoisting needs for activeCard
@@ -156,6 +161,10 @@ export const isBlackJokerRemoved = ref(false);
 export const jokersAdded = ref(false);
 export const cardsAddedFromReserve = ref(0);
 
+// Queue for pending act setup screens (e.g., 'act3', 'jokers')
+// Used when multiple triggers happen simultaneously
+export const pendingActSetups = ref<string[]>([]);
+
 // Computed
 export const areJokersAvailable = computed(() => {
   return jokersAdded.value;
@@ -167,7 +176,8 @@ export const isGameOver = computed(() => {
 
 export const isMiddleStackEmpty = computed(() => {
   return (
-    Object.values(middleStack.value).every((count) => count === 0) && unknownThreatCards.value === 0
+    Object.values(middleStack.value).every((count) => count === 0) &&
+    Object.values(unknownThreatCards.value).every((count) => count === 0)
   );
 });
 
@@ -186,6 +196,11 @@ export const effortResult = computed(() => {
 
 // Helper for Difficulty
 const getDifficulty = () => {
+  // Jokers use the trophy top value as their difficulty (base only, no modifier)
+  if (selectedJoker.value) {
+    return !trophyTop.value || (trophyTop.value.rank as number) === 0 ? 0 : trophyTop.value.rank;
+  }
+
   const rank = activeCard.value?.rank;
   if (!rank) return 0;
 
