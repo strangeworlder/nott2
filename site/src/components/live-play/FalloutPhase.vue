@@ -34,7 +34,7 @@ const {
   isSuccess,
   cardName,
   isFaceCard,
-  isFirstTime,
+  weaknessesFound,
   selectedSuit,
   effortResult,
   startNextScene,
@@ -48,6 +48,8 @@ const {
   selectedRank,
   pendingFalloutRank,
   strikesToAssign,
+  drawnCards,
+  activeCard,
 } = useLivePlay();
 
 const emit = defineEmits<(e: 'back') => void>();
@@ -135,6 +137,15 @@ const growText = computed(() => {
 const isBreakingPoint = computed(() => {
   return effortResult.value?.level === 4;
 });
+
+const isWeaknessJustFound = computed(() => {
+  // Logic: Becomes "Found" if it's NOT in the known weaknesses array yet.
+  // Since we defer adding it until startNextScene, a new weakness will NOT be in the array here.
+  if (!activeCard.value) return false;
+  return !weaknessesFound.value.includes(activeCard.value.suit);
+});
+// Note: strikesToAssign check is a safeguard, though success usually means 0 strikes unless breaking point.
+// Actually just checking drawnCards is enough.
 </script>
 
 <template>
@@ -219,7 +230,7 @@ const isBreakingPoint = computed(() => {
                   <!-- Face Card Success -->
                   <template v-else>
                       <ProcessStep step="1" variant="success" :title="content.standard.success.weakness.title">
-                          <Card v-if="isFirstTime" variant="success" :interactive="false" class="p-1 mt-1">
+                          <Card v-if="isWeaknessJustFound" variant="success" :interactive="false" class="p-1 mt-1">
                             <Text variant="body" color="success" class="mb-1"><strong><span v-html="content.standard.success.weakness.found.title"></span></strong></Text>
                             <Text variant="caption" class="block mb-2"><span v-html="weaknessFoundCaption"></span></Text>
                             <Text variant="body"><strong><span v-html="content.standard.success.weakness.found.action"></span></strong></Text>

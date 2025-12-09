@@ -7,6 +7,7 @@ import {
   currentAct,
   drawnCards,
   faceCardReserves,
+  identifiedCards,
   isTrophyTopRandomized,
   knownBottomStackCards,
   type LivePlayCard,
@@ -62,40 +63,88 @@ export const isRankAvailable = (rank: Rank) => {
   if (rank === 1) return false;
 
   // Generic Suit Availability Check:
-  // If all 4 suits for this rank are already drawn, this rank is exhausted.
   const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds'];
+  // If we have ALREADY drawn all 4 suits, then rank is exhausted.
+  // BUT what if we haven't drawn them, but they are physically in the deck?
+  // Drawn check is minimal.
   const availableSuits = suits.filter((s) => !drawnCards.value.has(`${rank}-${s}`));
   if (availableSuits.length === 0) return false;
 
-  // Standard Check (Classic)
-  if (middleStack.value[rank] > 0 || bottomStack.value[rank] > 0) return true;
+  // Standard Logic: Check if PHYSICAL copies exist in deck.
+  // 1. Middle Stack (Active/Known Counts)
+  if ((middleStack.value[rank] || 0) > 0) return true;
+  // 2. Bottom Stack (Known Counts)
+  if ((bottomStack.value[rank] || 0) > 0) return true;
 
-  // Randomized Setup Check:
-  if (unknownThreatCards.value > 0 || unknownBottomStack.value > 0) {
-    // Restriction 1: Face Cards in Act 1 (Only Jack allowed)
-    if (!isClassicMode() && currentAct.value === 1) {
-      if (rank === 12 || rank === 13) return false;
+  // 3. Unknown Threat Cards (Rank Specific)
+  if ((unknownThreatCards.value[rank] || 0) > 0) return true;
+  if (rank <= 10 && (unknownThreatCards.value[0] || 0) > 0) return true; // Generic Number Cards
 
-      // Restriction 2: Forced Jack Check (Last unknown card)
-      const totalUnknown = unknownThreatCards.value + unknownBottomStack.value;
-      if (totalUnknown === 1) {
-        const hasSeenJack = Array.from(drawnCards.value).some((id) => id.startsWith('11-'));
-        if (!hasSeenJack) {
-          return rank === 11;
-        }
-      }
-    }
-    return true;
-  }
+  // 4. Unknown Bottom Stack
+  if ((unknownBottomStack.value[rank] || 0) > 0) return true;
+  if (rank <= 10 && (unknownBottomStack.value[0] || 0) > 0) return true;
 
   return false;
 };
 
 export const isSuitAvailable = (rank: Rank, suit: Suit) => {
   const cardId = `${rank}-${suit}`;
+
+  // 1. Directly Drawn?
   if (drawnCards.value.has(cardId)) return false;
+
+  // 2. At Bottom of Deck (Known)?
   if (knownBottomStackCards.value.has(cardId)) return false;
-  return true;
+
+  // 3. Explicitly Identified and In-Play?
+  // If it is in `identifiedCards` (and passed drawn checks above), it implies it is in Middle Stack (Active).
+  if (identifiedCards.value.has(cardId)) {
+    // It is identified. It is not drawn. It is not at bottom.
+    // So it MUST be in the active deck (Middle Stack).
+    // So it is available.
+    return true;
+  }
+
+  // 4. If NOT Identified, is it available as an Unknown instance?
+  // We need to check if there are "Unidentified Copies" of this Rank in the deck (middle or bottom).
+
+  // Middle Stack Counts for Rank:
+  const middleCount = middleStack.value[rank] || 0;
+  // Bottom Stack Counts for Rank:
+  const bottomCount = bottomStack.value[rank] || 0;
+  // Unknown Threat Counts:
+  const unknownSpecific = unknownThreatCards.value[rank] || 0;
+  const unknownGeneric = rank <= 10 ? unknownThreatCards.value[0] || 0 : 0;
+  // Unknown Bottom Stack Counts:
+  const unknownBottomSpecific = unknownBottomStack.value[rank] || 0;
+  const unknownBottomGeneric = rank <= 10 ? unknownBottomStack.value[0] || 0 : 0;
+
+  const totalActiveCount =
+    middleCount +
+    bottomCount +
+    unknownSpecific +
+    unknownGeneric +
+    unknownBottomSpecific +
+    unknownBottomGeneric;
+
+  // Now, how many of these are "taken" by Identified cards?
+  // Identified cards that are currently in the Active Deck (not drawn, not bottom).
+  let activeIdentifiedCount = 0;
+
+  // Iterate known identified cards for this rank
+  const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds'];
+  for (const s of suits) {
+    const id = `${rank}-${s}`;
+    if (identifiedCards.value.has(id)) {
+      if (!drawnCards.value.has(id) && !knownBottomStackCards.value.has(id)) {
+        activeIdentifiedCount++;
+      }
+    }
+  }
+
+  // Open Slots = Total Active - Active Identified
+  // If Open Slots > 0, then a non-identified suit (like this one) is valid.
+  return totalActiveCount - activeIdentifiedCount > 0;
 };
 
 export const getNextValidCard = (): { rank: Rank; suit: Suit } => {
@@ -106,29 +155,40 @@ export const getNextValidCard = (): { rank: Rank; suit: Suit } => {
     if (availableSuit) return { rank: 1, suit: availableSuit };
   }
 
-  // 2. Check Middle Stack (Active Deck)
+  // 2. Check Middle Stack (Known Ranks)
   const ranks = Object.keys(middleStack.value)
     .map(Number)
     .sort((a, b) => a - b);
 
   for (const rank of ranks) {
     if (middleStack.value[rank] > 0) {
+      // ... logic to pick suit?
+      // Just pick first available suit.
       const suits: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds'];
-      const availableSuit = suits.find((s) => !drawnCards.value.has(`${rank}-${s}`));
+      const availableSuit = suits.find((s) => isSuitAvailable(rank as Rank, s));
       if (availableSuit) return { rank: rank as Rank, suit: availableSuit };
     }
   }
 
-  // 3. Check Unknown Cards (Random Mode)
-  if (unknownThreatCards.value > 0) {
-    // Forced Jack Check
-    if (!isClassicMode() && currentAct.value === 1 && unknownThreatCards.value === 1) {
-      const hasSeenJack = Array.from(drawnCards.value).some((id) => id.startsWith('11-'));
-      if (!hasSeenJack) {
-        return { rank: 11, suit: 'Spades' };
-      }
+  // 3. Check Unknowns (Specific Rank) - e.g. Jack in Random Mode
+  const unknownRanks = [11, 12, 13];
+  for (const r of unknownRanks) {
+    if ((unknownThreatCards.value[r] || 0) > 0) {
+      // We have an Unknown Jack.
+      // Return Generic or specific?
+      // If no identified Jack exists, we return generic?
+      // But SceneSetup usually wants a specific card to display/edit?
+      // Or usually ManualCardEntry handles it.
+      // If we return {11, Unknown}, SceneSetup defaults to Spades/2?
+      // User requirement implies we know it's a Jack.
+      // Let's return { 11, 'Spades' } as default, Manual Entry will act.
+      return { rank: r as Rank, suit: 'Spades' }; // Simplified
     }
-    return { rank: 0 as unknown as Rank, suit: 'Unknown' };
+  }
+
+  // 4. Check Generic Unknowns (Number Cards)
+  if ((unknownThreatCards.value[0] || 0) > 0) {
+    return { rank: 2, suit: 'Spades' }; // Default low card
   }
 
   // Fallback
@@ -148,12 +208,24 @@ export const updateDeckState = (rank: Rank, suit: Suit, action: 'draw' | 'add' |
     if (rank === 1) {
       acesRemaining.value--;
     } else if (suit === 'Unknown') {
-      if (unknownThreatCards.value > 0) {
-        unknownThreatCards.value--;
-      } else if (unknownBottomStack.value > 0) {
-        unknownBottomStack.value--;
+      // Drawing an Unknown Card (Generic or Face)
+      if (rank > 10) {
+        // Unknown Face Card
+        if ((unknownThreatCards.value[rank] || 0) > 0) {
+          unknownThreatCards.value[rank]--;
+        } else if ((unknownBottomStack.value[rank] || 0) > 0) {
+          unknownBottomStack.value[rank]--;
+        }
+      } else {
+        // Unknown Number Card (Generic)
+        if ((unknownThreatCards.value[0] || 0) > 0) {
+          unknownThreatCards.value[0]--;
+        } else if ((unknownBottomStack.value[0] || 0) > 0) {
+          unknownBottomStack.value[0]--;
+        }
       }
     } else {
+      // Drawing a Known Card
       if (middleStack.value[rank] > 0) {
         middleStack.value[rank]--;
       } else if (bottomStack.value[rank] > 0) {
@@ -169,8 +241,13 @@ export const updateDeckState = (rank: Rank, suit: Suit, action: 'draw' | 'add' |
       bottomStack.value[rank]++;
       knownBottomStackCards.value.add(cardId);
     } else if (suit === 'Unknown') {
-      unknownBottomStack.value++;
-      // Unknown cards are not tracked by specific ID
+      // Returning an Unknown card to the bottom.
+      // It becomes Unknown Bottom Stack.
+      if (rank > 10) {
+        unknownBottomStack.value[rank] = (unknownBottomStack.value[rank] || 0) + 1;
+      } else {
+        unknownBottomStack.value[0] = (unknownBottomStack.value[0] || 0) + 1;
+      }
     } else {
       bottomStack.value[rank]++;
       knownBottomStackCards.value.add(cardId);
@@ -190,9 +267,10 @@ export const addNextReserve = (): boolean => {
       cardsAddedFromReserve.value++;
     }
   } else {
+    // Random Mode Reserve: Generic
     if (unknownReserveCards.value > 0) {
       unknownReserveCards.value--;
-      unknownBottomStack.value++;
+      unknownBottomStack.value[0] = (unknownBottomStack.value[0] || 0) + 1;
       cardsAddedFromReserve.value++;
     }
   }
@@ -220,8 +298,13 @@ export const shuffleThreatDeck = () => {
   }
 
   // Merge Unknown Bottom Stack into Unknown Threat
-  unknownThreatCards.value += unknownBottomStack.value;
-  unknownBottomStack.value = 0;
+  // Iterate keys 0, 11, 12, 13 (or just generic copy)
+  const keys = [0, 11, 12, 13];
+  for (const k of keys) {
+    unknownThreatCards.value[k] =
+      (unknownThreatCards.value[k] || 0) + (unknownBottomStack.value[k] || 0);
+    unknownBottomStack.value[k] = 0;
+  }
 
   // Clear known bottom stack cards (they're now mixed into middle)
   knownBottomStackCards.value.clear();
@@ -270,62 +353,80 @@ export const revealHiddenTen = () => {
   }
 };
 
-export const addFaceCardToThreatDeck = (targetRank: number, effort: number | null = null) => {
-  // Helper to try adding a specific rank
+export const addFaceCardFromReserve = (targetType: 'Jack' | 'Queen' | 'King'): boolean => {
   const tryAdd = (rank: number): boolean => {
+    // Check specific reserve first
     if (faceCardReserves.value[rank as 11 | 12 | 13] > 0) {
       faceCardReserves.value[rank as 11 | 12 | 13]--;
+      lastAddedFaceCardRank.value = rank;
 
       if (isClassicMode()) {
-        updateDeckState(rank as Rank, 'Spades', 'add');
+        updateDeckState(rank as Rank, 'Spades', 'add'); // Classic adds Spades by default or random? Logic implies Spades is placeholder for "A Jack" until drawn?
+        // Actually updateDeckState 'add' just increments bottomStack count. Suit allows 'Spades' as generic container if we don't track suits in stack.
+        // Wait, standard Face Cards have no suit in reserve?
+        // Game says "Add a random Jack".
+        // updateDeckState 'add' increases bottomStack[rank].
+        // When we draw, we check available suits.
+        // So yes, generic add is fine.
       } else {
-        unknownBottomStack.value++;
+        unknownBottomStack.value[rank] = (unknownBottomStack.value[rank] || 0) + 1;
       }
-
-      lastAddedFaceCardRank.value = rank;
       return true;
     }
-    // Check recycling bin (removedFaceCards)
-    if (removedFaceCards.value[rank] > 0) {
-      removedFaceCards.value[rank]--;
 
-      if (isClassicMode()) {
-        updateDeckState(rank as Rank, 'Spades', 'add');
-      } else {
-        unknownBottomStack.value++;
-      }
-
-      lastAddedFaceCardRank.value = rank;
-      return true;
-    }
+    // Check recycling bin (removedFaceCards) - The prompt implies reserves, but usually games cycle.
+    // "If Reserve empty: Jack->Queen->King->None"
+    // It does NOT say "Reshuffle graveyard".
+    // So if reserve is empty, we look for HIGHER tier.
     return false;
   };
 
-  if (targetRank === 11) {
-    // Jack
-    if (tryAdd(11)) return;
-    if (tryAdd(12)) return;
-    if (tryAdd(13)) return; // Fallback to King?
-    // Actually if both Jack and Queen are out, adding a Jack just fails?
-    // Logic: "(If Reserve empty: Jack->Queen->King->None)"
-    tryAdd(13);
-    // Wait, if Jack empty, try Queen. If Queen empty, try King.
-  } else if (targetRank === 12) {
-    // Queen
-    if (tryAdd(12)) return;
-    if (tryAdd(13)) return;
-    tryAdd(11);
-  } else if (targetRank === 13) {
-    // King
-    if (tryAdd(13)) return;
-    if (effort && effort <= 2) {
-      if (tryAdd(11)) return;
-      tryAdd(12);
-    } else {
-      if (tryAdd(12)) return;
-      tryAdd(11);
-    }
+  // Logic:
+  // 1-2 (Controlled/Pushing) -> Add Jack.
+  // 3-4 (Overexertion/Breaking) -> Add Queen.
+  // Failure -> Add King.
+
+  // Fallback Chain:
+  // Jack -> Queen -> King -> None
+  // Queen -> King -> Jack -> None
+  // King -> Queen -> Jack -> None ?
+  // Rules Rule 254:
+  // "No Jacks? Add a Queen instead."
+  // "No Queens? Add a King instead."
+  // "No Kings? Add a Jack or Queen instead."
+
+  if (targetType === 'Jack') {
+    if (tryAdd(11)) return true;
+    if (tryAdd(12)) return true;
+    if (tryAdd(13)) return true;
+  } else if (targetType === 'Queen') {
+    if (tryAdd(12)) return true;
+    if (tryAdd(13)) return true;
+    if (tryAdd(11)) return true;
+  } else if (targetType === 'King') {
+    if (tryAdd(13)) return true;
+    if (tryAdd(12)) return true;
+    if (tryAdd(11)) return true;
   }
+
+  return false;
+};
+
+// Deprecated or can comprise:
+export const addFaceCardToThreatDeck = (targetRank: number, effort: number | null = null) => {
+  // Mapping old calls to new Logic if needed, or just remove.
+  // We will update phaseLogic to use addFaceCardFromReserve directly.
+  // Keeping this stub or removing it?
+  // Let's replace it with the new one entirely if no other callers exist.
+  // Only usage likely in phaseLogic.
+  let type: 'Jack' | 'Queen' | 'King' = 'Jack';
+  if (targetRank === 12) type = 'Queen';
+  if (targetRank === 13) type = 'King';
+
+  // Effort overload override?
+  if (effort && effort >= 3) type = 'Queen';
+
+  addFaceCardFromReserve(type);
 };
 
 export const removeHighestFaceCardFromDeck = () => {
@@ -347,13 +448,22 @@ export const removeHighestFaceCardFromDeck = () => {
     if (check(12)) return;
     if (check(11)) return;
   } else {
-    if (unknownThreatCards.value > 0) {
-      unknownThreatCards.value--;
-      removedFaceCards.value[13]++;
-    } else if (unknownBottomStack.value > 0) {
-      unknownBottomStack.value--;
-      removedFaceCards.value[13]++;
-    }
+    const checkUnknown = (r: number) => {
+      if ((unknownThreatCards.value[r] || 0) > 0) {
+        unknownThreatCards.value[r]--;
+        removedFaceCards.value[r]++;
+        return true;
+      }
+      if ((unknownBottomStack.value[r] || 0) > 0) {
+        unknownBottomStack.value[r]--;
+        removedFaceCards.value[r]++;
+        return true;
+      }
+      return false;
+    };
+    if (checkUnknown(13)) return;
+    if (checkUnknown(12)) return;
+    if (checkUnknown(11)) return;
   }
 };
 
@@ -380,12 +490,7 @@ export const addVisibleCard = () => {
 
     if (visibleUnknown !== -1) {
       // Replace the unknown card logic
-      const oldCard = visibleCards.value[visibleUnknown];
-
-      // Validate availability
-      if (acesRemaining.value > 0 && manualRank.value !== 1) {
-        // Warning? But let's allow corrections.
-      }
+      // We assume the "Unknown" count was already decremented when it was drawn.
 
       visibleCards.value[visibleUnknown] = {
         id: `${manualRank.value}-${manualSuit.value}`,
@@ -396,21 +501,12 @@ export const addVisibleCard = () => {
         type: manualRank.value > 10 ? 'face' : 'number',
       };
 
+      // Mark as Identified
+      identifiedCards.value.add(visibleCards.value[visibleUnknown].id);
+
       // Update Deck State (Identity Revealed)
-      // It was "Drawn" as Unknown. Now we know it is X.
-      // updateDeckState(0, 'Unknown', 'return') // ? No, we already deducted Unknown count when drawn.
       // We just need to mark it as drawn in `drawnCards`.
-      // And potentially sync checks.
-      updateDeckState(manualRank.value, manualSuit.value, 'draw'); // Determine that X is drawn.
-      // But we already deducted 'Unknown' count.
-      // Do we need to refund 'Unknown'?
-      // `updateDeckState` for 'Unknown' (draw) reduced `unknownThreatCards`.
-      // Now we say "It's actually 7-Spades".
-      // `updateDeckState` for 7-Spades (draw) will reduce `middleStack[7]` if Classic.
-      // But if Random, `middleStack` is 0s. So it just adds to `drawnCards`.
-      // So for Random, this is correct.
-      // For Classic, we shouldn't have had an Unknown card in the first place?
-      // "Unknown" only happens in Random mode (or bug).
+      updateDeckState(manualRank.value, manualSuit.value, 'draw');
     } else {
       // Adding a completely new card (e.g. Draw)
       const newCard: LivePlayCard = {
@@ -423,11 +519,37 @@ export const addVisibleCard = () => {
       };
       visibleCards.value.push(newCard);
 
+      // Check if already identified BEFORE marking (for correct decrement logic below)
+      const isAlreadyIdentified = identifiedCards.value.has(newCard.id);
+
+      // Mark as Identified
+      identifiedCards.value.add(newCard.id);
+
       // Update Deck State
       if (!isClassicMode() && manualRank.value !== 1) {
-        // We are drawing from "Unknown" stack conceptually
-        if (unknownThreatCards.value > 0) {
-          unknownThreatCards.value--;
+        // Random Mode: Check if this specific card was returned to deck previously
+
+        if (isAlreadyIdentified) {
+          // This card was returned to the deck previously and is now in middleStack
+          if (middleStack.value[manualRank.value] > 0) {
+            middleStack.value[manualRank.value]--;
+          } else if (bottomStack.value[manualRank.value] > 0) {
+            bottomStack.value[manualRank.value]--;
+          }
+        } else if (manualRank.value > 10) {
+          // Face Card from Unknown pool
+          if ((unknownThreatCards.value[manualRank.value] || 0) > 0) {
+            unknownThreatCards.value[manualRank.value]--;
+          } else if ((unknownBottomStack.value[manualRank.value] || 0) > 0) {
+            unknownBottomStack.value[manualRank.value]--;
+          }
+        } else {
+          // Number Card (Generic Rank 0 pool usually)
+          if ((unknownThreatCards.value[0] || 0) > 0) {
+            unknownThreatCards.value[0]--;
+          } else if ((unknownBottomStack.value[0] || 0) > 0) {
+            unknownBottomStack.value[0]--;
+          }
         }
         drawnCards.value.add(newCard.id);
       } else {

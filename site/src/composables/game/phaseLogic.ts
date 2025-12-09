@@ -2,7 +2,7 @@ import { getPlaysetConfig } from '../../utils/contentLoader';
 import type { Suit } from '../useGameEngine';
 import {
   addCardToTrophyPile,
-  addFaceCardToThreatDeck,
+  addFaceCardFromReserve,
   addNextReserve,
   getNextValidCard,
   removeHighestFaceCardFromDeck,
@@ -20,10 +20,11 @@ import {
   currentPhase,
   drawnCards,
   faceCardReserves,
+  falloutCard,
+  identifiedCards,
   isBlackJokerRemoved,
   isEndgame,
   isEndgameInitialized,
-  isFaceCard,
   isGameWon,
   isGenrePointAwarded,
   isGenrePointUsed,
@@ -35,6 +36,7 @@ import {
   manualRank,
   manualSuit,
   middleStack,
+  pendingActSetups,
   playerGenrePoints,
   removedFaceCards,
   reserveQueue,
@@ -168,10 +170,11 @@ export const fullReset = () => {
     12: 0,
     13: 0,
   };
-  unknownThreatCards.value = 0;
-  unknownBottomStack.value = 0;
+  unknownThreatCards.value = { 0: 0, 11: 0, 12: 0, 13: 0 };
+  unknownBottomStack.value = { 0: 0, 11: 0, 12: 0, 13: 0 };
   unknownReserveCards.value = 0;
   knownBottomStackCards.value = new Set();
+  identifiedCards.value = new Set();
 
   faceCardReserves.value = { 11: 3, 12: 4, 13: 4 };
   lastAddedFaceCardRank.value = null;
@@ -201,15 +204,19 @@ export const fullReset = () => {
   strikesToAssign.value = 0;
   tableGenrePoints.value = 13;
   playerGenrePoints.value = 0;
+  pendingActSetups.value = [];
 };
+
 export const startGame = () => {
   const config = getPlaysetConfig(selectedPlayset.value);
 
   if (config.rulesModules?.classicSetup) {
-    unknownThreatCards.value = 0;
+    unknownThreatCards.value = { 0: 0, 11: 0, 12: 0, 13: 0 };
+    unknownBottomStack.value = { 0: 0, 11: 0, 12: 0, 13: 0 };
     unknownReserveCards.value = 0;
   } else {
-    unknownThreatCards.value = 8;
+    unknownThreatCards.value = { 0: 8, 11: 1, 12: 0, 13: 0 };
+    // Initializes Middle Stack to empty (We rely on unknownThreatCards for the initial draw now)
     middleStack.value = {
       1: 0,
       2: 0,
@@ -221,7 +228,7 @@ export const startGame = () => {
       8: 0,
       9: 0,
       10: 0,
-      11: 1,
+      11: 0,
       12: 0,
       13: 0,
     };
@@ -255,6 +262,8 @@ export const startGame = () => {
 export const startAct3 = () => {
   currentAct.value = 3;
   isEndgame.value = true;
+  // Queue the Act 3 screen
+  pendingActSetups.value.push('3');
   currentPhase.value = 'act-setup';
 };
 
@@ -278,7 +287,25 @@ export const startEndgame = () => {
 
 export const triggerJokerEvent = () => {
   jokersAdded.value = true;
+  // Queue the Jokers screen
+  pendingActSetups.value.push('jokers');
   currentPhase.value = 'act-setup';
+};
+
+// Consume the first item from the pending act setups queue
+export const consumePendingActSetup = (): string | null => {
+  if (pendingActSetups.value.length === 0) return null;
+  return pendingActSetups.value.shift() || null;
+};
+
+// Peek at the first item without consuming
+export const peekPendingActSetup = (): string | null => {
+  return pendingActSetups.value[0] || null;
+};
+
+// Check if there are more pending act setups
+export const hasMorePendingActSetups = (): boolean => {
+  return pendingActSetups.value.length > 0;
 };
 
 // --------------------------------------------------------------------------------
@@ -356,80 +383,132 @@ export const toggleGenrePointAward = () => {
 };
 
 export const applyGameStateUpdates = () => {
+  // Save activeCard for Fallout usage (persistence through shuffle)
+  falloutCard.value = activeCard.value;
+
   // Breaking Point Logic
   if (rollEffort.value === 4) {
     strikesToAssign.value++;
   }
 
-  if (isSuccess.value) {
-    // Joker Success
-    if (selectedJoker.value === 'Red') {
+  const success = isSuccess.value;
+
+  if (selectedJoker.value) {
+    handleJokerResolution(success);
+  } else if (activeCard.value) {
+    // 1. Ace
+    if (activeCard.value.rank === 1) {
+      handleAceResolution(success);
+    }
+    // 2. Number Card (2-10)
+    else if (activeCard.value.type === 'number' && activeCard.value.rank <= 10) {
+      handleNumberCardResolution(success);
+    }
+    // 3. Face Card
+    else {
+      handleFaceResolution(success);
+    }
+  }
+
+  // 4. Act 3 Trigger (Global Rule: If we add enough cards)
+  if (!isEndgame.value && activeCard.value?.rank !== 1 && !selectedJoker.value) {
+    // Logic from old code: "if !isEndgame && rank != 1"
+    // Added "!selectedJoker" because Jokers don't draw from reserve typically?
+    // Actually standard rules say reserve adds on success/failure for Number cards.
+    // Handlers will call addNextReserve() if appropriate.
+    // But we need to check if Act 3 triggered AFTER that.
+    if (cardsAddedFromReserve.value >= 13 && currentAct.value < 3) {
+      startAct3();
+    }
+  }
+};
+
+const handleJokerResolution = (success: boolean) => {
+  if (selectedJoker.value === 'Red') {
+    if (success) {
       isGameWon.value = true;
       currentPhase.value = 'win';
-      return;
     }
-    if (selectedJoker.value === 'Black') {
+    // Failure = Death (Handled by UI/Rules text usually? Or do we kill character here?)
+    // "Character Dies." -> assignStrike(active)?
+    // Let's leave UI to handle narrative unless we want to force kill.
+  } else if (selectedJoker.value === 'Black') {
+    if (success) {
       removeHighestFaceCardFromDeck();
-      selectedJoker.value = null;
-      triggerJokerEvent();
-      return;
+    } else {
+      // Failure: Add King
+      addFaceCardFromReserve('King');
+    }
+    isBlackJokerRemoved.value = true;
+    shuffleThreatDeck();
+    shuffleTrophyPile();
+    selectedJoker.value = null; // Clear selection
+    triggerJokerEvent(); // Logic to proceed?
+  }
+};
+
+const handleAceResolution = (success: boolean) => {
+  if (success) {
+    // Remove from game. Do NOT add to Trophy Pile.
+    // It stays in 'drawnCards' (so effectively removed from deck).
+    // Decrement Aces Remaining?
+    // acesRemaining is decremented on DRAW. So we are good.
+  } else {
+    // Failure: Return to bottom
+    updateDeckState(activeCard.value!.rank, activeCard.value!.suit, 'return');
+  }
+};
+
+const handleNumberCardResolution = (success: boolean) => {
+  if (success) {
+    addCardToTrophyPile(activeCard.value!);
+    addNextReserve();
+  } else {
+    updateDeckState(activeCard.value!.rank, activeCard.value!.suit, 'return');
+    addNextReserve();
+  }
+};
+
+const handleFaceResolution = (success: boolean) => {
+  if (success) {
+    // 1. Weakness Check (Global)
+    // "First time defeating a suit -> Remove it."
+    if (!weaknessesFound.value.includes(activeCard.value!.suit)) {
+      // Remove from visibleCards so shuffleThreatDeck doesn't return it to deck
+      visibleCards.value = visibleCards.value.filter((c) => c.id !== activeCard.value!.id);
+    } else {
+      // Repeat Weakness: Return to Deck.
+      // We do NOTHING here. The card remains in visibleCards.
+      // shuffleThreatDeck() will iterate visibleCards and return them to the deck.
     }
 
-    // Standard Success
-    if (activeCard.value) {
-      // Number Cards (Rank 2-10) and Aces (Rank 1) go to Trophy Pile on success
-      if (activeCard.value.type === 'number' || activeCard.value.rank === 1) {
-        addCardToTrophyPile(activeCard.value);
-      } else {
-        // Face Cards are returned (if not defeated/weakness logic handles removal separately?
-        // Wait, "First time defeating a suit removes it (Weakness Found). If already defeated, it stays in deck."
-        // Face Card Logic handles deck updates internally via `removeHighestFaceCardFromDeck`?
-        // No, that's for Black Joker success.
-        // Standard Face Card Success: "1-2 adds a Jack... First time defeating a suit removes it."
-        // This logic is missing here properly?
-        // Actually `applyGameStateUpdates` doesn't seem to implement the Face Card Success logic fully here?
-        // Ah, let's look at `isFaceCard.value` check below in Failure block.
-        // But this block is `if (isSuccess.value)`.
-        // For Face Cards success:
-        // We need to implement Face Card Success logic here too if it's missing.
-        // But for now, fixing Number Cards.
-        updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return');
-      }
-    }
-
-    if (!isEndgame.value && activeCard.value?.rank !== 1) {
-      const act3Triggered = addNextReserve();
-      if (act3Triggered) startAct3();
+    // 2. Add Reserve (The Killer Learns)
+    const effortLevel = rollEffort.value || 0;
+    if (effortLevel >= 3) {
+      addFaceCardFromReserve('Queen');
+    } else {
+      addFaceCardFromReserve('Jack');
     }
   } else {
     // Failure
-    if (selectedJoker.value) {
-      shuffleThreatDeck();
-      shuffleTrophyPile();
-      return;
-    }
+    // Gain a Strike (in addition to any Breaking Point strike)
+    strikesToAssign.value++;
 
-    if (isFaceCard.value) {
-      strikesToAssign.value++;
-      addFaceCardToThreatDeck(13, rollEffort.value); // Add King
+    // Return to Deck:
+    // We do NOTHING here. The card remains in visibleCards.
+    // shuffleThreatDeck() will iterate visibleCards and return them to the deck.
 
-      if (currentAct.value === 1) {
-        currentAct.value = 2;
-      }
+    addFaceCardFromReserve('King');
 
-      shuffleThreatDeck();
-      shuffleTrophyPile();
-    } else {
-      if (activeCard.value && activeCard.value.rank !== 1) {
-        updateDeckState(activeCard.value.rank, activeCard.value.suit, 'return');
-      }
-
-      if (!isEndgame.value && activeCard.value?.rank !== 1) {
-        const act3Triggered = addNextReserve();
-        if (act3Triggered) startAct3();
-      }
+    if (currentAct.value === 1) {
+      currentAct.value = 2;
     }
   }
+
+  // Always shuffle after Face Card
+  // This will return all remaining visible cards (the current Face Card) to the deck.
+  shuffleThreatDeck();
+  shuffleTrophyPile();
 };
 
 export const startNextScene = () => {
@@ -437,12 +516,50 @@ export const startNextScene = () => {
 
   if (isGameWon.value) return;
 
+  // Deferred Weakness Update
+  // If we had a successful Face Card resolution that WASN'T returned to deck, it's a new weakness.
+  if (
+    falloutCard.value &&
+    (falloutCard.value.type === 'face' || falloutCard.value.rank > 10) &&
+    !weaknessesFound.value.includes(falloutCard.value.suit) &&
+    isSuccess.value
+  ) {
+    // Double check: Did we return it?
+    // If we returned it, it's not in drawnCards (or is in bottomStack logic).
+    // But simpler: Check our logic criteria again.
+    // If Success + Not in Weakness -> We didn't return it.
+    weaknessesFound.value.push(falloutCard.value.suit);
+
+    // Check if all 4 weaknesses found -> Trigger Act 3 AND Finale (add Jokers)
+    if (weaknessesFound.value.length >= 4) {
+      // Only start Act 3 if not already in progress
+      if (currentAct.value < 3) {
+        currentAct.value = 3;
+        isEndgame.value = true;
+        // Queue Act 3 screen
+        pendingActSetups.value.push('3');
+      }
+      // Add Jokers if not already added
+      if (!jokersAdded.value) {
+        jokersAdded.value = true;
+        // Queue Jokers screen
+        pendingActSetups.value.push('jokers');
+      }
+      // Go to act-setup phase to show the queued screens
+      if (pendingActSetups.value.length > 0) {
+        currentPhase.value = 'act-setup';
+        return; // Exit early to show act setup screens first
+      }
+    }
+  }
+
   if (selectedCardId.value) {
     visibleCards.value = visibleCards.value.filter((c) => c.id !== selectedCardId.value);
   }
 
   // Reset Scene State
   selectedCardId.value = null;
+  falloutCard.value = null; // Clear persistence
   selectedJoker.value = null;
   manualJoker.value = null;
   sacrificeConfirmed.value = false;

@@ -344,6 +344,7 @@ export interface ResolutionPhaseContent {
       description: string;
       unavailable: string;
       deadMessage: string;
+      jokerMessage: string;
     };
   };
   results: {

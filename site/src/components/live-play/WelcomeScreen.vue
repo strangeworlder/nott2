@@ -22,7 +22,7 @@ import { getWelcomeScreenContent } from '../../utils/contentLoader';
 import ActionFooter from '../ActionFooter.vue';
 import Card from '../Card.vue';
 import Separator from '../defaults/Separator.vue';
-import Icon from '../Icon.vue';
+import Icon, { type IconName } from '../Icon.vue';
 import Text from '../Text.vue';
 
 defineEmits(['next']);
