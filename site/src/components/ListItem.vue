@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * ListItem (Wrapper)
+ *
+ * Philosophical:
+ * An individual element within a collection. It represents a single unit of data
+ * or a specific option within a larger set.
+ *
+ * Technical:
+ * Dynamically loads the `ListItem` component based on the `selectedPlayset`.
+ * Falls back to `defaults/ListItem.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

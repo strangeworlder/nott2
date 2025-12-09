@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * Toggle (Wrapper)
+ *
+ * Philosophical:
+ * A switch of state. Toggles represent an immediate change in the world's configuration,
+ * providing instant feedback on the activation or deactivation of a feature.
+ *
+ * Technical:
+ * Dynamically loads the `Toggle` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Toggle.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

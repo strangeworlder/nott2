@@ -1,3 +1,20 @@
+/**
+ * phaseLogic
+ *
+ * Philosophical:
+ * Time in the game is not linear; it is chopped into phases of tension and release. This module conduct
+ * the orchestra of the game loop. It decides when the curtain rises on a new act, when the players
+ * must face the consequences of their actions, and when the story reaches its inevitable conclusion.
+ * It manages the transitions that give the game its rhythm.
+ *
+ * Technical:
+ * Contains the finite state machine transitional logic for the game.
+ * Key responsibilities:
+ * - Managing phase transitions (`nextPhase`, `prevPhase`, `reset`)
+ * - Handling major game events (`startGame`, `startAct3`, `startEndgame`)
+ * - Integrating resolution outcomes into the game state (`applyGameStateUpdates`)
+ * - Managing complex event chains like "Fallout" and "Final Girl" triggers.
+ */
 import { getPlaysetConfig } from '../../utils/contentLoader';
 import type { Suit } from '../useGameEngine';
 import {
@@ -31,6 +48,7 @@ import {
   isSuccess,
   jokersAdded,
   knownBottomStackCards,
+  type LivePlayPhase,
   lastAddedFaceCardRank,
   manualJoker,
   manualRank,
@@ -92,7 +110,8 @@ export const nextPhase = () => {
     case 'resolve-scene':
       applyGameStateUpdates();
       // Don't transition to fallout if the game was just won (e.g., Red Joker victory)
-      if (currentPhase.value !== 'win') {
+      // applyGameStateUpdates may have changed the phase to 'win'
+      if ((currentPhase.value as LivePlayPhase) !== 'win') {
         currentPhase.value = 'fallout';
       }
       break;

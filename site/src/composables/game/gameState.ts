@@ -1,3 +1,21 @@
+/**
+ * gameState
+ *
+ * Philosophical:
+ * This module is the "memory" of the game. It holds the absolute truth of the game's current state,
+ * independent of any transient UI concerns. It tracks the physical reality of the cards, the
+ * metaphysical status of the characters, and the narrative progression of the acts. It is the
+ * single source of truth that all other systems rely upon.
+ *
+ * Technical:
+ * Contains the global reactive state (Refs and Computeds) for the game.
+ * State is implemented as a singleton to ensure consistency across the application.
+ * Major state categories:
+ * - Core Data (Visible cards, selection)
+ * - Game Stats (Strikes, characters, acts)
+ * - Deck State (Middle/Bottom stacks, known/unknown cards)
+ * - Resolution State (Dice rolls, outcomes)
+ */
 import { computed, ref } from 'vue';
 import { effortScale } from '../../data/rules';
 import type { Card as GameCard, Rank, Suit } from '../useGameEngine';

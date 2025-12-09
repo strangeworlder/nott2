@@ -88,6 +88,23 @@ import {
   triggerJokerEvent,
 } from './game/phaseLogic';
 
+/**
+ * useLivePlay
+ *
+ * Philosophical:
+ * This composable serves as the central nervous system for the "Night of the Thirteenth" live play interface.
+ * It aggregates state and logic from specialized sub-modules (deckLogic, gameState, phaseLogic) to provide
+ * a unified API for the UI components. By decoupling the UI from the gritty details of state management,
+ * we ensure that the "Live Play" experience remains fluid and responsive, allowing the user (Keeper) to
+ * focus on the narrative rather than the bookkeeping.
+ *
+ * Technical:
+ * A facade composable that re-exports reactive state and methods from the underlying game engine modules.
+ * It also computes some derived state specific to the live play UI layer (e.g., `isWelcomePhase`, `cardName`).
+ *
+ * Usage:
+ * const { activeCard, drawCard } = useLivePlay();
+ */
 export function useLivePlay() {
   // Derived State (local to useLivePlay or just forwarded?)
   // Most computed props are now forwarded from gameState or defined there to share them.

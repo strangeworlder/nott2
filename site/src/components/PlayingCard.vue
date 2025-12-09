@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * PlayingCard (Wrapper)
+ *
+ * Philosophical:
+ * The atom of chance. It represents the fundamental unit of the game's mechanics,
+ * holding both a numerical value (rank) and a thematic alignment (suit).
+ *
+ * Technical:
+ * Dynamically loads the `PlayingCard` component based on the `selectedPlayset`.
+ * Falls back to `defaults/PlayingCard.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

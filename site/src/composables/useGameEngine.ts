@@ -1,3 +1,18 @@
+/**
+ * useGameEngine
+ *
+ * Philosophical:
+ * A blueprint of the game's mechanics in their purest form. While `useLivePlay` handles the
+ * complexities of a guided user interface, `useGameEngine` represents the core mathematical model
+ * of "Night of the Thirteenth". It is the Platonic ideal of the game loop, unburdened by
+ * the necessities of visual presentation.
+ *
+ * Technical:
+ * A standalone composable that implements the core game rules and state.
+ * Currently serves as a reference implementation and type definition source for the standard game.
+ * Note: The active UI primarily uses `useLivePlay` and its sub-modules, which may have diverged
+ * or expanded upon the logic here to support robust UI interactions (undo, manual overrides, etc.).
+ */
 import { ref } from 'vue';
 
 export type Suit = 'Spades' | 'Hearts' | 'Clubs' | 'Diamonds' | 'Unknown';

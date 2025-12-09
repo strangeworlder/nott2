@@ -1,3 +1,21 @@
+/**
+ * deckLogic
+ *
+ * Philosophical:
+ * The deck is the engine of entropy in the game. This module manages the complex lifecycle of cards:
+ * effectively "shuffling", "drawing", and "returning" them within the constraints of a digital medium
+ * that must simulate a physical deck. It handles the probability waves of "Unknown" cards collapsing
+ * into specific identities, and the maintenance of the various stacks (Threat Deck, Trophy Pile).
+ *
+ * Technical:
+ * Contains pure functions and state mutators for manipulating the card decks.
+ * Key responsibilities:
+ * - Checking card availability (`isRankAvailable`, `isSuitAvailable`)
+ * - Determining the next valid card to draw (`getNextValidCard`)
+ * - Updating deck state (`updateDeckState`: draw/add/return)
+ * - Shuffling and resetting stacks
+ * - Handling face card logic and Act 3 triggers
+ */
 import { getPlaysetConfig } from '../../utils/contentLoader';
 import type { Rank, Suit } from '../useGameEngine';
 import {

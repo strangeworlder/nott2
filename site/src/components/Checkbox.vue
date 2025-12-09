@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * Checkbox (Wrapper)
+ *
+ * Philosophical:
+ * A confirmation of truth. The checkbox represents a binary state of being,
+ * allowing the user to affirm or deny specific conditions.
+ *
+ * Technical:
+ * Dynamically loads the `Checkbox` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Checkbox.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

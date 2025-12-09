@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * ProcessStep (Wrapper)
+ *
+ * Philosophical:
+ * A milestone in the journey. Visualizes progress through a multi-stage procedure,
+ * giving the user a sense of history and future direction.
+ *
+ * Technical:
+ * Dynamically loads the `ProcessStep` component based on the `selectedPlayset`.
+ * Falls back to `defaults/ProcessStep.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

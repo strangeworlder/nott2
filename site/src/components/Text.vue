@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * Text (Wrapper)
+ *
+ * Philosophical:
+ * The prose of the interface. Displays content that is meant to be read, usually
+ * with specific typographic weighting (heading, body, caption) to imply hierarchy.
+ *
+ * Technical:
+ * Dynamically loads the `Text` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Text.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

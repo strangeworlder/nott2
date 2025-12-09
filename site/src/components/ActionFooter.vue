@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * ActionFooter (Wrapper)
+ *
+ * Philosophical:
+ * The point of commitment. This component houses the primary actions that drive the
+ * game forward, ensuring they are presented with appropriate gravity.
+ *
+ * Technical:
+ * Dynamically loads the `ActionFooter` component based on the `selectedPlayset`.
+ * Falls back to `defaults/ActionFooter.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

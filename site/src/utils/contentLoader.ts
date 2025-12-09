@@ -1,3 +1,15 @@
+/**
+ * contentLoader
+ *
+ * Philosophical:
+ * The Scribe. This module bridges the static world of JSON data and the dynamic
+ * reality of the application. It respects the "Playset" as the supreme context,
+ * merging default truths with specific overrides to create a coherent narrative.
+ *
+ * Technical:
+ * Utilities for loading, merging, and typing JSON content from the `data` directory.
+ * Implements the "Default + Override" pattern for playset configuration.
+ */
 import { marked } from 'marked';
 
 // Load all JSON data files

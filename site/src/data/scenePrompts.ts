@@ -1,3 +1,14 @@
+/**
+ * scenePrompts
+ *
+ * Philosophical:
+ * The Oracle. It interprets the fall of the cards (Rank and Suit) into
+ * narrative inspiration, guiding the active player's imagination.
+ *
+ * Technical:
+ * Utilities for retrieving and parsing scene prompts based on card data.
+ * Handles "First Time" vs "Recurring" face card logic.
+ */
 import { marked } from 'marked';
 import type { Suit } from '../composables/useGameEngine';
 import promptsData from './default/prompts.json';

@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * Header (Wrapper)
+ *
+ * Philosophical:
+ * The banner of context. It establishes the space we are in, grounding the user
+ * within the application's structure.
+ *
+ * Technical:
+ * Dynamically loads the `Header` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Header.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

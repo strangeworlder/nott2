@@ -1,3 +1,14 @@
+/**
+ * theme
+ *
+ * Philosophical:
+ * The Painter. It applies the colors and fonts of the current Playset to the
+ * canvas of the DOM, ensuring that the visual atmosphere matches the narrative tone.
+ *
+ * Technical:
+ * Dynamically updates CSS variables on the `:root` element based on the loaded
+ * playset configuration.
+ */
 import { getCssContent } from './contentLoader';
 
 function getRgbFromColor(color: string): string | null {

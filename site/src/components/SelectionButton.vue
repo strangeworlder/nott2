@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * SelectionButton (Wrapper)
+ *
+ * Philosophical:
+ * A specific choice. Often used in grids or lists where the user must distinguish
+ * between multiple parallel options (e.g., choosing a suit).
+ *
+ * Technical:
+ * Dynamically loads the `SelectionButton` component based on the `selectedPlayset`.
+ * Falls back to `defaults/SelectionButton.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';
