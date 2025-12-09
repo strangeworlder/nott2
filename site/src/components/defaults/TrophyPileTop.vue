@@ -15,6 +15,7 @@
  * - isRandomized (boolean): Whether the trophy pile is randomized (unknown top card).
  */
 
+import { computed } from 'vue';
 import { getLivePlayHeaderContent } from '../../utils/contentLoader';
 import Text from '../Text.vue';
 
@@ -26,14 +27,39 @@ interface Card {
 interface Props {
   trophyTop?: Card | null;
   isRandomized?: boolean;
+  availableTrophyRanks?: number[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   trophyTop: null,
   isRandomized: false,
+  availableTrophyRanks: () => [],
 });
 
 const content = getLivePlayHeaderContent();
+
+const resolvedRank = computed(() => {
+  // If randomized but only one option exists, we know the rank
+  if (props.isRandomized && props.availableTrophyRanks.length === 1) {
+    return props.availableTrophyRanks[0];
+  }
+  return props.trophyTop?.rank;
+});
+
+const isUnknown = computed(() => {
+  if (props.trophyTop?.rank === 0) return true;
+
+  if (props.isRandomized) {
+    // If we have available ranks data
+    if (props.availableTrophyRanks.length > 0) {
+      return props.availableTrophyRanks.length > 1;
+    }
+    // Fallback to original logic if no ranks data
+    return props.trophyTop?.suit !== 'Unknown';
+  }
+
+  return false;
+});
 </script>
 
 <template>
@@ -41,8 +67,9 @@ const content = getLivePlayHeaderContent();
     <Text variant="micro" color="muted">{{ content.trophyPile.label }}</Text>
     <div class="flex items-center justify-end gap-2">
       <Text variant="h3" color="white" leading="none">
-        {{ (trophyTop.rank === 0 || (isRandomized && trophyTop.suit !== 'Unknown')) ? content.trophyPile.unknown : trophyTop.rank }}
+        {{ isUnknown ? content.trophyPile.unknown : resolvedRank }}
       </Text>
     </div>
+
   </div>
 </template>

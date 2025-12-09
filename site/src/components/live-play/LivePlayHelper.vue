@@ -54,6 +54,7 @@ const {
   pendingActSetups,
   consumePendingActSetup,
   hasMorePendingActSetups,
+  availableTrophyRanks,
 } = useLivePlay();
 
 import { computed, watch } from 'vue';
@@ -119,6 +120,7 @@ const handleActSetupNext = () => {
       :full-reset="fullReset"
       :act3-countdown="act3Countdown"
       :aces-remaining="acesRemaining"
+      :available-trophy-ranks="availableTrophyRanks"
     />
 
     <!-- Phase: Welcome Screen -->
