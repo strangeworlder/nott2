@@ -25,6 +25,7 @@ import { computed, onMounted } from 'vue';
 import { useLivePlay } from '../../composables/useLivePlay';
 import { getResolutionPhaseContent } from '../../utils/contentLoader';
 import ActionFooter from '../ActionFooter.vue';
+import Button from '../Button.vue';
 import Card from '../Card.vue';
 import DieSelector from '../DieSelector.vue';
 import IngressText from '../IngressText.vue';
@@ -67,6 +68,13 @@ onMounted(() => {
   rollEffort.value = null;
   rollEffort.value = null;
 });
+
+const rollDice = () => {
+  // d10 produces 0-9
+  rollMain.value = Math.floor(Math.random() * 10);
+  // d4 produces 1-4
+  rollEffort.value = Math.floor(Math.random() * 4) + 1;
+};
 
 const isAptitudeUnavailableDueToJoker = computed(() => !!selectedJoker.value);
 
@@ -180,6 +188,19 @@ const needsTrophySelection = computed(() => {
           :label="content.dice.effort"
           color="red"
         />
+      </div>
+
+      <!-- Roll Dice Button -->
+      <div 
+        class="flex justify-center transition-opacity duration-300"
+        :class="needsTrophySelection ? 'opacity-30 pointer-events-none' : ''"
+      >
+        <Button
+          variant="secondary"
+          @click="rollDice"
+        >
+          🎲 Roll Dice
+        </Button>
       </div>
 
         <!-- Reminders -->

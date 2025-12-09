@@ -87,8 +87,9 @@ const classes = computed(() => {
     </template>
 
     <template v-else-if="name === 'Clubs'">
-      <path d="M12 2C9 2 7 4 7 6c0 1.5 1 2.5 2 3-2 0-3 2-3 4 0 3 3 4 6 4s6-1 6-4c0-2-1-4-3-4 1-.5 2-1.5 2-3 0-2-2-4-5-4z" fill="currentColor"></path>
-      <path d="M12 17v5" stroke="currentColor"></path>
+      <!-- Skull shape with cutouts -->
+      <path d="M12 2C7.5 2 4 5.5 4 9.5c0 2.5 1.5 4.5 3 6v2.5h2v-1h6v1h2v-2.5c1.5-1.5 3-3.5 3-6C20 5.5 16.5 2 12 2z M10.3 9a1.8 1.8 0 1 1-3.6 0 1.8 1.8 0 0 1 3.6 0z M17.3 9a1.8 1.8 0 1 1-3.6 0 1.8 1.8 0 0 1 3.6 0z M12 11.5l-1.2 2.5h2.4L12 11.5z" fill="currentColor" stroke="none" fill-rule="evenodd"></path>
+
     </template>
 
     <template v-else-if="name === 'Diamonds'">

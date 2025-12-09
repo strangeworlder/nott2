@@ -146,6 +146,10 @@ export const knownBottomStackCards = ref<Set<string>>(new Set());
 // Used to track which specific suits are "in play" vs which are generic "Unknowns".
 export const identifiedCards = ref<Set<string>>(new Set());
 
+// Permanently removed face cards by their full ID (e.g., "11-Clubs")
+// These cards have been removed via weakness discovery or Black Joker success
+export const removedFaceCardIds = ref<Set<string>>(new Set());
+
 // Resolution State
 // selectedJoker is defined above due to hoisting needs for activeCard
 export const sacrificeConfirmed = ref(false);
