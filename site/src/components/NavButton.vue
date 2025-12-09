@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * NavButton (Wrapper)
+ *
+ * Philosophical:
+ * A directional choice. Unlike a standard button which acts, a NavButton moves.
+ * It changes the user's perspective or location within the application.
+ *
+ * Technical:
+ * Dynamically loads the `NavButton` component based on the `selectedPlayset`.
+ * Falls back to `defaults/NavButton.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

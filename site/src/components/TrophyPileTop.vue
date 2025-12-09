@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * TrophyPileTop (Wrapper)
+ *
+ * Philosophical:
+ * The prize of victory. It displays the most recently conquered challenge, symbolizing
+ * the player's momentum and the resources they have accumulated.
+ *
+ * Technical:
+ * Dynamically loads the `TrophyPileTop` component based on the `selectedPlayset`.
+ * Falls back to `defaults/TrophyPileTop.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

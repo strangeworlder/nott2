@@ -1,3 +1,13 @@
+/**
+ * rules
+ *
+ * Philosophical:
+ * The Codex. A static repository of the game's laws. It holds the definitions
+ * of "Effort", "Strikes", and "Roles" that govern the players' interactions.
+ *
+ * Technical:
+ * Exports static data structures defining the core rules text and mechanics explanations.
+ */
 import defaultRulesData from './default/rules.json';
 
 export interface Effort {

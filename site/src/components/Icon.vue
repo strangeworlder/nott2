@@ -2,6 +2,17 @@
 /**
  * Icon (Wrapper)
  *
+ * Philosophical:
+ * Visual shorthand. Icons reduce cognitive load by providing immediate semantic cues
+ * that transcend language, allowing for denser and more intuitive interfaces.
+ *
+ * Technical:
+ * Dynamically loads the `Icon` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Icon.vue`.
+ */
+/**
+ * Icon (Wrapper)
+ *
  * Technical:
  * A wrapper component that dynamically loads either the default Icon implementation
  * or a playset-specific override. This enables visual customization per playset

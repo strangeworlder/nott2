@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * List (Wrapper)
+ *
+ * Philosophical:
+ * A collection of items. Lists organize related information, allowing the user
+ * to scan and process groups of data efficiently.
+ *
+ * Technical:
+ * Dynamically loads the `List` component based on the `selectedPlayset`.
+ * Falls back to `defaults/List.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

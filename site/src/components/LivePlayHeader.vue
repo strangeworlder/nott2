@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * LivePlayHeader (Wrapper)
+ *
+ * Philosophical:
+ * The dashboard of the current moment. This specific header relates directly to the
+ * active session, providing immediate access to game-level status and controls.
+ *
+ * Technical:
+ * Dynamically loads the `LivePlayHeader` component based on the `selectedPlayset`.
+ * Falls back to `defaults/LivePlayHeader.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * IngressText (Wrapper)
+ *
+ * Philosophical:
+ * The narrative voice. Ingress text bridges the gap between the interface and the
+ * player's imagination, providing flavor and context that plain controls cannot.
+ *
+ * Technical:
+ * Dynamically loads the `IngressText` component based on the `selectedPlayset`.
+ * Falls back to `defaults/IngressText.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

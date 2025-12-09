@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * CurrentThreat (Wrapper)
+ *
+ * Philosophical:
+ * The face of danger. This component visualizes the immediate antagonist or challenge,
+ * keeping the stakes visible and present.
+ *
+ * Technical:
+ * Dynamically loads the `CurrentThreat` component based on the `selectedPlayset`.
+ * Falls back to `defaults/CurrentThreat.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

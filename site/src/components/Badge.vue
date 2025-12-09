@@ -2,6 +2,17 @@
 /**
  * Badge (Wrapper)
  *
+ * Philosophical:
+ * A mark of distinction or status. Badges highlight key attributes or states,
+ * drawing the eye to critical information without overwhelming the narrative.
+ *
+ * Technical:
+ * Dynamically loads the `Badge` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Badge.vue`.
+ */
+/**
+ * Badge (Wrapper)
+ *
  * Technical:
  * A wrapper component that dynamically loads either the default Badge implementation
  * or a playset-specific override. This enables visual customization per playset

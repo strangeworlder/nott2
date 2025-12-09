@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * Card (Wrapper)
+ *
+ * Philosophical:
+ * A container of knowledge. This wrapper ensures that information is presented
+ * in the visual language appropriate for the current story (Playset).
+ *
+ * Technical:
+ * Dynamically loads the `Card` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Card.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

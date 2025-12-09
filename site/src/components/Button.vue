@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * Button (Wrapper)
+ *
+ * Philosophical:
+ * The Gateway to Action. This component represents the abstract concept of a button,
+ * delegating the concrete physical manifestation to the active reality (Playset).
+ *
+ * Technical:
+ * Dynamically loads the `Button` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Button.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';

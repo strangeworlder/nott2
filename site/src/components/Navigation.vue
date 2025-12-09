@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * Navigation (Wrapper)
+ *
+ * Philosophical:
+ * The map of the world. It provides orientation and transit options, changing its
+ * appearance to match the thematic landscape of the playset.
+ *
+ * Technical:
+ * Dynamically loads the `Navigation` component based on the `selectedPlayset`.
+ * Falls back to `defaults/Navigation.vue`.
+ */
 import { type Component, defineAsyncComponent, shallowRef, watchEffect } from 'vue';
 import { useLivePlay } from '../composables/useLivePlay';
 import { getPlaysetConfig } from '../utils/contentLoader';
