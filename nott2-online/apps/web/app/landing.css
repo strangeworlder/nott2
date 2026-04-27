@@ -1,0 +1,198 @@
+/* ============================================================
+   Landing Page Styles
+   Night of the Thirteenth 2 — Online Play
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.landing {
+  min-height: 100dvh;
+  background: #080808;
+  color: #e8e8e8;
+  font-family: 'Inter', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Atmospheric grain overlay ──────────────────────────────── */
+.landing__grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.5;
+}
+
+/* Radial vignette */
+.landing::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Red atmospheric glow behind title */
+.landing::after {
+  content: '';
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(138, 0, 0, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.landing__hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 28px;
+  padding: 48px 24px;
+  max-width: 680px;
+  width: 100%;
+  animation: fadeUp 0.9s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.landing__eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6a6a6a;
+  animation: fadeUp 0.9s ease 0.1s both;
+}
+
+.landing__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(3.5rem, 10vw, 6.5rem);
+  font-weight: 900;
+  line-height: 1.0;
+  color: #f0f0f0;
+  letter-spacing: -0.02em;
+  animation: fadeUp 0.9s ease 0.15s both;
+}
+
+.landing__title-num {
+  color: #dc2626;
+  text-shadow:
+    0 0 40px rgba(220, 38, 38, 0.5),
+    0 0 80px rgba(220, 38, 38, 0.2);
+  display: block;
+}
+
+.landing__tagline {
+  font-size: clamp(0.9rem, 2vw, 1.125rem);
+  color: #6a6a6a;
+  line-height: 1.65;
+  max-width: 440px;
+  animation: fadeUp 0.9s ease 0.25s both;
+}
+
+/* ── CTAs ─────────────────────────────────────────────────────── */
+.landing__ctas {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp 0.9s ease 0.35s both;
+}
+
+.landing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 36px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 160ms ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.landing-btn--primary {
+  background: #8a0000;
+  color: #f0f0f0;
+  border: 1px solid #8a0000;
+}
+.landing-btn--primary:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  box-shadow: 0 0 32px rgba(220, 38, 38, 0.35);
+  transform: translateY(-1px);
+}
+
+.landing-btn--secondary {
+  background: transparent;
+  color: #e8e8e8;
+  border: 1px solid #2a2a2a;
+}
+.landing-btn--secondary:hover {
+  border-color: #4a4a4a;
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-1px);
+}
+
+/* ── Secondary links ─────────────────────────────────────────── */
+.landing__secondary-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadeUp 0.9s ease 0.45s both;
+}
+
+.landing-link {
+  font-size: 0.8125rem;
+  color: #4a4a4a;
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+.landing-link:hover { color: #8a8a8a; }
+
+.landing__dot {
+  color: #2a2a2a;
+  font-size: 0.75rem;
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+.landing__footer {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #2a2a2a;
+  z-index: 1;
+  animation: fadeUp 0.9s ease 0.55s both;
+}

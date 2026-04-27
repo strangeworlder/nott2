@@ -1,0 +1,37 @@
+{
+  "name": "@nott2/web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run --passWithNoTests",
+    "test:ci": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@nott2/design-system": "*",
+    "@nott2/game-engine": "*",
+    "@nott2/multiplayer": "*",
+    "@react-three/fiber": "^9.6.0",
+    "@react-three/rapier": "^2.2.0",
+    "firebase": "^12.12.1",
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-ttrpg-dice": "^0.1.1",
+    "three": "^0.184.0",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.184.0",
+    "@vanilla-extract/next-plugin": "^2.5.2",
+    "typescript": "~5.5.0",
+    "vitest": "^2.0.0"
+  }
+}
