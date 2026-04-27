@@ -185,13 +185,18 @@ function handleNumberCardFallout(
   const pending = [...state.pendingActSetups];
   let actTransition: FalloutResult['actTransition'] = 'none';
 
-  if (
-    state.currentAct === 2 &&
-    newDeck.cardsAddedFromReserve >= 13 &&
-    !state.isEndgame
-  ) {
-    pending.push('act3');
-    actTransition = 'act3';
+  if (state.currentAct === 2 && newDeck.cardsAddedFromReserve >= 13) {
+    if (!state.isEndgame) {
+      pending.push('act3');
+      actTransition = 'act3';
+    }
+    // If all 4 weaknesses were already found, the Finale fires here too
+    // (countdown and weaknesses met simultaneously or weaknesses came first).
+    const finaleAlreadyQueued = pending.includes('finale') || state.pendingActSetups.includes('finale');
+    if (newDeck.weaknessesBySuit.size >= 4 && !state.isEndgame && !finaleAlreadyQueued) {
+      pending.push('finale');
+      actTransition = 'finale';
+    }
   }
 
   return {
@@ -246,19 +251,8 @@ function handleFaceCardFallout(
 
     // Act 1 → Act 2 transition on first face card resolution
     if (state.currentAct === 1) {
+      pending.push('act2');
       actTransition = 'act2';
-    }
-
-    // Check weakness/endgame trigger
-    const totalWeaknesses = newDeck.weaknessesBySuit.size;
-    if (totalWeaknesses >= 4 && !state.isEndgame) {
-      // All weaknesses found → Finale
-      const alreadyAct3 = state.currentAct === 3;
-      if (!alreadyAct3) {
-        pending.push('act3');
-      }
-      pending.push('finale');
-      actTransition = 'finale';
     }
   } else {
     // Failure
@@ -278,11 +272,40 @@ function handleFaceCardFallout(
 
     // Act 1 → Act 2 transition on face card failure (§9.3)
     if (state.currentAct === 1) {
+      pending.push('act2');
       actTransition = 'act2';
     }
   }
 
-  // 3. Shuffle Threat Deck and Trophy Pile after any face card (§9.3)
+  // ── Post-outcome: clock tick + Finale check ─────────────────────────────
+  // Runs regardless of success/failure.
+  //
+  // In Act 3 there are no number cards left, so addFromReserve is never called.
+  // Each face card scene (win or lose) counts as one tick toward the 13-clock,
+  // allowing the countdown to complete and the Finale to eventually fire.
+  if (state.currentAct === 3) {
+    newDeck = { ...newDeck, cardsAddedFromReserve: newDeck.cardsAddedFromReserve + 1 };
+  }
+
+  // Finale fires when all 4 weaknesses are found AND the countdown reaches 13.
+  // If weaknesses were found before the countdown, Act 3 was already queued
+  // and we just wait for the ticks above to get us to 13.
+  const totalWeaknesses = newDeck.weaknessesBySuit.size;
+  const finaleAlreadyQueued = pending.includes('finale') || state.pendingActSetups.includes('finale');
+  if (totalWeaknesses >= 4 && !state.isEndgame && !finaleAlreadyQueued) {
+    if (state.currentAct !== 3) {
+      // Still in Act 2 — queue Act 3, defer Finale for countdown
+      pending.push('act3');
+      actTransition = 'act3';
+    }
+    if (newDeck.cardsAddedFromReserve >= 13) {
+      // Countdown complete — Finale is now due
+      pending.push('finale');
+      actTransition = 'finale';
+    }
+  }
+
+  // Shuffle Threat Deck and Trophy Pile after any face card (§9.3)
   newDeck = shuffleThreatDeck(newDeck);
   newDeck = shuffleTrophyPile(newDeck);
 

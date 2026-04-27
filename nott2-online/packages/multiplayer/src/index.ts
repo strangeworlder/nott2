@@ -21,7 +21,7 @@ export { initFirebase, getDb, getFirebaseAuth } from './firebase';
 export type { FirebaseConfig } from './firebase';
 
 // Auth
-export { ensureAuth, subscribeToAuth, getCurrentUser } from './auth';
+export { ensureAuth, signInAsHost, subscribeToAuth, getCurrentUser } from './auth';
 export type { AuthState } from './auth';
 
 // Lobby

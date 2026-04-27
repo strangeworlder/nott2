@@ -508,3 +508,64 @@ select.field-select:focus { border-color: var(--color-accent-bright); }
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
+
+/* ── Result Summary ─────────────────────────────────────────────────────────── */
+/* Displayed after the dice settle to show d10 + d4 = total clearly.           */
+
+.result-summary {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.result-summary__dice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.result-summary__die {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 56px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border, #2a2a2a);
+}
+
+.result-summary__die--total {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: var(--color-accent, #dc2626);
+}
+
+.result-summary__die-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted, #6a6a6a);
+  font-weight: 600;
+}
+
+.result-summary__die-value {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-text, #e4e4e7);
+}
+
+.result-summary__die--total .result-summary__die-value {
+  color: var(--color-accent-bright, #ef4444);
+  font-size: 2.5rem;
+}
+
+.result-summary__plus,
+.result-summary__equals {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-muted, #6a6a6a);
+}

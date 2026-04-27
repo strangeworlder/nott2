@@ -10,14 +10,15 @@
 import { useState } from 'react';
 import { useGameStore } from '../store/game-store';
 import type { Suit } from '@nott2/game-engine';
+import { Icon, suitToIconName } from '@nott2/design-system';
 
 const SUITS: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds'];
-const SUIT_SYMBOL: Record<string, string> = { Spades: '♠', Hearts: '♥', Clubs: '♣', Diamonds: '♦' };
+const SUIT_ABBR: Record<string, string> = { Spades: 'S', Hearts: 'H', Clubs: 'C', Diamonds: 'D' };
 
 function cardLabel(c: { id: string; rank: number; suit: string }): string {
-  const rankNames: Record<number, string> = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K', 14: '🃏R', 15: '🃏B' };
+  const rankNames: Record<number, string> = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K', 14: 'JkR', 15: 'JkB' };
   const rankStr = rankNames[c.rank] ?? `${c.rank}`;
-  return `${SUIT_SYMBOL[c.suit] ?? ''}${rankStr}`;
+  return `${SUIT_ABBR[c.suit] ?? ''}${rankStr}`;
 }
 
 export default function DebugPanel() {
@@ -32,7 +33,7 @@ export default function DebugPanel() {
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
       >
-        <span className="debug-panel__title">🔧 Debug Panel</span>
+        <span className="debug-panel__title"><Icon name="settings" size={14} /> Debug Panel</span>
         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{open ? '▲' : '▼'}</span>
       </button>
 
@@ -109,9 +110,9 @@ export default function DebugPanel() {
             <div className="debug-stat">
               <div className="debug-stat__key">Turn Order</div>
               <div className="debug-stat__val">
-                ✅{gameState.turnOrder.available.map(s => SUIT_SYMBOL[s]).join('')}
+                <Icon name="check_circle" size={14} />{gameState.turnOrder.available.map(s => <Icon key={`avail-${s}`} name={suitToIconName(s)} size={12} />)}
                 {gameState.turnOrder.acted.length > 0 && (
-                  <> 🔽{gameState.turnOrder.acted.map(s => SUIT_SYMBOL[s]).join('')}</>
+                  <> <Icon name="arrow_downward" size={14} />{gameState.turnOrder.acted.map(s => <Icon key={`acted-${s}`} name={suitToIconName(s)} size={12} />)}</>
                 )}
               </div>
             </div>
@@ -128,7 +129,7 @@ export default function DebugPanel() {
                   key={s}
                   className={`weakness-pip ${deck.weaknessesBySuit.has(s) ? 'weakness-pip--found' : ''}`}
                 >
-                  {SUIT_SYMBOL[s]} {s}
+                  <Icon name={suitToIconName(s)} size={14} /> {s}
                 </div>
               ))}
             </div>
@@ -141,10 +142,10 @@ export default function DebugPanel() {
             <div className="label-sm" style={{ marginBottom: 8 }}>Quick Controls</div>
             <div className="debug-actions">
               <button className="btn btn--ghost btn--sm" onClick={skipToAct3}>
-                ⏩ Skip to Act 3
+                Skip to Act 3
               </button>
               <button className="btn btn--ghost btn--sm" onClick={applyFinale}>
-                ☠️ Trigger Finale
+                <Icon name="skull" size={14} /> Trigger Finale
               </button>
               {SUITS.filter(s => !deck.weaknessesBySuit.has(s)).map(s => (
                 <button
@@ -152,7 +153,7 @@ export default function DebugPanel() {
                   className="btn btn--ghost btn--sm"
                   onClick={() => addWeakness(s)}
                 >
-                  + {SUIT_SYMBOL[s]} Weakness
+                  + <Icon name={suitToIconName(s)} size={14} /> Weakness
                 </button>
               ))}
               {gameState.characters.filter(c => !c.isDead).map(c => (
@@ -162,7 +163,7 @@ export default function DebugPanel() {
                   style={{ borderColor: 'var(--color-accent)' }}
                   onClick={() => killCharacter(c.id)}
                 >
-                  ☠ Kill {SUIT_SYMBOL[c.id]}
+                  <Icon name="skull" size={14} /> Kill <Icon name={suitToIconName(c.id)} size={14} />
                 </button>
               ))}
             </div>

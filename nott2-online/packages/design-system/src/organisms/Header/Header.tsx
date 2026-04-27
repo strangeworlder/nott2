@@ -22,6 +22,7 @@
 
 import React from 'react';
 import * as styles from './Header.css';
+import { Icon } from '../../atoms/Icon/Icon';
 
 interface HeaderProps {
   title?: string;
@@ -58,7 +59,9 @@ export function Header({
         </span>
         <span className={styles.pill}>{formatPhase(phase)}</span>
         {isEndgame && (
-          <span className={`${styles.pill} ${styles.pillDanger}`}>☠ Finale</span>
+          <span className={`${styles.pill} ${styles.pillDanger}`}>
+            <Icon name="skull" size={14} /> Finale
+          </span>
         )}
         {roomCode && (
           <span className={`${styles.pill} ${styles.pillCode}`} title="Room code">

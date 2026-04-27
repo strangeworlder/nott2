@@ -36,6 +36,8 @@ export function initTurnOrder(characters: Character[]): TurnOrder {
  * Moves the suit from `available` to `acted`.
  */
 export function markActed(turnOrder: TurnOrder, suit: Suit): TurnOrder {
+  // Idempotent: if the suit is already in `acted`, return unchanged to prevent duplicates.
+  if (turnOrder.acted.includes(suit)) return turnOrder;
   return {
     available: turnOrder.available.filter(s => s !== suit),
     acted: [...turnOrder.acted, suit],

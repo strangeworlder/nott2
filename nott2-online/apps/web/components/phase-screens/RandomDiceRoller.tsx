@@ -26,6 +26,7 @@
 
 import { useDiceRoll } from 'react-ttrpg-dice';
 import type { D10Result, D4Result } from '@nott2/game-engine';
+import { Icon } from '@nott2/design-system';
 
 interface Props {
   onResult: (d10: D10Result, d4: D4Result) => void;
@@ -34,6 +35,8 @@ interface Props {
 
 export default function RandomDiceRoller({ onResult, disabled = false }: Props) {
   const { rollGroups, isRolling, DiceOverlayPortal } = useDiceRoll({
+    sound: true,
+    cameraAngle: { x: -1, z: -1 },
     onRollComplete: (result) => {
       const rawD10 = result.rolls.find((r) => r.group === 'd10')?.value ?? 0;
       const rawD4  = result.rolls.find((r) => r.group === 'd4')?.value  ?? 1;
@@ -72,7 +75,7 @@ export default function RandomDiceRoller({ onResult, disabled = false }: Props) 
         disabled={disabled || isRolling}
         aria-label={isRolling ? 'Dice are rolling…' : 'Roll dice randomly'}
       >
-        <span className="random-dice-btn__icon" aria-hidden="true">🎲</span>
+        <span className="random-dice-btn__icon" aria-hidden="true"><Icon name="casino" size={24} /></span>
         <span className="random-dice-btn__label">
           {isRolling ? 'Rolling…' : 'Roll Randomly'}
         </span>

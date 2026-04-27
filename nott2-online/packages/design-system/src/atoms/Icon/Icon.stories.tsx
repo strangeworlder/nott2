@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon';
+import type { IconName } from './Icon';
 
 const meta = {
   title: 'Atoms/Icon',
@@ -12,12 +13,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// ── Custom SVG Suit Icons ───────────────────────────────────────────────────
+
 export const Spades: Story = { args: { name: 'spades', color: 'white' } };
 export const Hearts: Story = { args: { name: 'hearts', color: 'red' } };
 export const Diamonds: Story = { args: { name: 'diamonds', color: 'red' } };
 export const Clubs: Story = { args: { name: 'clubs', color: 'white' } };
-export const Skull: Story = { args: { name: 'skull', color: 'muted' } };
-export const Clock: Story = { args: { name: 'clock', color: 'muted' } };
 
 export const SuitRow: Story = {
   render: () => (
@@ -30,15 +31,57 @@ export const SuitRow: Story = {
   ),
 };
 
+// ── Material Symbol Icons ───────────────────────────────────────────────────
+
+export const Schedule: Story = { args: { name: 'schedule', color: 'muted' } };
+export const Warning: Story = { args: { name: 'warning', color: 'red' } };
+export const Casino: Story = { args: { name: 'casino', color: 'white' } };
+export const Bolt: Story = { args: { name: 'bolt', color: 'red' } };
+export const TheaterComedy: Story = { args: { name: 'theater_comedy', color: 'muted' } };
+
+// ── All Icons Gallery ───────────────────────────────────────────────────────
+
+const CUSTOM_ICONS: IconName[] = ['spades', 'hearts', 'diamonds', 'clubs'];
+
+const MATERIAL_ICONS: IconName[] = [
+  'schedule', 'chevron_right', 'chevron_left', 'expand_more', 'refresh',
+  'group', 'person', 'check', 'close', 'warning', 'bolt', 'auto_awesome',
+  'star', 'target', 'air', 'local_fire_department', 'dangerous',
+  'casino', 'emoji_events', 'theater_comedy', 'skull',
+  'movie', 'mic', 'mic_off', 'videocam', 'videocam_off',
+  'description', 'assignment', 'settings', 'shuffle', 'undo', 'delete', 'style',
+  'check_circle', 'arrow_downward', 'inventory_2',
+];
+
 export const AllIcons: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-      {(['spades','hearts','diamonds','clubs','clock','users','skull','star','check','x','chevron-right','chevron-left','chevron-down','refresh'] as const).map(name => (
-        <div key={name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <Icon name={name} size={24} color="muted" />
-          <span style={{ fontSize: 9, color: '#6a6a6a', fontFamily: 'monospace' }}>{name}</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div>
+        <div style={{ fontSize: 11, color: '#6a6a6a', fontFamily: 'monospace', marginBottom: 8 }}>
+          Custom SVG (Card Suits)
         </div>
-      ))}
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          {CUSTOM_ICONS.map(name => (
+            <div key={name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              <Icon name={name} size={24} color="muted" />
+              <span style={{ fontSize: 9, color: '#6a6a6a', fontFamily: 'monospace' }}>{name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <div style={{ fontSize: 11, color: '#6a6a6a', fontFamily: 'monospace', marginBottom: 8 }}>
+          Material Symbols Rounded
+        </div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          {MATERIAL_ICONS.map(name => (
+            <div key={name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              <Icon name={name} size={24} color="muted" />
+              <span style={{ fontSize: 9, color: '#6a6a6a', fontFamily: 'monospace' }}>{name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   ),
 };

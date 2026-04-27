@@ -7,28 +7,40 @@ export const indicatorRoot = style({
   alignItems: 'center',
 });
 
-export const strikeMark = style({
+/** Shared fixed container — keeps every slot the same footprint. */
+const strikeSlot = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '1.5rem',
+  height: '1.5rem',
+  flexShrink: 0,
+});
+
+export const strikeMark = style([strikeSlot, {
   color: vars.color.accentBright,
-  fontWeight: 700,
+  fontWeight: 800,
   fontSize: '1.25rem',
   lineHeight: 1,
+  textShadow: '0 0 8px rgba(220, 38, 38, 0.6)',
   transition: `all ${vars.transition.fast}`,
   selectors: {
     '&[data-animated="true"]': {
       animation: 'strikeIn 0.3s ease-out',
     },
   },
-});
+}]);
 
-export const strikeEmpty = style({
-  color: vars.color.border,
-  fontWeight: 400,
-  fontSize: '1.25rem',
+export const strikeEmpty = style([strikeSlot, {
+  color: vars.color.textMuted,
+  fontWeight: 300,
+  fontSize: '1rem',
   lineHeight: 1,
-});
+  opacity: 0.55,
+}]);
 
 export const skullMark = style({
-  color: vars.color.textMuted,
+  color: vars.color.text,
   fontSize: '1.5rem',
   lineHeight: 1,
   selectors: {

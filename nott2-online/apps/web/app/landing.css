@@ -196,3 +196,42 @@
   z-index: 1;
   animation: fadeUp 0.9s ease 0.55s both;
 }
+
+/* -- Responsive — Tablet (=768px) ------------------------------ */
+@media (max-width: 768px) {
+  .landing__title {
+    font-size: clamp(2.5rem, 12vw, 4rem);
+  }
+  .landing__ctas {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  .landing-btn {
+    padding: 13px 24px;
+    text-align: center;
+  }
+  .landing__hero {
+    padding: 32px 20px;
+    gap: 22px;
+  }
+}
+
+/* -- Reduced Motion --------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .landing__hero,
+  .landing__eyebrow,
+  .landing__title,
+  .landing__tagline,
+  .landing__ctas,
+  .landing__secondary-links,
+  .landing__footer {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .landing-btn { transition: none; }
+  .landing-link { transition: none; }
+}

@@ -3,9 +3,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { PlayingCard } from './PlayingCard';
 
 describe('PlayingCard', () => {
-  it('renders a suit symbol', () => {
+  it('renders a suit icon as SVG', () => {
     const { container } = render(<PlayingCard suit="Hearts" rank={1} />);
-    expect(container.textContent).toContain('♥');
+    // Suit is now rendered as an inline SVG Icon, not a text character
+    const svgs = container.querySelectorAll('svg');
+    expect(svgs.length).toBeGreaterThan(0);
   });
 
   it('renders rank label for Ace', () => {
@@ -30,7 +32,9 @@ describe('PlayingCard', () => {
 
   it('renders card back when faceDown', () => {
     const { container } = render(<PlayingCard suit="Spades" rank={5} faceDown />);
-    expect(container.textContent).not.toContain('♠');
+    // Face-down card should not render any SVG suit icons
+    const svgs = container.querySelectorAll('svg');
+    expect(svgs.length).toBe(0);
   });
 
   it('fires onClick when clicked', () => {

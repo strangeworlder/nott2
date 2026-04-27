@@ -9,7 +9,10 @@
     "lint": "next lint",
     "test": "vitest run --passWithNoTests",
     "test:ci": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@nott2/design-system": "*",
@@ -18,14 +21,18 @@
     "@react-three/fiber": "^9.6.0",
     "@react-three/rapier": "^2.2.0",
     "firebase": "^12.12.1",
+    "firebase-admin": "^13.0.0",
+    "material-symbols": "^0.44.4",
     "next": "^15.0.0",
+    "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-ttrpg-dice": "^0.1.1",
+    "react-ttrpg-dice": "^0.3.0",
     "three": "^0.184.0",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@playwright/test": "^1.44.0",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

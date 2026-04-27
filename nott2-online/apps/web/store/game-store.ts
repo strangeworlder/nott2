@@ -20,6 +20,7 @@ import * as engine from '@nott2/game-engine';
 import {
   initFirebase,
   ensureAuth,
+  signInAsHost,
   createRoom,
   joinRoom,
   leaveRoom,
@@ -200,6 +201,7 @@ export const useGameStore = create<GameStore>()(
           rulesModules: merged,
           deck: engine.createDeck(merged),
           players: makeDemoPlayers(characters),
+          turnOrder: engine.initTurnOrder(characters),
           scene: {
             ...base.scene,
             activePlayerId: `${DEMO_PLAYER_ID}-Spades`,
@@ -378,11 +380,6 @@ export const useGameStore = create<GameStore>()(
           pendingActSetups: result.pendingActSetups,
         };
 
-        // Handle act1 → act2
-        if (result.actTransition === 'act2' && newGs.currentAct === 1) {
-          newGs = engine.startAct2(newGs);
-        }
-
         // Handle black joker
         if (joker === 'Black') {
           newGs = { ...newGs, isBlackJokerRemoved: true };
@@ -409,6 +406,7 @@ export const useGameStore = create<GameStore>()(
         const newGS = {
           ...gs,
           scene: { ...gs.scene, activePlayerId: playerId },
+          turnOrder: engine.markActed(gs.turnOrder, characterId),
         };
         set({ gameState: newGS, computed: recompute(newGS) }, false, 'setActivePlayer');
       },
@@ -457,7 +455,11 @@ export const useGameStore = create<GameStore>()(
         const chars = gs.characters.map(c =>
           c.id === suit ? { ...c, strikes: 3 as const, isDead: true } : c,
         );
-        const newGs = { ...gs, characters: chars };
+        const newGs = {
+          ...gs,
+          characters: chars,
+          turnOrder: engine.removeFromTurnOrder(gs.turnOrder, suit),
+        };
         set({ gameState: newGs, computed: recompute(newGs) }, false, 'killCharacter');
       },
 
@@ -499,11 +501,42 @@ export const useGameStore = create<GameStore>()(
       /**
        * Create a room and become the host.
        * Registers presence + subscribes to action queue.
+       *
+       * Hybrid auth flow:
+       *   1. Check for a Discord SSO session (NextAuth)
+       *   2. If found → fetch Firebase Custom Token → signInAsHost()
+       *   3. If not found → fall through to ensureAuth() (anonymous / dev mode)
+       *
        * Returns the room code.
        */
       createRoom: async (playerName) => {
-        const { playerId } = get();
-        if (!playerId) throw new Error('Call initMultiplayer() first.');
+        let { playerId } = get();
+
+        // ── Hybrid auth: attempt Discord host auth first ──────────────
+        try {
+          const sessionRes = await fetch('/api/auth/session');
+          const session = sessionRes.ok ? await sessionRes.json() : null;
+
+          if (session?.user?.discordId) {
+            // Discord session exists → mint Firebase Custom Token
+            const tokenRes = await fetch('/api/auth/firebase-token');
+            if (tokenRes.ok) {
+              const { token } = await tokenRes.json();
+              const { uid } = await signInAsHost(token);
+              playerId = uid;
+              set({ playerId, isConnected: true }, false, 'createRoom/discordAuth');
+            }
+          }
+        } catch {
+          // Discord auth failed — fall through to anonymous
+        }
+
+        // Fallback: anonymous auth (dev mode or Discord unavailable)
+        if (!playerId) {
+          const { uid } = await ensureAuth();
+          playerId = uid;
+          set({ playerId, isConnected: true }, false, 'createRoom/anonAuth');
+        }
 
         set({ playerName, multiplayerError: null }, false, 'createRoom/start');
 

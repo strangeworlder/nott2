@@ -21,6 +21,31 @@ export const cardCompact = style({
   height: '72px',
 });
 
+export const cardMicro = style({
+  width: '28px',
+  height: '40px',
+  borderRadius: vars.radius.sm,
+});
+
+/**
+ * Micro layout: simplified single-column "A" + suit icon.
+ * Used for Ace turn order tokens in CharacterBar.
+ */
+export const microLayout = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '1px',
+});
+
+export const microRank = style({
+  fontSize: '0.625rem',
+  fontWeight: 700,
+  fontFamily: 'Georgia, serif',
+  lineHeight: 1,
+});
+
 export const cardSelected = style({
   borderColor: vars.color.accentBright,
   boxShadow: vars.shadow.glowIntense,

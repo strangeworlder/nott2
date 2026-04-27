@@ -8,6 +8,7 @@
  */
 
 import type { GameState, Phase, Act, Character, Suit } from './types';
+import { removeFromTurnOrder } from './turn-order';
 import {
   createDeck,
   addJokersToDeck,
@@ -88,8 +89,13 @@ export function nextPhase(state: GameState): GameState {
   // Game Setup → Act Setup
   if (phase === 'game-setup') return { ...state, phase: 'act-setup' };
 
-  // Act Setup → (Trophy Setup if classic) or Scene Setup
+  // Act Setup → next pending setup (if any), else Trophy Setup or Scene Setup
   if (phase === 'act-setup') {
+    // Chain directly through multiple pending act setups (e.g. act3 → finale)
+    // without requiring a scene in between.
+    if (state.pendingActSetups.length > 0) {
+      return evaluateFalloutTransition(state);
+    }
     if (state.rulesModules.classicSetup) {
       return { ...state, phase: 'trophy-setup' };
     }
@@ -131,14 +137,18 @@ export function prevPhase(state: GameState): GameState {
 }
 
 function evaluateFalloutTransition(state: GameState): GameState {
-  // Consume any pending act setups first
+  // Consume any pending act setups, applying the correct state mutation on pop.
   if (state.pendingActSetups.length > 0) {
     const [next, ...remaining] = state.pendingActSetups;
-    return {
-      ...state,
-      phase: 'act-setup',
-      pendingActSetups: remaining,
-    };
+    let newState: GameState = { ...state, pendingActSetups: remaining };
+
+    // Apply the state mutation for the act being set up, so the act-setup
+    // screen always sees the correct currentAct / isEndgame values.
+    if (next === 'act2')   newState = startAct2(newState);
+    else if (next === 'act3')   newState = startAct3(newState);
+    else if (next === 'finale') newState = startEndgame(newState);
+
+    return { ...newState, phase: 'act-setup' };
   }
 
   // Check for win/lose
@@ -165,12 +175,13 @@ export function startGame(state: GameState): GameState {
  * Called when the first Face Card is resolved.
  */
 export function startAct2(state: GameState): GameState {
-  // Transition to Act 2. Any remaining Aces in the deck are naturally
-  // handled — they'll be drawn and resolved (always succeed) in sequence.
-  // With the card array model, no special cleanup needed.
+  // Transition to Act 2. Reset the turn order — the act-setup screen bypasses
+  // startNextScene so the round counter would otherwise carry over stale.
+  const living = state.characters.filter(c => !c.isDead);
   return {
     ...state,
     currentAct: 2,
+    turnOrder: { available: living.map(c => c.id), acted: [] },
   };
 }
 
@@ -178,11 +189,24 @@ export function startAct2(state: GameState): GameState {
  * Act 3 setup: remove all number cards from the Threat Deck. §7.3
  */
 export function startAct3(state: GameState): GameState {
-  const newDeck = removeNumberCardsForAct3(state.deck);
+  // Sweep any visible (already-drawn) cards back into the threat deck first,
+  // then purge all number cards. This ensures no number card survives on the
+  // table when Act 3 begins (§7.3).
+  const deckWithVisibleReturned = {
+    ...state.deck,
+    threatDeck: [...state.deck.threatDeck, ...state.deck.visibleCards],
+    visibleCards: [],
+  };
+  const newDeck = removeNumberCardsForAct3(deckWithVisibleReturned);
+
+  // Reset turn order — act-setup bypasses startNextScene so the round counter
+  // would otherwise carry over stale entries from the previous round.
+  const living = state.characters.filter(c => !c.isDead);
   return {
     ...state,
     currentAct: 3,
     deck: newDeck,
+    turnOrder: { available: living.map(c => c.id), acted: [] },
   };
 }
 
@@ -190,17 +214,24 @@ export function startAct3(state: GameState): GameState {
  * The Finale: add both Jokers to the Threat Deck. §7.4
  */
 export function startEndgame(state: GameState): GameState {
+  // Add Jokers to the threat deck and shuffle (§7.4). They are drawn normally
+  // in Act 3 just like face cards. Guard prevents double-adding.
   let newDeck = state.deck;
   if (!state.jokersAdded) {
     newDeck = addJokersToDeck(newDeck);
     newDeck = shuffleThreatDeck(newDeck);
   }
+
+  // Reset turn order — act-setup bypasses startNextScene so the round counter
+  // would otherwise carry over stale entries.
+  const living = state.characters.filter(c => !c.isDead);
   return {
     ...state,
     isEndgame: true,
     isEndgameInitialized: true,
     jokersAdded: true,
     deck: newDeck,
+    turnOrder: { available: living.map(c => c.id), acted: [] },
   };
 }
 
@@ -225,13 +256,34 @@ function resetScene(scene: GameState['scene']): GameState['scene'] {
 
 /**
  * Start the next scene. Resets scene state.
+ * If the round is complete (all living players have acted), reset the turn order.
+ *
+ * Redundancy: also checks that at least one living character is available.
+ * If not (e.g. a character died while in `available` and stale entries remain),
+ * the round is force-reset so the game can continue.
  */
 export function startNextScene(state: GameState): GameState {
+  const living = state.characters.filter(c => !c.isDead);
+  const livingSuits = new Set(living.map(c => c.id));
+
+  // Primary check: standard round completion
+  const roundDone = state.turnOrder.available.length === 0 && state.turnOrder.acted.length > 0;
+
+  // Redundancy check: are there any living characters still available to act?
+  // If not, force a round reset even if turnOrder.available has stale (dead) entries.
+  const livingAvailable = state.turnOrder.available.filter(s => livingSuits.has(s));
+  const needsForceReset = !roundDone && livingAvailable.length === 0 && living.length > 0;
+
+  const shouldReset = roundDone || needsForceReset;
+
   return {
     ...state,
     phase: 'scene-setup',
     scene: resetScene(state.scene),
     strikesToAssign: 0,
+    turnOrder: shouldReset
+      ? { available: living.map(c => c.id), acted: [] }
+      : state.turnOrder,
   };
 }
 
@@ -248,7 +300,7 @@ export function consumePendingActSetup(state: GameState): GameState {
 
 /**
  * Assign a strike to a character. If they reach 3 strikes, they die.
- * Returns new characters array.
+ * When a character dies, they are also removed from the turn order.
  */
 export function assignStrike(state: GameState, characterId: Suit): GameState {
   const characters = state.characters.map(c => {
@@ -262,9 +314,19 @@ export function assignStrike(state: GameState, characterId: Suit): GameState {
   });
 
   const living = characters.filter(c => !c.isDead);
+  const diedThisStrike = characters.find(c => c.id === characterId)?.isDead
+    && !state.characters.find(c => c.id === characterId)?.isDead;
   const newStrikesToAssign = Math.max(0, state.strikesToAssign - 1);
 
   let newState = { ...state, characters, strikesToAssign: newStrikesToAssign };
+
+  // Remove dead character from turn order so they don't block round completion
+  if (diedThisStrike) {
+    newState = {
+      ...newState,
+      turnOrder: removeFromTurnOrder(newState.turnOrder, characterId),
+    };
+  }
 
   // Final Girl: if one character left, trigger Act 3 immediately (§12.2)
   if (state.rulesModules.finalGirl && living.length === 1 && state.currentAct < 3) {

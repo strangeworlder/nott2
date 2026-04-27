@@ -18,7 +18,6 @@ import {
   SceneSetupScreen,
   ConversationStakesScreen,
   ResolutionScreen,
-  ResolveSceneScreen,
   FalloutScreen,
   WinScreen,
   LoseScreen,
@@ -38,7 +37,7 @@ export function GamePhaseRouter() {
       case 'scene-setup':         return SceneSetupScreen;
       case 'conversation-stakes': return ConversationStakesScreen;
       case 'resolution':          return ResolutionScreen;
-      case 'resolve-scene':       return ResolveSceneScreen;
+      case 'resolve-scene':       return FalloutScreen;
       case 'fallout':             return FalloutScreen;
       case 'win':                 return WinScreen;
       case 'lose':                return LoseScreen;
