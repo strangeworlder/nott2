@@ -132,9 +132,16 @@
     4.  **Watcher**: Use `watchEffect` to check `selectedPlayset` and `getPlaysetConfig`. If an override exists, load it; otherwise, use the default.
     5.  **Template**: Render the dynamic component using `<component :is="...">`, binding all props and forwarding all slots.
 
+
 ## Interaction Protocol
 1.  **Understand**: Read the user request and relevant files (`NotT_2.md`, source code).
 2.  **Plan**: Define the scope and steps in `task.md`.
 3.  **Execute**: Implement changes iteratively.
 4.  **Verify**: Ensure the application builds and runs as expected.
 5.  **Reflect**: Update `walkthrough.md` with results.
+
+## 6. Feature Freezes
+- **Live Play Helper**: The Live Play Helper (components/live-play/**) is currently **FEATURE FROZEN**.
+    - **Do NOT** add new features or change existing logic unless explicitly instructed to fix a critical bug.
+    - All new development should focus on other tools (e.g., Online Play Tool).
+    - If a request seems to imply changing Live Play Helper, confirm with the user first.

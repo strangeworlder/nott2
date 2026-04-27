@@ -1,0 +1,295 @@
+/* ============================================================
+   Lobby Page Styles
+   Night of the Thirteenth 2 — Online Play
+   ============================================================ */
+
+.lobby-page {
+  min-height: 100dvh;
+  background: #080808;
+  color: #e8e8e8;
+  font-family: 'Inter', system-ui, sans-serif;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 24px 80px;
+}
+
+.lobby-inner {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.lobby-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-back {
+  font-size: 0.75rem;
+  color: #4a4a4a;
+  text-decoration: none;
+  transition: color 140ms;
+}
+.lobby-back:hover { color: #8a8a8a; }
+
+.lobby-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #dc2626;
+  text-shadow: 0 0 24px rgba(220, 38, 38, 0.3);
+  letter-spacing: 0.02em;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────────── */
+.lobby-tabs {
+  display: flex;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.lobby-tab {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  color: #6a6a6a;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+.lobby-tab:hover { color: #e8e8e8; background: rgba(255,255,255,0.03); }
+.lobby-tab--active {
+  background: #1a1a1a;
+  color: #dc2626;
+  border-bottom: 2px solid #dc2626;
+}
+
+/* ── Form ─────────────────────────────────────────────────────── */
+.lobby-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lobby-code-input {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-size: 1.5rem !important;
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lobby-error {
+  padding: 8px 12px;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid #8a0000;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  color: #dc2626;
+}
+
+/* ── Waiting Room ─────────────────────────────────────────────── */
+.waiting-room {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 0 40px;
+}
+
+.room-code-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: rgba(138, 0, 0, 0.08);
+  border: 1px solid #8a0000;
+  border-radius: 8px;
+}
+
+.room-code-banner__label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #6a6a6a;
+}
+
+.room-code-banner__code {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #dc2626;
+  letter-spacing: 0.25em;
+  flex: 1;
+  text-shadow: 0 0 20px rgba(220, 38, 38, 0.35);
+}
+
+.room-code-banner__copy {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  color: #6a6a6a;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+.room-code-banner__copy:hover {
+  border-color: #4a4a4a;
+  color: #e8e8e8;
+}
+
+/* ── Seat List ────────────────────────────────────────────────── */
+.seat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.seat {
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid #1e1e1e;
+  background: #0e0e0e;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+}
+
+.seat--filled {
+  border-color: #2a2a2a;
+  background: #141414;
+}
+
+.seat__player {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.seat__meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.seat__badge {
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.seat__badge--host   { border-color: #8a0000; color: #dc2626; }
+.seat__badge--ready  { border-color: #2a5a2a; color: #4ade80; }
+.seat__badge--waiting { border-color: #3a3a3a; color: #6a6a6a; }
+
+.seat__empty-label {
+  font-size: 0.75rem;
+  color: #2a2a2a;
+  letter-spacing: 0.08em;
+}
+
+/* ── Actions ─────────────────────────────────────────────────── */
+.waiting-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ── Demo link ───────────────────────────────────────────────── */
+.lobby-demo-link {
+  font-size: 0.8125rem;
+  color: #4a4a4a;
+  text-align: center;
+}
+.lobby-demo-link a {
+  color: #6a6a6a;
+  text-decoration: none;
+  border-bottom: 1px solid #3a3a3a;
+  transition: color 140ms, border-color 140ms;
+}
+.lobby-demo-link a:hover {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+/* ── Waiting Layout (two columns) ────────────────────────────── */
+.waiting-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 680px) {
+  .waiting-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Video Preview ────────────────────────────────────────────── */
+.video-preview {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #0a0a0a;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #1e1e1e;
+}
+
+.video-preview__feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror local preview */
+}
+
+.video-preview__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.5;
+}
+
+.video-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.video-ctrl-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #2a2a2a;
+  background: #141414;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 160ms ease;
+}
+.video-ctrl-btn:hover { border-color: #4a4a4a; background: #1e1e1e; }
+.video-ctrl-btn--off { border-color: #8a0000; background: rgba(138,0,0,0.12); }

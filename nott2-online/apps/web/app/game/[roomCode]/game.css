@@ -1,0 +1,176 @@
+/* ============================================================
+   Game Page Layout Styles
+   Night of the Thirteenth 2 — Online Play
+   ============================================================ */
+
+.game-page {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background: var(--color-bg, #0a0a0a);
+  overflow: hidden;
+}
+
+/* ── Main layout ─────────────────────────────────────────────── */
+.game-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0; /* allow children to scroll within flex */
+}
+
+/* Left: game table + phase panel */
+.game-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  gap: 0;
+  min-width: 0;
+}
+
+/* Right: video + chat sidebar */
+.game-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--color-border, #2a2a2a);
+  background: var(--color-surface, #141414);
+  overflow: hidden;
+}
+
+.game-sidebar__video {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--color-border, #2a2a2a);
+}
+
+.game-sidebar__chat {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Game Board Zone ─────────────────────────────────────────── */
+.game-board-panel {
+  padding: 20px 24px 0;
+  border-bottom: 1px solid var(--color-border, #2a2a2a);
+}
+
+.game-board-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.game-deck-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.game-deck-box {
+  width: 56px;
+  height: 80px;
+  border: 2px solid var(--color-border, #2a2a2a);
+  border-radius: 6px;
+  background: var(--color-surface-2, #1e1e1e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted, #6a6a6a);
+  transition: border-color 160ms ease;
+  position: relative;
+}
+
+.game-deck-box::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 3px;
+}
+
+.game-deck-box:hover { border-color: #4a4a4a; }
+.game-deck-box__count {
+  position: absolute;
+  bottom: -20px;
+  font-size: 0.6rem;
+  color: var(--color-text-muted, #6a6a6a);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.game-trophy-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.game-trophy-box {
+  width: 56px;
+  height: 80px;
+  border: 2px solid var(--color-warning, #f59e0b);
+  border-radius: 6px;
+  background: rgba(245, 158, 11, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.game-trophy-label {
+  font-size: 0.45rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-warning, #f59e0b);
+}
+
+.game-trophy-rank {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-warning, #f59e0b);
+}
+
+.game-visible-cards {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.game-phase-panel {
+  padding: 24px;
+  flex: 1;
+}
+
+/* ── Debug sidebar (solo mode) ───────────────────────────────── */
+.game-sidebar__debug {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* In solo mode, always show the debug panel expanded */
+.game-sidebar__debug .debug-panel {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--color-border, #2a2a2a);
+}
+
+/* ── Responsive collapse sidebar on small screens ─────────────── */
+@media (max-width: 900px) {
+  .game-sidebar {
+    display: none;
+  }
+}
