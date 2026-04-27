@@ -1,0 +1,43 @@
+.denied-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--color-bg);
+}
+
+.denied-container {
+  max-width: 480px;
+  width: 100%;
+}
+
+.denied-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.denied-icon-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.1);
+  border: 2px solid var(--color-accent-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.denied-message {
+  line-height: 1.6;
+}
+
+.denied-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}

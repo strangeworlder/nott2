@@ -7,8 +7,9 @@
  * building toward. The animation on a new strike makes the moment land.
  *
  * Technical:
- * Renders 0–3 visual strike marks. Strike marks are ✕ symbols styled
- * in blood-red. The third strike or `isDead` prop shows a skull overlay.
+ * Renders 0–3 visual strike marks. Empty slots show ○ (hollow ring); filled
+ * marks show ✕ in blood-red with a glow — shape, weight, and color all differ.
+ * The third strike or `isDead` prop shows a skull overlay.
  * `animated` triggers a brief scale animation on mount.
  *
  * Props:
@@ -50,8 +51,9 @@ export function StrikeIndicator({
           key={i}
           className={i < strikes ? strikeMark : strikeEmpty}
           data-animated={animated && i === strikes - 1}
+          aria-hidden="true"
         >
-          ✕
+          {i < strikes ? '✕' : '○'}
         </span>
       ))}
     </div>

@@ -12,10 +12,35 @@ export const gameBoardRoot = style({
   minHeight: '200px',
 });
 
+/* Vertical mode: stacks zones as a column, used in sidebar placement */
+export const gameBoardVertical = style({
+  flexDirection: 'column',
+  flexWrap: 'nowrap',
+  gap: vars.space.md,
+  padding: `${vars.space.md} ${vars.space.sm}`,
+  minHeight: 'unset',
+  borderRadius: 0,
+  border: 'none',
+  height: '100%',
+});
+
 export const zone = style({
   display: 'flex',
   flexDirection: 'column',
   gap: vars.space.sm,
+});
+
+/* Vertical mode: zone spans full width with a subtle separator */
+export const zoneVertical = style({
+  width: '100%',
+  paddingBottom: vars.space.sm,
+  borderBottom: `1px solid ${vars.color.border}`,
+  selectors: {
+    '&:last-child': {
+      borderBottom: 'none',
+      paddingBottom: 0,
+    },
+  },
 });
 
 export const zoneLabel = style({
@@ -26,43 +51,8 @@ export const zoneLabel = style({
   letterSpacing: '0.1em',
 });
 
-export const deckStack = style({
-  position: 'relative',
-  width: '52px',
-  height: '72px',
-  cursor: 'pointer',
-  ':hover': { transform: 'scale(1.05)' },
-  transition: `transform ${vars.transition.fast}`,
-});
 
-export const deckCard = style({
-  position: 'absolute',
-  width: '52px',
-  height: '72px',
-  borderRadius: vars.radius.md,
-  backgroundImage: `repeating-linear-gradient(
-    45deg,
-    ${vars.color.accent} 0px,
-    ${vars.color.accent} 2px,
-    transparent 2px,
-    transparent 8px
-  )`,
-  backgroundColor: vars.color.surface,
-  border: `1px solid ${vars.color.border}`,
-});
 
-export const deckCount = style({
-  position: 'absolute',
-  inset: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontFamily: vars.font.display,
-  fontSize: '1.25rem',
-  fontWeight: 700,
-  color: vars.color.text,
-  zIndex: 10,
-});
 
 export const cardLine = style({
   display: 'flex',
@@ -70,6 +60,15 @@ export const cardLine = style({
   gap: vars.space.sm,
   alignItems: 'flex-start',
 });
+
+/* Vertical mode: cards stack in a single column */
+export const cardLineVertical = style({
+  flexDirection: 'column',
+  flexWrap: 'nowrap',
+  gap: vars.space.xs,
+  alignItems: 'flex-start',
+});
+
 
 export const emptyHint = style({
   color: vars.color.textMuted,

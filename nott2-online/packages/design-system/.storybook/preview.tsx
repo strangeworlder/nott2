@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Preview } from '@storybook/react';
 import { darkTheme } from '../src/tokens/theme.css';
+import 'material-symbols/rounded.css';
 
 const preview: Preview = {
   decorators: [

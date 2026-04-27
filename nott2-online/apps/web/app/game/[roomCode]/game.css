@@ -12,13 +12,36 @@
 }
 
 /* ── Main layout ─────────────────────────────────────────────── */
+/* Three-column layout:
+   [game-board-sidebar] [game-main (phase panel)] [game-sidebar (debug/video)]
+   The board sidebar is a narrow, always-visible vertical strip showing
+   the physical table state. The phase panel is the action/decision center.  */
 .game-layout {
   display: flex;
   flex: 1;
   min-height: 0; /* allow children to scroll within flex */
 }
 
-/* Left: game table + phase panel */
+/* ── Left: vertical game board sidebar ───────────────────────── */
+.game-board-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border, #2a2a2a);
+  background: var(--color-surface, #141414);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* The GameBoardPanel wrapper inside the sidebar fills its height */
+.game-board-sidebar .game-board-panel {
+  flex: 1;
+  padding: 16px 12px;
+  border-bottom: none;
+}
+
+/* ── Center: phase panel ─────────────────────────────────────── */
 .game-main {
   flex: 1;
   display: flex;
@@ -28,7 +51,7 @@
   min-width: 0;
 }
 
-/* Right: video + chat sidebar */
+/* ── Right: video + chat sidebar ─────────────────────────────── */
 .game-sidebar {
   width: 320px;
   flex-shrink: 0;
@@ -52,8 +75,9 @@
 }
 
 /* ── Game Board Zone ─────────────────────────────────────────── */
+/* .game-board-panel is the outer wrapper rendered by GameBoardPanel */
 .game-board-panel {
-  padding: 20px 24px 0;
+  padding: 16px 12px;
   border-bottom: 1px solid var(--color-border, #2a2a2a);
 }
 
@@ -149,9 +173,22 @@
   align-items: center;
 }
 
+/* ── Phase panel ─────────────────────────────────────────────── */
+/* Must be display:flex+column so that PhasePanel's alignSelf:center resolves.
+   PhaseDisplay (cinematic) fills naturally; PhasePanel (operational) centers
+   itself at max-width 640px.                                                  */
 .game-phase-panel {
-  padding: 24px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.game-phase-panel > * {
+  max-width: 640px;
+  width: 100%;
+  align-self: center;
 }
 
 /* ── Debug sidebar (solo mode) ───────────────────────────────── */
@@ -168,9 +205,81 @@
   border-bottom: 1px solid var(--color-border, #2a2a2a);
 }
 
-/* ── Responsive collapse sidebar on small screens ─────────────── */
+/* ── Solo mode: no right sidebar, so game-main fills center ──── */
+/* The board sidebar + phase panel are centered; no max-width cap needed
+   since the board sidebar provides natural visual anchoring on the left.     */
+.game-layout:has(.game-main--solo) {
+  justify-content: center;
+}
+
+.game-main--solo {
+  max-width: 680px;
+  width: 100%;
+}
+
+.game-sidebar--debug {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+/* ── Responsive — tablet (≤1100px): hide board sidebar into top bar ─── */
+@media (max-width: 1100px) {
+  /* Board sidebar drops to top, lays out horizontally */
+  .game-board-sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border, #2a2a2a);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .game-board-sidebar .game-board-panel {
+    padding: 12px 16px;
+    flex: unset;
+    width: 100%;
+  }
+
+  .game-layout {
+    flex-direction: column;
+  }
+}
+
+/* ── Responsive — collapse right sidebar on small screens ──────── */
 @media (max-width: 900px) {
   .game-sidebar {
     display: none;
   }
+}
+
+/* ── Responsive — stack right sidebar on tablet ─────────────────── */
+@media (max-width: 1024px) and (min-width: 901px) {
+  .game-sidebar {
+    width: 100%;
+    height: 260px;
+    border-left: none;
+    border-top: 1px solid var(--color-border, #2a2a2a);
+    flex-direction: row;
+  }
+  .game-sidebar__video {
+    width: 50%;
+    border-bottom: none;
+    border-right: 1px solid var(--color-border, #2a2a2a);
+  }
+  .game-sidebar__chat { width: 50%; }
+  .char-bar__inner {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+  }
+  .char-bar__inner::-webkit-scrollbar { display: none; }
+}
+
+/* ── Reduced Motion ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .game-deck-box { transition: none; }
+  .waiting-hint  { animation: none; opacity: 0.8; }
+  .char-card     { transition: none; }
 }

@@ -18,15 +18,11 @@ import { useEffect, useRef } from 'react';
 import { useWebRTCStore, getLocalStreamRef, getRemoteStreamRef } from '../store/webrtc-store';
 import { useGameStore } from '../store/game-store';
 import type { Character } from '@nott2/game-engine';
+import { Icon, suitToIconName } from '@nott2/design-system';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const SUIT_ICON: Record<string, string> = {
-  Spades: '♠',
-  Hearts: '♥',
-  Clubs: '♣',
-  Diamonds: '♦',
-};
+
 
 const CONNECTION_STATE_LABEL: Partial<Record<RTCPeerConnectionState, string>> = {
   connecting: 'Connecting…',
@@ -89,7 +85,7 @@ function VideoCell({
         />
       ) : (
         <div className="video-cell__avatar">
-          <span className="video-cell__suit">{character ? SUIT_ICON[character.id] : '?'}</span>
+          <span className="video-cell__suit">{character ? <Icon name={suitToIconName(character.id)} size={32} /> : '?'}</span>
         </div>
       )}
 
@@ -111,9 +107,9 @@ function VideoCell({
           {character?.name ?? 'Empty'}
         </span>
         <div className="video-cell__icons">
-          {audioMuted  && <span title="Muted">🔇</span>}
-          {!audioMuted && <span title="Audio on">🎤</span>}
-          {videoEnabled  ? <span title="Camera on">🎥</span> : <span title="Camera off">📷</span>}
+          {audioMuted  && <span title="Muted"><Icon name="mic_off" size={16} /></span>}
+          {!audioMuted && <span title="Audio on"><Icon name="mic" size={16} /></span>}
+          {videoEnabled  ? <span title="Camera on"><Icon name="videocam" size={16} /></span> : <span title="Camera off"><Icon name="videocam_off" size={16} /></span>}
         </div>
       </div>
 

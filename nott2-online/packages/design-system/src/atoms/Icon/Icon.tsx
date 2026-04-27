@@ -3,49 +3,38 @@
  *
  * Philosophical:
  * Visual shorthand — each icon is a compact symbolic language for the game world.
- * Card suit icons (♠ ♥ ♦ ♣) are the game's fundamental symbols; utility icons
- * support the interface's functional language. All icons are inline SVG to allow
- * full color control via CSS currentColor.
+ * Card suit icons (spades, hearts, diamonds, clubs) are the game's fundamental
+ * symbols rendered as bespoke inline SVGs — these are candidates for future
+ * custom icon commissions. All other icons use Google Material Symbols Rounded,
+ * a professional variable icon font that brings visual consistency and polish.
  *
  * Technical:
- * Renders an inline SVG icon from a named library. Size is specified in pixels;
- * color is controlled via the Vanilla Extract color variant (default: inherit).
+ * Dual-mode rendering:
+ * - **Custom SVG icons** (card suits): rendered as inline <svg> for full path
+ *   control and future replacement with custom artwork.
+ * - **Material Symbol icons** (everything else): rendered as a <span> with the
+ *   `material-symbols-rounded` font class. Size is controlled via `font-size`;
+ *   color via the Vanilla Extract color recipe.
+ *
+ * The component inspects the `name` prop — if it matches a custom SVG key,
+ * it renders inline SVG; otherwise it renders a Material Symbol font glyph.
  *
  * Props:
- * - name: Icon identifier. Required.
+ * - name: Icon identifier (CustomIconName | MaterialIconName). Required.
  * - size: Width/height in pixels. Defaults to 24.
  * - color: Color variant token. Defaults to 'inherit'.
+ * - id: Optional id attribute.
  */
 
 import React from 'react';
-import { iconRecipe } from './Icon.css';
+import { iconRecipe, materialIconStyle } from './Icon.css';
 
-type IconName =
-  | 'spades'
-  | 'hearts'
-  | 'diamonds'
-  | 'clubs'
-  | 'clock'
-  | 'users'
-  | 'skull'
-  | 'star'
-  | 'check'
-  | 'x'
-  | 'chevron-right'
-  | 'chevron-left'
-  | 'chevron-down'
-  | 'refresh';
+// ── Custom SVG Icons (card suits — future custom icon candidates) ───────────
 
-type IconColor = 'white' | 'red' | 'muted' | 'success' | 'inherit';
+const CUSTOM_ICON_NAMES = ['spades', 'hearts', 'diamonds', 'clubs'] as const;
+type CustomIconName = (typeof CUSTOM_ICON_NAMES)[number];
 
-interface IconProps {
-  name: IconName;
-  size?: number | string;
-  color?: IconColor;
-  id?: string;
-}
-
-const ICONS: Record<IconName, React.ReactElement> = {
+const CUSTOM_SVGS: Record<CustomIconName, React.ReactElement> = {
   spades: (
     <path
       fill="currentColor"
@@ -67,74 +56,123 @@ const ICONS: Record<IconName, React.ReactElement> = {
       d="M12 2a4 4 0 0 0-3.1 6.54A4 4 0 1 0 12 14.07V17H9v2h6v-2h-3v-2.93A4 4 0 1 0 15.1 8.54 4 4 0 0 0 12 2z"
     />
   ),
-  clock: (
-    <>
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-      <polyline points="12 6 12 12 16 14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-    </>
-  ),
-  users: (
-    <>
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" fill="none" />
-      <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="2" fill="none" />
-    </>
-  ),
-  skull: (
-    <>
-      <circle cx="12" cy="10" r="7" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path d="M9 14v3h6v-3" stroke="currentColor" strokeWidth="2" fill="none" />
-      <line x1="9" y1="11" x2="9" y2="11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      <line x1="15" y1="11" x2="15" y2="11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    </>
-  ),
-  star: (
-    <polygon
-      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-      fill="currentColor"
-    />
-  ),
-  check: (
-    <polyline points="20 6 9 17 4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-  ),
-  x: (
-    <>
-      <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </>
-  ),
-  'chevron-right': (
-    <polyline points="9 18 15 12 9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-  ),
-  'chevron-left': (
-    <polyline points="15 18 9 12 15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-  ),
-  'chevron-down': (
-    <polyline points="6 9 12 15 18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-  ),
-  refresh: (
-    <>
-      <polyline points="23 4 23 10 17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </>
-  ),
 };
 
+function isCustomIcon(name: string): name is CustomIconName {
+  return (CUSTOM_ICON_NAMES as readonly string[]).includes(name);
+}
+
+// ── Material Symbol Names ───────────────────────────────────────────────────
+// These map 1:1 to Material Symbols Rounded glyph names.
+
+type MaterialIconName =
+  // Time & navigation
+  | 'schedule'
+  | 'chevron_right'
+  | 'chevron_left'
+  | 'expand_more'
+  | 'refresh'
+  // People & identity
+  | 'group'
+  | 'person'
+  // Status & feedback
+  | 'check'
+  | 'close'
+  | 'warning'
+  | 'bolt'
+  | 'auto_awesome'
+  | 'star'
+  // Game / thematic
+  | 'target'
+  | 'air'
+  | 'local_fire_department'
+  | 'dangerous'
+  | 'casino'
+  | 'emoji_events'
+  | 'theater_comedy'
+  | 'skull'
+  // Media
+  | 'movie'
+  | 'mic'
+  | 'mic_off'
+  | 'videocam'
+  | 'videocam_off'
+  // Document / UI
+  | 'description'
+  | 'assignment'
+  | 'settings'
+  | 'shuffle'
+  | 'undo'
+  | 'delete'
+  | 'style'
+  // Misc
+  | 'crown'
+  | 'swords'
+  | 'check_circle'
+  | 'arrow_downward'
+  | 'inventory_2'
+  | 'deployed_code'
+  // Auth / access
+  | 'lock'
+  | 'link_off'
+  | 'group_off'
+  | 'error_outline'
+  | 'login';
+
+// ── Combined type ───────────────────────────────────────────────────────────
+
+export type IconName = CustomIconName | MaterialIconName;
+export type IconColor = 'white' | 'red' | 'muted' | 'success' | 'inherit';
+
+interface IconProps {
+  name: IconName;
+  size?: number | string;
+  color?: IconColor;
+  id?: string;
+}
+
 export function Icon({ name, size = 24, color = 'inherit', id }: IconProps) {
+  if (isCustomIcon(name)) {
+    return (
+      <svg
+        id={id}
+        className={iconRecipe({ color })}
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        focusable="false"
+      >
+        {CUSTOM_SVGS[name]}
+      </svg>
+    );
+  }
+
+  // Material Symbols Rounded — rendered via icon font
   return (
-    <svg
+    <span
       id={id}
-      className={iconRecipe({ color })}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
+      className={`material-symbols-rounded ${iconRecipe({ color })} ${materialIconStyle}`}
+      style={{ fontSize: typeof size === 'number' ? `${size}px` : size }}
       aria-hidden="true"
-      focusable="false"
     >
-      {ICONS[name]}
-    </svg>
+      {name}
+    </span>
   );
 }
 
-export type { IconName };
+// ── Utility ─────────────────────────────────────────────────────────────────
+
+/**
+ * Maps a suit name (e.g. 'Spades') to its corresponding custom IconName.
+ * Eliminates the need for every component to maintain its own SUIT_SYMBOL map.
+ */
+export function suitToIconName(suit: string): CustomIconName {
+  const map: Record<string, CustomIconName> = {
+    Spades: 'spades',
+    Hearts: 'hearts',
+    Clubs: 'clubs',
+    Diamonds: 'diamonds',
+  };
+  return map[suit] ?? 'spades';
+}

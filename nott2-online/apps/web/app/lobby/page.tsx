@@ -17,14 +17,13 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useGameStore } from '../../store/game-store';
 import { useWebRTCStore, getLocalStreamRef } from '../../store/webrtc-store';
 import {
-  darkTheme, PlayerAvatar, Card, Button, ActionFooter,
+  darkTheme, PlayerAvatar, Card, Button, ActionFooter, TextField, TabBar,
+  Icon, suitToIconName,
 } from '@nott2/design-system';
 import '../demo/demo.css';
 import './lobby.css';
 
-const SUIT_SYMBOL: Record<string, string> = {
-  Spades: '♠', Hearts: '♥', Clubs: '♣', Diamonds: '♦',
-};
+
 const SUIT_LABEL: Record<string, string> = {
   Spades: 'The Power', Hearts: 'The Resolve', Clubs: 'The Intellect', Diamonds: 'The Finesse',
 };
@@ -35,6 +34,37 @@ function CreateForm({ onCreated }: { onCreated: () => void }) {
   const { createRoom, multiplayerError } = useGameStore() as any;
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Check if user has a Discord session (for host gating)
+  const [session, setSession] = useState<any>(null);
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const [authRequired, setAuthRequired] = useState(false);
+
+  useEffect(() => {
+    // Probe the session endpoint — if it returns a discordId, user is authed.
+    // If it returns empty or fails, check if Discord auth is even configured.
+    fetch('/api/auth/session')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        setSession(data?.user?.discordId ? data : null);
+        // If we got a valid response but no Discord session, auth may be required.
+        // The server will set a header or we infer from the providers endpoint.
+        setSessionChecked(true);
+      })
+      .catch(() => {
+        setSessionChecked(true); // No session endpoint = dev mode, proceed
+      });
+
+    // Check if Discord auth is configured by probing providers
+    fetch('/api/auth/providers')
+      .then(r => r.ok ? r.json() : null)
+      .then(providers => {
+        if (providers?.discord) {
+          setAuthRequired(true);
+        }
+      })
+      .catch(() => {}); // No providers = dev mode
+  }, []);
 
   const handleCreate = async () => {
     if (!name.trim()) return;
@@ -47,24 +77,70 @@ function CreateForm({ onCreated }: { onCreated: () => void }) {
     }
   };
 
+  // Show loading state while checking session
+  if (!sessionChecked) {
+    return (
+      <Card title="Create a Game">
+        <div className="lobby-form">
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', textAlign: 'center' }}>
+            Checking authentication…
+          </p>
+        </div>
+      </Card>
+    );
+  }
+
+  // Discord auth is configured but user hasn't signed in → show sign-in prompt
+  if (authRequired && !session) {
+    return (
+      <Card title="Create a Game">
+        <div className="lobby-form" style={{ gap: 16 }}>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', lineHeight: 1.6 }}>
+            To host a game, you need to verify your subscription by signing in with Discord.
+          </p>
+          <Button
+            variant="primary"
+            onClick={() => window.location.href = '/auth/signin'}
+          >
+            <Icon name="login" size={20} />
+            Sign in with Discord
+          </Button>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', textAlign: 'center' }}>
+            Players joining a game don't need to sign in — use the "Join Game" tab.
+          </p>
+        </div>
+      </Card>
+    );
+  }
+
+  // Authenticated (Discord or dev mode) → show the create form
   return (
     <Card title="Create a Game">
       <div className="lobby-form">
-        <label className="field-label" htmlFor="create-name">Your Name</label>
-        <input
+        {session && (
+          <div style={{
+            padding: '8px 12px', borderRadius: 6, marginBottom: 8,
+            background: 'rgba(88, 101, 242, 0.08)',
+            border: '1px solid rgba(88, 101, 242, 0.2)',
+            fontSize: '0.8rem', color: 'var(--color-text-muted)',
+            display: 'flex', alignItems: 'center', gap: 8,
+          }}>
+            <Icon name="check_circle" size={16} />
+            Signed in as <strong style={{ color: 'var(--color-text)' }}>{session.user.discordName ?? session.user.name}</strong>
+          </div>
+        )}
+        <TextField
           id="create-name"
-          type="text"
-          className="field-select"
+          label="Your Name"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={setName}
           onKeyDown={e => e.key === 'Enter' && handleCreate()}
           placeholder="Enter your name"
           maxLength={24}
           autoFocus
+          error={multiplayerError || undefined}
+          helperText="A 6-character room code will be generated. Share it with your players."
         />
-        {multiplayerError && (
-          <div className="lobby-error">{multiplayerError}</div>
-        )}
         <Button
           variant="primary"
           onClick={handleCreate}
@@ -72,9 +148,6 @@ function CreateForm({ onCreated }: { onCreated: () => void }) {
         >
           {loading ? 'Creating…' : 'Create Game →'}
         </Button>
-        <p className="text-muted" style={{ fontSize: '0.75rem' }}>
-          A 6-character room code will be generated. Share it with your players.
-        </p>
       </div>
     </Card>
   );
@@ -100,31 +173,25 @@ function JoinForm({ onJoined }: { onJoined: () => void }) {
   return (
     <Card title="Join a Game">
       <div className="lobby-form">
-        <label className="field-label" htmlFor="join-code">Room Code</label>
-        <input
+        <TextField
           id="join-code"
-          type="text"
-          className="field-select lobby-code-input"
+          label="Room Code"
           value={code}
-          onChange={e => setCode(e.target.value.toUpperCase().slice(0, 6))}
+          onChange={v => setCode(v.toUpperCase().slice(0, 6))}
           placeholder="XXXXXX"
           maxLength={6}
           autoFocus
         />
-        <label className="field-label" htmlFor="join-name">Your Name</label>
-        <input
+        <TextField
           id="join-name"
-          type="text"
-          className="field-select"
+          label="Your Name"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={setName}
           onKeyDown={e => e.key === 'Enter' && handleJoin()}
           placeholder="Enter your name"
           maxLength={24}
+          error={multiplayerError || undefined}
         />
-        {multiplayerError && (
-          <div className="lobby-error">{multiplayerError}</div>
-        )}
         <Button
           variant="primary"
           onClick={handleJoin}
@@ -207,7 +274,7 @@ function WaitingRoom() {
                       <div className="seat__player">
                         <PlayerAvatar
                           name={player.name ?? '???'}
-                          suitSymbol={SUIT_SYMBOL[suit]}
+                          suit={suit}
                           characterName={SUIT_LABEL[suit]}
                           isConnected={true}
                           isActivePlayer={player.name === playerName}
@@ -221,7 +288,7 @@ function WaitingRoom() {
                         </div>
                       </div>
                     ) : (
-                      <div className="seat__empty-label">{SUIT_SYMBOL[suit]} Empty</div>
+                      <div className="seat__empty-label"><Icon name={suitToIconName(suit)} size={16} /> Empty</div>
                     )}
                   </div>
                 );
@@ -244,7 +311,7 @@ function WaitingRoom() {
                 />
               ) : (
                 <div className="video-preview__placeholder">
-                  <span style={{ fontSize: '2rem' }}>🎥</span>
+                  <span style={{ fontSize: '2rem' }}><Icon name="videocam" size={32} /></span>
                   <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
                     {webrtc.mediaError ? 'Camera unavailable' : 'Starting camera…'}
                   </span>
@@ -256,23 +323,21 @@ function WaitingRoom() {
                 className={`video-ctrl-btn ${webrtc.audioMuted ? 'video-ctrl-btn--off' : ''}`}
                 onClick={webrtc.toggleAudio}
               >
-                {webrtc.audioMuted ? '🔇' : '🎤'}
+                {webrtc.audioMuted ? <Icon name="mic_off" size={20} /> : <Icon name="mic" size={20} />}
               </button>
               <button
                 className={`video-ctrl-btn ${!webrtc.videoEnabled ? 'video-ctrl-btn--off' : ''}`}
                 onClick={webrtc.toggleVideo}
               >
-                {webrtc.videoEnabled ? '🎥' : '📷'}
+                {webrtc.videoEnabled ? <Icon name="videocam" size={20} /> : <Icon name="videocam_off" size={20} />}
               </button>
             </div>
             <div style={{ marginTop: 12 }}>
-              <label className="field-label">Your Name</label>
-              <input
-                type="text"
-                className="field-select"
-                value={playerName}
-                readOnly
-                style={{ opacity: 0.6 }}
+              <TextField
+                label="Your Name"
+                value={playerName ?? ''}
+                onChange={() => {}}
+                disabled
               />
             </div>
           </Card>
@@ -337,20 +402,14 @@ export default function LobbyPage() {
           <h1 className="lobby-title">Night of the Thirteenth 2</h1>
         </div>
 
-        <div className="lobby-tabs">
-          <button
-            className={`lobby-tab ${activeTab === 'create' ? 'lobby-tab--active' : ''}`}
-            onClick={() => setActiveTab('create')}
-          >
-            Create Game
-          </button>
-          <button
-            className={`lobby-tab ${activeTab === 'join' ? 'lobby-tab--active' : ''}`}
-            onClick={() => setActiveTab('join')}
-          >
-            Join Game
-          </button>
-        </div>
+        <TabBar
+          tabs={[
+            { id: 'create', label: 'Create Game' },
+            { id: 'join',   label: 'Join Game' },
+          ]}
+          activeTab={activeTab}
+          onTabChange={(id) => setActiveTab(id as 'create' | 'join')}
+        />
 
         {activeTab === 'create' ? (
           <CreateForm onCreated={() => setInRoom(true)} />

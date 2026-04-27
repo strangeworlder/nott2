@@ -12,7 +12,7 @@
  * Renders a standard poker-sized playing card with correct pip layout for
  * ranks 2–10, face cards (face-down silhouette), and Jokers. The `faceDown`
  * prop hides the face and shows the card back pattern. The `selected` prop
- * applies a glowing red selection ring.
+ * applies a glowing red selection ring. Uses Icon component for suit symbols.
  *
  * Props:
  * - suit: Card suit ('Spades' | 'Hearts' | 'Clubs' | 'Diamonds')
@@ -27,13 +27,10 @@
 
 import React from 'react';
 import * as styles from './PlayingCard.css';
+import { Icon, suitToIconName } from '../../atoms/Icon/Icon';
 
 export type Suit = 'Spades' | 'Hearts' | 'Clubs' | 'Diamonds';
 export type Rank = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
-
-const SUIT_SYMBOL: Record<Suit, string> = {
-  Spades: '♠', Hearts: '♥', Clubs: '♣', Diamonds: '♦',
-};
 
 const RANK_LABEL: Record<number, string> = {
   1: 'A', 11: 'J', 12: 'Q', 13: 'K',
@@ -53,6 +50,8 @@ interface PlayingCardProps {
   selected?: boolean;
   faceDown?: boolean;
   compact?: boolean;
+  /** Micro size (28×40px). Renders simplified "A" + suit icon layout. */
+  micro?: boolean;
   joker?: boolean;
   jokerColor?: 'Red' | 'Black';
   onClick?: () => void;
@@ -64,13 +63,14 @@ export function PlayingCard({
   selected = false,
   faceDown = false,
   compact = false,
+  micro = false,
   joker = false,
   jokerColor = 'Black',
   onClick,
 }: PlayingCardProps) {
   const cardClass = [
     styles.card,
-    compact ? styles.cardCompact : '',
+    micro ? styles.cardMicro : compact ? styles.cardCompact : '',
     selected ? styles.cardSelected : '',
     onClick ? styles.cardClickable : '',
   ].filter(Boolean).join(' ');
@@ -88,7 +88,9 @@ export function PlayingCard({
     return (
       <div className={cardClass} onClick={onClick} role={onClick ? 'button' : undefined}>
         <div className={`${styles.corner} ${styles.cornerTL}`}>
-          <span className={isRedJoker ? styles.rankRed : styles.rankBlack}>★</span>
+          <span className={isRedJoker ? styles.rankRed : styles.rankBlack}>
+            <Icon name="star" size={14} />
+          </span>
         </div>
         <div className={styles.suitCenter}>
           <span className={`${styles.jokerSymbol} ${isRedJoker ? styles.rankRed : styles.rankBlack}`}>
@@ -96,7 +98,9 @@ export function PlayingCard({
           </span>
         </div>
         <div className={`${styles.corner} ${styles.cornerBR}`}>
-          <span className={isRedJoker ? styles.rankRed : styles.rankBlack}>★</span>
+          <span className={isRedJoker ? styles.rankRed : styles.rankBlack}>
+            <Icon name="star" size={14} />
+          </span>
         </div>
       </div>
     );
@@ -104,26 +108,49 @@ export function PlayingCard({
 
   const red = isRed(suit);
   const rankLabel = getRankLabel(rank);
-  const suitSymbol = SUIT_SYMBOL[suit];
+  const suitIcon = suitToIconName(suit);
   const rankClass = red ? styles.rankRed : styles.rankBlack;
+
+  // Micro: simplified "A" + suit icon layout (for Ace turn order tokens)
+  if (micro) {
+    return (
+      <div className={cardClass} onClick={onClick} role={onClick ? 'button' : undefined}>
+        <div className={styles.microLayout}>
+          <span className={`${styles.microRank} ${rankClass}`}>{rankLabel}</span>
+          <span className={rankClass}>
+            <Icon name={suitIcon} size={10} />
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  const centerSize = compact ? 20 : 32;
+  const cornerSize = compact ? 8 : 12;
 
   return (
     <div className={cardClass} onClick={onClick} role={onClick ? 'button' : undefined}>
       {/* Top-left corner */}
       <div className={`${styles.corner} ${styles.cornerTL}`}>
         <span className={`${styles.rankLabel} ${rankClass}`}>{rankLabel}</span>
-        <span className={`${styles.suitLabel} ${rankClass}`}>{suitSymbol}</span>
+        <span className={`${styles.suitLabel} ${rankClass}`}>
+          <Icon name={suitIcon} size={cornerSize} />
+        </span>
       </div>
 
       {/* Center suit */}
       <div className={styles.suitCenter}>
-        <span className={`${styles.suitLarge} ${rankClass}`}>{suitSymbol}</span>
+        <span className={`${styles.suitLarge} ${rankClass}`}>
+          <Icon name={suitIcon} size={centerSize} />
+        </span>
       </div>
 
       {/* Bottom-right corner (rotated 180°) */}
       <div className={`${styles.corner} ${styles.cornerBR}`}>
         <span className={`${styles.rankLabel} ${rankClass}`}>{rankLabel}</span>
-        <span className={`${styles.suitLabel} ${rankClass}`}>{suitSymbol}</span>
+        <span className={`${styles.suitLabel} ${rankClass}`}>
+          <Icon name={suitIcon} size={cornerSize} />
+        </span>
       </div>
     </div>
   );

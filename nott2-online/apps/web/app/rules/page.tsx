@@ -79,7 +79,7 @@ export default function RulesPage() {
             <div className="rules-act rules-act--2">
               <div className="rules-act__num">Act II</div>
               <div className="rules-act__name">The Horror Story</div>
-              <p>Killer is active. Queens enter when Face Cards are defeated. Ends when 4 weaknesses found or 13 reserve cards added.</p>
+              <p>The Killer is active. People will die. More and more Face Cards get added to the Threat Deck.</p>
             </div>
             <div className="rules-act rules-act--3">
               <div className="rules-act__num">Act III</div>

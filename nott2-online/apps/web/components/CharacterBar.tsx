@@ -1,81 +1,59 @@
 /**
- * CharacterBar — always-visible strip at the bottom of the game surface.
+ * CharacterBar (App-Level Store Wrapper)
  *
- * Shows all four characters with their strikes, active player indicator,
- * and genre point counters. Clicking a character sets them as the AP.
+ * This is the thin store-connected wrapper around the Design System's
+ * `CharacterBar` organism. It binds the game state to the presentational
+ * component via props, keeping the DS component fully decoupled from the
+ * Zustand store and app-level concerns.
  *
- * Shared between solo demo and multiplayer game routes.
- * Uses design system PlayerAvatar + StrikeIndicator molecules.
+ * The DS CharacterBar in @nott2/design-system/CharacterBar owns all
+ * presentation logic. This file owns only the store binding.
  */
 
 'use client';
 
 import { useGameStore } from '../store/game-store';
-import { PlayerAvatar, StrikeIndicator } from '@nott2/design-system';
-import type { Character } from '@nott2/game-engine';
-
-const SUIT_SYMBOL: Record<string, string> = {
-  Spades: '♠', Hearts: '♥', Clubs: '♣', Diamonds: '♦',
-};
-
-function CharCard({ character }: { character: Character }) {
-  const { gameState, setActivePlayer } = useGameStore();
-  const { players, scene, playerGenrePoints } = gameState;
-
-  const playerId = players.find(p => p.characterId === character.id)?.id ?? '';
-  const isActive = scene.activePlayerId === playerId;
-  const gp = playerGenrePoints[playerId] ?? 0;
-
-  return (
-    <button
-      className={[
-        'char-card',
-        isActive ? 'char-card--active' : '',
-        character.isDead ? 'char-card--dead' : '',
-      ].join(' ')}
-      onClick={() => !character.isDead && setActivePlayer(character.id)}
-      disabled={character.isDead}
-      aria-pressed={isActive}
-      aria-label={`${character.name} — ${character.strikes} strikes${character.isDead ? ' — dead' : ''}`}
-    >
-      <PlayerAvatar
-        name={character.isDead ? `☠ ${character.name}` : character.name}
-        suitSymbol={SUIT_SYMBOL[character.id]}
-        isActivePlayer={isActive}
-        isConnected={!character.isDead}
-        size="sm"
-      />
-      <div style={{ marginTop: 4 }}>
-        <StrikeIndicator
-          strikes={character.strikes as 0 | 1 | 2 | 3}
-          isDead={character.isDead}
-        />
-      </div>
-      {gp > 0 && (
-        <div style={{ fontSize: '0.6rem', marginTop: 4, color: 'var(--color-warning)' }}>
-          {gp} GP
-        </div>
-      )}
-    </button>
-  );
-}
+import { CharacterBar as DSCharacterBar } from '@nott2/design-system';
+import type { Suit } from '@nott2/game-engine';
 
 export default function CharacterBar() {
-  const { gameState } = useGameStore();
-  const { characters, tableGenrePoints } = gameState;
+  const { gameState, setActivePlayer } = useGameStore();
+  const { characters, players, scene, playerGenrePoints, tableGenrePoints, turnOrder, deck } = gameState;
+
+  // A character earns their Ace token when their Ace (rank 1) has been
+  // resolved and removed from the game — i.e. it appears in removedCards.
+  const resolvedAceSuits = new Set(
+    deck.removedCards
+      .filter(card => card.rank === 1)
+      .map(card => card.suit),
+  );
+
+  const mappedCharacters = characters.map(c => ({
+    id: c.id,
+    name: c.name,
+    strikes: c.strikes as 0 | 1 | 2 | 3,
+    isDead: c.isDead,
+    hasAceToken: resolvedAceSuits.has(c.id as Suit),
+    hasActed: turnOrder.acted.includes(c.id as Suit),
+  }));
+
+  // Map player genre points by characterId (DS expects charId → gp)
+  const genrePoints: Record<string, number> = {};
+  players.forEach(p => {
+    genrePoints[p.characterId] = playerGenrePoints[p.id] ?? 0;
+  });
+
+  // Resolve activeCharacterId from activePlayerId
+  const activePlayer = players.find(p => p.id === scene.activePlayerId);
+  const activeCharacterId = activePlayer?.characterId ?? null;
 
   return (
-    <footer className="char-bar">
-      <div className="char-bar__inner">
-        {characters.map(c => (
-          <CharCard key={c.id} character={c} />
-        ))}
-      </div>
-      <div className="gp-bar">
-        <span className="gp-label">Genre Pool</span>
-        <span className="gp-count">{tableGenrePoints}</span>
-        <span className="gp-label" style={{ marginLeft: 16 }}>tokens remaining</span>
-      </div>
-    </footer>
+    <DSCharacterBar
+      characters={mappedCharacters}
+      activeCharacterId={activeCharacterId}
+      genrePoints={genrePoints}
+      tableGenrePoints={tableGenrePoints}
+      onSelectCharacter={(characterId) => setActivePlayer(characterId as Suit)}
+    />
   );
 }

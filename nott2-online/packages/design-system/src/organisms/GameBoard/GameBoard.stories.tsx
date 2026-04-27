@@ -15,6 +15,8 @@ const SAMPLE_CARDS = [
   { id: '3D', suit: 'Diamonds' as const, rank: 3 as const },
 ];
 
+// ── Horizontal stories (legacy bar layout) ────────────────────────────────────
+
 export const Empty: Story = {
   render: () => (
     <GameBoard>
@@ -31,7 +33,7 @@ export const ActiveScene: Story = {
     <GameBoard>
       <GameBoard.DeckZone count={18} onClick={() => {}} />
       <GameBoard.CardLine cards={SAMPLE_CARDS} selectedId="KS" onSelect={() => {}} />
-      <GameBoard.TrophyZone card={{ suit: 'Hearts', rank: 5 }} />
+      <GameBoard.TrophyZone topCard={{ suit: 'Hearts', rank: 5 }} count={3} />
       <GameBoard.PhaseInfo phase="resolution" act={2} />
     </GameBoard>
   ),
@@ -42,7 +44,7 @@ export const Endgame: Story = {
     <GameBoard>
       <GameBoard.DeckZone count={3} onClick={() => {}} />
       <GameBoard.CardLine cards={SAMPLE_CARDS} selectedId={null} onSelect={() => {}} />
-      <GameBoard.TrophyZone card={{ suit: 'Spades', rank: 13 }} />
+      <GameBoard.TrophyZone topCard={{ suit: 'Spades', rank: 13 }} count={7} />
       <GameBoard.PhaseInfo phase="fallout" act={3} isEndgame />
     </GameBoard>
   ),
@@ -55,6 +57,46 @@ export const RandomisedTrophy: Story = {
       <GameBoard.CardLine cards={[]} selectedId={null} onSelect={() => {}} />
       <GameBoard.TrophyZone isRandomized />
       <GameBoard.PhaseInfo phase="act-setup" act={1} />
+    </GameBoard>
+  ),
+};
+
+// ── Vertical stories (sidebar layout — used in GameShell) ─────────────────────
+// The vertical prop stacks zones as a column. PhaseInfo is omitted here
+// because the Header carries act/phase when in sidebar mode.
+
+export const VerticalSidebar: Story = {
+  name: 'Vertical / Empty',
+  decorators: [
+    (Story) => (
+      <div style={{ width: 220, height: 480, background: '#141414', border: '1px solid #2a2a2a' }}>
+        <Story />
+      </div>
+    ),
+  ],
+  render: () => (
+    <GameBoard vertical>
+      <GameBoard.DeckZone count={0} />
+      <GameBoard.CardLine cards={[]} selectedId={null} onSelect={() => {}} />
+      <GameBoard.TrophyZone />
+    </GameBoard>
+  ),
+};
+
+export const VerticalSidebarActive: Story = {
+  name: 'Vertical / Active Scene',
+  decorators: [
+    (Story) => (
+      <div style={{ width: 220, height: 480, background: '#141414', border: '1px solid #2a2a2a' }}>
+        <Story />
+      </div>
+    ),
+  ],
+  render: () => (
+    <GameBoard vertical>
+      <GameBoard.DeckZone count={12} />
+      <GameBoard.CardLine cards={SAMPLE_CARDS} selectedId="KS" onSelect={() => {}} />
+      <GameBoard.TrophyZone topCard={{ suit: 'Hearts', rank: 5 }} count={2} />
     </GameBoard>
   ),
 };

@@ -1,20 +1,23 @@
 /**
- * Anonymous Authentication (`auth.ts`)
+ * Authentication Module (`auth.ts`)
  *
- * Handles Firebase Anonymous Auth flow.
- * Anonymous accounts persist across sessions (same browser/device).
+ * Handles Firebase auth for both authentication paths:
  *
- * Flow:
- *   1. App loads → call ensureAuth()
- *   2. If already signed in → returns existing user
- *   3. If not signed in → signInAnonymously()
- *   4. Returns { uid, displayName }
+ * 1. Anonymous Auth (clients / dev mode):
+ *    App loads → ensureAuth() → signInAnonymously() if needed
+ *
+ * 2. Discord Host Auth (production):
+ *    Host authenticates via Discord SSO → server mints Firebase Custom Token
+ *    → client calls signInAsHost(token) → signInWithCustomToken()
  *
  * The UID is used as playerId throughout the multiplayer system.
+ * For anonymous users it's a random Firebase UID.
+ * For Discord hosts it's `discord:<discordId>`.
  */
 
 import {
   signInAnonymously,
+  signInWithCustomToken,
   onAuthStateChanged,
   type User,
 } from 'firebase/auth';
@@ -58,6 +61,21 @@ export async function ensureAuth(): Promise<AuthState> {
 }
 
 /**
+ * Sign in as a Discord-authenticated host using a Firebase Custom Token.
+ *
+ * The token is minted server-side by the `/api/auth/firebase-token` endpoint
+ * using the Firebase Admin SDK. The resulting auth.uid will be `discord:<id>`.
+ *
+ * @param firebaseToken - Custom Token from the server
+ * @returns AuthState with the host's Firebase UID
+ */
+export async function signInAsHost(firebaseToken: string): Promise<AuthState> {
+  const auth = getFirebaseAuth();
+  const cred = await signInWithCustomToken(auth, firebaseToken);
+  return { uid: cred.user.uid, displayName: cred.user.displayName };
+}
+
+/**
  * Subscribe to auth state changes.
  * Use this to reactively update the Zustand store when auth changes.
  *
@@ -76,3 +94,4 @@ export function subscribeToAuth(
 export function getCurrentUser(): User | null {
   return getFirebaseAuth().currentUser;
 }
+

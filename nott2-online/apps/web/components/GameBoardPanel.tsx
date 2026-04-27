@@ -1,119 +1,75 @@
 /**
  * GameBoardPanel — always-visible top zone showing the physical game state.
  *
- * Renders: Threat Deck (count) | Visible Cards (selectable) | Trophy Pile top
- * This is the "table" — the shared physical representation of the game.
+ * Philosophical:
+ * This is the table surface. A shared, persistent view of the physical game
+ * state that all players see at all times — the deck, the cards, the trophy.
+ * It grounds every conversation in the same material reality.
+ *
+ * Technical:
+ * A thin store-connected wrapper around the DS `GameBoard` compound component.
+ * Uses `GameBoard.DeckZone`, `GameBoard.CardLine`, `GameBoard.TrophyZone`,
+ * `GameBoard.PhaseInfo`, and `GameBoard.DoomClockZone` — the same zones visible
+ * in Storybook — rather than hand-rolling ad-hoc CSS. This ensures the demo
+ * and DS stay in sync visually.
+ *
+ * Mounted guard prevents hydration mismatch from Zustand localStorage state.
  */
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useGameStore } from '../store/game-store';
-import { PlayingCard } from '@nott2/design-system';
-
-const SUIT_SYMBOL: Record<string, string> = {
-  Spades: '♠', Hearts: '♥', Clubs: '♣', Diamonds: '♦',
-};
-
-function getRankLabel(rank: number) {
-  if (rank === 1) return 'A';
-  if (rank === 11) return 'J';
-  if (rank === 12) return 'Q';
-  if (rank === 13) return 'K';
-  return String(rank);
-}
+import { GameBoard } from '@nott2/design-system';
+import type { Suit, Rank } from '@nott2/design-system';
 
 export function GameBoardPanel() {
-  const { gameState, selectCard, selectJoker } = useGameStore();
-  const { deck, scene } = gameState;
+  const { gameState, computed, selectCard, selectJoker, drawCard } = useGameStore();
+  const { deck, scene, phase, currentAct, isEndgame } = gameState;
   const { visibleCards, trophyTop, threatDeck } = deck;
-  // Count Aces remaining in the threat deck (Prologue cards)
-  const acesRemaining = threatDeck.filter(c => c.rank === 1).length;
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  if (!mounted) {
+    return <div className="game-board-panel" role="region" aria-label="Game board" />;
+  }
+
+  // Build card list for CardLine — exclude joker IDs (rank 14/15), which are
+  // rendered specially in SceneSetupScreen, not as standard PlayingCards.
+  const allVisibleCards = visibleCards
+    .filter(c => !c.id.startsWith('Joker-'))
+    .map(c => ({ id: c.id, suit: c.suit as Suit, rank: c.rank as Rank }));
+
+  const selectedId = scene.selectedCardId ?? (
+    scene.activeJoker === 'Black' ? 'Joker-Black'
+    : scene.activeJoker === 'Red' ? 'Joker-Red'
+    : null
+  );
 
   return (
-    <div className="game-board-panel">
-      <div className="game-board-row" style={{ paddingBottom: 20 }}>
-        {/* Threat Deck */}
-        <div className="game-deck-zone">
-          <div className="game-deck-box">
-            <span>🂠</span>
-            <div className="game-deck-box__count">
-              {threatDeck.length} cards
-            </div>
-          </div>
-          <span style={{ fontSize: '0.55rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            Deck
-          </span>
-        </div>
-
-        {/* Divider */}
-        <div style={{ width: 1, height: 60, background: 'var(--color-border, #2a2a2a)', flexShrink: 0 }} />
-
-        {/* Visible cards */}
-        <div className="game-visible-cards">
-          {visibleCards.length === 0 && (
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-              No cards on table
-            </span>
-          )}
-          {visibleCards.map(card => (
-            <div key={card.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-              <PlayingCard
-                suit={card.suit as any}
-                rank={card.rank as any}
-                selected={scene.selectedCardId === card.id}
-                onClick={() => selectCard(card.id)}
-              />
-              {card.rank >= 11 && (
-                <span style={{ fontSize: '0.5rem', color: 'var(--color-accent-bright)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  Face Card
-                </span>
-              )}
-            </div>
-          ))}
-          {/* Jokers */}
-          {gameState.jokersAdded && !gameState.isBlackJokerRemoved && (
-            <PlayingCard
-              joker jokerColor="Black"
-              selected={scene.activeJoker === 'Black'}
-              onClick={() => selectJoker('Black')}
-            />
-          )}
-          {gameState.jokersAdded && (
-            <PlayingCard
-              joker jokerColor="Red"
-              selected={scene.activeJoker === 'Red'}
-              onClick={() => selectJoker('Red')}
-            />
-          )}
-        </div>
-
-        {/* Divider */}
-        {trophyTop && (
-          <>
-            <div style={{ width: 1, height: 60, background: 'var(--color-border, #2a2a2a)', flexShrink: 0 }} />
-            {/* Trophy */}
-            <div className="game-trophy-zone">
-              <div className="game-trophy-box">
-                <span className="game-trophy-label">Trophy</span>
-                <span className="game-trophy-rank">{getRankLabel(trophyTop.rank)}{SUIT_SYMBOL[trophyTop.suit]}</span>
-              </div>
-              <span style={{ fontSize: '0.55rem', color: 'var(--color-warning)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                Rank {trophyTop.rank}
-              </span>
-            </div>
-          </>
-        )}
-
-        {/* Aces indicator */}
-        {acesRemaining > 0 && (
-          <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-            <div style={{ fontSize: '1.5rem' }}>🂡</div>
-            <span style={{ fontSize: '0.55rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              {acesRemaining} Ace{acesRemaining > 1 ? 's' : ''} left
-            </span>
-          </div>
-        )}
-      </div>
+    <div className="game-board-panel" role="region" aria-label="Game board">
+      <GameBoard vertical>
+        <GameBoard.DeckZone count={threatDeck.length} />
+        <GameBoard.CardLine
+          cards={allVisibleCards}
+          selectedId={selectedId}
+          onSelect={(id) => {
+            if (id === 'joker-black') selectJoker('Black');
+            else if (id === 'joker-red') selectJoker('Red');
+            else selectCard(id);
+          }}
+        />
+        <GameBoard.TrophyZone
+          topCard={trophyTop ? { suit: trophyTop.suit as Suit, rank: trophyTop.rank as Rank } : null}
+          count={deck.trophyPile.length}
+        />
+        <GameBoard.DoomClockZone
+          current={deck.cardsAddedFromReserve}
+          act={currentAct as 1 | 2 | 3}
+          isPrologue={computed.isPrologue}
+        />
+      </GameBoard>
     </div>
   );
 }
