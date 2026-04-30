@@ -2,11 +2,11 @@
  * GameShell — Shared layout component for the game surface.
  *
  * Philosophical: The GameShell is the "theater" — the physical space where the
- * horror unfolds. Whether you're playing solo or with three friends online, the
- * stage is identical: a game board sidebar on the left showing the physical card
- * state, the phase-driven narrative panel in the center, a sidebar for context
- * (debug tools in solo, video + chat in multiplayer) on the right, and the
- * ever-present character bar at the bottom reminding you who's still alive.
+ * horror unfolds. The game board sidebar has been absorbed into the CardMatt
+ * area (VisibleThreatsZone), so the layout is now simpler: a phase-driven
+ * narrative panel in the center, a sidebar for context (debug tools in solo,
+ * video + chat in multiplayer) on the right, and the ever-present character
+ * bar at the bottom.
  *
  * Technical: Accepts a `mode` prop ('solo' | 'multiplayer') to control which
  * sidebar content is rendered and whether multiplayer-specific features (video,
@@ -22,12 +22,15 @@
 
 'use client';
 
-import { darkTheme, Header } from '@nott2/design-system';
+import { darkTheme, Header, TransitionOverlay, DoomClockTransition } from '@nott2/design-system';
 import { useGameStore } from '../store/game-store';
-import { GameBoardPanel } from './GameBoardPanel';
 import { GamePhaseRouter } from './GamePhaseRouter';
 import CharacterBar from './CharacterBar';
 import DebugPanel from './DebugPanel';
+import { TransitionProvider, useTransitionContext } from '../contexts/TransitionContext';
+import { CardDealProvider } from '../contexts/CardDealContext';
+import { useCardDealBridge } from '../hooks/useCardDealBridge';
+import { VisibleThreatsZone } from './VisibleThreatsZone';
 
 interface GameShellProps {
   mode: 'solo' | 'multiplayer';
@@ -39,8 +42,20 @@ interface GameShellProps {
 }
 
 export function GameShell({ mode, roomCode, sidebar, onReset }: GameShellProps) {
+  return (
+    <TransitionProvider>
+      <CardDealProvider>
+        <GameShellInner mode={mode} roomCode={roomCode} sidebar={sidebar} onReset={onReset} />
+      </CardDealProvider>
+    </TransitionProvider>
+  );
+}
+
+function GameShellInner({ mode, roomCode, sidebar, onReset }: GameShellProps) {
   const { gameState, fullReset } = useGameStore();
   const { phase, currentAct, isEndgame } = gameState;
+  const { transition, clearTransition } = useTransitionContext();
+  const { CardOverlayPortal } = useCardDealBridge();
 
   const handleReset = onReset ?? fullReset;
 
@@ -55,15 +70,13 @@ export function GameShell({ mode, roomCode, sidebar, onReset }: GameShellProps) 
         onReset={handleReset}
       />
 
-      {/* Main game surface — three-column layout */}
+      {/* Main game surface — two-column layout */}
       <div className="game-layout" role="main" aria-label="Game surface">
-        {/* Left sidebar: persistent game board (table state) */}
-        <aside className="game-board-sidebar" aria-label="Game board">
-          <GameBoardPanel />
-        </aside>
-
-        {/* Center: phase panel (actions & decisions) */}
+        {/* Center: persistent card matt + phase panel */}
         <div className="game-main">
+          {/* Persistent card matt — survives phase transitions */}
+          <VisibleThreatsZone />
+
           <div
             className="game-phase-panel"
             aria-live="polite"
@@ -87,6 +100,33 @@ export function GameShell({ mode, roomCode, sidebar, onReset }: GameShellProps) 
 
       {/* Persistent character bar */}
       <CharacterBar />
+
+      {/* 3D card deal overlay — above game surface, below transitions */}
+      {CardOverlayPortal}
+
+      {/* Transition overlay — rendered via portal above everything */}
+      <TransitionOverlay
+        visible={transition !== null}
+        onDismiss={clearTransition}
+        onExited={clearTransition}
+        themeClass={darkTheme}
+      >
+        {transition?.type === 'doom-clock-tick' && (
+          <DoomClockTransition
+            from={transition.from}
+            to={transition.to}
+            onComplete={clearTransition}
+          />
+        )}
+        {transition?.type === 'doom-clock-break' && (
+          <DoomClockTransition
+            from={transition.from}
+            to={transition.to}
+            isBroken
+            onComplete={clearTransition}
+          />
+        )}
+      </TransitionOverlay>
     </div>
   );
 }

@@ -41,6 +41,8 @@ interface DeckProps {
   label?: string;
   status?: DeckStatus | null;
   compact?: boolean;
+  /** When true, renders a pulsing amber/crimson glow around the deck to signal drawability */
+  glow?: boolean;
   topCard?: TopCardInfo | null;
   onClick?: () => void;
   id?: string;
@@ -53,6 +55,7 @@ export function Deck({
   label,
   status = null,
   compact = false,
+  glow = false,
   topCard = null,
   onClick,
   id,
@@ -64,6 +67,7 @@ export function Deck({
   const stackClass = [
     styles.deckStack,
     onClick ? styles.deckStackInteractive : '',
+    glow ? styles.deckStackGlow : '',
   ].filter(Boolean).join(' ');
 
   const countClass = [

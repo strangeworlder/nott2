@@ -7,7 +7,6 @@ export const panelRoot = style({
   padding: vars.space.md,
   gap: vars.space.md,
   flex: 1,
-  overflowY: 'auto',
   maxWidth: '640px',
   width: '100%',
   alignSelf: 'center',

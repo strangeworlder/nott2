@@ -76,8 +76,10 @@ export {
   applyGenrePointReroll,
   applyFallout,
   handleAceFallout,
-  computeGameState,
 } from './resolution';
+
+// Computed State
+export { computeGameState } from './computed';
 
 // Phase FSM
 export {
@@ -90,10 +92,14 @@ export {
   startEndgame,
   startNextScene,
   consumePendingActSetup,
+} from './phases';
+
+// Character & Genre Point Management
+export {
   assignStrike,
   awardGenrePoint,
   spendGenrePoint,
-} from './phases';
+} from './characters';
 
 // Turn Order
 export {
