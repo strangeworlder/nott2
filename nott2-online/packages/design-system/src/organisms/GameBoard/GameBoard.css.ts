@@ -69,6 +69,16 @@ export const cardLineVertical = style({
   alignItems: 'flex-start',
 });
 
+/**
+ * Target zone for the 3D card overlay (react-ttrpg-cards).
+ * The physics scene renders cards onto this element's bounding rect.
+ * Needs a minimum height so the overlay has a valid landing area.
+ */
+export const cardLine3DTarget = style({
+  minHeight: '120px',
+  width: '100%',
+});
+
 
 export const emptyHint = style({
   color: vars.color.textMuted,

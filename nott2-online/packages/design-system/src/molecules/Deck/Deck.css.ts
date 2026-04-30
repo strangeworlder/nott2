@@ -8,6 +8,12 @@ const fadeInScale = keyframes({
   '100%': { opacity: 1, transform: 'scale(1)' },
 });
 
+// ── Glow pulse — gold/crimson box-shadow that breathes, matching CardMatt ───
+const glowPulse = keyframes({
+  '0%, 100%': { boxShadow: '0 0 8px 2px rgba(180, 100, 40, 0.40), 0 0 24px 4px rgba(180, 60, 20, 0.20)' },
+  '50%':      { boxShadow: '0 0 16px 6px rgba(220, 150, 50, 0.70), 0 0 40px 10px rgba(220, 80, 30, 0.35)' },
+});
+
 // ── Root ────────────────────────────────────────────────────────────────────
 
 export const deckRoot = style({
@@ -51,6 +57,12 @@ export const deckStackInteractive = style({
     outlineOffset: '2px',
     borderRadius: vars.radius.md,
   },
+});
+
+// ── Glow variant — pulsing amber/crimson halo signalling drawability ─────────
+export const deckStackGlow = style({
+  borderRadius: vars.radius.md,
+  animation: `${glowPulse} 2.5s ease-in-out infinite`,
 });
 
 // ── Count overlay ───────────────────────────────────────────────────────────

@@ -45,6 +45,11 @@ interface CardLineProps {
   onSelect: (id: string) => void;
   vertical?: boolean;
 }
+interface CardLine3DProps {
+  /** Number of cards currently on the table (for the count badge) */
+  count: number;
+  vertical?: boolean;
+}
 interface TrophyZoneProps {
   /** The top card of the trophy pile, rendered face-up. */
   topCard?: { suit: Suit; rank: Rank } | null;
@@ -89,6 +94,30 @@ function CardLine({ cards, selectedId, onSelect, vertical }: CardLineProps) {
   );
 }
 
+/**
+ * CardLine3D — A ref-forwarding target zone for 3D card rendering.
+ * The 3D card overlay (react-ttrpg-cards) renders physics-driven cards that
+ * land on this element's bounding rect. This component provides only the
+ * label and count badge — the actual card visuals are in the 3D layer.
+ */
+const CardLine3D = React.forwardRef<HTMLDivElement, CardLine3DProps>(
+  function CardLine3D({ count, vertical }, ref) {
+    return (
+      <div
+        ref={ref}
+        className={`${styles.zone} ${vertical ? styles.zoneVertical : ''}`}
+      >
+        <span className={styles.zoneLabel}>Cards ({count})</span>
+        <div className={styles.cardLine3DTarget}>
+          {count === 0 && (
+            <span className={styles.emptyHint}>—</span>
+          )}
+        </div>
+      </div>
+    );
+  },
+);
+
 function TrophyZone({ topCard, count = 0, isRandomized, vertical }: TrophyZoneProps) {
   // When isRandomized, we have no known card yet — show an empty deck.
   const effectiveCount = isRandomized ? 0 : count;
@@ -126,11 +155,18 @@ function DoomClockZone({ current, act, isPrologue = true }: DoomClockZoneProps) 
   );
 }
 
+/** The set of known GameBoard sub-components that accept a `vertical` prop. */
+const ZONE_TYPES = new Set<React.ElementType>([DeckZone, CardLine, CardLine3D, TrophyZone, PhaseInfo, DoomClockZone]);
+
 export function GameBoard({ children, vertical = false }: GameBoardProps) {
-  // In vertical mode, clone children and inject the `vertical` prop
+  // In vertical mode, clone children and inject the `vertical` prop — but only
+  // into known GameBoard zone sub-components. Plain DOM wrappers or third-party
+  // elements passed as children must not receive this prop (React will warn).
   const enhancedChildren = vertical
     ? React.Children.map(children, child =>
-        React.isValidElement(child) ? React.cloneElement(child as React.ReactElement<any>, { vertical: true }) : child
+        React.isValidElement(child) && ZONE_TYPES.has(child.type as React.ComponentType<any>)
+          ? React.cloneElement(child as React.ReactElement<any>, { vertical: true })
+          : child
       )
     : children;
 
@@ -143,6 +179,7 @@ export function GameBoard({ children, vertical = false }: GameBoardProps) {
 
 GameBoard.DeckZone = DeckZone;
 GameBoard.CardLine = CardLine;
+GameBoard.CardLine3D = CardLine3D;
 GameBoard.TrophyZone = TrophyZone;
 GameBoard.PhaseInfo = PhaseInfo;
 GameBoard.DoomClockZone = DoomClockZone;

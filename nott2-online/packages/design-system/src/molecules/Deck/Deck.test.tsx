@@ -130,4 +130,25 @@ describe('Deck', () => {
     render(<Deck count={2} topCard={{ joker: true, jokerColor: 'Red' }} />);
     expect(screen.getByText('JOKER')).toBeTruthy();
   });
+
+  // ── glow prop ─────────────────────────────────────────────────────────────
+
+  it('applies an extra class when glow is true', () => {
+    const { container: withGlow } = render(<Deck count={10} glow />);
+    const { container: withoutGlow } = render(<Deck count={10} />);
+    // The deckRoot has one child: the stack div. glow adds an extra class to it.
+    const stackWith    = withGlow.firstElementChild?.children[0];
+    const stackWithout = withoutGlow.firstElementChild?.children[0];
+    const classCountWith    = stackWith?.className.split(' ').filter(Boolean).length ?? 0;
+    const classCountWithout = stackWithout?.className.split(' ').filter(Boolean).length ?? 0;
+    expect(classCountWith).toBeGreaterThan(classCountWithout);
+  });
+
+  it('does not add extra glow class when glow is false (default)', () => {
+    const { container: withGlow } = render(<Deck count={10} glow={false} />);
+    const { container: withoutGlow } = render(<Deck count={10} />);
+    const stackWith    = withGlow.firstElementChild?.children[0];
+    const stackWithout = withoutGlow.firstElementChild?.children[0];
+    expect(stackWith?.className).toBe(stackWithout?.className);
+  });
 });

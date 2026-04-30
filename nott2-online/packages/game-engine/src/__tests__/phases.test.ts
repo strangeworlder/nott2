@@ -14,10 +14,12 @@ import {
   startAct3,
   startEndgame,
   startNextScene,
+} from '../phases';
+import {
   assignStrike,
   awardGenrePoint,
   spendGenrePoint,
-} from '../phases';
+} from '../characters';
 import type { GameState } from '../types';
 
 // ── createInitialGameState ──────────────────────────────────────────────────

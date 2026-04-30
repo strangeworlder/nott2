@@ -32,6 +32,17 @@ export const Interactive: Story = {
   args: { count: 12, label: 'Threat Deck', onClick: () => alert('Draw!') },
 };
 
+/** Pulsing amber/crimson glow — signals that cards can be drawn from this deck. */
+export const Glowing: Story = {
+  args: { count: 12, label: 'Threat Deck', glow: true },
+};
+
+/** Glowing + interactive — the full "draw from me" state used in gameplay. */
+export const GlowingInteractive: Story = {
+  name: 'Glowing / Interactive (Draw State)',
+  args: { count: 12, label: 'Threat Deck', glow: true, onClick: () => alert('Draw!') },
+};
+
 export const NoLabel: Story = {
   args: { count: 5 },
 };

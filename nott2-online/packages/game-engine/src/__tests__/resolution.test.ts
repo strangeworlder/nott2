@@ -16,8 +16,8 @@ import {
   applyAptitudeModifier,
   applyGenrePointReroll,
   applyFallout,
-  computeGameState,
 } from '../resolution';
+import { computeGameState } from '../computed';
 import { makeCard, createDeck } from '../deck';
 import { createInitialGameState } from '../phases';
 import type { Card, JokerCard, D4Result, D10Result, Suit } from '../types';

@@ -5,7 +5,10 @@ export const card = style({
   position: 'relative',
   width: '80px',
   height: '112px',
-  backgroundColor: '#f8f5ed',
+  backgroundColor: '#d4c5a0',
+  backgroundImage: 'url(/textures/parchment-card.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
   borderRadius: vars.radius.md,
   border: `1px solid ${vars.color.border}`,
   display: 'flex',
@@ -63,15 +66,10 @@ export const cardBack = style({
   width: '100%',
   height: '100%',
   borderRadius: vars.radius.md,
-  backgroundImage: `repeating-linear-gradient(
-    45deg,
-    ${vars.color.accent} 0px,
-    ${vars.color.accent} 2px,
-    transparent 2px,
-    transparent 8px
-  )`,
+  backgroundImage: 'url(/textures/card-back.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
   backgroundColor: vars.color.surface,
-  opacity: 0.9,
 });
 
 export const corner = style({
@@ -125,5 +123,5 @@ export const jokerSymbol = style({
   fontFamily: vars.font.display,
 });
 
-export const rankRed = style({ color: '#c0392b' });
-export const rankBlack = style({ color: '#1a1a1a' });
+export const rankRed = style({ color: '#8b1a1a' });
+export const rankBlack = style({ color: '#1a1210' });

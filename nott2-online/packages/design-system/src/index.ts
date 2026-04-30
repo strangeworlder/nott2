@@ -47,11 +47,17 @@ export { WeaknessTracker } from './molecules/WeaknessTracker/WeaknessTracker';
 export { WaitingIndicator } from './molecules/WaitingIndicator/WaitingIndicator';
 export { TabBar } from './molecules/TabBar/TabBar';
 
+export { CardMatt } from './molecules/CardMatt/CardMatt';
+export type { CardMattProps } from './molecules/CardMatt/CardMatt';
+
 export { Deck } from './molecules/Deck/Deck';
 export type { DeckStatus, TopCardInfo } from './molecules/Deck/Deck';
 
 export { DoomClock } from './molecules/DoomClock/DoomClock';
 export type { DoomClockProps } from './molecules/DoomClock/DoomClock';
+
+export { DoomClockTransition } from './molecules/DoomClockTransition/DoomClockTransition';
+export type { DoomClockTransitionProps } from './molecules/DoomClockTransition/DoomClockTransition';
 
 // ── Organisms ─────────────────────────────────────────────────────────────────
 export { GameBoard } from './organisms/GameBoard/GameBoard';
@@ -69,6 +75,9 @@ export { CharacterBar } from './organisms/CharacterBar/CharacterBar';
 export type { CharacterBarCharacter } from './organisms/CharacterBar/CharacterBar';
 
 export { PhasePanel } from './organisms/PhasePanel/PhasePanel';
+
+export { TransitionOverlay } from './organisms/TransitionOverlay/TransitionOverlay';
+export type { TransitionOverlayProps } from './organisms/TransitionOverlay/TransitionOverlay';
 
 // Version
 export const DESIGN_SYSTEM_VERSION = '0.0.0';
