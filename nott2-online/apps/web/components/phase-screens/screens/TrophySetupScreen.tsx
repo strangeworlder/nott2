@@ -7,7 +7,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PhasePanel, Card, ActionFooter, TrophyIndicator } from '@nott2/design-system';
+import { PhasePanel, Card, ActionFooter } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
 import CardEntry from '../CardEntry';
 import type { Suit, Rank } from '@nott2/game-engine';
@@ -31,12 +31,7 @@ export function TrophySetupScreen() {
               includeFaceCards={false}
             />
           </div>
-          {gameState.deck.trophyTop && (
-            <TrophyIndicator
-              suit={gameState.deck.trophyTop.suit}
-              rank={gameState.deck.trophyTop.rank}
-            />
-          )}
+
         </div>
       </Card>
       <ActionFooter label="Continue →" onClick={nextPhase} />

@@ -34,4 +34,19 @@ describe('CardMatt', () => {
     expect(ref.current).toBeTruthy();
     expect(ref.current?.tagName).toBe('DIV');
   });
+
+  it('applies glow class when glow prop is true', () => {
+    const { container: containerGlow } = render(<CardMatt glow={true} />);
+    const { container: containerNoGlow } = render(<CardMatt glow={false} />);
+    // Vanilla-extract hashes class names, so we compare the number of classes
+    // on the surface div. The glow variant adds a second class to the surface.
+    const surfaceGlow = containerGlow.querySelectorAll('[class]')[1] as HTMLElement;
+    const surfaceNoGlow = containerNoGlow.querySelectorAll('[class]')[1] as HTMLElement;
+    expect(surfaceGlow).toBeTruthy();
+    expect(surfaceNoGlow).toBeTruthy();
+    // Glowing surface should have more classes than non-glowing
+    const glowClassCount = surfaceGlow.className.trim().split(/\s+/).length;
+    const noGlowClassCount = surfaceNoGlow.className.trim().split(/\s+/).length;
+    expect(glowClassCount).toBeGreaterThan(noGlowClassCount);
+  });
 });

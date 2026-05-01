@@ -37,6 +37,7 @@ export default function RandomDiceRoller({ onResult, disabled = false }: Props) 
   const { rollGroups, isRolling, DiceOverlayPortal } = useDiceRoll({
     sound: true,
     cameraAngle: { x: -1, z: -1 },
+    zIndex: 10000,
     onRollComplete: (result) => {
       const rawD10 = result.rolls.find((r) => r.group === 'd10')?.value ?? 0;
       const rawD4  = result.rolls.find((r) => r.group === 'd4')?.value  ?? 1;

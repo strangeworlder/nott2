@@ -21,7 +21,12 @@
  * - Syncs `selectedIndices` from `scene.selectedCardId`.
  * - Locks the selected card via `lockedIndices` once a selection is made,
  *   preventing re-click deselection (v0.3.0 feature).
+ * - Computes `canSelectCard` to gate `interactionMode`:
+ *     'select' only during scene-setup when the player is ready to challenge
+ *     (AP set + ≥2 cards OR a special card/joker that forces immediate
+ *     challenge). All other phases get 'none', preventing mid-scene changes.
  * - Provides `onCardSelect` callback that routes back to the store.
+ * - Exports `canSelectCard` so VisibleThreatsZone can drive the CardMatt glow.
  */
 
 'use client';
@@ -46,8 +51,8 @@ function engineToTtrpg(card: GameCard) {
 
 export function useCardDealBridge() {
   const { tableRef, deckRef, trophyRef } = useCardDealContext();
-  const { gameState, selectCard, selectJoker } = useGameStore();
-  const { deck, scene } = gameState;
+  const { gameState, selectCard, selectJoker, deselectCard } = useGameStore();
+  const { deck, scene, phase } = gameState;
   const { visibleCards } = deck;
 
   // ── Track previous visible card IDs for diffing ──────────────────────────
@@ -70,10 +75,14 @@ export function useCardDealBridge() {
 
   // ── Card select callback → routes to store ───────────────────────────────
   // The library passes `selected: boolean` as the third arg (v0.3.0+).
-  // We ignore deselects here — the locked-indices mechanism prevents them
-  // visually, but this guard is a belt-and-braces safety net.
+  // During scene-setup, deselects are routed to deselectCard so the player
+  // can change their mind. In all other phases, cards are non-interactive
+  // (interactionMode: 'none') so this callback will never fire.
   const handleCardSelect = useCallback((_index: number, card: TtrpgCard, selected: boolean) => {
-    if (!selected) return;
+    if (!selected) {
+      deselectCard();
+      return;
+    }
     const engineId = getEngineId(card);
     if (!engineId) return;
 
@@ -83,16 +92,50 @@ export function useCardDealBridge() {
     } else {
       selectCard(engineId);
     }
-  }, [selectCard, selectJoker]);
+  }, [selectCard, selectJoker, deselectCard]);
 
-  // ── Lock selected indices once a card has been chosen ────────────────────
-  // `lockedIndices` uses the v0.3.0 API: the card's 3D glow is locked on and
-  // clicks on it are silently ignored, preventing the one-frame flicker that
-  // would occur if the library tried to toggle the selection off.
+  // ── Gate card interaction to scene-setup only, and only when ready ────────
+  // Mirrors SceneSetupScreen's readyToChallenge / mustChallengeImmediately logic.
+  // 'select' → scene-setup, AP set, ≥2 cards OR a special card that forces
+  //            immediate challenge (ace, face card, endgame joker).
+  //            Remains 'select' even after a selection so the player can
+  //            change their mind before advancing to the next phase.
+  // 'none'   → all other phases — cards are not clickable.
+  const canSelectCard = useMemo(() => {
+    if (phase !== 'scene-setup') return false;
+
+    const apSelected = scene.activePlayerId !== null;
+    if (!apSelected) return false;
+
+    // Aces (rank 1) and face cards (rank ≥ 11) bypass the 2-card rule.
+    // Endgame jokers also force immediate challenge.
+    const nonJokerCards = visibleCards.filter(c => !c.id.startsWith('Joker-'));
+    const hasSpecialCard = nonJokerCards.some(
+      (c) => (c as { rank: number }).rank >= 11 || (c as { rank: number }).rank === 1,
+    );
+    const mustChallengeImmediately = hasSpecialCard
+      || (gameState.isEndgame && gameState.jokersAdded);
+
+    return visibleCards.length >= 2 || mustChallengeImmediately;
+  }, [
+    phase,
+    scene.activePlayerId,
+    visibleCards,
+    gameState.isEndgame,
+    gameState.jokersAdded,
+  ]);
+
+  // ── Lock selected indices once the scene-setup phase is over ─────────────
+  // During scene-setup, we do NOT lock — the player can change their selection.
+  // After advancing (conversation-stakes, resolution, etc.), we lock so the
+  // card highlight persists and the selection cannot be changed.
+  // `lockedIndices` uses the v0.3.0 API: clicks on locked cards are silently
+  // ignored by the library.
   const lockedIndices = useMemo(() => {
+    if (phase === 'scene-setup') return [];
     const hasSelection = scene.selectedCardId !== null || scene.activeJoker !== null;
     return hasSelection ? selectedIndices : [];
-  }, [scene.selectedCardId, scene.activeJoker, selectedIndices]);
+  }, [phase, scene.selectedCardId, scene.activeJoker, selectedIndices]);
 
   // ── Initialize useCardDeal ───────────────────────────────────────────────
   const {
@@ -104,7 +147,7 @@ export function useCardDealBridge() {
       trophy: trophyRef as React.RefObject<HTMLElement>,
     },
     ...CARD_DEAL_CONFIG,
-    interactionMode: 'select',
+    interactionMode: canSelectCard ? 'select' : 'none',
     selectedIndices,
     lockedIndices,
     onCardSelect: handleCardSelect,
@@ -181,5 +224,6 @@ export function useCardDealBridge() {
     CardOverlayPortal,
     isDealing,
     result,
+    canSelectCard,
   };
 }

@@ -286,20 +286,22 @@ function handleFaceCardFallout(
     newDeck = { ...newDeck, cardsAddedFromReserve: newDeck.cardsAddedFromReserve + 1 };
   }
 
-  // Finale fires when all 4 weaknesses are found AND the countdown reaches 13.
-  // If weaknesses were found before the countdown, Act 3 was already queued
-  // and we just wait for the ticks above to get us to 13.
+  // Finale fires when all 4 weaknesses are found.
+  // If we're not yet in Act 3, queue Act 3 first (strips number cards from
+  // the threat deck and visible zone), then the Finale immediately after.
   const totalWeaknesses = newDeck.weaknessesBySuit.size;
   const finaleAlreadyQueued = pending.includes('finale') || state.pendingActSetups.includes('finale');
   if (totalWeaknesses >= 4 && !state.isEndgame && !finaleAlreadyQueued) {
     if (state.currentAct !== 3) {
-      // Still in Act 2 — queue Act 3, defer Finale for countdown
-      pending.push('act3');
+      // Not yet in Act 3 — queue Act 3 transition first
+      if (!pending.includes('act3')) {
+        pending.push('act3');
+      }
       actTransition = 'act3';
     }
-    if (newDeck.cardsAddedFromReserve >= 13) {
-      // Countdown complete — Finale is now due
-      pending.push('finale');
+    // Queue the Finale right after Act 3 (or immediately if already in Act 3)
+    pending.push('finale');
+    if (state.currentAct === 3) {
       actTransition = 'finale';
     }
   }

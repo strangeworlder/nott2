@@ -96,7 +96,7 @@ function describeFalloutEvents(
 // ── Component ────────────────────────────────────────────────────────────────
 
 export function FalloutScreen() {
-  const { gameState, applyFallout, assignStrike, awardGenrePoint, nextPhase } = useGameStore();
+  const { gameState, applyFallout, commitClockTick, assignStrike, awardGenrePoint, nextPhase } = useGameStore();
   const { scene, deck, characters, players } = gameState;
 
   const [applied, setApplied] = useState(false);
@@ -169,27 +169,42 @@ export function FalloutScreen() {
       for (let i = 0; i < count; i++) assignStrike(charId as any);
     }
 
+    // Read the deferred clock value from the store. applyFallout wrote the
+    // original counter to gameState.deck.cardsAddedFromReserve and stashed
+    // the real (incremented) value in pendingClockValue.
+    const pendingClock = useGameStore.getState().pendingClockValue;
+    const reserveBefore = snapshot.current?.reserveBefore ?? 0;
+
     // 2. Check for Act 3 break transition
     const hasAct3Transition = gameState.pendingActSetups.includes('act3');
     if (hasAct3Transition) {
-      const reserveBefore = snapshot.current?.reserveBefore ?? 0;
-      showTransition({ type: 'doom-clock-break', from: reserveBefore, to: 13 });
+      showTransition(
+        { type: 'doom-clock-break', from: reserveBefore, to: pendingClock ?? 13 },
+        commitClockTick,
+      );
       advancePhase();
       return;
     }
 
-    // 3. Check if the doom clock ticked (reserve count increased)
-    const reserveBefore = snapshot.current?.reserveBefore ?? 0;
-    const reserveAfter = gameState.deck.cardsAddedFromReserve;
-    const clockTicked = reserveAfter > reserveBefore;
+    // 3. Check if the doom clock ticked (reserve count increased).
+    //    Guard: skip the overlay if reserveBefore is already at or past TRIGGER (13).
+    //    In Act 3 the counter can increment from 13→14, which passes the `>` check
+    //    but both values display as "0 left" — showing the animation is meaningless.
+    const DOOM_TRIGGER = 13;
+    const clockTicked = pendingClock !== null && pendingClock > reserveBefore && reserveBefore < DOOM_TRIGGER;
 
     if (clockTicked) {
-      showTransition({ type: 'doom-clock-tick', from: reserveBefore, to: reserveAfter });
+      showTransition(
+        { type: 'doom-clock-tick', from: reserveBefore, to: pendingClock },
+        commitClockTick,
+      );
       advancePhase();
       return;
     }
 
-    // 4. No transition needed — advance immediately
+    // 4. No visual transition — commit any pending clock value immediately
+    //    so the store isn't left in limbo.
+    commitClockTick();
     advancePhase();
   };
 

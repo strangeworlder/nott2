@@ -79,5 +79,8 @@ export { PhasePanel } from './organisms/PhasePanel/PhasePanel';
 export { TransitionOverlay } from './organisms/TransitionOverlay/TransitionOverlay';
 export type { TransitionOverlayProps } from './organisms/TransitionOverlay/TransitionOverlay';
 
+export { ActBreakOverlay } from './organisms/ActBreakOverlay/ActBreakOverlay';
+export type { ActBreakOverlayProps } from './organisms/ActBreakOverlay/ActBreakOverlay';
+
 // Version
 export const DESIGN_SYSTEM_VERSION = '0.0.0';

@@ -16,9 +16,11 @@
  * The component itself renders no card visuals — the 3D overlay handles that.
  *
  * Props:
- *   title      string — the rotated label on the left edge (default: "Visible Threats")
- *   count      number — how many cards are on the matt (shown as a count badge)
- *   emptyHint  string — text shown when count is 0 (default: "Draw from deck")
+ *   title      string  — the rotated label on the left edge (default: "Visible Threats")
+ *   count      number  — how many cards are on the matt (shown as a count badge)
+ *   emptyHint  string  — text shown when count is 0 (default: "Draw from deck")
+ *   glow       boolean — when true, applies a pulsing amber/crimson halo to signal
+ *                        that cards are selectable (default: false)
  *   ref        forwarded to the invisible inner target area div
  */
 
@@ -33,10 +35,20 @@ export interface CardMattProps {
   count?: number;
   /** Hint text shown on the empty matt */
   emptyHint?: string;
+  /**
+   * When true, applies a pulsing amber/crimson halo around the surface to
+   * signal that the player should select a card. Mirrors the Deck `glow` prop.
+   */
+  glow?: boolean;
 }
 
 export const CardMatt = React.forwardRef<HTMLDivElement, CardMattProps>(
-  function CardMatt({ title = 'Visible Threats', count = 0, emptyHint = 'Draw from deck' }, ref) {
+  function CardMatt({ title = 'Visible Threats', count = 0, emptyHint = 'Draw from deck', glow = false }, ref) {
+    const surfaceClass = [
+      styles.cardMattSurface,
+      glow ? styles.cardMattSurfaceGlow : '',
+    ].filter(Boolean).join(' ');
+
     return (
       <div className={styles.cardMattRoot}>
         {/* Rotated title on the left edge */}
@@ -45,7 +57,7 @@ export const CardMatt = React.forwardRef<HTMLDivElement, CardMattProps>(
         </div>
 
         {/* The felt surface — this is the 3D card landing zone */}
-        <div className={styles.cardMattSurface}>
+        <div className={surfaceClass}>
           {count === 0 && (
             <div className={styles.cardMattEmpty}>
               {emptyHint}

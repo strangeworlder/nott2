@@ -22,7 +22,7 @@
 
 'use client';
 
-import { darkTheme, Header, TransitionOverlay, DoomClockTransition } from '@nott2/design-system';
+import { darkTheme, Header, TransitionOverlay, DoomClockTransition, ActBreakOverlay } from '@nott2/design-system';
 import { useGameStore } from '../store/game-store';
 import { GamePhaseRouter } from './GamePhaseRouter';
 import CharacterBar from './CharacterBar';
@@ -52,9 +52,9 @@ export function GameShell({ mode, roomCode, sidebar, onReset }: GameShellProps) 
 }
 
 function GameShellInner({ mode, roomCode, sidebar, onReset }: GameShellProps) {
-  const { gameState, fullReset } = useGameStore();
+  const { gameState, fullReset, nextPhase } = useGameStore() as any;
   const { phase, currentAct, isEndgame } = gameState;
-  const { transition, clearTransition } = useTransitionContext();
+  const { transition, clearTransition, fireMidpoint } = useTransitionContext();
   const { CardOverlayPortal } = useCardDealBridge();
 
   const handleReset = onReset ?? fullReset;
@@ -115,6 +115,7 @@ function GameShellInner({ mode, roomCode, sidebar, onReset }: GameShellProps) {
           <DoomClockTransition
             from={transition.from}
             to={transition.to}
+            onClockArrived={fireMidpoint}
             onComplete={clearTransition}
           />
         )}
@@ -123,10 +124,20 @@ function GameShellInner({ mode, roomCode, sidebar, onReset }: GameShellProps) {
             from={transition.from}
             to={transition.to}
             isBroken
+            onClockArrived={fireMidpoint}
             onComplete={clearTransition}
           />
         )}
       </TransitionOverlay>
+
+      {/* Act break overlay — z-index 15000, fires above everything */}
+      <ActBreakOverlay
+        visible={phase === 'act-setup'}
+        act={isEndgame ? 'finale' : currentAct === 1 ? 'prologue' : (currentAct as 2 | 3)}
+        onDismiss={nextPhase}
+        onExited={() => {}}
+        themeClass={darkTheme}
+      />
     </div>
   );
 }

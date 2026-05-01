@@ -179,11 +179,14 @@ export interface DoomClockTransitionProps {
   isBroken?: boolean;
   /** Callback fired when the animation completes */
   onComplete: () => void;
+  /** Callback fired when the clock hand arrives at the new position (~1800ms).
+   *  Used to commit deferred state changes (e.g. cardsAddedFromReserve). */
+  onClockArrived?: () => void;
   /** Optional HTML id */
   id?: string;
 }
 
-export function DoomClockTransition({ from, to, isBroken = false, onComplete, id }: DoomClockTransitionProps) {
+export function DoomClockTransition({ from, to, isBroken = false, onComplete, onClockArrived, id }: DoomClockTransitionProps) {
   const [hasAnimated, setHasAnimated] = useState(false);
   // Start displaying the OLD countdown; flip to the new one after the hand arrives.
   const [displayCountdown, setDisplayCountdown] = useState(Math.max(0, TRIGGER - from));
@@ -199,6 +202,10 @@ export function DoomClockTransition({ from, to, isBroken = false, onComplete, id
     // Hand delay (600ms) + sweep duration (1200ms) = 1800ms. Flip the number
     // just as the hand settles into its new position.
     const flipTimer = setTimeout(() => {
+      // Fire the deferred state commit — this is the moment the clock
+      // “really” moves. The DoomClock in the sidebar updates now.
+      onClockArrived?.();
+
       setIsUpdating(true);
       // After the fade-out phase (~200ms), swap the value and fade back in.
       setTimeout(() => {

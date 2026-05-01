@@ -370,7 +370,7 @@ describe('applyFallout — Face Card success', () => {
     expect(result.newDeck.visibleCards).toHaveLength(0);
   });
 
-  it('Act 1 → Act 2 queued on face card success', () => {
+   it('Act 1 → Act 2 queued on face card success', () => {
     const state = { ...createInitialGameState(), currentAct: 1 as 1 };
     const jack = makeCard(11, 'Clubs');
     const stateWithCard = {
@@ -380,6 +380,56 @@ describe('applyFallout — Face Card success', () => {
 
     const result = applyFallout(stateWithCard, jack, true, 1 as D4Result);
     expect(result.actTransition).toBe('act2');
+  });
+
+  it('queues act3 + finale when 4th weakness found in Act 2', () => {
+    const state = {
+      ...createInitialGameState(),
+      currentAct: 2 as 1 | 2 | 3,
+    };
+    const jack = makeCard(11, 'Diamonds');
+    // 3 weaknesses already found — this victory will be the 4th
+    const stateWith3 = {
+      ...state,
+      deck: {
+        ...state.deck,
+        visibleCards: [jack],
+        trophyTop: makeCard(5, 'Spades'),
+        weaknessesBySuit: new Set(['Spades', 'Hearts', 'Clubs']) as Set<Suit>,
+      },
+    };
+
+    const result = applyFallout(stateWith3, jack, true, 1 as D4Result);
+    expect(result.weaknessFound).toBe(true);
+    expect(result.pendingActSetups).toContain('act3');
+    expect(result.pendingActSetups).toContain('finale');
+    // Act 3 must come before Finale
+    const act3Idx = result.pendingActSetups.indexOf('act3');
+    const finaleIdx = result.pendingActSetups.indexOf('finale');
+    expect(act3Idx).toBeLessThan(finaleIdx);
+  });
+
+  it('queues only finale (no duplicate act3) when 4th weakness found in Act 3', () => {
+    const state = {
+      ...createInitialGameState(),
+      currentAct: 3 as 1 | 2 | 3,
+    };
+    const jack = makeCard(11, 'Diamonds');
+    const stateWith3 = {
+      ...state,
+      deck: {
+        ...state.deck,
+        visibleCards: [jack],
+        trophyTop: makeCard(5, 'Spades'),
+        weaknessesBySuit: new Set(['Spades', 'Hearts', 'Clubs']) as Set<Suit>,
+      },
+    };
+
+    const result = applyFallout(stateWith3, jack, true, 1 as D4Result);
+    expect(result.weaknessFound).toBe(true);
+    expect(result.pendingActSetups).not.toContain('act3');
+    expect(result.pendingActSetups).toContain('finale');
+    expect(result.actTransition).toBe('finale');
   });
 });
 

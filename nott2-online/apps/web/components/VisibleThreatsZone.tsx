@@ -16,8 +16,7 @@
  * - Right column: `Deck` as Trophy Pile (trophyRef registered for fly-to
  *                 animation) + `DoomClock` (shown after Prologue, Act 2+).
  *
- * - Visible during the scene loop phases: scene-setup, conversation-stakes,
- *   resolution, resolve-scene, fallout.
+ * - Always visible — there is no phase where this zone should be hidden.
  * - Lives in GameShell's `game-main` area, above the phase router.
  */
 
@@ -29,14 +28,7 @@ import { useGameStore } from '../store/game-store';
 import { useCardDealContext } from '../contexts/CardDealContext';
 import type { Suit, Rank } from '@nott2/design-system';
 
-/** Phases during which the card matt should be visible */
-const SCENE_LOOP_PHASES = new Set([
-  'scene-setup',
-  'conversation-stakes',
-  'resolution',
-  'resolve-scene',
-  'fallout',
-]);
+
 
 export function VisibleThreatsZone() {
   const { gameState, computed, autoDeal } = useGameStore();
@@ -73,28 +65,38 @@ export function VisibleThreatsZone() {
   const needsSecondDraw = apSelected && visibleCards.length < 2 && !hasSpecialCard && !gameState.isEndgame;
   const canDraw = phase === 'scene-setup' && threatDeck.length > 0 && (needsFirstDraw || needsSecondDraw);
 
-  // DoomClock: only visible once the prologue is over (Act 2+)
-  const showDoomClock = currentAct >= 2 || !computed.isPrologue;
+  // DoomClock: visible once the prologue is truly over — no aces on the deck
+  // AND no ace currently being resolved on the table. This prevents the clock
+  // from appearing during the last ace's scene.
+  const aceInPlay = visibleCards.some(c => c.rank === 1);
+  const showDoomClock = currentAct >= 2 || (!computed.isPrologue && !aceInPlay);
 
-  // Always render — never unmount. The 3D CardMatt physics scene must stay in
-  // the DOM so that tableRef / deckRef / trophyRef remain valid across phase
-  // transitions (including act breaks). During non-scene-loop phases the zone
-  // is hidden via CSS (invisible + non-interactive) but the refs and the 3D
-  // overlay portal continue to exist.
-  const isVisible = SCENE_LOOP_PHASES.has(phase);
+  // CardMatt glow: signal to the player that they should select a card.
+  // Mirrors SceneSetupScreen's readyToChallenge / mustChallengeImmediately logic.
+  // Glow stays on during scene-setup even after a card is selected, so the
+  // player can see they can still change their mind before advancing.
+  const canSelectCard = (() => {
+    if (phase !== 'scene-setup') return false;
+    const apSelected = gameState.scene.activePlayerId !== null;
+    if (!apSelected) return false;
+    const nonJokerCards = visibleCards.filter(c => !c.id.startsWith('Joker-'));
+    const hasSpecialCard = nonJokerCards.some(
+      (c) => (c as { rank: number }).rank >= 11 || (c as { rank: number }).rank === 1,
+    );
+    const mustChallengeImmediately = hasSpecialCard
+      || (gameState.isEndgame && gameState.jokersAdded);
+    return visibleCards.length >= 2 || mustChallengeImmediately;
+  })();
 
   return (
-    <div
-      className="visible-threats-zone"
-      aria-hidden={!isVisible}
-      style={!isVisible ? { visibility: 'hidden', pointerEvents: 'none' } : undefined}
-    >
+    <div className="visible-threats-zone">
       {/* Left: Threat Deck — glows and clicks when drawable */}
       <div ref={deckCallbackRef} className="visible-threats-zone__deck">
         <Deck
           count={threatDeck.length}
           label="Threat Deck"
           glow={canDraw}
+          showCount={false}
           onClick={canDraw && canControl ? autoDeal : undefined}
         />
       </div>
@@ -105,6 +107,7 @@ export function VisibleThreatsZone() {
         title="Visible Threats"
         count={cardCount}
         emptyHint="Draw from deck"
+        glow={canSelectCard}
       />
 
       {/* Right: Trophy pile + Doom Clock */}

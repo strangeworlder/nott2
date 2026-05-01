@@ -15,15 +15,14 @@
 import React from 'react';
 import {
   PhasePanel, Card, Button, ActionFooter,
-  StatusCallout, WaitingIndicator, TrophyIndicator, Icon, suitToIconName,
+  StatusCallout, WaitingIndicator, Icon, suitToIconName,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
-import CardEntry from '../CardEntry';
 import { getRankLabel } from '../helpers';
 
 export function SceneSetupScreen() {
   const {
-    gameState, computed, autoDeal, drawCard,
+    gameState, computed,
     selectCard, selectJoker, setActivePlayer, nextPhase,
   } = useGameStore();
   // Multiplayer control — separate cast to avoid losing engine types above
@@ -37,16 +36,18 @@ export function SceneSetupScreen() {
   // ── Derive sub-state ──────────────────────────────────────────────────────
 
   const hasSpecialCard = visibleCards.some(c => c.rank >= 11 || c.rank === 1);
-  const hasJokerOnTable = gameState.jokersAdded && (
-    (!gameState.isBlackJokerRemoved) || true // Red joker always present once added
-  );
+  // A Joker is only "on the table" when it is actually in visibleCards,
+  // not merely because jokersAdded is true (they start in the threat deck).
+  const hasJokerOnTable = deck.visibleCards.some(c => 'isJoker' in c && c.isJoker);
   const mustChallengeImmediately = hasSpecialCard || (gameState.isEndgame && hasJokerOnTable);
 
   const needsFirstDraw = visibleCards.length === 0;
   const apSelected = scene.activePlayerId !== null;
   const needsApSelection = visibleCards.length >= 1 && !apSelected;
   const needsSecondDraw = apSelected && visibleCards.length < 2 && !mustChallengeImmediately && !gameState.isEndgame;
-  const readyToChallenge = apSelected && (visibleCards.length >= 2 || mustChallengeImmediately);
+  // readyToChallenge requires at least one card on the mat — mustChallengeImmediately
+  // cannot override an empty table, it only skips the second draw step.
+  const readyToChallenge = apSelected && visibleCards.length >= 1 && (visibleCards.length >= 2 || mustChallengeImmediately);
   const canAdvance = readyToChallenge && (scene.selectedCardId !== null || scene.activeJoker !== null);
 
   // ── Prologue auto-AP ──────────────────────────────────────────────────────
@@ -80,7 +81,9 @@ export function SceneSetupScreen() {
         computed.isPrologue
           ? 'Prologue — Aces on top. The matching Aptitude player takes the spotlight.'
           : needsFirstDraw
-          ? 'Draw the first card from the Threat Deck.'
+          ? gameState.isEndgame
+            ? 'The Finale begins. Draw from the Threat Deck — only Jokers remain.'
+            : 'Draw the first card from the Threat Deck.'
           : needsApSelection
           ? 'Choose who rises to the challenge. You can only see one card — choose wisely.'
           : needsSecondDraw
@@ -90,16 +93,12 @@ export function SceneSetupScreen() {
     >
 
 
-        {/* Trophy top */}
-        {deck.trophyTop && (
-          <TrophyIndicator suit={deck.trophyTop.suit} rank={deck.trophyTop.rank} />
-        )}
 
         {/* Step 1: Draw first card (table empty) */}
         {needsFirstDraw && canControl && (
-          <Card title="Draw from Threat Deck">
-            <CardEntry onCard={drawCard} includeFaceCards={true} includeAces={computed.isPrologue} />
-          </Card>
+          <StatusCallout variant="highlight" icon="style">
+            Click the <strong>Threat Deck</strong> on the table to draw the first card and begin the scene.
+          </StatusCallout>
         )}
         {needsFirstDraw && !canControl && (
           <WaitingIndicator message="Waiting for host to draw the first card…" />
@@ -177,12 +176,9 @@ export function SceneSetupScreen() {
 
         {/* Step 3: Draw second card (AP selected, only number cards on table) */}
         {needsSecondDraw && canControl && (
-          <Card title="Draw Second Card">
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 8 }}>
-              Draw a second card to give {activeChar?.name ?? 'the AP'} a choice.
-            </p>
-            <CardEntry onCard={drawCard} includeFaceCards={true} includeAces={false} />
-          </Card>
+          <StatusCallout variant="highlight" icon="style">
+            Click the <strong>Threat Deck</strong> on the table to draw a second card and give {activeChar?.name ?? 'the Active Player'} a choice.
+          </StatusCallout>
         )}
         {needsSecondDraw && !canControl && (
           <WaitingIndicator message="Waiting for host to draw a second card…" />

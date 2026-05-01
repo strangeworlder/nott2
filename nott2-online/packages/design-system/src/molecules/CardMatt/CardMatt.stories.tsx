@@ -55,3 +55,8 @@ export const TallMatt: Story = {
   ],
   args: { title: 'Visible Threats', count: 5 },
 };
+
+/** Glowing matt — signals to the player that a card should be selected */
+export const Glowing: Story = {
+  args: { title: 'Visible Threats', count: 2, glow: true },
+};
