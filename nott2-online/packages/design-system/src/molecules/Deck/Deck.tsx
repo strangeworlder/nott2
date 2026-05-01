@@ -17,6 +17,7 @@
  * - label: Zone label displayed above the stack.
  * - status: Transient status overlay. 'shuffled' | 'empty' | null.
  * - compact: Smaller font/spacing variant. Defaults to false.
+ * - showCount: Whether to show the numeric badge on the deck face. Defaults to true.
  * - topCard: When set, renders this card face-up as the top of the pile.
  * - onClick: Click handler — makes the stack interactive.
  * - id: HTML id attribute.
@@ -43,6 +44,8 @@ interface DeckProps {
   compact?: boolean;
   /** When true, renders a pulsing amber/crimson glow around the deck to signal drawability */
   glow?: boolean;
+  /** When false, hides the numeric card-count badge rendered over the deck face. Defaults to true. */
+  showCount?: boolean;
   topCard?: TopCardInfo | null;
   onClick?: () => void;
   id?: string;
@@ -56,6 +59,7 @@ export function Deck({
   status = null,
   compact = false,
   glow = false,
+  showCount = true,
   topCard = null,
   onClick,
   id,
@@ -121,8 +125,8 @@ export function Deck({
               );
             })}
 
-            {/* Count overlay — only for face-down decks (not obscuring face-up top card) */}
-            {!hasTopCard && <span className={countClass}>{count}</span>}
+            {/* Count overlay — only for face-down decks (not obscuring face-up top card), and when showCount is enabled */}
+            {!hasTopCard && showCount && <span className={countClass}>{count}</span>}
           </>
         )}
 

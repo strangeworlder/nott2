@@ -7,7 +7,6 @@
 
 export { WelcomeScreen } from './screens/WelcomeScreen';
 export { GameSetupScreen } from './screens/GameSetupScreen';
-export { ActSetupScreen } from './screens/ActSetupScreen';
 export { TrophySetupScreen } from './screens/TrophySetupScreen';
 export { SceneSetupScreen } from './screens/SceneSetupScreen';
 export { ConversationStakesScreen } from './screens/ConversationStakesScreen';

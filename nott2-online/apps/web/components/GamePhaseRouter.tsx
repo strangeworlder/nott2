@@ -13,7 +13,6 @@ import { useGameStore } from '../store/game-store';
 import {
   WelcomeScreen,
   GameSetupScreen,
-  ActSetupScreen,
   TrophySetupScreen,
   SceneSetupScreen,
   ConversationStakesScreen,
@@ -32,7 +31,7 @@ export function GamePhaseRouter() {
       case 'lobby':
       case 'welcome':             return WelcomeScreen;
       case 'game-setup':          return GameSetupScreen;
-      case 'act-setup':           return ActSetupScreen;
+      case 'act-setup':           return null; // handled by ActBreakOverlay in GameShell
       case 'trophy-setup':        return TrophySetupScreen;
       case 'scene-setup':         return SceneSetupScreen;
       case 'conversation-stakes': return ConversationStakesScreen;
@@ -45,5 +44,6 @@ export function GamePhaseRouter() {
     }
   })();
 
+  if (!Screen) return null;
   return <Screen />;
 }

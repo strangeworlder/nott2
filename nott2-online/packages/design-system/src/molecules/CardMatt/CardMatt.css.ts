@@ -7,6 +7,12 @@ const borderPulse = keyframes({
   '50%': { borderColor: 'rgba(220, 160, 60, 0.70)' },
 });
 
+// ── Glow pulse — gold/crimson box-shadow that breathes, signals card selectability ──
+const cardMattGlowPulse = keyframes({
+  '0%, 100%': { boxShadow: '0 0 10px 3px rgba(180, 100, 40, 0.40), 0 0 30px 6px rgba(180, 60, 20, 0.20)' },
+  '50%':      { boxShadow: '0 0 20px 8px rgba(220, 150, 50, 0.70), 0 0 50px 14px rgba(220, 80, 30, 0.35)' },
+});
+
 // ── Root container: rotated title on left + matt on right ────────────────────
 export const cardMattRoot = style({
   display: 'flex',
@@ -60,6 +66,14 @@ export const cardMattSurface = style({
   backgroundBlendMode: ['multiply', 'screen', 'normal', 'normal'].join(', '),
 
   transition: `border-color ${vars.transition.slow}`,
+});
+
+// ── Glow variant — pulsing amber/crimson halo signalling card selectability ───
+// Applied on top of cardMattSurface. The animation overrides borderPulse with
+// a more dramatic box-shadow beacon. Stop borderPulse by overriding animationName.
+export const cardMattSurfaceGlow = style({
+  animation: `${cardMattGlowPulse} 2.5s ease-in-out infinite`,
+  borderColor: 'rgba(220, 160, 60, 0.80)',
 });
 
 // ── Empty state hint text ────────────────────────────────────────────────────

@@ -9,7 +9,7 @@
   background-color: #332222;
   background-image: url('/textures/peeling-paint-bg.png');
   background-repeat: repeat;
-  background-size: 600px auto;
+  background-size: cover;
   background-blend-mode: multiply;
 }
 

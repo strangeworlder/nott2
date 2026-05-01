@@ -141,7 +141,7 @@ function ResolutionDiceRoller({ useDiceRoll, slasherTheme, onResult, hasRolled, 
   rollMain: number | null; rollEffort: number | null;
 }) {
   const { rollGroups, isRolling: diceIsRolling, DiceOverlayPortal } = useDiceRoll({
-    sound: true, cameraAngle: { x: -1, z: -1 },
+    sound: true, cameraAngle: { x: -1, z: -1 }, zIndex: 10000,
     onRollComplete: (result: any) => {
       const rawD10 = result.rolls.find((r: any) => r.group === 'd10')?.value ?? 0;
       const rawD4  = result.rolls.find((r: any) => r.group === 'd4')?.value  ?? 1;
@@ -173,7 +173,7 @@ function GenrePointDiceRoller({ useDiceRoll, slasherTheme, onResult }: {
   useDiceRoll: any; slasherTheme: Record<string, any>; onResult: (d10: any) => void;
 }) {
   const { rollGroups, isRolling, DiceOverlayPortal } = useDiceRoll({
-    sound: true, cameraAngle: { x: -1, z: -1 },
+    sound: true, cameraAngle: { x: -1, z: -1 }, zIndex: 10000,
     onRollComplete: (result: any) => {
       const rawD10 = result.rolls.find((r: any) => r.group === 'd10')?.value ?? 0;
       onResult((rawD10 % 10) as 0|1|2|3|4|5|6|7|8|9);

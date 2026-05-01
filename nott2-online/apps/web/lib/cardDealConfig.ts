@@ -45,6 +45,7 @@ registerTheme('nott2-horror', {
 // ── Shared configuration ─────────────────────────────────────────────────────
 
 export const CARD_DEAL_CONFIG: Partial<UseCardDealOptions> = {
+  zIndex: 9998,                 // Below dice overlay (10000) so dice always render on top
   cardScale: 0.85,              // Fit within ~640px phase panel center zone
   config: {
     theme: 'nott2-horror',

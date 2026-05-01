@@ -25,6 +25,8 @@ interface GameStore extends MultiplayerSlice {
   // ── State ─────────────────────────────────────────────────────────────────
   gameState: engine.GameState;
   computed: ReturnType<typeof engine.computeGameState>;
+  /** Deferred clock value — written by applyFallout, committed by commitClockTick */
+  pendingClockValue: number | null;
 
   // ── Phase Control ────────────────────────────────────────────────────────
   nextPhase: () => void;
@@ -44,6 +46,8 @@ interface GameStore extends MultiplayerSlice {
   autoDeal: () => void;
   selectCard: (cardId: string) => void;
   selectJoker: (color: engine.JokerColor) => void;
+  /** Clear the current card/joker selection — only valid during scene-setup */
+  deselectCard: () => void;
   setTrophyTop: (suit: engine.Suit, rank: engine.Rank) => void;
 
   // ── Dice & Resolution ────────────────────────────────────────────────────
@@ -54,6 +58,8 @@ interface GameStore extends MultiplayerSlice {
   // ── Scene Management ──────────────────────────────────────────────────────
   confirmSacrifice: () => void;
   applyFallout: () => void;
+  /** Commit the deferred clock tick — called by the transition overlay at its visual midpoint */
+  commitClockTick: () => void;
   escalate: () => void;
 
   // ── Character & Strikes ───────────────────────────────────────────────────
@@ -107,6 +113,7 @@ export const useGameStore = create<GameStore>()(
     (set, get) => ({
       gameState: initialState(),
       computed: recompute(initialState()),
+      pendingClockValue: null,
 
       // ── Phase Control ────────────────────────────────────────────────────
 
@@ -190,6 +197,14 @@ export const useGameStore = create<GameStore>()(
         set({ gameState: newGS, computed: recompute(newGS) }, false, 'selectJoker');
       },
 
+      deselectCard: () => {
+        const gs = get().gameState;
+        // Guard: deselection only meaningful during scene-setup
+        if (gs.phase !== 'scene-setup') return;
+        const newGS = { ...gs, scene: { ...gs.scene, selectedCardId: null, activeJoker: null } };
+        set({ gameState: newGS, computed: recompute(newGS) }, false, 'deselectCard');
+      },
+
       setTrophyTop: (suit, rank) => {
         const card = engine.makeCard(rank, suit);
         const newDeck = engine.setTrophyTop(get().gameState.deck, card);
@@ -258,15 +273,38 @@ export const useGameStore = create<GameStore>()(
         const isSuccess = engine.isSuccessful(total, difficulty);
         const result = engine.applyFallout(gs, card, isSuccess, d4);
 
+        // Defer the clock counter: the engine computed the correct new value
+        // (used for act transition checks), but we write the ORIGINAL counter
+        // to the store. The real value is stashed in pendingClockValue and
+        // committed later when the DoomClockTransition fires its midpoint.
+        const originalCounter = deck.cardsAddedFromReserve;
+        const engineCounter = result.newDeck.cardsAddedFromReserve;
+        const hasTick = engineCounter > originalCounter;
+        const deferredDeck = hasTick
+          ? { ...result.newDeck, cardsAddedFromReserve: originalCounter }
+          : result.newDeck;
+
         let newGs: engine.GameState = {
-          ...gs, deck: result.newDeck, strikesToAssign: result.newStrikesToAssign,
+          ...gs, deck: deferredDeck, strikesToAssign: result.newStrikesToAssign,
           weaknessesFound: result.newDeck.weaknessesBySuit.size > gs.weaknessesFound.length
             ? [...gs.weaknessesFound, ...Array.from(result.newDeck.weaknessesBySuit).filter(s => !gs.weaknessesFound.includes(s))]
             : gs.weaknessesFound,
           isGameWon: result.isGameWon, pendingActSetups: result.pendingActSetups,
         };
         if (joker === 'Black') newGs = { ...newGs, isBlackJokerRemoved: true };
-        set({ gameState: newGs, computed: recompute(newGs) }, false, 'applyFallout');
+        set({
+          gameState: newGs,
+          computed: recompute(newGs),
+          pendingClockValue: hasTick ? engineCounter : null,
+        }, false, 'applyFallout');
+      },
+
+      commitClockTick: () => {
+        const pending = get().pendingClockValue;
+        if (pending === null) return;
+        const gs = get().gameState;
+        const newGs = { ...gs, deck: { ...gs.deck, cardsAddedFromReserve: pending } };
+        set({ gameState: newGs, pendingClockValue: null, computed: recompute(newGs) }, false, 'commitClockTick');
       },
 
       // ── Character & Strikes ───────────────────────────────────────────────
