@@ -31,6 +31,18 @@
   min-width: 0;
 }
 
+/* Phase area — wraps phase panel + SceneChallengeOverlay.                    */
+/* position:relative scopes the overlay's inset:0 to this area only,          */
+/* so VisibleThreatsZone above it is never covered.                           */
+.game-phase-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
 /* -- Persistent card matt (3D card landing zone) --------------------------- */
 /* The full-width table bar: [Threat Deck] [CardMatt] [Trophy + Clock]        */
 .visible-threats-zone {

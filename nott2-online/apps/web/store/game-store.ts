@@ -27,10 +27,18 @@ interface GameStore extends MultiplayerSlice {
   computed: ReturnType<typeof engine.computeGameState>;
   /** Deferred clock value — written by applyFallout, committed by commitClockTick */
   pendingClockValue: number | null;
+  /** Whether the Scene Challenge overlay is currently visible */
+  sceneChallengeVisible: boolean;
 
   // ── Phase Control ────────────────────────────────────────────────────────
   nextPhase: () => void;
   prevPhase: () => void;
+
+  // ── Scene Challenge Overlay ───────────────────────────────────────────────
+  /** Open the scene challenge overlay (called by SceneSetupScreen instead of nextPhase) */
+  showSceneChallenge: () => void;
+  /** Dismiss the overlay and advance to conversation-stakes */
+  hideSceneChallenge: () => void;
 
   // ── Game Setup ────────────────────────────────────────────────────────────
   initGame: (
@@ -114,12 +122,29 @@ export const useGameStore = create<GameStore>()(
       gameState: initialState(),
       computed: recompute(initialState()),
       pendingClockValue: null,
+      sceneChallengeVisible: false,
 
       // ── Phase Control ────────────────────────────────────────────────────
 
       nextPhase: () => {
         const gs = engine.nextPhase(get().gameState);
         set({ gameState: gs, computed: recompute(gs) }, false, 'nextPhase');
+      },
+
+      // ── Scene Challenge Overlay ──────────────────────────────────────────
+
+      showSceneChallenge: () => {
+        // Advance to conversation-stakes immediately so the CardMatt locks
+        // (interactionMode becomes 'none') before the overlay appears.
+        // The overlay is cosmetic — phase is already correct when it shows.
+        const gs = engine.nextPhase(get().gameState);
+        set({ gameState: gs, computed: recompute(gs), sceneChallengeVisible: true }, false, 'showSceneChallenge');
+      },
+
+      hideSceneChallenge: () => {
+        // Phase is already conversation-stakes — just clear the overlay flag.
+        // ConversationStakesScreen will now render normally behind the exiting overlay.
+        set({ sceneChallengeVisible: false }, false, 'hideSceneChallenge');
       },
 
       prevPhase: () => {
