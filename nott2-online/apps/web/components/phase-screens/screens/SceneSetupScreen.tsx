@@ -23,7 +23,7 @@ import { getRankLabel } from '../helpers';
 export function SceneSetupScreen() {
   const {
     gameState, computed,
-    selectCard, selectJoker, setActivePlayer, nextPhase,
+    selectCard, selectJoker, setActivePlayer, showSceneChallenge,
   } = useGameStore();
   // Multiplayer control — separate cast to avoid losing engine types above
   const { isHost, roomCode } = useGameStore() as any;
@@ -189,7 +189,7 @@ export function SceneSetupScreen() {
           <ActionFooter
             label="Challenge Selected Card →"
             disabled={!canAdvance}
-            onClick={nextPhase}
+            onClick={showSceneChallenge}
             hint={canAdvance ? undefined : 'Select a card first'}
           />
         )}

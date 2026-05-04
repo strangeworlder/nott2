@@ -82,5 +82,8 @@ export type { TransitionOverlayProps } from './organisms/TransitionOverlay/Trans
 export { ActBreakOverlay } from './organisms/ActBreakOverlay/ActBreakOverlay';
 export type { ActBreakOverlayProps } from './organisms/ActBreakOverlay/ActBreakOverlay';
 
+export { SceneChallengeOverlay } from './organisms/SceneChallengeOverlay/SceneChallengeOverlay';
+export type { SceneChallengeOverlayProps } from './organisms/SceneChallengeOverlay/SceneChallengeOverlay';
+
 // Version
 export const DESIGN_SYSTEM_VERSION = '0.0.0';

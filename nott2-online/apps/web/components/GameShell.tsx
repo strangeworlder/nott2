@@ -22,7 +22,7 @@
 
 'use client';
 
-import { darkTheme, Header, TransitionOverlay, DoomClockTransition, ActBreakOverlay } from '@nott2/design-system';
+import { darkTheme, Header, TransitionOverlay, DoomClockTransition, ActBreakOverlay, SceneChallengeOverlay } from '@nott2/design-system';
 import { useGameStore } from '../store/game-store';
 import { GamePhaseRouter } from './GamePhaseRouter';
 import CharacterBar from './CharacterBar';
@@ -30,6 +30,7 @@ import DebugPanel from './DebugPanel';
 import { TransitionProvider, useTransitionContext } from '../contexts/TransitionContext';
 import { CardDealProvider } from '../contexts/CardDealContext';
 import { useCardDealBridge } from '../hooks/useCardDealBridge';
+import { useSceneChallengeProps } from '../hooks/useSceneChallengeProps';
 import { VisibleThreatsZone } from './VisibleThreatsZone';
 
 interface GameShellProps {
@@ -52,10 +53,11 @@ export function GameShell({ mode, roomCode, sidebar, onReset }: GameShellProps) 
 }
 
 function GameShellInner({ mode, roomCode, sidebar, onReset }: GameShellProps) {
-  const { gameState, fullReset, nextPhase } = useGameStore() as any;
+  const { gameState, fullReset, nextPhase, sceneChallengeVisible, hideSceneChallenge } = useGameStore() as any;
   const { phase, currentAct, isEndgame } = gameState;
   const { transition, clearTransition, fireMidpoint } = useTransitionContext();
   const { CardOverlayPortal } = useCardDealBridge();
+  const sceneChallengeProps = useSceneChallengeProps();
 
   const handleReset = onReset ?? fullReset;
 
@@ -77,13 +79,25 @@ function GameShellInner({ mode, roomCode, sidebar, onReset }: GameShellProps) {
           {/* Persistent card matt — survives phase transitions */}
           <VisibleThreatsZone />
 
-          <div
-            className="game-phase-panel"
-            aria-live="polite"
-            aria-atomic="false"
-            aria-label="Current phase"
-          >
-            <GamePhaseRouter />
+          {/* Phase area — position:relative so SceneChallengeOverlay scopes here, below CardMatt */}
+          <div className="game-phase-area">
+            <div
+              className="game-phase-panel"
+              aria-live="polite"
+              aria-atomic="false"
+              aria-label="Current phase"
+            >
+              <GamePhaseRouter />
+            </div>
+
+            {/* Scene challenge overlay — inset:0 within game-phase-area only */}
+            <SceneChallengeOverlay
+              visible={sceneChallengeVisible}
+              onDismiss={hideSceneChallenge}
+              onExited={() => {}}
+              themeClass={darkTheme}
+              {...sceneChallengeProps}
+            />
           </div>
         </div>
 
