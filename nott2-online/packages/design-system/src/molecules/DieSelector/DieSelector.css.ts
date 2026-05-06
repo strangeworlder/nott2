@@ -12,7 +12,7 @@ export const dieSelectorLabel = style({
   fontSize: vars.fontSize.label,
   color: vars.color.textMuted,
   textTransform: 'uppercase',
-  letterSpacing: '0.08em',
+  letterSpacing: vars.letterSpacing.normal,
 });
 
 export const dieGrid = style({

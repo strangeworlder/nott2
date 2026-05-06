@@ -48,6 +48,13 @@ export const segmentNew = style({
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
   animationDelay: '800ms',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      strokeOpacity: 1,
+    },
+  },
 });
 
 /* ── Hour markers ────────────────────────────────────────────────────────── */
@@ -101,7 +108,7 @@ export const clockSubLabel = style({
   fontSize: vars.fontSize.label,
   fontWeight: 600,
   textTransform: 'uppercase',
-  letterSpacing: '0.12em',
+  letterSpacing: vars.letterSpacing.wide,
   color: vars.color.textMuted,
 });
 
@@ -117,7 +124,7 @@ export const dismissHint = style({
   fontSize: vars.fontSize.micro,
   color: vars.color.textMuted,
   textTransform: 'uppercase',
-  letterSpacing: '0.15em',
+  letterSpacing: vars.letterSpacing.wider,
   opacity: 0,
   animationName: hintFade,
   animationDuration: '600ms',
@@ -146,6 +153,13 @@ export const crackLine = style({
   animationDuration: '3s',
   animationIterationCount: 'infinite',
   animationTimingFunction: 'ease-in-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.85,
+    },
+  },
 });
 
 const shakeAnim = keyframes({
@@ -167,6 +181,12 @@ export const brokenShake = style({
   animationDelay: '400ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-in-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+    },
+  },
 });
 
 const pulseGlow = keyframes({
@@ -179,4 +199,11 @@ export const brokenGlow = style({
   animationDuration: '2s',
   animationIterationCount: 'infinite',
   animationTimingFunction: 'ease-in-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      filter: 'drop-shadow(0 0 40px rgba(220, 38, 38, 0.5))',
+    },
+  },
 });

@@ -1,0 +1,29 @@
+---
+sidebar_position: 10
+title: DiceResult
+---
+
+# DiceResult
+
+The autopsy report. Clinical `d10 + d4 = Total` layout with optional aptitude modifier (struck-through original value).
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `d10` | `number` | — | Threat die value |
+| `d4` | `number` | — | Effort die value |
+| `total` | `number` | — | Calculated total |
+| `aptitudeModifier` | `number` | — | Optional modifier (shows struck-through original) |
+
+## Implementation Examples
+
+```tsx
+<DiceResult d10={7} d4={3} total={10} />
+<DiceResult d10={7} d4={3} total={12} aptitudeModifier={2} />
+```
+
+## Related Components
+
+- **[DieSelector](/components/molecules/die-selector)** — Input for die values
+- **[ResultBanner](/components/molecules/result-banner)** — SUCCESS/FAILURE verdict

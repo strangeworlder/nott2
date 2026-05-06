@@ -51,18 +51,12 @@ export const charCardInner = style({
 
 export const charCardActive = style({
   borderColor: vars.color.accentBright,
-  boxShadow: '0 0 12px rgba(220, 38, 38, 0.2)',
+  boxShadow: vars.shadow.glowSubtle,
 });
 
 export const charCardDead = style({
   opacity: 0.4,
   cursor: 'default',
-});
-
-export const gpBadge = style({
-  fontSize: '0.6rem',
-  marginTop: 2,
-  color: '#fbbf24',
 });
 
 export const genrePool = style({
@@ -75,9 +69,9 @@ export const genrePool = style({
 });
 
 export const genrePoolLabel = style({
-  fontSize: '0.55rem',
+  fontSize: vars.fontSize.nano,
   textTransform: 'uppercase',
-  letterSpacing: '0.08em',
+  letterSpacing: vars.letterSpacing.normal,
   color: vars.color.textMuted,
 });
 

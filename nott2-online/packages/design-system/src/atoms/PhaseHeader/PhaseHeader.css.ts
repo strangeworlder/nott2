@@ -9,9 +9,9 @@ export const headerRoot = style({
 });
 
 export const stepLabel = style({
-  fontSize: '0.6875rem',
+  fontSize: vars.fontSize.small,
   fontWeight: 600,
-  letterSpacing: '0.08em',
+  letterSpacing: vars.letterSpacing.normal,
   textTransform: 'uppercase',
   color: vars.color.textMuted,
 });

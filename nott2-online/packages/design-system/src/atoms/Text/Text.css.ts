@@ -14,7 +14,7 @@ export const glowRed = style({
 });
 
 export const glowGreen = style({
-  textShadow: `0 0 8px #4ade80, 0 0 20px ${vars.color.success}`,
+  textShadow: `0 0 8px ${vars.color.successBright}, 0 0 20px ${vars.color.success}`,
 });
 
 export const borderLeft = style({
@@ -23,12 +23,19 @@ export const borderLeft = style({
 });
 
 export const borderBottom = style({
-  borderBottom: `1px solid rgba(255,255,255,0.1)`,
+  borderBottom: `1px solid ${vars.color.borderSubtle}`,
   paddingBottom: vars.space.xs,
 });
 
 export const animatePulse = style({
   animation: `${pulseAnimation} 2s ease-in-out infinite`,
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.7,
+    },
+  },
 });
 
 // ── Text Recipe ───────────────────────────────────────────────────────────────
@@ -46,7 +53,7 @@ export const textRecipe = recipe({
         fontSize: vars.fontSize.hero,
         fontWeight: 700,
         textTransform: 'uppercase',
-        letterSpacing: '0.1em',
+        letterSpacing: vars.letterSpacing.normal,
         lineHeight: 1.1,
       },
       h1: {
@@ -54,7 +61,7 @@ export const textRecipe = recipe({
         fontSize: vars.fontSize.h1,
         fontWeight: 700,
         textTransform: 'uppercase',
-        letterSpacing: '0.08em',
+        letterSpacing: vars.letterSpacing.normal,
         lineHeight: 1.15,
       },
       h2: {
@@ -75,7 +82,7 @@ export const textRecipe = recipe({
       },
       lead: {
         fontFamily: vars.font.body,
-        fontSize: 'clamp(1.125rem, 2vw, 1.25rem)',
+        fontSize: vars.fontSize.lead,
         fontWeight: 400,
         lineHeight: 1.7,
       },
@@ -90,7 +97,7 @@ export const textRecipe = recipe({
         fontSize: vars.fontSize.label,
         fontWeight: 600,
         textTransform: 'uppercase',
-        letterSpacing: '0.1em',
+        letterSpacing: vars.letterSpacing.normal,
       },
       caption: {
         fontFamily: vars.font.body,
@@ -100,7 +107,13 @@ export const textRecipe = recipe({
       },
       quote: {
         fontFamily: vars.font.body,
-        fontSize: 'clamp(1.25rem, 3vw, 1.5rem)',
+        fontSize: vars.fontSize.quote,
+        fontStyle: 'italic',
+        lineHeight: 1.6,
+      },
+      flavor: {
+        fontFamily: vars.font.display,
+        fontSize: vars.fontSize.body,
         fontStyle: 'italic',
         lineHeight: 1.6,
       },
@@ -109,7 +122,7 @@ export const textRecipe = recipe({
         fontSize: vars.fontSize.micro,
         fontWeight: 600,
         textTransform: 'uppercase',
-        letterSpacing: '0.15em',
+        letterSpacing: vars.letterSpacing.wide,
       },
     },
 
@@ -117,7 +130,7 @@ export const textRecipe = recipe({
       white: { color: vars.color.text },
       red: { color: vars.color.accentBright },
       muted: { color: vars.color.textMuted },
-      success: { color: '#4ade80' },
+      success: { color: vars.color.successBright },
     },
 
     align: {

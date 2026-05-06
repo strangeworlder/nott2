@@ -1,0 +1,51 @@
+---
+sidebar_position: 16
+title: DoomClock
+---
+
+# DoomClock
+
+The impossible 13th hour. An SVG clock with 12 arc segments and a sweeping hand. When the reserve reaches 13 cards, the clock face shatters with cracks and red glow.
+
+## Why to Use
+
+DoomClock provides an atmospheric, diegetic visualization of the game's tension escalation. It's a constant visual reminder that time is running out.
+
+## When to Use
+
+- **DoomClock**: Compact (~80px) version for the sidebar/game board
+- **DoomClockTransition**: Full-screen (240px) version for dramatic tick animations between scenes
+
+## Key Props
+
+### DoomClock
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `count` | `number` | — | Current reserve card count (0–13) |
+| `isBroken` | `boolean` | `false` | Shattered face state (at 13) |
+
+### DoomClockTransition
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `fromCount` | `number` | — | Starting count |
+| `toCount` | `number` | — | Ending count (animates the tick) |
+| `isBreak` | `boolean` | `false` | Shatter animation variant |
+| `onComplete` | `() => void` | — | Fires after animation completes |
+
+## Implementation Examples
+
+```tsx
+{/* Compact sidebar clock */}
+<DoomClock count={7} />
+<DoomClock count={13} isBroken />
+
+{/* Full-screen transition */}
+<DoomClockTransition fromCount={11} toCount={12} onComplete={advancePhase} />
+<DoomClockTransition fromCount={12} toCount={13} isBreak onComplete={advancePhase} />
+```
+
+## Related Components
+
+- **[GameBoard](/components/organisms/game-board)** — Contains the DoomClockZone

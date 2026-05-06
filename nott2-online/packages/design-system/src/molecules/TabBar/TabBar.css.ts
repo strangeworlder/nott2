@@ -17,7 +17,7 @@ export const tabRecipe = recipe({
     cursor: 'pointer',
     fontFamily: vars.font.body,
     fontSize: vars.fontSize.label,
-    fontWeight: 500,
+    fontWeight: 600,
     color: vars.color.textMuted,
     transition: `all ${vars.transition.fast}`,
     marginBottom: '-1px',

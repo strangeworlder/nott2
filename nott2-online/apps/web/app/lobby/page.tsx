@@ -15,7 +15,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useGameStore } from '../../store/game-store';
-import { darkTheme, TabBar } from '@nott2/design-system';
+import { darkTheme, TabBar, Text } from '@nott2/design-system';
 import '../demo/demo.css';
 import './lobby.css';
 
@@ -49,7 +49,7 @@ export default function LobbyPage() {
       <div className="lobby-inner">
         <div className="lobby-header">
           <a href="/" className="lobby-back">← Back</a>
-          <h1 className="lobby-title">Night of the Thirteenth 2</h1>
+          <Text variant="h1" className="lobby-title">Night of the Thirteenth 2</Text>
         </div>
 
         <TabBar
@@ -67,9 +67,9 @@ export default function LobbyPage() {
           <JoinForm onJoined={() => setInRoom(true)} />
         )}
 
-        <p className="lobby-demo-link">
+        <Text variant="caption" color="muted" className="lobby-demo-link">
           Want to play solo? <a href="/demo">Try the demo mode</a>
-        </p>
+        </Text>
       </div>
     </div>
   );

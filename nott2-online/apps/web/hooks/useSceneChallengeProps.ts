@@ -91,7 +91,7 @@ export function useSceneChallengeProps() {
     ? 'warning'
     : suit
     ? suitToIconName(suit)
-    : 'style';
+    : 'playing_cards';
 
   const imageSrc = isJoker
     ? SCENE_IMAGES.Joker

@@ -79,6 +79,13 @@ export const actBreakBackdrop = style({
   animationDuration: '300ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const actBreakBackdropExiting = style({
@@ -86,6 +93,13 @@ export const actBreakBackdropExiting = style({
   animationDuration: '350ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-in',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0,
+    },
+  },
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -129,6 +143,13 @@ export const actBreakPanel = style({
     `0 0 80px rgba(138, 0, 0, 0.35)`,
     `0 0 160px rgba(138, 0, 0, 0.15)`,
   ].join(', '),
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const actBreakPanelExiting = style({
@@ -143,7 +164,7 @@ export const actBreakLabel = style({
   fontFamily: vars.font.body,
   fontSize: vars.fontSize.label,
   fontWeight: 700,
-  letterSpacing: '0.35em',
+  letterSpacing: vars.letterSpacing.widest,
   textTransform: 'uppercase',
   color: vars.color.accentBright,
   opacity: 0,
@@ -153,6 +174,13 @@ export const actBreakLabel = style({
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
   userSelect: 'none',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -172,6 +200,14 @@ export const actBreakNumeral = style({
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
   userSelect: 'none',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+      textShadow: `0 0 24px rgba(220, 38, 38, 0.8), 0 0 60px rgba(220, 38, 38, 0.4)`,
+    },
+  },
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -188,6 +224,13 @@ export const actBreakDivider = style({
   animationDelay: '800ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -208,6 +251,13 @@ export const actBreakTitle = style({
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
   userSelect: 'none',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -230,6 +280,13 @@ export const actBreakSubtitle = style({
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
   userSelect: 'none',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -252,6 +309,13 @@ export const actBreakRules = style({
   animationDelay: '1200ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -264,7 +328,7 @@ export const actBreakButton = style({
   fontFamily: vars.font.body,
   fontSize: vars.fontSize.label,
   fontWeight: 700,
-  letterSpacing: '0.12em',
+  letterSpacing: vars.letterSpacing.wide,
   textTransform: 'uppercase',
   color: vars.color.text,
   backgroundColor: vars.color.accent,
@@ -286,5 +350,12 @@ export const actBreakButton = style({
   ':focus-visible': {
     outline: `2px solid ${vars.color.accentBright}`,
     outlineOffset: '3px',
+  },
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.55,
+    },
   },
 });

@@ -4,6 +4,9 @@
  * Shown by Next.js during initial server-render streaming.
  * Dark background matching the game's aesthetic — no flash of white.
  */
+'use client';
+import { Text } from '@nott2/design-system';
+
 export default function RootLoading() {
   return (
     <div
@@ -25,9 +28,9 @@ export default function RootLoading() {
           border: '1px solid rgba(220, 38, 38, 0.3)',
           animation: 'nott-pulse 1.5s ease-in-out infinite',
         }} />
-        <span style={{ fontSize: '0.75rem', color: '#3a3a3a', letterSpacing: '0.1em' }}>
+        <Text variant="micro" color="muted" as="span">
           LOADING
-        </span>
+        </Text>
       </div>
       <style>{`
         @keyframes nott-pulse {

@@ -1,0 +1,165 @@
+---
+sidebar_position: 6
+title: Toggle
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Toggle, Row, Text, Stack, Card } from '@nott2/design-system';
+
+# Toggle
+
+A binary state control for decisive on/off choices. In this game, toggling a setting is a commitment — enabling "Final Girl" mode means characters will die faster, turning on "Classic Setup" changes how the deck is built. The switch slides; the decision lands.
+
+Two visual modes serve different contexts:
+- **`switch`** — A track-and-thumb slider for settings panels where the toggle sits alongside a description. This is the primary mode used in the game.
+- **`button`** — A text button that shows the current state label. More compact, for inline use where a switch would be too large.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Toggle } from '@nott2/design-system';
+
+<Toggle 
+  checked={isFinalGirl} 
+  onChange={setIsFinalGirl} 
+  label="Final Girl Rules" 
+/>
+```
+</details>
+
+## When to Use
+
+Toggle is the correct choice when a user is making a binary, persistent decision that alters the rules or state of the application. The physical sliding motion of the switch reinforces the feeling of "locking in" a preference.
+
+> **Do**
+> - Use Toggle for configuration screens where the user is building a customized experience from a list of defined options.
+> - Use the `switch` variant alongside a descriptive label and helper text for complex settings (like Rules Modules).
+> - Use the `button` variant only when space is severely constrained (like an inline toolbar) and a switch would disrupt the layout.
+
+> **Don't**
+> - Don't use Toggle for audio/video mute controls — use icon-only buttons. Media controls need standard iconography, not text labels.
+> - Don't use Toggle for multi-option selection (more than 2 states) — use a [SegmentedControl](/components/atoms/segmented-control). Toggle is strictly binary.
+> - Don't use Toggle for transient actions — use a [Button](/components/atoms/button). Toggle is for persistent state, not immediate verbs.
+
+## Content Guidelines
+
+> **Do**
+> - Use clear, unambiguous labels that describe the setting being controlled.
+> - Provide context with helper text if the impact of the toggle isn't immediately obvious (e.g., "Increased lethality" under "Final Girl").
+> - Use the default `labelOn` ("On") and `labelOff` ("Off") props unless the specific context demands alternatives (like "Enabled"/"Disabled").
+
+> **Don't**
+> - Don't phrase settings as questions (e.g., "Do you want Final Girl mode?"). Use noun phrases.
+> - Don't use vague terms that leave the user guessing what the active state actually does.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `variant` | `'button' \| 'switch'` | `'button'` | Visual mode — switch for settings lists, button for inline |
+| `value` | `boolean` | — | Current state (controlled) |
+| `onChange` | `(value: boolean) => void` | — | Called with the new state when toggled |
+| `labelOn` | `string` | `'On'` | Text shown when active |
+| `labelOff` | `string` | `'Off'` | Text shown when inactive |
+| `id` | `string` | — | HTML id attribute |
+
+## Anatomy
+
+### Button Variant
+
+```
+┌──────────────┐
+│   ON / OFF   │ ← display font, micro size, uppercase
+└──────────────┘
+ └── border color: green (on) / subtle (off)
+     background: green-tinted (on) / transparent (off)
+```
+
+### Switch Variant
+
+```
+┌─────────────────────────────────────────┐
+│  [====●]  ON / OFF                      │
+│   track    thumb    label               │
+└─────────────────────────────────────────┘
+ └── track: green (on) / gray (off)
+     thumb: slides left/right with transition
+     label: green (on) / muted (off)
+```
+
+## Behavior
+
+- **Controlled component** — state is managed by the parent via `value` + `onChange`.
+- Clicking anywhere on the switch wrapper (track, thumb, or label) triggers the toggle.
+- The `button` variant uses `aria-pressed` for screen readers.
+- The `switch` variant uses `role="switch"` with `aria-checked` and supports keyboard activation (Space, Enter).
+- Green glow on the active state reinforces the "enabled" feeling. Muted gray for inactive keeps it recessive.
+
+## Accessibility
+
+- **Switch variant**: `role="switch"` with `aria-checked` — screen readers announce "On, switch" or "Off, switch".
+- **Button variant**: `aria-pressed` — screen readers announce "On, toggle button, pressed" or "Off, toggle button, not pressed".
+- Both variants are keyboard-focusable with visible focus rings.
+- Labels are always visible text — no icon-only toggles.
+
+## Real Usage Examples
+
+### Rules Modules (GameSetupScreen)
+
+This is the primary usage: each rules module gets a switch toggle alongside its name and description.
+
+<ComponentPreview column start>
+  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+    <Toggle variant="switch" value={false} onChange={() => {}} labelOn="On" labelOff="Off" />
+    <div>
+      <Text variant="label" as="div">Classic Setup</Text>
+      <Text variant="caption" color="muted" as="div" style={{ marginTop: 2 }}>
+        Curated deck: 2s, 3s, 4s in threat deck. Ordered reserve: 5–10.
+      </Text>
+    </div>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+    <Toggle variant="switch" value={true} onChange={() => {}} labelOn="On" labelOff="Off" />
+    <div>
+      <Text variant="label" as="div">Final Girl</Text>
+      <Text variant="caption" color="muted" as="div" style={{ marginTop: 2 }}>
+        Increased lethality. Any face card encounter earns a Strike.
+      </Text>
+    </div>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Toggle
+  variant="switch"
+  value={classicSetup}
+  onChange={setClassicSetup}
+  labelOn="On"
+  labelOff="Off"
+/>
+```
+
+### Button Variant
+
+<ComponentPreview>
+  <Row gap="sm">
+    <Toggle variant="button" value={false} onChange={() => {}} labelOn="Enabled" labelOff="Disabled" />
+    <Toggle variant="button" value={true} onChange={() => {}} labelOn="Enabled" labelOff="Disabled" />
+  </Row>
+</ComponentPreview>
+
+```tsx
+<Toggle
+  variant="button"
+  value={debugMode}
+  onChange={setDebugMode}
+  labelOn="Enabled"
+  labelOff="Disabled"
+/>
+```
+
+## Related Components
+
+- **[Button](/components/atoms/button)** — For one-time actions, not toggleable state
+- **[Badge](/components/atoms/badge)** — For displaying the current state as a label (read-only, no interaction)

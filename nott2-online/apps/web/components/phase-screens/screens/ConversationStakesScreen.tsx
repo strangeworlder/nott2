@@ -8,7 +8,7 @@
 import React from 'react';
 import {
   PhasePanel, Card, Button, ActionFooter,
-  StatusCallout, DifficultyBadge,
+  StatusCallout, DifficultyBadge, Text, Icon,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
 import type { Rank } from '@nott2/game-engine';
@@ -56,9 +56,9 @@ export function ConversationStakesScreen() {
   return (
     <PhasePanel title="Conversation & Stakes" subtitle="Focus the camera. Define the sacrifice. Then proceed to roll.">
       <Card variant="instruction" title="Scene Prompt">
-        <p style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', lineHeight: 1.6, color: 'var(--color-text)', fontStyle: 'italic' }}>
+        <Text variant="flavor">
           &ldquo;{prompt}&rdquo;
-        </p>
+        </Text>
       </Card>
 
       {difficulty !== null && (
@@ -76,9 +76,9 @@ export function ConversationStakesScreen() {
 
       {!scene.escalationUsed && (
         <Card title="Escalation — Something Not Right">
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 12 }}>
+          <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
             Any non-AP player can add a terrifying detail. Once per scene.
-          </p>
+          </Text>
           <Button variant="secondary" size="sm" onClick={escalate}>Use Escalation</Button>
         </Card>
       )}
@@ -88,14 +88,14 @@ export function ConversationStakesScreen() {
       )}
 
       <Card title="The Stakes — Define the Sacrifice">
-        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 12 }}>
+        <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
           &ldquo;If you push yourself, what are you willing to sacrifice?&rdquo; Define the Overexertion result — specific and a genuine loss.
-        </p>
+        </Text>
         {!scene.sacrificeConfirmed && (
-          <Button variant="secondary" size="sm" onClick={confirmSacrifice}>Sacrifice Defined ✔</Button>
+          <Button variant="secondary" size="sm" onClick={confirmSacrifice}>Sacrifice Defined</Button>
         )}
         {scene.sacrificeConfirmed && (
-          <div style={{ color: 'var(--color-success)', fontSize: '0.75rem' }}>✔ Sacrifice confirmed.</div>
+          <Text variant="micro" color="success" as="div"><Icon name="check_circle" size={14} /> Sacrifice confirmed.</Text>
         )}
       </Card>
 

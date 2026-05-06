@@ -58,7 +58,7 @@ export const CardMatt = React.forwardRef<HTMLDivElement, CardMattProps>(
 
         {/* The felt surface — this is the 3D card landing zone */}
         <div className={surfaceClass}>
-          {count === 0 && (
+          {count === 0 && emptyHint && (
             <div className={styles.cardMattEmpty}>
               {emptyHint}
             </div>

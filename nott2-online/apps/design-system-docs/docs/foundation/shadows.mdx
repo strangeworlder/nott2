@@ -1,0 +1,182 @@
+---
+sidebar_position: 4
+title: Shadows & Glows
+---
+
+# Shadows & Glows
+
+There are no traditional drop shadows in Night of the Thirteenth. No gentle elevation, no Material Design depth cards floating above a page. Instead, elements **radiate light** — they glow, as if something beneath the surface is alive, watching.
+
+This is the single most important visual distinction in the system. Where most design systems use shadow to create hierarchy through depth, we use it to create **presence** — the feeling that what you're looking at has weight, heat, intent.
+
+## Two Systems of Glow
+
+The system uses glow in two fundamentally different ways, and conflating them will break the visual language.
+
+### 1. Box Glow — Elements that Radiate
+
+`boxShadow` tokens applied to containers and interactive elements. These make an element appear to emit light from behind its edges, like a campfire seen through a cabin window.
+
+### 2. Text Glow — Words that Burn
+
+`textShadow` applied to type. These make words appear self-luminous, used exclusively for **cinematic moments** — phase titles, act announcements, the Killer's name.
+
+## Glow Tokens
+
+### Red Glows — The Default Voice
+
+Red is the system's native color. Glow defaults to red the same way text defaults to white — you don't choose it, it's simply what happens.
+
+| Token | CSS Value | Where It's Used | Why |
+|---|---|---|---|
+| `shadow.glowSubtle` | `0 0 10px rgba(138,0,0, 0.2)` | **Button rest state**, CharacterBar background presence | A whisper of light. The button is alive, warm, watching — but not demanding attention. |
+| `shadow.glow` | `0 0 20px rgba(138,0,0, 0.4)` | **Button hover**, Card interactive hover, PlayingCard hover, TextField focus, DieSelector hover, Deck interactive, PlayerAvatar active | The element responds. You've engaged it. The medium red halo says "I see you too." |
+| `shadow.glowIntense` | `0 0 40px rgba(138,0,0, 0.6)` | **PlayingCard flipped** (face reveal), DieSelector selected, ActBreakOverlay CTA hover | Maximum emphasis — used for moments of consequence. The card you've revealed, the die you've committed to. This is the point of no return. |
+
+### Green Glows — The Rarest Light
+
+Green glow means one thing: **survival**. A weakness discovered, a challenge overcome, a toggle flipped to safety. It is the scarcest color in the system, and that scarcity is the point — if green appears too often, it stops meaning anything.
+
+| Token | CSS Value | Where It's Used | Why |
+|---|---|---|---|
+| `shadow.glowGreen` | `0 0 20px rgba(45,90,45, 0.4)` | Currently reserved | Calm green halo for moderate survival moments. |
+| `shadow.glowGreenBright` | `0 0 30px rgba(74,222,128, 0.4)` | **Toggle checked state** (button variant) | Bright green confirmation — the toggle is ON, the setting is saved, the system has acknowledged your choice. |
+| `shadow.glowGreenSubtle` | `0 0 8px rgba(74,222,128, 0.5)` | **Toggle switch thumb** (checked) | Compact green glow for small elements — the switch knob needs a tighter, more focused green signal than the full-size toggle button. |
+
+### Gold Glow — The Attention Beacon
+
+Gold glow is the system's way of saying **"act here next."** It guides the player's eye to the element that needs interaction — the card that's selectable, the deck that's drawable, the control that's waiting for input.
+
+Unlike red (which responds to hover) and green (which confirms an outcome), gold glow is **proactive** — it pulses before the player has acted, drawing their attention.
+
+| Token | CSS Value | Where It's Used | Why |
+|---|---|---|---|
+| `shadow.beacon` | `0 0 10px 3px rgba(180,100,40, 0.4), 0 0 30px 6px rgba(180,60,20, 0.2)` | Standard attention beacon (default size) | The resting state of the attention beacon. Use directly on medium-sized elements. |
+
+**CardMatt** and **Deck** compose their own size-proportional beacon glows from `vars.color.gold` / `vars.color.goldBright`. The colors are tokenized; the blur/spread geometry scales to the component's physical dimensions.
+
+| Component | Scale | Why |
+|---|---|---|
+| **CardMatt** | Large (10–50px blur) | Big surface needs a wider, more diffuse beacon to fill the space |
+| **Deck** | Small (8–40px blur) | Compact card stack needs tighter, more focused glow |
+
+## Visual Reference
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: 16, margin: '16px 0 24px' }}>
+  {[
+    { label: 'glowSubtle', shadow: '0 0 10px rgba(138, 0, 0, 0.2)', desc: 'Button rest — presence without demand' },
+    { label: 'glow', shadow: '0 0 20px rgba(138, 0, 0, 0.4)', desc: 'Hover / focus — acknowledged interaction' },
+    { label: 'glowIntense', shadow: '0 0 40px rgba(138, 0, 0, 0.6)', desc: 'Point of no return — commitment' },
+    { label: 'glowGreen', shadow: '0 0 20px rgba(45, 90, 45, 0.4)', desc: 'Survival — calm confirmation' },
+    { label: 'glowGreenBright', shadow: '0 0 30px rgba(74, 222, 128, 0.4)', desc: 'Survival — bright acknowledgment' },
+    { label: 'glowGreenSubtle', shadow: '0 0 8px rgba(74, 222, 128, 0.5)', desc: 'Survival — compact glow for small elements' },
+    { label: 'beacon', shadow: '0 0 10px 3px rgba(180, 100, 40, 0.40), 0 0 30px 6px rgba(180, 60, 20, 0.20)', desc: 'Attention beacon — act here next' },
+  ].map(({ label, shadow, desc }) => (
+    <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 24, padding: '16px 20px', backgroundColor: '#141414', border: '1px solid #2a2a2a', borderRadius: 4 }}>
+      <div style={{
+        width: 64, height: 64,
+        backgroundColor: '#1a1a1a',
+        borderRadius: 8,
+        boxShadow: shadow,
+        flexShrink: 0,
+      }} />
+      <div>
+        <div style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: '#dc2626', marginBottom: 4 }}>{label}</div>
+        <div style={{ fontSize: '0.875rem', color: '#e8e8e8', marginBottom: 2 }}>{desc}</div>
+        <div style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#6a6a6a' }}>{shadow}</div>
+      </div>
+    </div>
+  ))}
+</div>
+
+## The Escalation Pattern
+
+Glows follow a consistent **escalation** across interactive states. This is the only correct pattern for components that respond to user input:
+
+```
+rest         → glowSubtle   (10px, 0.2 opacity)  "I'm here"
+hover/focus  → glow         (20px, 0.4 opacity)  "I see you"
+active/selected → glowIntense (40px, 0.6 opacity)  "Committed"
+```
+
+This pattern applies to **Buttons**, **PlayingCards**, **DieSelectors**, and any future interactive element. Breaking the escalation (e.g., jumping from `glowSubtle` to `glowIntense` on hover) will feel jarring and wrong.
+
+## Beyond Tokens: Bespoke Glow
+
+Some components use glow effects **outside** the token system — animated, multi-layered, or contextually unique. These are cinematic set-pieces, not reusable patterns:
+
+| Component | Effect | Why It's Bespoke |
+|---|---|---|
+| **ActBreakOverlay** | Multi-layer animated `textShadow` (40px + 80px, fading in) | Cinematic title reveal — the act name burns into existence. This is a one-shot animation, not a resting state. |
+| **SceneChallengeOverlay** | Various hardcoded red `textShadow` values | Horror evidence-photo aesthetic — each piece of text feels like it's been lit by a flashlight in the dark. |
+| **StrikeIndicator** | `textShadow: 0 0 8px rgba(220,38,38, 0.6)` | The "X" marks glow with danger — strikes against a player feel hot. |
+| **PhaseDisplay** | Inset `boxShadow: inset 0 0 80px rgba(138,0,0, 0.08)` | Subtle ambient vignette — the only inset shadow in the system. Creates a cinematic "edge of frame" darkness. |
+| **TextField** | Composite `0 0 0 2px focus-ring + vars.shadow.glow` | The focus ring is layered: a sharp 2px structural outline + the softer glow behind it. The ring handles accessibility, the glow handles atmosphere. |
+
+:::tip When to go bespoke
+Organism-level cinematic components may use hardcoded glow values for one-shot animations. Beacon glows (gold attention signals) should always compose from `vars.color.gold` / `vars.color.goldBright` tokens — the colors are standardized, only the blur/spread geometry changes per component.
+:::
+
+## Hover Tints
+
+Some interactive components use **hardcoded low-opacity RGBA values** for hover state background tints. These are intentional and are not candidates for tokenization:
+
+| Component | Hover Tint | Why |
+|---|---|---|
+| **Button** (secondary) | `rgba(138, 0, 0, 0.05)` | Barely-perceptible brand warmth on hover — the button acknowledges interaction without competing with the primary variant. |
+| **Button** (ghost) | `rgba(255, 255, 255, 0.05)` | Neutral luminance shift — the ghost button reveals itself without committing to a color. |
+
+These values are too specific and low-opacity to warrant tokens. They follow the same pattern as `StatusCallout`'s hardcoded RGBA for `info` and `highlight` variants — UI-only atmospheric tints, not brand-level decisions.
+
+## Accessibility: Color Is Not Meaning
+
+:::warning Critical Accessibility Principle
+**Glow color must never be the sole indicator of success or failure.** Approximately 8% of men and 0.5% of women have some form of red-green color vision deficiency (protanopia, deuteranopia). A red glow and a green glow can look identical to these users.
+:::
+
+Every success/failure distinction in the system uses **multiple channels** — never color alone:
+
+| State | Color Signal | Structural Signal | Text Signal |
+|---|---|---|---|
+| **Success** | Green border + glow | ✓ icon, distinct border style | "SURVIVED", "WEAKNESS FOUND" |
+| **Failure** | Red border + glow | ✗ icon, distinct border style | "ELIMINATED", "FAILED" |
+| **Interactive** (card selectable) | Gold pulsing glow | Dashed border, breathing animation | "DRAW A CARD" helper text |
+| **Weakness found** (pip) | Green border + background | Filled vs. empty pip shape | Pip label text |
+
+When adding new outcome-dependent UI, always ensure:
+
+1. **Icon or shape** differentiates the states (checkmark vs. cross, filled vs. empty)
+2. **Text label** explicitly names the outcome
+3. **Border style** provides additional structural differentiation (solid vs. dashed, thick vs. thin)
+4. Color/glow provides the **atmospheric reinforcement** on top of these structural cues
+
+```tsx
+{/* ✅ Correct — multiple channels */}
+<ResultBanner outcome="success">
+  <Icon name="check" />           {/* Shape signal */}
+  <Text glow>SURVIVED</Text>      {/* Text + glow */}
+</ResultBanner>
+
+{/* ❌ Wrong — glow color is the only differentiator */}
+<Text color="success" glow>Result</Text>   {/* Green glow */}
+<Text color="red" glow>Result</Text>       {/* Red glow — indistinguishable for CVD users */}
+```
+
+## Usage
+
+```tsx
+// In a .css.ts file — use the escalation pattern:
+import { vars } from '../../tokens/theme.css';
+
+const myInteractiveElement = style({
+  boxShadow: vars.shadow.glowSubtle,       // rest
+  ':hover': {
+    boxShadow: vars.shadow.glow,           // engaged
+  },
+});
+
+// For committed/selected states:
+const mySelectedState = style({
+  boxShadow: vars.shadow.glowIntense,      // locked in
+});
+```

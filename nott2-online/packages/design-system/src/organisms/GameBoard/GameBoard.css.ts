@@ -48,7 +48,7 @@ export const zoneLabel = style({
   fontSize: vars.fontSize.micro,
   color: vars.color.textMuted,
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
+  letterSpacing: vars.letterSpacing.normal,
 });
 
 
@@ -107,18 +107,9 @@ export const phaseInfo = style({
   alignItems: 'flex-end',
 });
 
-export const actBadge = style({
-  fontFamily: vars.font.display,
-  fontSize: vars.fontSize.label,
-  fontWeight: 700,
-  color: vars.color.accentBright,
-  textTransform: 'uppercase',
-  letterSpacing: '0.08em',
-});
-
 export const phaseName = style({
   color: vars.color.textMuted,
   fontSize: vars.fontSize.micro,
   textTransform: 'capitalize',
-  letterSpacing: '0.05em',
+  letterSpacing: vars.letterSpacing.tight,
 });

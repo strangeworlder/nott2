@@ -18,9 +18,9 @@ export const badgeNumber = style({
 });
 
 export const badgeLabel = style({
-  fontSize: '0.45rem',
+  fontSize: vars.fontSize.nano,
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
+  letterSpacing: vars.letterSpacing.normal,
   color: vars.color.textMuted,
   marginTop: 2,
 });

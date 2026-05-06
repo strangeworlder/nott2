@@ -4,16 +4,18 @@ import { DoomClockTransition } from './DoomClockTransition';
 
 describe('DoomClockTransition', () => {
   it('renders with tick variant', () => {
+    // displayCountdown starts at TRIGGER(13) - from(3) = 10
     render(<DoomClockTransition from={3} to={4} onComplete={vi.fn()} />);
     const el = screen.getByRole('status');
     expect(el).toBeTruthy();
-    expect(el.getAttribute('aria-label')).toContain('9');
+    expect(el.getAttribute('aria-label')).toContain('10');
   });
 
   it('shows correct countdown for given to value', () => {
+    // displayCountdown starts at TRIGGER(13) - from(10) = 3
     render(<DoomClockTransition from={10} to={11} onComplete={vi.fn()} />);
     const el = screen.getByRole('status');
-    expect(el.getAttribute('aria-label')).toContain('2');
+    expect(el.getAttribute('aria-label')).toContain('3');
   });
 
   it('renders broken variant', () => {

@@ -38,7 +38,7 @@ import {
   animatePulse,
 } from './Text.css';
 
-type TextVariant = 'hero' | 'h1' | 'h2' | 'h3' | 'lead' | 'body' | 'label' | 'caption' | 'quote' | 'micro';
+type TextVariant = 'hero' | 'h1' | 'h2' | 'h3' | 'lead' | 'body' | 'label' | 'caption' | 'quote' | 'flavor' | 'micro';
 type TextColor = 'white' | 'red' | 'muted' | 'success';
 
 interface TextProps {
@@ -54,6 +54,9 @@ interface TextProps {
   dangerouslySetInnerHTML?: { __html: string };
   className?: string;
   id?: string;
+  /** Layout spacing only (margin, padding). Never use for typography overrides — use variant/color props instead. */
+  style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler;
 }
 
 const variantTagMap: Record<TextVariant, ElementType> = {
@@ -66,6 +69,7 @@ const variantTagMap: Record<TextVariant, ElementType> = {
   label: 'div',
   caption: 'p',
   quote: 'p',
+  flavor: 'p',
   micro: 'p',
 };
 
@@ -82,6 +86,8 @@ export function Text({
   dangerouslySetInnerHTML,
   className,
   id,
+  style,
+  onClick,
 }: TextProps) {
   const Tag = as ?? variantTagMap[variant];
 
@@ -98,6 +104,8 @@ export function Text({
     <Tag
       id={id}
       className={cn}
+      style={style}
+      onClick={onClick}
       dangerouslySetInnerHTML={dangerouslySetInnerHTML}
     >
       {dangerouslySetInnerHTML ? undefined : children}

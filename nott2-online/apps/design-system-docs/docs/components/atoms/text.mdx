@@ -1,0 +1,238 @@
+---
+sidebar_position: 1
+title: Text
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Text, Card, Stack } from '@nott2/design-system';
+
+# Text
+
+The typographic authority. **All text in the UI passes through this component.** It prevents default-font leakage and enforces consistency in tone — whether it's a shouting header or a whispered caption. Text is the purest expression of the [Typography](/foundation/typography) foundation — every token, every typeface rule, every narrative voice finds its concrete form here.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Text } from '@nott2/design-system';
+
+<Text variant="h1" color="accent">The Night Begins</Text>
+```
+</details>
+
+## Why to Use
+
+Text is the voice of the game. Without it, raw HTML elements (`<p>`, `<h1>`, `<span>`) leak browser-default fonts and break the horror aesthetic. The Text component ensures every word adheres to the typographic hierarchy and can be re-themed by playsets without touching component code.
+
+**Never use raw HTML text elements.** If it's text, it's `<Text>`.
+
+## When to Use
+
+Use the Text component for **every single piece of typography** rendered in the application.
+
+> **Do**
+> - Use `h1`, `h2`, `h3` for structural landmarks and page architecture.
+> - Use `body` for paragraphs, instructions, and standard text.
+> - Use `label` for short UI signposts and form fields.
+
+> **Don't**
+> - Don't use raw HTML tags like `<p>`, `<h1>`, `<span>`, or `<div>` for text content.
+> - Don't use utility classes (like `font-bold` or `text-red-400`) to override text styles — use the `variant` and `color` props.
+> - Don't use the `h1` variant more than once per screen.
+
+## Content Guidelines
+
+> **Do**
+> - Use the `color` prop semantically to convey voice (e.g., `red` for threats, `muted` for whispers).
+> - Use `dangerouslySetInnerHTML` only when rendering sanitized Markdown from the game engine.
+
+> **Don't**
+> - Don't use `color="red"` just for emphasis — red means danger or consequence in this game.
+> - Don't use `caption` and `label` interchangeably. `label` is uppercase and commanding; `caption` is italic and explanatory.
+
+## Variants — The Dramatic Roles
+
+Each variant serves a specific **dramatic role** in the horror narrative. They split into two families based on which typeface they use, and that split is meaningful:
+
+### The Commanding Voice — Display Font
+
+These variants use **Playfair Display** — the serif typeface that commands attention. They are always uppercase, always tracked, always heavy. They speak with authority.
+
+<ComponentPreview column>
+  <Text variant="hero">Hero — The Movie Poster</Text>
+  <Text variant="h1">H1 — The Chapter Title</Text>
+  <Text variant="h2">H2 — The Scene Heading</Text>
+  <Text variant="h3">H3 — The Card Title</Text>
+  <Text variant="label">Label — The UI Signpost</Text>
+  <Text variant="flavor">Flavor — "The house remembers. It always remembers."</Text>
+  <Text variant="micro">Micro — The Fine Print</Text>
+</ComponentPreview>
+
+| Variant | When to Use | Rendering Details |
+|---|---|---|
+| `hero` | **One per app.** Full-screen splash titles — the title card of the horror film. | `<p>`, 700, `clamp(3rem, 8vw, 6rem)`, tracking: `normal` (0.08em), leading: 1.1 |
+| `h1` | **One per screen.** Page-level headings that orient the player. | `<h1>`, 700, `clamp(2rem, 5vw, 3.5rem)`, tracking: `normal` (0.08em), leading: 1.15 |
+| `h2` | Section headings. The major beats within a page — act titles, phase names. | `<h2>`, 700, `clamp(1.5rem, 3vw, 2.5rem)`, tracking: bespoke `0.06em`, leading: 1.2 |
+| `h3` | Card titles, sub-sections. The smallest heading that still carries weight. | `<h3>`, 600 (lighter than h1/h2), `1.25rem` (not fluid), tracking: bespoke `0.05em`, leading: 1.3 |
+| `label` | UI signposts — zone labels, form labels, badge-like markers. Short noun phrases, never sentences. | `<div>` (not semantic), 600, `0.875rem`, tracking: `normal` (0.08em) |
+| `flavor` | Scene prompts, dramatic narration, in-world flavor text that needs the weight of the display font. The commanding voice whispering — italic, sentence-case, at body size. | `<p>`, italic, `1rem`, no uppercase, leading: 1.6 |
+| `micro` | Tiny annotations — badge text, deck status, card counts. Information that should be available but not prominent. | `<p>`, 600, `0.625rem`, tracking: `wide` (0.12em) |
+
+:::note Why `label` renders as `<div>`
+Labels are UI markers, not paragraph content. A `<div>` avoids invalid nesting (you can put a label inside a flex container, a button, etc.) and doesn't imply paragraph semantics.
+:::
+
+### The Explaining Voice — Body Font
+
+These variants use **Inter** — the sans-serif typeface that explains, narrates, and supports. They are sentence-case, never uppercase, and optimized for readability.
+
+<ComponentPreview column>
+  <Text variant="lead">Lead — the opening paragraph that draws you in.</Text>
+  <Text variant="body">Body — the default voice, clear and steady.</Text>
+  <Text variant="caption">Caption — the whispered footnote, the attribution.</Text>
+  <Text variant="quote">Quote — "The house remembers what you did last summer."</Text>
+</ComponentPreview>
+
+| Variant | When to Use | Rendering Details |
+|---|---|---|
+| `lead` | Introductory paragraphs. The first paragraph under a heading, slightly elevated to draw the reader in. | `<p>`, 400, `clamp(1.125rem, 2vw, 1.25rem)`, leading: 1.7 |
+| `body` | **The default.** Standard paragraphs, rules text, instructions. If you're not sure, it's body. | `<p>`, 400, `1rem`, leading: 1.65 |
+| `caption` | Footnotes, attributions, secondary information. Always italic — the whispered aside. | `<p>`, italic, `0.875rem` (same size as label — but italic body font, not uppercase display font), leading: 1.5 |
+| `quote` | Flavor text, in-world narration, the game's atmospheric voice. Italic and larger than body — these are the words the game "speaks." | `<p>`, italic, `clamp(1.25rem, 3vw, 1.5rem)`, leading: 1.6 |
+
+:::tip Caption vs. Label — Same Size, Different Voice
+`caption` and `label` both use `fontSize.label` (0.875rem), but they serve opposite roles. **Label** is the commanding voice (uppercase, display font, tracked) — it points and names. **Caption** is the explaining voice (italic, body font) — it annotates and attributes. Same size, different drama.
+:::
+
+:::tip Lead vs. Body — When to Elevate
+`lead` is body text that deserves slightly more visual weight. Use it for the first paragraph under a heading, or for introductory/contextual text that frames what follows. If you're writing more than one paragraph, only the first should be `lead` — the rest should be `body`.
+:::
+
+## Colors — The Four Narrative Voices
+
+Text color is not decoration — it is **narrative voice**. Each color carries a specific emotional register. See the [Typography Colors](/foundation/typography#text-colors) foundation page for the full philosophy.
+
+<ComponentPreview>
+  <Text color="white">White — the steady narrator</Text>
+  <Text color="red">Red — the threat speaks</Text>
+  <Text color="muted">Muted — the whispered aside</Text>
+  <Text color="success">Success — the breath of relief</Text>
+</ComponentPreview>
+
+| Value | Maps To | Narrative Role |
+|---|---|---|
+| `white` (default) | `vars.color.text` (`#e8e8e8`) | **The Narrator** — neutral, observational, the camera's gaze |
+| `red` | `vars.color.accentBright` (`#dc2626`) | **The Threat** — danger, warnings, the Killer's presence |
+| `muted` | `vars.color.textMuted` (`#6a6a6a`) | **The Whisper** — helper text, secondary labels, metadata |
+| `success` | `vars.color.successBright` (`#4ade80`) | **The Reprieve** — survival, discoveries, the rarest voice |
+
+## Glow — Cinematic Punctuation
+
+The `glow` prop adds a text-shadow halo that makes words feel like they're radiating light from within. See the [Typography Glow](/foundation/typography#text-with-glow) foundation page for when/when-not guidance.
+
+The glow color is **automatic** — it follows the `color` prop. Red text glows red. Success text glows green. You don't choose the glow color.
+
+<ComponentPreview>
+  <Text variant="h2" glow>Red Glow (default)</Text>
+  <Text variant="h2" color="success" glow>Green Glow</Text>
+</ComponentPreview>
+
+```tsx
+<Text variant="h2" glow>The Killer Strikes</Text>
+<Text variant="h2" color="success" glow>Weakness Discovered</Text>
+```
+
+## Border Decorations
+
+Decorative accents that add structural weight to text blocks. Two options:
+
+<ComponentPreview column>
+  <Text border="left">Left border — a red accent bar for blockquote-style emphasis.</Text>
+  <Text border="bottom">Bottom border — a subtle rule underneath for separation.</Text>
+</ComponentPreview>
+
+| Value | Effect | When to Use |
+|---|---|---|
+| `left` | 4px solid red left border + `space.md` left padding | Pulled quotes, important call-outs, rules text that needs visual separation |
+| `bottom` | 1px subtle border underneath + `space.xs` bottom padding | Section-ending text, divider-style separations |
+
+```tsx
+<Text border="left">An important rule, visually pulled out.</Text>
+<Text border="bottom">End of section text.</Text>
+```
+
+## Pulse Animation
+
+The `animation="pulse"` prop applies a breathing opacity cycle (1 → 0.5 → 1 over 2s, `ease-in-out`). Use for:
+- Waiting states where text indicates an ongoing process
+- Dramatic emphasis on phase announcements
+- Red warning text that needs to feel urgent
+
+Respects `prefers-reduced-motion` — falls back to static `opacity: 0.7`.
+
+<ComponentPreview>
+  <Text variant="h3" color="red" animation="pulse">Pulsing Warning</Text>
+</ComponentPreview>
+
+```tsx
+<Text variant="h3" color="red" animation="pulse">
+  The Killer is watching...
+</Text>
+```
+
+## Anatomy
+
+```
+┌─────────────────────────────────────┐
+│ [Tag]                               │  ← HTML tag determined by variant (or `as` prop)
+│   className={recipe + modifiers}    │  ← Computed from variant, color, align, leading
+│   + glow? + border? + animation?   │  ← Additive style classes
+│   children or dangerouslySetInnerHTML│
+└─────────────────────────────────────┘
+```
+
+The rendered HTML tag follows the variant: `h1`→`<h1>`, `h2`→`<h2>`, `h3`→`<h3>`, `label`→`<div>`, all others→`<p>`. Override with the `as` prop when you need a different semantic element.
+
+## Behavior
+
+- **Purely presentational** — no internal state, no side effects.
+- When `dangerouslySetInnerHTML` is provided, `children` is ignored.
+- The `glow` prop selects red or green text-shadow automatically based on the `color` prop.
+- The `as` prop overrides the default tag mapping — useful for semantic adjustments (e.g., rendering an h2-styled element as a `<div>` inside a flex container).
+- The `leading` prop overrides the variant's default line-height — use sparingly, only when the default doesn't work for a specific layout.
+
+## Accessibility
+
+- Heading variants (`h1`, `h2`, `h3`) render correct semantic HTML tags, maintaining the document outline.
+- Use only **one `h1` per screen**. Multiple screens in the app can each have their own `h1`.
+- The `as` prop should be used carefully — don't render visual headings as `<span>` or `<div>` unless there's a specific accessibility reason (e.g., avoiding duplicate heading landmarks).
+- The `animation="pulse"` respects `prefers-reduced-motion: reduce` by falling back to a static opacity.
+- Never rely on `color` alone to communicate meaning — always pair with structural cues (icons, borders, text labels). See the [Accessibility section](/foundation/shadows#accessibility-color-is-not-meaning) for details.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `variant` | `'hero' \| 'h1' \| 'h2' \| 'h3' \| 'lead' \| 'body' \| 'label' \| 'caption' \| 'quote' \| 'flavor' \| 'micro'` | `'body'` | Typographic style — determines font, size, weight, and HTML tag |
+| `as` | `ElementType` | — | Override the rendered HTML element |
+| `color` | `'white' \| 'red' \| 'muted' \| 'success'` | `'white'` | Text color — each maps to a narrative voice |
+| `glow` | `boolean` | `false` | Text shadow halo — color follows the `color` prop automatically |
+| `border` | `'left' \| 'bottom' \| 'none'` | — | Decorative border accent |
+| `align` | `'left' \| 'center' \| 'right' \| 'justify'` | — | Text alignment override |
+| `leading` | `'none' \| 'tight' \| 'snug' \| 'normal' \| 'relaxed' \| 'loose'` | — | Line-height override (use sparingly) |
+| `animation` | `'pulse' \| 'none'` | — | CSS animation |
+| `dangerouslySetInnerHTML` | `{ __html: string }` | — | Rich text content (bypasses children) |
+| `style` | `React.CSSProperties` | — | **Layout spacing only** (margin, padding). Never for typography overrides — use `variant`/`color` props instead. |
+| `onClick` | `React.MouseEventHandler` | — | Click handler |
+| `className` | `string` | — | Additional CSS class |
+| `id` | `string` | — | HTML id attribute |
+
+## Related Components
+
+- **[Badge](/components/atoms/badge)** — Inline status labels that use `micro`-level styling
+- **[PhaseHeader](/components/atoms/phase-header)** — Screen-level title with subtitle and step indicator
+- **[StatusCallout](/components/atoms/status-callout)** — System messages that wrap Text with semantic borders
+
+:::caution Anti-Pattern: Utility Classes on Text
+**Never use utility classes** (`font-bold`, `text-red-400`) on `<Text>`. If a style doesn't exist as a prop, consult about adding it to the design system. The `<Text>` component is the design system's typographic contract — overriding it with utilities defeats the purpose.
+:::

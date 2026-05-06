@@ -36,9 +36,9 @@ export const dieCellTotal = style({
 });
 
 export const dieLabel = style({
-  fontSize: '0.65rem',
+  fontSize: vars.fontSize.micro,
   textTransform: 'uppercase',
-  letterSpacing: '0.08em',
+  letterSpacing: vars.letterSpacing.normal,
   color: vars.color.textMuted,
   fontWeight: 600,
   // Row 1 — label track
@@ -65,7 +65,7 @@ export const dieValueModified = style({
 });
 
 export const dieOriginal = style({
-  fontSize: '0.6rem',
+  fontSize: vars.fontSize.micro,
   color: vars.color.textMuted,
   textDecoration: 'line-through',
   // Row 3 — original track (empty for unmodified cells)

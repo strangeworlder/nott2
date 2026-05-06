@@ -2,11 +2,10 @@
  * Badge
  *
  * Philosophical:
- * Badges are small, high-signal visual indicators used to categorize, label, or
- * highlight specific attributes of an item. They are designed to be scanned quickly,
- * providing immediate context without interrupting the flow of reading. In the game's
- * UI, they represent status effects, tags, or mechanical properties that need to stand
- * out from body text.
+ * A badge is a stamp, a tag, a classification mark. It tells you what something
+ * *is* rather than what it *says*. "Act II" is a badge — it classifies the current
+ * moment. "Host" is a badge — it marks a player's role. "3 GP" is a badge — it
+ * stamps a resource count onto a character card. Badges are scanned, not read.
  *
  * Technical:
  * An inline-flex label component with 5 visual variants.
@@ -15,13 +14,13 @@
  * - variant: Visual style. Defaults to 'default'.
  *
  * Slots (children):
- * - Short label text.
+ * - Short label text (1–3 words).
  */
 
 import React from 'react';
 import { badgeRecipe } from './Badge.css';
 
-type BadgeVariant = 'default' | 'outline' | 'red' | 'success' | 'danger';
+type BadgeVariant = 'default' | 'outline' | 'red' | 'success' | 'warning';
 
 interface BadgeProps {
   variant?: BadgeVariant;

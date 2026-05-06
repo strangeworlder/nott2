@@ -1,0 +1,358 @@
+---
+sidebar_position: 3
+title: Icon
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Icon, Row, Text } from '@nott2/design-system';
+
+# Icon
+
+Visual shorthand for the game world. Every icon earns its place by communicating something faster than words could — a skull for death, a flame for overexertion, a key for a discovered weakness. The component enforces two iron rules: **card suits are always custom SVGs**, and **everything else uses Material Symbols Rounded**.
+
+## Why Two Rendering Modes
+
+The dual-mode architecture exists because card suit symbols serve a different purpose than UI icons.
+
+**Card suits are identity.** Spades, Hearts, Diamonds, Clubs — these are the four characters in the game. Players identify with their suit throughout the session. The custom SVG paths ensure pixel-perfect rendering at every size, and are earmarked for future custom artwork per playset.
+
+**Material Symbols are utility.** Status indicators, effort levels, game event feedback — these are UI furniture that needs to be consistent and available in bulk. Google's Material Symbols Rounded provides a professional variable icon font that loads as a single asset.
+
+## When to Use
+
+| Scenario | Do | Don't |
+|---|---|---|
+| **Card suit identification** | `<Icon name="spades" />` | `♠` Unicode character or inline SVG |
+| **UI action or status** | `<Icon name="check_circle" />` | Emoji, inline SVG, or image |
+| **Inside a component** | Compose as a child of Button, StatusCallout, Text | Hardcode SVGs inside components |
+| **Decorative flair** | Don't — icons carry meaning or they don't appear | Use an icon "because it looks nice" |
+
+---
+
+## The Icon Vocabulary
+
+### Custom SVGs — Artist-Replaceable Icons
+
+These icons are inline SVGs — not Material Symbols. They are the primary targets for the commissioned icon set. The placeholder SVGs should be replaced by the artist with custom artwork that preserves the communicative intent described below.
+
+#### Card Suits — The Four Identities
+
+<ComponentPreview>
+  <Icon name="spades" size={32} color="white" />
+  <Icon name="hearts" size={32} color="red" />
+  <Icon name="diamonds" size={32} color="red" />
+  <Icon name="clubs" size={32} color="white" />
+</ComponentPreview>
+
+| Icon | Why This Symbol | Art Direction |
+|---|---|---|
+| `spades` | The spade is the most aggressive suit in card tradition — it is the soldier's entrenching tool, the gravedigger's instrument. In this game it represents **Power**: physical force and confrontation. | The replacement should feel heavy, sharp, and dangerous — a weapon shape, not a garden tool. |
+| `hearts` | The heart is emotional resilience — the capacity to care when caring is a liability. It represents **Resolve**: willpower, empathy, the refusal to break. | Warm but wounded. The shape should suggest something that's still beating despite the damage. |
+| `diamonds` | The diamond is precision — calculated, cold, exact. It represents **Finesse**: agility, perception, the ability to act without being caught. | Angular, clean, maybe crystalline. The shape should feel deliberate, not decorative. |
+| `clubs` | The club is a blunt instrument of the mind — knowledge as a bludgeon. It represents **Intellect**: reasoning, investigation, understanding what you're really dealing with. | Dense and organic, like something that grows but could also be used as a weapon. The trefoil is a brain rendered as nature. |
+
+Color convention: Hearts and Diamonds are red suits; Spades and Clubs are black (white on dark backgrounds).
+
+**Used in:** `PlayingCard` (corner pips and center), `PlayerAvatar`, `WeaknessTracker`, `CharacterBar`, `SceneSetupScreen`, `DebugPanel`, `FalloutScreen`, `TrophyIndicator`.
+
+```tsx
+// Direct usage
+<Icon name="spades" size={32} color="white" />
+
+// Dynamic mapping from game data
+<Icon name={suitToIconName(character.suit)} size={14} />
+```
+
+#### Strike & Death Marks — The Accumulation of Consequence
+
+<ComponentPreview>
+  <Icon name="strike_empty" size={32} color="muted" />
+  <Icon name="strike_filled" size={32} color="red" />
+  <Icon name="strike_dead" size={32} color="red" />
+</ComponentPreview>
+
+| Icon | Why This Symbol | Art Direction |
+|---|---|---|
+| `strike_empty` | An empty slot — the *potential* for harm. Three of these sit beside each character. They exist to create dread through absence: you can see exactly how many wounds you can take before you're gone. The hollow circle was chosen because it reads as "unfilled" at any size. | The replacement should feel like a wound-slot that hasn't been used yet — a tally mark waiting to be scratched, an empty chamber in a revolver. It must clearly contrast with the filled version. |
+| `strike_filled` | A wound received. The ×-mark was chosen because it reads as "crossed out" — something has been taken from you. Each one accumulates, and three means death. The player needs to feel the weight of each mark landing. | A scratch, a slash, a mark of violence. It should feel permanent and irreversible — once you see it, you know it can't be undone. Must be visually heavier than `strike_empty`. |
+| `strike_dead` | The character is gone. The skull-and-crossbones says "this person died" — not "the Killer appeared" (that's `skull`) or "danger ahead" (that's `dangerous`). This is the past tense of violence: it already happened. | A death marker — something you'd see on a headstone, a toe tag, or pinned to a crime scene photo. It should be unmistakable at 12–14px (used inline next to character names). |
+
+**Used in:** `StrikeIndicator` (the primary 0–3 strike display), `VideoGrid` (strike overlay on video cells), `SceneSetupScreen` (character selection buttons), `CharacterBar` (dead character indicator), `GameBoard.PhaseInfo` (endgame act badge).
+
+:::tip Why not `skull` for death?
+`skull` (a Material Symbol) means "the Killer / the Finale" — it's about the *source* of death, not the *fact* of death. `strike_dead` (a custom SVG) means "this character is dead" — it's about a specific player's state. The Killer is alive; the character is not. Different concepts, different icons.
+:::
+
+---
+
+### Material Symbols — The Game Vocabulary
+
+Each icon has one documented purpose. Where two icons could be confused, the reason for the distinction is explained.
+
+---
+
+#### Death & The Killer's Vocabulary
+
+<ComponentPreview>
+  <Icon name="skull" size={32} color="red" />
+  <Icon name="dangerous" size={32} color="red" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `skull` | The Killer's sigil — not "someone died" but "the Killer is present." It marks the transition into the endgame: the moment the final confrontation begins. Chosen because a skull is inherently a warning of what's *about to happen*, not a record of what already did. Contrast with `strike_dead` which is post-mortem. | Header "Finale" pill; DebugPanel "Trigger Finale" and "Kill" controls |
+| `dangerous` | The Killer's power growing — a hazard warning that the threat deck just got worse. Chosen because the biohazard/warning shape communicates systemic escalation, not a single event. When you see this, the world got harder for everyone, not just the active player. | `FalloutScreen`: failed face card challenges, King/Queen additions; `EffortBand`: Breaking Point level |
+
+:::note `dangerous` in two contexts
+`dangerous` appears in `EffortBand` as the Breaking Point level label, and in `FalloutScreen` for Killer-related bad outcomes. Both mean "maximum danger" — the Killer wins this moment. The `bolt` icon (below) specifically means "Strike earned"; `dangerous` means "the Killer's presence is felt."
+:::
+
+---
+
+#### Effort Levels — The Thermometer of Desperation
+
+The `EffortBand` molecule maps d4 results to four escalating levels of danger. The icon progression tells the story visually: from precision, through strain, to fire, to collapse.
+
+<ComponentPreview>
+  <Icon name="target" size={32} color="white" />
+  <Icon name="air" size={32} color="white" />
+  <Icon name="local_fire_department" size={32} color="red" />
+  <Icon name="dangerous" size={32} color="red" />
+</ComponentPreview>
+
+| Icon | Effort Level | d4 Value | Why This Icon |
+|---|---|---|---|
+| `target` | **Controlled** | 1 | A crosshair — the character acted with precision and control. No wasted energy, no excess. Chosen because a crosshair communicates "I hit exactly what I was aiming at." The feeling should be surgical confidence. |
+| `air` | **Pushing It** | 2 | Wind/breath — the character had to exert themselves. Not yet burning, but straining. Chosen because breathing hard is the first sign of effort before it becomes pain. The feeling should be "I can handle this, but I felt it." |
+| `local_fire_department` | **Overexertion** | 3 | Fire — the character burned beyond their limit. The sacrifice happens regardless of whether they succeeded. Chosen because fire is effort that has become destructive: you might accomplish the goal, but something is burning in the process. |
+| `dangerous` | **Breaking Point** | 4 | Maximum hazard — the character shattered under the strain. This earns a Strike (see `strike_filled`). Chosen because the hazard symbol says "you went too far" — it's not just effort, it's self-destruction. |
+
+**Used in:** `EffortBand` exclusively. The effort level is computed by `getEffortLevel(d4)` in the game engine and passed as the `level` prop.
+
+---
+
+#### Game Outcomes — What the Roll Meant
+
+These icons appear in `FalloutScreen` to communicate the mechanical consequence of the scene's dice roll.
+
+<ComponentPreview>
+  <Icon name="military_tech" size={32} color="success" />
+  <Icon name="emoji_events" size={32} color="success" />
+  <Icon name="key" size={32} color="success" />
+  <Icon name="bolt" size={32} color="red" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `military_tech` | A medal of honor — this icon only appears once per game, if ever: when the players defeat the Red Joker and survive the night. Chosen because a medal communicates "you earned this through extraordinary effort." This is not merely winning a scene — it's winning the *game*. The feeling should be triumph mixed with exhaustion. | `FalloutScreen`: Red Joker defeated only |
+| `emoji_events` | A trophy cup — a defeated number card is literally placed on the Trophy Pile, raising the difficulty for future challenges. Chosen because the trophy says "you won this battle, but the war just got harder." Victory with consequence. | `FalloutScreen`: successful number card outcome; `TrophyIndicator` label |
+| `key` | A key unlocking a lock — the first defeat of a suit's face card reveals the Killer's weakness. Chosen because weakness discovery is a moment of *finding the way in*, not just "something good happened." The player cracked the Killer's defenses. | `FalloutScreen`: first face-card defeat of a suit ("A Weakness has been found!") |
+| `bolt` | A lightning strike — immediate, unavoidable punishment. The d4 rolled maximum (4), which means the character earns a Strike regardless of success or failure. Chosen because lightning is sudden and doesn't care about the circumstances — it just hits. | `FalloutScreen`: all Breaking Point events |
+
+:::tip Why `military_tech` and not `star`?
+`star` is reserved for the Joker card's decorative corner pip — a visual element replacing the suit, not a game event. `military_tech` (a badge/medal) is the icon for the single most significant positive outcome in the game. Two different concepts, two different icons.
+:::
+
+:::tip Why `key` for weakness discovery?
+Sparks or stars (`auto_awesome`) would say "something happened." A key says "you found the way in." Weakness discovery is about unlocking a specific vulnerability — the metaphor is direct.
+:::
+
+---
+
+#### Deck Mechanics — What Happened to the Cards
+
+<ComponentPreview>
+  <Icon name="arrow_downward" size={32} color="muted" />
+  <Icon name="input" size={32} color="muted" />
+  <Icon name="delete" size={32} color="muted" />
+  <Icon name="shuffle" size={32} color="muted" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `arrow_downward` | The card sinks back down into the deck — you failed to remove it, and now it's going to come back for you. Chosen because a downward arrow communicates "returned to the pile" without ambiguity. The same icon for failed challenges and repeat-defeat returns because the *result* is identical: this threat is still in play. | `FalloutScreen`: failed number card; repeat-defeat face card return |
+| `input` | Something entering from outside — a new threat card arrives from the Number Reserve (an off-screen holding area) into the active Threat Deck. Chosen because `input` visually shows an arrow entering a container, which is exactly what happens: a card that wasn't in play is now a live threat. | `FalloutScreen`: reserve replenishment |
+| `delete` | Permanent erasure — this card is removed from the game forever. It will never threaten anyone again. Chosen because `delete` is final in a way that `arrow_downward` is not. When a player sees this, they should feel relief: one fewer card in the deck. | `FalloutScreen`: face card eliminations, Black Joker retirement |
+| `shuffle` | The deck is reshuffled — the known order is destroyed, and what was predictable is now random again. Chosen because shuffle communicates that all your mental tracking of the deck just reset. New unknowns, new dread. | `FalloutScreen`: post-Joker and post-face-card resolutions |
+
+:::note `arrow_downward` for two similar events
+Both "failed challenge" and "already-defeated suit returns" use `arrow_downward` because they're the same mechanical event: the card goes back to threaten you again. The callout variant (warning vs. info) differentiates the emotional weight.
+:::
+
+---
+
+#### Aptitude & Genre Points — Player Resources
+
+<ComponentPreview>
+  <Icon name="auto_awesome" size={32} color="success" />
+  <Icon name="theater_comedy" size={32} color="white" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `auto_awesome` | Sparkles — a moment of fortunate alignment. Your character's aptitude (their area of expertise) matches the challenge being faced. Chosen because sparkles say "something clicked into place" — it's not luck, it's competence meeting opportunity. The feeling should be a brief flash of hope in a dark game. | `SceneSetupScreen`: "Aptitude match!" label; `FalloutScreen`: "Aptitude applied" callout |
+| `theater_comedy` | Comedy and tragedy masks — Genre Points are earned through good roleplay, through *performing* the horror genre. Spending one is a dramatic, self-aware act: the player is saying "I'm invoking the genre itself." Chosen because masks represent performance and narrative awareness — the currency of storytelling, not of combat. | `ResolutionScreen`: "Spend & Reroll d10" Genre Point button |
+
+---
+
+#### Scene & Player Management — Table Operations
+
+<ComponentPreview>
+  <Icon name="playing_cards" size={32} color="white" />
+  <Icon name="person_raised_hand" size={32} color="white" />
+  <Icon name="movie" size={32} color="muted" />
+  <Icon name="star" size={32} color="white" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `playing_cards` | Cards being dealt — the instruction to draw from the Threat Deck. Chosen because it's the most literal possible icon for "do something with cards." The player sees this and knows to click the deck. No abstraction, no metaphor — just cards. | `SceneSetupScreen`: draw instruction callouts |
+| `person_raised_hand` | A raised hand — fate has chosen this character. During the Prologue, the Ace of a suit forces that suit's character to act. Chosen because a raised hand says "you've been called on" — it's compulsory, not voluntary. The character didn't choose to step forward; the card demanded it. | `SceneSetupScreen`: Prologue auto-AP callout |
+| `movie` | A film camera — this is scene management information, not a game event. Chosen because the camera represents the narrative frame: who's in the scene, how many have acted, what round it is. It's the director's clipboard, not the actor's prop. | `SceneSetupScreen`: round progress; active player callout |
+| `star` | A decorative pip replacing the suit symbol on Joker cards. Chosen because Jokers have no suit, and a star is the traditional placeholder in physical card decks. This is visual identity only — the star communicates "this card has no suit." Never use `star` for achievements or victories. | `PlayingCard`: Joker corner pips only |
+
+:::note `star` is decoration, not a game event
+Don't use `star` for victories or achievements — use `military_tech`. `star` only appears inside `PlayingCard` where a Joker has no suit to display.
+:::
+
+:::note `person_raised_hand` in SceneChallengeOverlay
+`SceneChallengeOverlay` accepts `suitIcon` as a plain `string` (not constrained to `IconName`). In practice the app always passes a suit icon via `suitToIconName()`, or `warning` for a Joker encounter. The overlay casts it to `any` internally.
+:::
+
+---
+
+#### Status & Warnings
+
+<ComponentPreview>
+  <Icon name="warning" size={32} color="red" />
+  <Icon name="check_circle" size={32} color="success" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `warning` | Standard hazard triangle — used for system-level notices and consumed resources. | `ConversationStakesScreen`: "Escalation used this scene"; `FalloutScreen`: act transition pending; `SceneChallengeOverlay`: Joker encounter suit icon |
+| `check_circle` | Filled checkmark — confirmed, verified, done. | `CreateForm`: Discord sign-in confirmed badge; `DebugPanel`: available-to-act turn order indicator |
+
+---
+
+#### Dice & Randomization
+
+<ComponentPreview>
+  <Icon name="casino" size={32} color="white" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `casino` | Dice — the action of rolling. | `ResolutionScreen`: "Roll the Dice" main button; `RandomDiceRoller`: fallback dice button |
+
+---
+
+#### Media & WebRTC
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `mic` / `mic_off` | Standard microphone icons — universally understood media controls. | `VideoGrid`, `WaitingRoom`: per-player audio status |
+| `videocam` / `videocam_off` | Standard camera icons — universally understood media controls. | `VideoGrid`, `WaitingRoom`: per-player video status |
+
+---
+
+#### Auth & Debug
+
+<ComponentPreview>
+  <Icon name="login" size={32} color="white" />
+  <Icon name="settings" size={32} color="muted" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `login` | Door with arrow — entering the system. | `SignIn` page hero; `CreateForm`: "Sign in with Discord" button |
+| `settings` | Gear — developer tool. Not player-facing. | `DebugPanel` header only |
+
+---
+
+### Reserved — Registered but Not Currently Used
+
+These icons are in the `MaterialIconName` type and are valid to use, but have no current usage in any component. Pre-registered for anticipated features.
+
+| Icon | Intended Purpose |
+|---|---|
+| `schedule` | Time/phase timer displays |
+| `chevron_right` / `chevron_left` | Navigation arrows |
+| `expand_more` | Collapsible section toggle |
+| `refresh` | Deck reset or game restart |
+| `group` | Multiplayer player list |
+| `person` | Single player / character reference |
+| `check` | Inline confirmation tick (smaller than `check_circle`) |
+| `close` | Dismiss / close overlay |
+| `description` | Rules text or document reference |
+| `assignment` | Quest/objective card |
+| `crown` | Killer designation or trophy display variant |
+| `swords` | Combat/confrontation indicator |
+| `deployed_code` | Technical/version display |
+| `lock` | Locked mechanic or access control |
+| `link_off` | Disconnected player state |
+| `group_off` | Player absent / disconnected |
+| `error_outline` | Error state (distinct severity from `warning`) |
+
+:::caution Keep the vocabulary intentional
+Before adding a new icon, check this list — what you need may already be registered. When a feature ships without using its reserved icon, remove it from the type.
+:::
+
+---
+
+## Colors
+
+Icon colors use the same four-voice system as [Text colors](/components/atoms/text):
+
+<ComponentPreview>
+  <Icon name="skull" size={28} color="white" />
+  <Icon name="skull" size={28} color="red" />
+  <Icon name="skull" size={28} color="muted" />
+  <Icon name="skull" size={28} color="success" />
+</ComponentPreview>
+
+| Value | When to Use |
+|---|---|
+| `inherit` (default) | Inside Text or Button — icon matches surrounding text color |
+| `white` | Standalone icons, neutral indicators |
+| `red` | Danger, the Killer, Breaking Point, warnings |
+| `muted` | De-emphasized indicators, secondary UI |
+| `success` | Trophy, weakness discovery, aptitude match, survival |
+
+## Sizing
+
+| Context | Typical Size |
+|---|---|
+| Inline with label text | `14–16px` |
+| Inside a button | `20–24px` |
+| Standalone indicator | `28–32px` |
+| Hero / splash contexts | `36–48px` |
+
+## Accessibility
+
+- All icons render `aria-hidden="true"` — screen readers skip them.
+- When an icon is the **sole content** of an interactive element, the parent must provide `aria-label`.
+- Custom SVGs also set `focusable="false"` to prevent focus trapping.
+
+## Utility: `suitToIconName`
+
+Maps game suit names to `CustomIconName`:
+
+```tsx
+import { suitToIconName } from '@nott2/design-system';
+
+suitToIconName('Spades')   // → 'spades'
+suitToIconName('Hearts')   // → 'hearts'
+suitToIconName('Clubs')    // → 'clubs'
+suitToIconName('Diamonds') // → 'diamonds'
+suitToIconName('Unknown')  // → 'spades' (fallback)
+```
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `name` | `IconName` | — | **Required.** Icon identifier |
+| `size` | `number` | `24` | Width/height in pixels |
+| `color` | `'white' \| 'red' \| 'muted' \| 'success' \| 'inherit'` | `'inherit'` | Color variant |
+| `id` | `string` | — | HTML id attribute |

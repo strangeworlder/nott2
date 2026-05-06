@@ -13,8 +13,8 @@ export const bandRecipe = recipe({
   },
   variants: {
     level: {
-      'controlled':     { borderColor: '#2a5a2a', backgroundColor: 'rgba(42,90,42,0.1)',   color: '#4ade80' },
-      'pushing-it':     { borderColor: '#5a5a2a', backgroundColor: 'rgba(90,90,42,0.1)',   color: '#fbbf24' },
+      'controlled':     { borderColor: '#2a5a2a', backgroundColor: 'rgba(42,90,42,0.1)',   color: vars.color.successBright },
+      'pushing-it':     { borderColor: '#5a5a2a', backgroundColor: 'rgba(90,90,42,0.1)',   color: vars.color.warning },
       'overexertion':   { borderColor: '#6a3a1a', backgroundColor: 'rgba(106,58,26,0.1)',  color: '#fb923c' },
       'breaking-point': { borderColor: vars.color.accent, backgroundColor: 'rgba(138,0,0,0.12)', color: vars.color.accentBright },
     },
@@ -29,10 +29,10 @@ export const bandIcon = style({
 
 export const bandLabel = style({
   fontFamily: vars.font.display,
-  fontSize: '0.8rem',
+  fontSize: vars.fontSize.label,
   fontWeight: 700,
   textTransform: 'uppercase',
-  letterSpacing: '0.08em',
+  letterSpacing: vars.letterSpacing.normal,
   flexShrink: 0,
 });
 

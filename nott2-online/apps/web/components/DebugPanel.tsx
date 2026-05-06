@@ -10,7 +10,7 @@
 import { useState } from 'react';
 import { useGameStore } from '../store/game-store';
 import type { Suit } from '@nott2/game-engine';
-import { Icon, suitToIconName } from '@nott2/design-system';
+import { Icon, suitToIconName, Text, Button } from '@nott2/design-system';
 
 const SUITS: Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds'];
 const SUIT_ABBR: Record<string, string> = { Spades: 'S', Hearts: 'H', Clubs: 'C', Diamonds: 'D' };
@@ -33,8 +33,10 @@ export default function DebugPanel() {
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
       >
-        <span className="debug-panel__title"><Icon name="settings" size={14} /> Debug Panel</span>
-        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{open ? '▲' : '▼'}</span>
+        <Text variant="label" as="span" className="debug-panel__title"><Icon name="settings" size={14} /> Debug Panel</Text>
+        <span style={{ display: 'inline-flex', transform: open ? 'rotate(180deg)' : undefined, transition: 'transform 0.2s' }}>
+          <Icon name="expand_more" size={14} color="muted" />
+        </span>
       </button>
 
       {open && (
@@ -112,7 +114,7 @@ export default function DebugPanel() {
               <div className="debug-stat__val">
                 <Icon name="check_circle" size={14} />{gameState.turnOrder.available.map(s => <Icon key={`avail-${s}`} name={suitToIconName(s)} size={12} />)}
                 {gameState.turnOrder.acted.length > 0 && (
-                  <> <Icon name="arrow_downward" size={14} />{gameState.turnOrder.acted.map(s => <Icon key={`acted-${s}`} name={suitToIconName(s)} size={12} />)}</>
+                  <> <Icon name="chevron_right" size={14} />{gameState.turnOrder.acted.map(s => <Icon key={`acted-${s}`} name={suitToIconName(s)} size={12} />)}</>
                 )}
               </div>
             </div>
@@ -122,7 +124,7 @@ export default function DebugPanel() {
 
           {/* Weaknesses */}
           <div>
-            <div className="label-sm" style={{ marginBottom: 8 }}>Weaknesses Found</div>
+            <Text variant="label" style={{ marginBottom: 8 }}>Weaknesses Found</Text>
             <div className="weakness-row">
               {SUITS.map(s => (
                 <div
@@ -139,39 +141,41 @@ export default function DebugPanel() {
 
           {/* Debug actions */}
           <div>
-            <div className="label-sm" style={{ marginBottom: 8 }}>Quick Controls</div>
+            <Text variant="label" style={{ marginBottom: 8 }}>Quick Controls</Text>
             <div className="debug-actions">
-              <button className="btn btn--ghost btn--sm" onClick={skipToAct3}>
+              <Button variant="ghost" size="sm" onClick={skipToAct3}>
                 Skip to Act 3
-              </button>
-              <button className="btn btn--ghost btn--sm" onClick={applyFinale}>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={applyFinale}>
                 <Icon name="skull" size={14} /> Trigger Finale
-              </button>
+              </Button>
               {SUITS.filter(s => !deck.weaknessesBySuit.has(s)).map(s => (
-                <button
+                <Button
                   key={s}
-                  className="btn btn--ghost btn--sm"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => addWeakness(s)}
                 >
                   + <Icon name={suitToIconName(s)} size={14} /> Weakness
-                </button>
+                </Button>
               ))}
               {gameState.characters.filter(c => !c.isDead).map(c => (
-                <button
+                <Button
                   key={c.id}
-                  className="btn btn--ghost btn--sm"
-                  style={{ borderColor: 'var(--color-accent)' }}
+                  variant="ghost"
+                  size="sm"
                   onClick={() => killCharacter(c.id)}
                 >
                   <Icon name="skull" size={14} /> Kill <Icon name={suitToIconName(c.id)} size={14} />
-                </button>
+                </Button>
               ))}
             </div>
           </div>
 
           {/* Threat deck breakdown */}
           <div>
-            <div className="label-sm" style={{ marginBottom: 6 }}>Threat Deck (top → bottom)</div>
+            <Text variant="label" style={{ marginBottom: 6 }}>Threat Deck (top → bottom)</Text>
+            {/* Diagnostic output — monospace is the correct voice for engine state data */}
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontFamily: 'monospace' }}>
               {deck.threatDeck.map(c => cardLabel(c)).join(' → ') || 'Empty'}
             </div>

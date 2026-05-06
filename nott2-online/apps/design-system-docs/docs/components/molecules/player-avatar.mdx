@@ -1,0 +1,48 @@
+---
+sidebar_position: 4
+title: PlayerAvatar
+---
+
+# PlayerAvatar
+
+Player identity at the table. Shows suit icon, name, character name, online indicator, and active-player glow.
+
+## Why to Use
+
+PlayerAvatar provides a consistent player identity component across lobby, character bar, and panel contexts. It handles all visual states: online/offline, active/inactive, alive/dead.
+
+## When to Use
+
+- Character bar (footer) — `sm` size
+- Player panels — `md` size
+- Lobby screens — `lg` size
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `suit` | `string` | — | Player's assigned suit |
+| `playerName` | `string` | — | Player display name |
+| `characterName` | `string` | — | In-game character name |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Avatar size |
+| `isActive` | `boolean` | `false` | Red glow for active player |
+| `isOnline` | `boolean` | `false` | Green dot indicator |
+| `isDead` | `boolean` | `false` | Grey out the avatar |
+
+## Implementation Examples
+
+```tsx
+<PlayerAvatar
+  suit="Spades"
+  playerName="Alex"
+  characterName="The Jock"
+  size="md"
+  isActive
+  isOnline
+/>
+```
+
+## Related Components
+
+- **[CharacterBar](/components/organisms/character-bar)** — Footer bar containing PlayerAvatars
+- **[Icon](/components/atoms/icon)** — Suit icons used internally

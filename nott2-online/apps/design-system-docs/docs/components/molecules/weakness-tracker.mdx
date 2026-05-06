@@ -1,0 +1,27 @@
+---
+sidebar_position: 11
+title: WeaknessTracker
+---
+
+# WeaknessTracker
+
+The countdown to hope. Four suit pips — found weaknesses glow green, unfound remain muted. Fixed order: Spades, Hearts, Clubs, Diamonds.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `found` | `string[]` | `[]` | Array of found suit names |
+
+## Implementation Examples
+
+```tsx
+<WeaknessTracker found={[]} />                       {/* All muted */}
+<WeaknessTracker found={['Spades', 'Hearts']} />     {/* Two green */}
+<WeaknessTracker found={['Spades', 'Hearts', 'Clubs', 'Diamonds']} /> {/* All green */}
+```
+
+## Related Components
+
+- **[Icon](/components/atoms/icon)** — Suit icons used internally
+- **[Badge](/components/atoms/badge)** — Can show "Found" status inline

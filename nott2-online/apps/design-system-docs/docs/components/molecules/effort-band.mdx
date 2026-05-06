@@ -1,0 +1,45 @@
+---
+sidebar_position: 8
+title: EffortBand
+---
+
+# EffortBand
+
+The d4 thermometer. Four levels with escalating color temperature — from controlled calm to breaking-point panic.
+
+## Why to Use
+
+EffortBand visualizes the escalating risk of the effort die, giving players an immediate read on how far they're pushing their luck.
+
+## When to Use
+
+- In the resolution phase to show current effort level
+- As a reference during the Conversation & Stakes phase
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `level` | `EffortLevel` | — | Current effort level |
+| `active` | `boolean` | `false` | Highlight the current level |
+
+### EffortLevel Values
+
+| Value | Icon | Temperature | Meaning |
+|---|---|---|---|
+| `controlled` | `target` | Calm | Safe, low risk |
+| `pushing-it` | `air` | Tense | Moderate risk |
+| `overexertion` | `local_fire_department` | Hot | High risk |
+| `breaking-point` | `dangerous` | Critical | Maximum danger |
+
+## Implementation Examples
+
+```tsx
+<EffortBand level="controlled" active />
+<EffortBand level="breaking-point" active />
+```
+
+## Related Components
+
+- **[DieSelector](/components/molecules/die-selector)** — Used to set the effort die
+- **[DifficultyBadge](/components/molecules/difficulty-badge)** — Shows the target difficulty

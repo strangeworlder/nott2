@@ -13,13 +13,16 @@ describe('StrikeIndicator', () => {
     expect(container.querySelector('[aria-label="2 of 3 strikes"]')).toBeTruthy();
   });
 
-  it('renders skull when isDead', () => {
+  it('renders skull icon when isDead', () => {
     const { container } = render(<StrikeIndicator isDead />);
-    expect(container.textContent).toContain('☠');
+    expect(container.querySelector('[aria-label="Character eliminated"]')).toBeTruthy();
+    // strike_dead is a custom SVG icon — rendered as an inline <svg>
+    expect(container.querySelector('svg')).toBeTruthy();
   });
 
-  it('renders skull at 3 strikes', () => {
+  it('renders skull icon at 3 strikes', () => {
     const { container } = render(<StrikeIndicator strikes={3} />);
-    expect(container.textContent).toContain('☠');
+    expect(container.querySelector('[aria-label="Character eliminated"]')).toBeTruthy();
+    expect(container.querySelector('svg')).toBeTruthy();
   });
 });

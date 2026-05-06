@@ -18,7 +18,7 @@ import { useEffect, useRef } from 'react';
 import { useWebRTCStore, getLocalStreamRef, getRemoteStreamRef } from '../store/webrtc-store';
 import { useGameStore } from '../store/game-store';
 import type { Character } from '@nott2/game-engine';
-import { Icon, suitToIconName } from '@nott2/design-system';
+import { Icon, suitToIconName, Text, Badge } from '@nott2/design-system';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -30,6 +30,14 @@ const CONNECTION_STATE_LABEL: Partial<Record<RTCPeerConnectionState, string>> = 
   disconnected: 'Disconnected',
   failed: 'Failed',
   closed: 'Closed',
+};
+
+const CONNECTION_STATE_VARIANT: Partial<Record<RTCPeerConnectionState, 'success' | 'outline' | 'red'>> = {
+  connecting: 'outline',
+  connected: 'success',
+  disconnected: 'red',
+  failed: 'red',
+  closed: 'red',
 };
 
 // ── VideoCell ─────────────────────────────────────────────────────────────────
@@ -92,20 +100,24 @@ function VideoCell({
       {/* Strike overlay */}
       {character && character.strikes > 0 && (
         <div className="video-cell__strikes">
-          {'✕'.repeat(character.strikes)}
+          {Array.from({ length: character.strikes }, (_, i) => (
+            <Icon key={i} name="strike_filled" size={14} color="red" />
+          ))}
         </div>
       )}
 
-      {/* Connection state (non-local only) */}
+      {/* Connection state badge (non-local only) */}
       {!isLocal && stateLabel && (
-        <div className="video-cell__connecting">{stateLabel}</div>
+        <Badge variant={CONNECTION_STATE_VARIANT[peerState ?? 'new'] ?? 'outline'}>
+          {stateLabel}
+        </Badge>
       )}
 
       {/* Footer: name + icons */}
       <div className="video-cell__footer">
-        <span className="video-cell__name">
+        <Text variant="label" as="span" className="video-cell__name">
           {character?.name ?? 'Empty'}
-        </span>
+        </Text>
         <div className="video-cell__icons">
           {audioMuted  && <span title="Muted"><Icon name="mic_off" size={16} /></span>}
           {!audioMuted && <span title="Audio on"><Icon name="mic" size={16} /></span>}

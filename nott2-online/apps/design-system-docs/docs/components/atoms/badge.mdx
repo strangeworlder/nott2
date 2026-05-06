@@ -1,0 +1,166 @@
+---
+sidebar_position: 4
+title: Badge
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Badge, Row, Text, Icon } from '@nott2/design-system';
+
+# Badge
+
+A stamp, a tag, a classification mark. Badge tells you what something *is* — not what it *says*. It answers one-word questions: *What act are we in?* **Act II.** *What's this player's role?* **Host.** *How many Genre Points?* **3 GP.** *Has this character acted?* **Done.**
+
+Badges are scanned, not read. If your content needs more than three words, it's not a badge — it's a [StatusCallout](/components/atoms/status-callout).
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Badge } from '@nott2/design-system';
+
+<Badge variant="warning">Act II</Badge>
+```
+</details>
+
+## Why to Use
+
+A Badge removes ambiguity without demanding focus. When a player scans the game board or character sheet, they don't want to read sentences to understand the current state. They want visual shorthand. Badges provide this by compressing state down to its absolute minimum: a color token and a one-word answer. It creates a rhythm of high-density information that the player learns to decode instantly.
+
+## When to Use
+
+Use a Badge when you need to stamp a static classification or resource quantity onto a larger component.
+
+> **Do**
+> - Use Badge to identify the current phase (e.g., "Act II" on the GameBoard).
+> - Use it to assign a role to an entity (e.g., "Host" in the WaitingRoom).
+> - Use it to track a discrete numerical resource that doesn't use the health/strike system (e.g., "3 GP" on CharacterBar).
+> - Use it to signal a terminal state for a round (e.g., "Done").
+
+> **Don't**
+> - Don't use it for scene prompts or descriptions — use [Text](/components/atoms/text).
+> - Don't use it for multi-sentence system messages — use [StatusCallout](/components/atoms/status-callout).
+> - Don't use it for numeric difficulty values — use [DifficultyBadge](/components/molecules/difficulty-badge).
+> - Don't use it for health pools or damage tracking — use [StrikeIndicator](/components/molecules/strike-indicator).
+
+## Variants
+
+<ComponentPreview>
+  <Badge variant="default">Default</Badge>
+  <Badge variant="outline">Done</Badge>
+  <Badge variant="red">Act II</Badge>
+  <Badge variant="success">Ready</Badge>
+  <Badge variant="warning">3 GP</Badge>
+</ComponentPreview>
+
+| Variant | Why This Variant Exists | Where Used |
+|---|---|---|
+| `default` | Neutral classification — when color would add meaning that isn't there. A label that says "this is a thing" without saying whether it's good or bad. | Available for future metadata tags |
+| `outline` | De-emphasized status — the thing is noted but not urgent. Chosen for states that are "fine, but not noteworthy." The border gives it shape without demanding attention. | `SceneSetupScreen`: "Done" on acted characters; `WaitingRoom`: "Waiting" for unready players |
+| `red` | The game's accent color — danger, the Killer, authority. Red badges mark things that matter to the game's central tension. "Act II" is red because the act structure *is* the Killer's timer. "Host" is red because they control the session. | `GameBoard.PhaseInfo`: "Act I/II/III" label; `WaitingRoom`: "Host" role badge |
+| `success` | Positive confirmation — something resolved favorably. Green is relief in a game built on dread. | `WaitingRoom`: "Ready" status for connected players |
+| `warning` | Amber resource indicator — a scarce quantity that demands awareness. Genre Points are a currency that changes every scene; amber says "this number matters, pay attention." | `CharacterBar`: Genre Point count per character |
+
+## Anatomy
+
+```
+┌────────────────┐
+│  LABEL TEXT    │ ← micro-size, uppercase, display font
+└────────────────┘
+  └─ background tint + border based on variant
+```
+
+All variants share the same base: `inline-flex`, `micro` font size, `uppercase`, `display` font family, `600` weight, `radius.sm` corners, `wide` letter spacing. The only difference between variants is the color triad (background tint, text color, border color).
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `variant` | `'default' \| 'outline' \| 'red' \| 'success' \| 'warning'` | `'default'` | Visual style — choose based on semantic intent, not color preference |
+| `children` | `ReactNode` | — | Label content (1–3 words max) |
+| `id` | `string` | — | HTML id attribute |
+
+## Content Guidelines
+
+> **Do**
+> - Keep text to 1–3 words maximum.
+> - Use nouns or adjectives ("Act II", "Host", "Done").
+> - Combine with an inline `<Icon />` if it helps scanning.
+
+> **Don't**
+> - Don't use full sentences or punctuation.
+> - Don't manually type uppercase — write in normal case, the component transforms it via CSS.
+
+## Behavior
+
+- Purely presentational — no interactions, no state, no click handlers.
+- Renders as an inline-flex `<span>`, so it flows naturally alongside Text and Icons.
+- Intentionally sharp-cornered (`radius.sm` = 2px) — the gritty, raw feel of the game's aesthetic. Not a pill.
+
+## Accessibility
+
+- Badges are visual reinforcement — the information they convey must also be available in surrounding context or via `aria-label` on a parent element.
+- Color is not the sole differentiator — the text content itself carries the meaning ("Host", "Ready", "Done").
+
+## Real Usage Examples
+
+### Game Board — Act Classification
+
+<ComponentPreview>
+  <Row gap="sm" style={{ alignItems: 'center' }}>
+    <Badge variant="red">Act II</Badge>
+    <Text variant="micro" color="muted">scene setup</Text>
+  </Row>
+</ComponentPreview>
+
+```tsx
+<Badge variant="red">Act {act}</Badge>
+```
+
+### Lobby — Player Seat Tags
+
+<ComponentPreview column start>
+  <Row gap="sm" style={{ alignItems: 'center' }}>
+    <Text variant="body">PlayerOne</Text>
+    <Badge variant="red">Host</Badge>
+    <Badge variant="success">Ready</Badge>
+  </Row>
+  <Row gap="sm" style={{ alignItems: 'center' }}>
+    <Text variant="body">PlayerTwo</Text>
+    <Badge variant="outline">Waiting</Badge>
+  </Row>
+</ComponentPreview>
+
+```tsx
+{player.isHost && <Badge variant="red">Host</Badge>}
+{player.ready
+  ? <Badge variant="success">Ready</Badge>
+  : <Badge variant="outline">Waiting</Badge>}
+```
+
+### Character Bar — Genre Points
+
+<ComponentPreview>
+  <Badge variant="warning">3 GP</Badge>
+</ComponentPreview>
+
+```tsx
+{gp > 0 ? <Badge variant="warning">{gp} GP</Badge> : null}
+```
+
+## API Reference
+
+### BadgeVariant
+
+| Value | Background | Text Color | Border | Semantic Role |
+|---|---|---|---|---|
+| `default` | Gray fill | `textMuted` | none | Neutral classification |
+| `outline` | Transparent | `textMuted` | `borderSubtle` | De-emphasized status |
+| `red` | Red-tinted | `accentBright` | `rgba(138,0,0,0.3)` | Danger / authority / game structure |
+| `success` | Green-tinted | `successBright` | `rgba(45,90,45,0.3)` | Positive confirmation |
+| `warning` | Amber-tinted | `warning` | `rgba(251,191,36,0.2)` | Scarce resource / attention |
+
+## Related Components
+
+- **[Text](/components/atoms/text)** — For prose content that flows as sentences
+- **[StatusCallout](/components/atoms/status-callout)** — For longer system messages with semantic coloring (multi-word, multi-line)
+- **[DifficultyBadge](/components/molecules/difficulty-badge)** — Specialized large-format badge for numeric difficulty values

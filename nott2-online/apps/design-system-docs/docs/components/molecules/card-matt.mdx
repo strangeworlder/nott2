@@ -1,0 +1,32 @@
+---
+sidebar_position: 14
+title: CardMatt
+---
+
+# CardMatt
+
+The physical playing surface. A textured felt-like surface for 3D card landing zones. Ref-forwarding so `react-ttrpg-cards` can measure the bounding rect.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `glow` | `boolean` | `false` | Pulsing halo when cards are selectable |
+| `label` | `string` | — | Optional label text (rotated, embossed) |
+| `ref` | `React.Ref` | — | Forwarded ref for 3D card overlay measurement |
+
+## Behavior
+
+- `glow` prop triggers a pulsing border animation to signal that the player should interact with the card area.
+- The ref is essential for the 3D card physics system — it measures the matt's position to know where to drop cards.
+
+## Implementation Examples
+
+```tsx
+<CardMatt ref={mattRef} glow={isSelectablePhase} label="Threat Cards" />
+```
+
+## Related Components
+
+- **[PlayingCard](/components/molecules/playing-card)** — Cards that land on the matt
+- **[Deck](/components/molecules/deck)** — The card stack that feeds the matt

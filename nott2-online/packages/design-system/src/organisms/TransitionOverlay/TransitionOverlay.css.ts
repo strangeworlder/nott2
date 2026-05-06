@@ -26,6 +26,13 @@ export const overlayBackdrop = style({
   animationDuration: '400ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const overlayBackdropExiting = style({
@@ -33,6 +40,13 @@ export const overlayBackdropExiting = style({
   animationDuration: '400ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-in',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0,
+    },
+  },
 });
 
 /* ── Content container ───────────────────────────────────────────────────── */
@@ -52,4 +66,11 @@ export const overlayContent = style({
   animationDuration: '500ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });

@@ -45,7 +45,7 @@ export const microLayout = style({
 export const microRank = style({
   fontSize: '0.625rem',
   fontWeight: 700,
-  fontFamily: 'Georgia, serif',
+  fontFamily: vars.font.display,
   lineHeight: 1,
 });
 
@@ -95,7 +95,7 @@ export const cornerBR = style({
 export const rankLabel = style({
   fontSize: '0.875rem',
   fontWeight: 700,
-  fontFamily: 'Georgia, serif',
+  fontFamily: vars.font.display,
   lineHeight: 1,
 });
 

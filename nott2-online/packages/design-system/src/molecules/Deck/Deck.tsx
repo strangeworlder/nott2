@@ -26,6 +26,7 @@
 import React from 'react';
 import { PlayingCard } from '../PlayingCard/PlayingCard';
 import type { Suit, Rank } from '../PlayingCard/PlayingCard';
+import { Badge } from '../../atoms/Badge/Badge';
 import * as styles from './Deck.css';
 
 export type DeckStatus = 'shuffled' | 'empty';
@@ -131,14 +132,14 @@ export function Deck({
         )}
 
         {status === 'shuffled' && (
-          <span className={`${styles.deckStatusBadge} ${styles.deckStatusShuffled}`} role="status" aria-label="Deck shuffled">
-            Shuffled ↻
-          </span>
+          <div className={styles.deckStatusBadgeWrapper} role="status" aria-label="Deck shuffled">
+            <Badge variant="warning">Shuffled</Badge>
+          </div>
         )}
         {status === 'empty' && (
-          <span className={`${styles.deckStatusBadge} ${styles.deckStatusEmpty}`} role="status" aria-label="Deck empty">
-            Empty
-          </span>
+          <div className={styles.deckStatusBadgeWrapper} role="status" aria-label="Deck empty">
+            <Badge variant="outline">Empty</Badge>
+          </div>
         )}
 
         {!status && !isEmpty && (

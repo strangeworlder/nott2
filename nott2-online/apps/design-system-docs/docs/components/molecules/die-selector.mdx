@@ -1,0 +1,38 @@
+---
+sidebar_position: 6
+title: DieSelector
+---
+
+# DieSelector
+
+Tactile die selection. A grid of clickable faces for d4 (1–4) or d10 (0–9).
+
+## Why to Use
+
+DieSelector provides a tangible, visual way to input die rolls rather than typing numbers. The color-coded faces (red for threat, white for effort) reinforce the game's mechanical language.
+
+## When to Use
+
+- During the Resolution phase for effort (d4) and threat (d10) die entry
+- In the PlayerPanel resolution sub-view
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `dieType` | `'d4' \| 'd10'` | — | Die type (determines face count) |
+| `color` | `'red' \| 'white'` | `'white'` | `red` for threat die, `white` for effort |
+| `value` | `number \| null` | — | Currently selected face |
+| `onSelect` | `(value: number) => void` | — | Selection handler |
+
+## Implementation Examples
+
+```tsx
+<DieSelector dieType="d4" color="white" value={effortRoll} onSelect={setEffortRoll} />
+<DieSelector dieType="d10" color="red" value={threatRoll} onSelect={setThreatRoll} />
+```
+
+## Related Components
+
+- **[DiceResult](/components/molecules/dice-result)** — Shows the roll calculation after selection
+- **[ResultBanner](/components/molecules/result-banner)** — Shows SUCCESS/FAILURE verdict

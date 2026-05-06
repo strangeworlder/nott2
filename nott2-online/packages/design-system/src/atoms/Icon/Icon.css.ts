@@ -21,7 +21,7 @@ export const iconRecipe = recipe({
       white: { color: vars.color.text },
       red: { color: vars.color.accentBright },
       muted: { color: vars.color.textMuted },
-      success: { color: '#4ade80' },
+      success: { color: vars.color.successBright },
       inherit: { color: 'inherit' },
     },
   },

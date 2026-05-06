@@ -1,0 +1,44 @@
+---
+sidebar_position: 3
+title: PlayingCard
+---
+
+# PlayingCard
+
+The central totem — a diegetic card face rendering suit and rank with correct pip layout. This is the game's physical card, not a UI container.
+
+## Why to Use
+
+PlayingCard provides a visually faithful representation of a standard playing card, styled to match the game's dark horror aesthetic. It handles suit icons, rank display, pip layouts, and special states like jokers and face-down cards.
+
+## When to Use
+
+- Displaying threat cards in the game board
+- Showing the top card of the trophy pile
+- Rendering card selections and hands
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `suit` | `Suit` | — | Card suit (Spades, Hearts, Diamonds, Clubs) |
+| `rank` | `Rank` | — | Card rank (A, 2-10, J, Q, K) |
+| `size` | `'default' \| 'compact' \| 'micro'` | `'default'` | Size variant |
+| `selected` | `boolean` | `false` | Red glow selection ring |
+| `faceDown` | `boolean` | `false` | Show card back pattern |
+| `joker` | `boolean` | `false` | Special joker layout |
+
+## Implementation Examples
+
+```tsx
+<PlayingCard suit="Spades" rank="A" />
+<PlayingCard suit="Hearts" rank="Q" selected />
+<PlayingCard faceDown />
+<PlayingCard suit="Spades" rank="A" size="micro" />
+```
+
+## Related Components
+
+- **[Card](/components/molecules/card)** — UI container (not a playing card)
+- **[Deck](/components/molecules/deck)** — Stack of face-down PlayingCards
+- **[Icon](/components/atoms/icon)** — Suit icons used internally

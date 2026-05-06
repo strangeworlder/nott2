@@ -14,7 +14,7 @@ describe('Badge', () => {
   });
 
   it('renders all variants without throwing', () => {
-    const variants = ['default', 'outline', 'red', 'success', 'danger'] as const;
+    const variants = ['default', 'outline', 'red', 'success', 'warning'] as const;
     variants.forEach(variant => {
       expect(() => render(<Badge variant={variant}>Test</Badge>)).not.toThrow();
     });

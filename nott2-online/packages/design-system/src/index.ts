@@ -11,6 +11,8 @@ export { Icon, suitToIconName } from './atoms/Icon/Icon';
 export type { IconName, IconColor } from './atoms/Icon/Icon';
 export { Badge } from './atoms/Badge/Badge';
 export { Toggle } from './atoms/Toggle/Toggle';
+export { SegmentedControl } from './atoms/SegmentedControl/SegmentedControl';
+export type { SegmentOption } from './atoms/SegmentedControl/SegmentedControl';
 export { Separator } from './atoms/Separator/Separator';
 export { TextField } from './atoms/TextField/TextField';
 export type { TextFieldProps } from './atoms/TextField/TextField';

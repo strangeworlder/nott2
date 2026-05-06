@@ -1,0 +1,132 @@
+---
+sidebar_position: 1
+title: Card
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Card, Text, Stack } from '@nott2/design-system';
+
+# Card
+
+The surface on which the game's content rests — a diegetic piece of dark wood or aged paper. Card creates depth and separation, grouping related mechanics into a single visual unit.
+
+:::caution
+This is a **UI container** component — not a playing card. For the diegetic card face (suit + rank), see [PlayingCard](/components/molecules/playing-card).
+:::
+
+## Why to Use
+
+Card replaces raw `<div>` grouping with a semantically meaningful container that carries consistent padding, borders, backgrounds, and interactive states from the design system.
+
+## When to Use
+
+- **Grouping related content**: Instructions, results, player info
+- **Emphasizing content**: Use `highlighted` or `instruction` variants
+- **Showing outcomes**: `success` or `failure` variants
+- **Layout-only grouping**: `ghost` variant (invisible container)
+
+## Writing & Content Guidelines
+
+- Card titles should be short noun phrases: "Scene Setup", "Roll Result"
+- Use the `title` prop for the built-in h3 header — don't render your own heading inside a card
+
+## Anatomy
+
+```
+┌─ border (variant-colored) ─────────────────┐
+│                                             │
+│  [Title]  ← optional h3 via title prop      │
+│                                             │
+│  Children content                           │
+│  (any React nodes)                          │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `variant` | `CardVariant` | `'default'` | Visual style |
+| `title` | `string` | — | Optional h3 header |
+| `interactive` | `boolean` | `false` | Hover glow + lift effect |
+| `noPadding` | `boolean` | `false` | Remove internal padding |
+
+## Behavior
+
+- `interactive` adds a hover glow and subtle transform on mouseover.
+- `noPadding` removes all internal padding — useful for cards containing full-bleed content like images or custom layouts.
+- The `title` prop renders an h3 with the `cardTitle` style — styled consistently across all variants.
+
+## Accessibility
+
+- Card is a `<div>` container — no implicit role. Content inside determines semantics.
+- If `interactive` is true, consider adding `role="button"` and keyboard handlers to the card.
+
+## Implementation Examples
+
+### All Variants
+
+<ComponentPreview column>
+  <Card variant="default"><Text>Default — general content grouping</Text></Card>
+  <Card variant="muted"><Text>Muted — de-emphasized content</Text></Card>
+  <Card variant="highlighted"><Text>Highlighted — selected or important</Text></Card>
+  <Card variant="success"><Text>Success — positive outcome</Text></Card>
+  <Card variant="failure"><Text>Failure — negative outcome</Text></Card>
+  <Card variant="instruction"><Text>Instruction — game directions</Text></Card>
+  <Card variant="ghost"><Text>Ghost — invisible container</Text></Card>
+</ComponentPreview>
+
+```tsx
+<Card variant="default"><Text>Default</Text></Card>
+<Card variant="highlighted"><Text>Selected item</Text></Card>
+<Card variant="instruction"><Text>Draw a card.</Text></Card>
+<Card variant="success"><Text>You survived!</Text></Card>
+<Card variant="failure"><Text>The Killer strikes.</Text></Card>
+```
+
+### With Title
+
+<ComponentPreview column>
+  <Card title="Scene Setup">
+    <Text>Draw a card from the threat deck to determine the encounter.</Text>
+  </Card>
+</ComponentPreview>
+
+```tsx
+<Card title="Scene Setup">
+  <Text>Draw a card from the threat deck.</Text>
+</Card>
+```
+
+### Interactive Cards
+
+<ComponentPreview>
+  <Card interactive><Text>Hover me — I glow</Text></Card>
+</ComponentPreview>
+
+```tsx
+<Card interactive onClick={handleSelect}>
+  <Text>Selectable option</Text>
+</Card>
+```
+
+## API Reference
+
+### CardVariant
+
+| Value | Background | Border | Use |
+|---|---|---|---|
+| `default` | `surface` | `border` | General grouping |
+| `muted` | `background` 70% | `border` | De-emphasized |
+| `highlighted` | `surfaceElevated` | `borderActive` (red) | Selected/important |
+| `success` | `surface` | `success` (green) | Positive outcome |
+| `failure` | `surface` | `accentBright` (red) | Negative outcome |
+| `instruction` | Red-tinted transparent | `accent` | Game instructions |
+| `ghost` | Transparent | None | Layout-only |
+
+## Related Components
+
+- **[PlayingCard](/components/molecules/playing-card)** — Diegetic card face (suit + rank)
+- **[Stack](/components/atoms/stack)** — Vertical layout for card content
+- **[StatusCallout](/components/atoms/status-callout)** — Semantic feedback (different purpose than Card)

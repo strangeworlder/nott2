@@ -10,7 +10,8 @@
     "dev": "turbo run dev",
     "test": "turbo run test",
     "test:ci": "turbo run test:ci",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "docs:dev": "turbo run docs:dev --filter=@nott2/design-system-docs"
   },
   "devDependencies": {
     "turbo": "^2.0.0",

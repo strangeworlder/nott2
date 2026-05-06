@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Text, Button } from '@nott2/design-system';
 
 /**
  * Game Route Error Boundary — /game/[roomCode]
@@ -31,30 +32,21 @@ export default function GameError({
     }}>
       <div style={{ fontSize: '2.5rem', lineHeight: 1 }}>💀</div>
       <div>
-        <h2 style={{ margin: '0 0 8px', fontSize: '1.125rem', fontWeight: 600 }}>
+        <Text variant="h3" style={{ margin: '0 0 8px' }}>
           The game encountered an error
-        </h2>
-        <p style={{ margin: 0, fontSize: '0.875rem', color: '#6a6a6a', maxWidth: 380 }}>
+        </Text>
+        <Text variant="caption" color="muted" style={{ maxWidth: 380 }}>
           Your game state is stored in Firebase and may still be intact.
           Try reconnecting first — if that fails, return to the lobby.
-        </p>
+        </Text>
         {error.digest && (
-          <p style={{ margin: '8px 0 0', fontSize: '0.7rem', color: '#3a3a3a', fontFamily: 'monospace' }}>
+          <Text variant="micro" color="muted" style={{ margin: '8px 0 0', fontFamily: 'monospace' }}>
             {error.digest}
-          </p>
+          </Text>
         )}
       </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-        <button
-          onClick={reset}
-          style={{
-            padding: '10px 20px', borderRadius: 6, border: 'none',
-            background: '#dc2626', color: '#fff', fontWeight: 600,
-            fontSize: '0.875rem', cursor: 'pointer',
-          }}
-        >
-          Reconnect
-        </button>
+        <Button variant="primary" onClick={reset}>Reconnect</Button>
         <a
           href="/"
           style={{

@@ -1,0 +1,48 @@
+---
+sidebar_position: 1
+title: GameBoard
+---
+
+# GameBoard
+
+The digital table. A compound container with spatial zone sub-components for organizing the game's physical elements.
+
+## Sub-Components
+
+| Zone | Purpose |
+|---|---|
+| `GameBoard.DeckZone` | Threat deck display |
+| `GameBoard.CardLine` | 2D card display (legacy) |
+| `GameBoard.CardLine3D` | Ref-forwarding target for 3D card overlay |
+| `GameBoard.TrophyZone` | Trophy pile via Deck molecule |
+| `GameBoard.PhaseInfo` | Act/phase status display |
+| `GameBoard.DoomClockZone` | Countdown clock (hidden during prologue) |
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `vertical` | `boolean` | `false` | Switch to sidebar column layout |
+
+## Implementation Examples
+
+```tsx
+<GameBoard vertical>
+  <GameBoard.DeckZone>
+    <Deck status={deckStatus} glow={isDrawPhase} onClick={handleDraw} />
+  </GameBoard.DeckZone>
+  <GameBoard.CardLine3D ref={cardLineRef} />
+  <GameBoard.TrophyZone>
+    <Deck status={trophyStatus} topCard={topTrophy} />
+  </GameBoard.TrophyZone>
+  <GameBoard.DoomClockZone>
+    <DoomClock count={reserveCount} />
+  </GameBoard.DoomClockZone>
+</GameBoard>
+```
+
+## Related Components
+
+- **[Deck](/components/molecules/deck)** — Card stacks within the board
+- **[DoomClock](/components/molecules/doom-clock)** — Clock within the board
+- **[CardMatt](/components/molecules/card-matt)** — Card landing surface

@@ -1,0 +1,29 @@
+---
+sidebar_position: 8
+title: TransitionOverlay
+---
+
+# TransitionOverlay
+
+The blackout between scenes. Full-screen portal with enter/exit CSS animations. Click to dismiss early.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `visible` | `boolean` | — | Show/hide the overlay |
+| `title` | `string` | — | Optional title text |
+| `subtitle` | `string` | — | Optional subtitle |
+| `onDismiss` | `() => void` | — | Click-to-dismiss handler |
+| `onExited` | `() => void` | — | Fires after exit animation (for state advancement) |
+
+## Behavior
+
+- Renders as a React portal to escape parent z-index contexts.
+- Enter/exit animations use CSS transitions (`transition.slow`).
+- `onExited` fires after the exit animation completes — use this for game state advancement, not `onDismiss`.
+
+## Related Components
+
+- **[ActBreakOverlay](/components/organisms/act-break-overlay)** — VHS-styled act transition
+- **[SceneChallengeOverlay](/components/organisms/scene-challenge-overlay)** — Evidence photo scene intro

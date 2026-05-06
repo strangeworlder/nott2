@@ -10,7 +10,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   PhasePanel, Card, Button, ActionFooter,
   StatusCallout, ResultBanner, EffortBand, WeaknessTracker,
-  Icon, suitToIconName,
+  Icon, suitToIconName, Text,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
 import { calculateDifficulty, calculateTotal, isSuccessful, getEffortLevel } from '@nott2/game-engine';
@@ -23,7 +23,7 @@ type FalloutEventVariant = 'info' | 'success' | 'warning' | 'danger' | 'highligh
 type FalloutEvent = {
   text: string;
   variant: FalloutEventVariant;
-  icon: 'emoji_events' | 'arrow_downward' | 'inventory_2' | 'bolt' | 'auto_awesome' | 'delete' | 'undo' | 'dangerous' | 'star' | 'shuffle' | 'warning';
+  icon: 'emoji_events' | 'arrow_downward' | 'input' | 'bolt' | 'auto_awesome' | 'key' | 'delete' | 'dangerous' | 'military_tech' | 'shuffle' | 'warning';
 };
 
 // ── Fallout Event Builder ────────────────────────────────────────────────────
@@ -40,7 +40,7 @@ function describeFalloutEvents(
 
   if (joker === 'Red') {
     events.push(isSuccess
-      ? { text: 'The Red Joker is defeated — you survived the Night!', variant: 'highlight', icon: 'star' }
+      ? { text: 'The Red Joker is defeated — you survived the Night!', variant: 'highlight', icon: 'military_tech' }
       : { text: 'The Red Joker kills the Active Player. The Red Joker is shuffled back into the Threat Deck.', variant: 'danger', icon: 'dangerous' });
     return events;
   }
@@ -65,7 +65,7 @@ function describeFalloutEvents(
     events.push(isSuccess
       ? { text: `${cardLabel} placed on the Trophy Pile. New base difficulty for Face Cards: ${card.rank}.`, variant: 'success', icon: 'emoji_events' }
       : { text: `${cardLabel} returned to the bottom of the Threat Deck.`, variant: 'warning', icon: 'arrow_downward' });
-    events.push({ text: 'Next card drawn from the Number Reserve → added to bottom of the Threat Deck.', variant: 'info', icon: 'inventory_2' });
+    events.push({ text: 'Next card drawn from the Number Reserve → added to bottom of the Threat Deck.', variant: 'info', icon: 'input' });
     if (d4 === 4) events.push({ text: 'Breaking Point (d4 = 4) — the Active Player earns a Strike.', variant: 'danger', icon: 'bolt' });
     return events;
   }
@@ -75,10 +75,10 @@ function describeFalloutEvents(
   const alreadyDefeated = weaknessesBefore.includes(card.suit);
   if (isSuccess) {
     if (!alreadyDefeated) {
-      events.push({ text: `First defeat of a ${card.suit} Face Card — a Weakness has been found!`, variant: 'highlight', icon: 'auto_awesome' });
+      events.push({ text: `First defeat of a ${card.suit} Face Card — a Weakness has been found!`, variant: 'highlight', icon: 'key' });
       events.push({ text: `${faceLabel} permanently removed from the game.`, variant: 'success', icon: 'delete' });
     } else {
-      events.push({ text: `${faceLabel} of ${card.suit} — already defeated this suit. Card returned to the Threat Deck.`, variant: 'warning', icon: 'undo' });
+      events.push({ text: `${faceLabel} of ${card.suit} — already defeated this suit. Card returned to the Threat Deck.`, variant: 'warning', icon: 'arrow_downward' });
     }
     const targetRank = d4 <= 2 ? 'Jack' : 'Queen';
     events.push({ text: `A random ${targetRank} added from Face Card Reserves to the Threat Deck (effort: ${d4}).`, variant: 'warning', icon: 'dangerous' });
@@ -225,10 +225,10 @@ export function FalloutScreen() {
       {effortLevel && <EffortBand level={effortLevel as any} />}
 
       <Card title="Narrate the Outcome">
-        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+        <Text variant="caption" color="muted">
           {success ? 'Describe how your character overcomes the challenge. The table frames the shot.'
             : 'Describe how the challenge overcomes your character. Make it hurt, make it matter.'}
-        </p>
+        </Text>
       </Card>
 
       {events.length > 0 && (
@@ -247,11 +247,11 @@ export function FalloutScreen() {
 
       {strikesToAssign > 0 && (
         <Card variant="failure" title={`Assign ${strikesToAssign} Strike${strikesToAssign > 1 ? 's' : ''}`}>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 12 }}>
+          <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
             {remainingToStage > 0
               ? `${remainingToStage} strike${remainingToStage > 1 ? 's' : ''} left to assign. Strikes are committed when you click Next Scene.`
               : 'All strikes assigned — proceed when ready.'}
-          </p>
+          </Text>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {characters.filter(c => !c.isDead).map(c => {
               const staged = pendingStrikes[c.id] ?? 0;
@@ -260,8 +260,8 @@ export function FalloutScreen() {
                 <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
                     <Icon name={suitToIconName(c.id)} size={16} />
-                    <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>{c.name}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{c.strikes}/3{staged > 0 ? ` → ${totalAfter}` : ''}</span>
+                    <Text variant="label" as="span">{c.name}</Text>
+                    <Text variant="micro" color="muted" as="span">{c.strikes}/3{staged > 0 ? ` → ${totalAfter}` : ''}</Text>
                   </div>
                   <div style={{ display: 'flex', gap: 4 }}>
                     <Button variant="ghost" size="sm" onClick={() => handleRemovePendingStrike(c.id)} disabled={staged <= 0}>−</Button>

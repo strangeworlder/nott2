@@ -94,6 +94,13 @@ export const sceneChallengeBackdrop = style({
   animationDuration: '500ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const sceneChallengeBackdropJumpScare = style({
@@ -101,6 +108,14 @@ export const sceneChallengeBackdropJumpScare = style({
   animationDuration: '600ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+      backgroundColor: '#0d0000',
+    },
+  },
 });
 
 export const sceneChallengeBackdropExiting = style({
@@ -116,6 +131,12 @@ export const sceneChallengeBackdropShake = style({
   animationDuration: '400ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+    },
+  },
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -136,6 +157,13 @@ export const sceneChallengePanel = style({
   animationDelay: '200ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const sceneChallengePanelJumpScare = style({
@@ -176,6 +204,13 @@ export const sceneChallengePhotoFrame = style({
     '-2px -2px 8px rgba(120,0,0,0.3)',
     '2px 2px 8px rgba(80,0,0,0.2)',
   ].join(', '),
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const sceneChallengePhotoFrameJumpScare = style({
@@ -234,7 +269,7 @@ export const sceneChallengeLabel = style({
   fontFamily: vars.font.body,
   fontSize: vars.fontSize.label,
   fontWeight: 700,
-  letterSpacing: '0.28em',
+  letterSpacing: vars.letterSpacing.widest,
   textTransform: 'uppercase',
   color: vars.color.accentBright,
   opacity: 0,
@@ -244,6 +279,13 @@ export const sceneChallengeLabel = style({
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
   userSelect: 'none',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const sceneChallengeLabelJumpScare = style({
@@ -259,6 +301,13 @@ export const sceneChallengePromptWrapper = style({
   animationDelay: '500ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const sceneChallengePromptWrapperJumpScare = style({
@@ -267,7 +316,7 @@ export const sceneChallengePromptWrapperJumpScare = style({
 
 export const sceneChallengePrompt = style({
   fontFamily: vars.font.display,
-  fontSize: '1.05rem',
+  fontSize: vars.fontSize.body,
   fontStyle: 'italic',
   lineHeight: 1.65,
   color: vars.color.text,
@@ -287,8 +336,14 @@ export const sceneChallengeDivider = style({
   animationDuration: '300ms',
   animationDelay: '650ms',
   animationFillMode: 'forwards',
-});
 
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
+});
 export const sceneChallengeDividerJumpScare = style({
   backgroundColor: '#cc0000',
   animationDelay: '250ms',
@@ -302,6 +357,13 @@ export const sceneChallengeDifficultyWrapper = style({
   animationDelay: '750ms',
   animationFillMode: 'forwards',
   animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 1,
+    },
+  },
 });
 
 export const sceneChallengeDifficultyWrapperJumpScare = style({
@@ -312,7 +374,7 @@ export const sceneChallengeDifficultyLabel = style({
   fontFamily: vars.font.body,
   fontSize: vars.fontSize.micro,
   fontWeight: 700,
-  letterSpacing: '0.25em',
+  letterSpacing: vars.letterSpacing.wider,
   textTransform: 'uppercase',
   color: vars.color.textMuted,
   marginBottom: vars.space.xs,
@@ -358,7 +420,7 @@ export const sceneChallengeHint = style({
   transform: 'translateX(-50%)',
   fontFamily: vars.font.body,
   fontSize: vars.fontSize.micro,
-  letterSpacing: '0.2em',
+  letterSpacing: vars.letterSpacing.wider,
   textTransform: 'uppercase',
   color: vars.color.textMuted,
   opacity: 0,
@@ -368,6 +430,13 @@ export const sceneChallengeHint = style({
   animationFillMode: 'forwards',
   userSelect: 'none',
   whiteSpace: 'nowrap',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.5,
+    },
+  },
 });
 
 export const sceneChallengeHintJumpScare = style({

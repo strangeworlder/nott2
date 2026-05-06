@@ -1,0 +1,34 @@
+---
+sidebar_position: 7
+title: CharacterBar
+---
+
+# CharacterBar
+
+The playbill. Footer bar showing all 4 characters: avatar, strikes, genre points, Ace turn tokens. Active player glows red. Dead characters are greyed out.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `characters` | `CharacterBarCharacter[]` | — | Array of 4 character objects |
+| `activePlayerId` | `string` | — | Currently active player's ID |
+| `genrePoolCount` | `number` | — | Genre Pool total at end of bar |
+
+## CharacterBarCharacter
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `string` | Player ID |
+| `suit` | `string` | Assigned suit |
+| `playerName` | `string` | Display name |
+| `characterName` | `string` | In-game character |
+| `strikes` | `number` | Strike count (0–3) |
+| `isDead` | `boolean` | Character death state |
+| `genrePoints` | `number` | Individual genre points |
+| `hasAceTurn` | `boolean` | Whether Ace turn is available |
+
+## Related Components
+
+- **[PlayerAvatar](/components/molecules/player-avatar)** — Individual player representation
+- **[StrikeIndicator](/components/molecules/strike-indicator)** — Health marks

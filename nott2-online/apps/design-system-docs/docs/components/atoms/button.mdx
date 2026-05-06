@@ -1,0 +1,392 @@
+---
+sidebar_position: 2
+title: Button
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Button, Stack, Row, Text } from '@nott2/design-system';
+
+# Button
+
+The primary agent of change. Every interactive action in the interface uses this component. The design communicates **consequence**: primary buttons are blood-red calls to action, secondary buttons offer careful alternatives, ghost buttons recede into the background.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Button } from '@nott2/design-system';
+
+<Button variant="primary">Confirm</Button>
+```
+</details>
+
+## Why to Use
+
+Buttons enforce consistent interaction patterns across the game. They carry the brand's visual weight (blood-red primary, glow-on-hover) and handle disabled states, focus rings, and sizing without ad-hoc styling. A raw `<button>` element would leak browser defaults and break the horror aesthetic.
+
+## When to Use
+
+Use Button for all interactive, transient actions (verbs) that do not represent persistent state choices.
+
+> **Do**
+> - Use Button for actions that commit a change (e.g., "Confirm", "Roll Dice").
+> - Use it for navigation that isn't purely an anchor link (e.g., "Leave Room").
+> - Choose the variant based on the consequence of the action (e.g., `primary` for main flow, `secondary` for cancel).
+
+> **Don't**
+> - Don't use Button for toggling persistent binary settings — use [Toggle](/components/atoms/toggle).
+> - Don't use it for selecting from a list of states — use [SegmentedControl](/components/atoms/segmented-control).
+> - Don't use a standard Button for the primary page-level CTA at the bottom of the screen — use `<ActionFooter>` instead.
+
+### Variant & Size Selection
+
+| Scenario | Variant | Size |
+|---|---|---|
+| Main action (confirm, roll, begin) | `primary` | `md` or `lg` |
+| Alternative action (cancel, skip, back) | `secondary` | `md` |
+| Subtle inline action (leave room, remove item) | `ghost` | `sm` or `xs` |
+| Developer/debug tools | `debug` | `sm` |
+| Primary page-level CTA | Use `<ActionFooter>` instead | — |
+
+:::tip ActionFooter, not Button
+For the **primary page-level action** (the big button at the bottom of a phase screen), always use `<ActionFooter>` instead of a raw `<Button>`. ActionFooter handles sticky positioning and page-level semantics.
+:::
+
+## Content Guidelines
+
+> **Do**
+> - Use **action verbs** for labels (e.g., "Draw Card", "Begin Act", "Confirm").
+> - Keep labels to 1–3 words.
+> - Write in sentence case in the code (e.g., `Draw Card`) — the component automatically transforms to uppercase via CSS.
+
+> **Don't**
+> - Don't use vague labels like "OK", "Submit", or "Click Here".
+> - Don't manually type ALL CAPS in the code.
+
+## Variants — The Four Intentions
+
+Each variant communicates a different level of **consequence and commitment**. They're ordered from most to least visually aggressive.
+
+### Primary — The Commitment
+
+Blood-red fill. The brand IS the action. Primary buttons demand attention and say "this is the thing to do." They carry a resting `glowSubtle` shadow even before hover — the button is warm and alive, waiting.
+
+<ComponentPreview>
+  <Button variant="primary">Draw Card</Button>
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Background | `vars.color.accent` (`#8a0000`) | Blood-red — the brand color is the action color |
+| Text | `vars.color.text` (`#e8e8e8`) | White on red for maximum contrast |
+| Border | `transparent` | The fill carries enough visual weight |
+| Rest shadow | `vars.shadow.glowSubtle` | The button breathes even at rest — alive, warm |
+| Hover | `accentBright` bg + `shadow.glow` | Escalation pattern: subtle → glow (see [Shadows](/foundation/shadows#the-escalation-pattern)) |
+
+### Secondary — The Alternative
+
+Transparent fill with a muted border. Secondary buttons say "there's another option" without competing with the primary action. On hover, the border and text turn red — the button reveals its intent.
+
+<ComponentPreview>
+  <Button variant="secondary">Cancel</Button>
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Background | `transparent` | Recedes behind primary |
+| Text | `vars.color.text` | Neutral at rest |
+| Border | `vars.color.textMuted` (`#6a6a6a`) | Visible but not demanding |
+| Hover | Red border + red text + `rgba(138,0,0,0.05)` tint | The button's true nature shows — it's still a blood-red action underneath |
+
+### Ghost — The Whisper
+
+No fill, no border. Ghost buttons are nearly invisible until hovered. They're for actions that should be available but shouldn't compete for attention — leaving a room, removing an item, toggling a minor setting.
+
+<ComponentPreview>
+  <Button variant="ghost">Leave Room</Button>
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Background | `transparent` | Invisible at rest |
+| Text | `vars.color.text` | Reads as plain text until hovered |
+| Border | `transparent` | No structure at rest |
+| Hover | Red text + `rgba(255,255,255,0.05)` tint | A faint luminance shift reveals the button without shouting |
+
+### Debug — The Fourth Wall
+
+Green-bordered, green-text buttons that break the game's visual language. They use the success color family deliberately — green is not the brand, so debug buttons immediately read as "outside the game." They should never appear in production UI seen by players.
+
+<ComponentPreview>
+  <Button variant="debug">Debug Panel</Button>
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Background | `transparent` | Minimal footprint |
+| Text | `vars.color.successBright` (`#4ade80`) | Green = outside the game world |
+| Border | `rgba(45,90,45,0.4)` | Subtle green border — present but muted |
+| Hover | Bright green border + `rgba(45,90,45,0.1)` tint | Confirms interactivity |
+
+## Sizes — The Weight Scale
+
+All sizes use hardcoded pixel padding rather than spacing tokens. This is an [intentional exception](/foundation/spacing) — button padding requires asymmetric horizontal/vertical values tuned to the display font's visual weight, which standard tokens can't express.
+
+<ComponentPreview>
+  <Button size="xs">XS</Button>
+  <Button size="sm">Small</Button>
+  <Button size="md">Medium</Button>
+  <Button size="lg">Large</Button>
+  <Button size="xl">Extra Large</Button>
+</ComponentPreview>
+
+| Size | Padding | Font Size | When to Use |
+|---|---|---|---|
+| `xs` | `4px 8px` | `fontSize.small` (0.75rem) | Compact inline controls, tight spaces |
+| `sm` | `6px 12px` | `0.8125rem` (bespoke) | Ghost/secondary inline actions, toolbar buttons |
+| `md` | `8px 24px` | `fontSize.body` (1rem) | **Default.** Most standalone buttons. |
+| `lg` | `12px 32px` | `fontSize.bodyLg` (1.125rem) | Prominent CTAs, overlay actions |
+| `xl` | `16px 48px` | `1.25rem` (bespoke) | Full-screen splash actions, cinematic moments |
+
+:::note Bespoke Font Sizes
+The `sm` (0.8125rem) and `xl` (1.25rem) sizes don't use `fontSize.*` tokens — they use hardcoded values that fall between token steps. This is optical tuning: the standard token values didn't produce the right visual balance at those specific padding dimensions.
+:::
+
+## Block Mode
+
+The `block` prop makes the button fill its container width. Use for form submissions, overlay CTAs, and any context where the button should anchor the full width of its parent.
+
+<ComponentPreview column>
+  <Button block>Full Width Primary</Button>
+  <Button variant="secondary" block>Full Width Secondary</Button>
+</ComponentPreview>
+
+```tsx
+<Button block>Full Width Primary</Button>
+<Button variant="secondary" block>Full Width Secondary</Button>
+```
+
+## Anatomy
+
+```
+┌──────────────────────────────┐
+│  [children]                  │ ← display font, uppercase, tracked (0.08em)
+│                              │ ← padding determined by size variant
+│  border + glow               │ ← variant determines color scheme
+└──────────────────────────────┘
+    └── native <button> ───────── type, disabled, onClick, id
+```
+
+The base styling applies to all variants: `display: inline-flex`, `font.display`, `fontWeight: 600`, `textTransform: uppercase`, `letterSpacing: normal` (0.08em), `radius.md`, `transition.normal`.
+
+## Behavior
+
+- **Hover**: Follows the [Escalation Pattern](/foundation/shadows#the-escalation-pattern). Primary: `glowSubtle` → `glow`. Secondary/Ghost: reveal hidden intent (border, tint). All hover transitions use `transition.normal` (200ms ease-out).
+- **Disabled**: All variants drop to 40% opacity with `cursor: not-allowed` and `pointer-events: none`. The disabled state is communicated both visually and to assistive technology via the native `disabled` attribute.
+- **Focus**: A 2px `accentBright` outline with 2px offset appears on `:focus-visible` only (keyboard navigation). Mouse clicks don't trigger the focus ring.
+- **Active**: No separate `:active` state. This is intentional — the hover state already communicates engagement, and an active state would feel "bouncy" in a horror context.
+
+## Accessibility
+
+- Renders a native `<button>` element — inherits all built-in keyboard and screen reader support.
+- `:focus-visible` ring ensures keyboard navigation is visible without affecting mouse users.
+- `disabled` attribute properly prevents interaction and communicates state to assistive technology.
+- Always provide meaningful text content — avoid icon-only buttons without an `aria-label`.
+- The glow escalation on primary buttons provides a non-color visual cue for hover state (shadow size change), supporting users who may not perceive the color shift.
+
+## Common Patterns
+
+### Action Pair
+
+The most common layout: a primary action alongside a secondary escape hatch.
+
+<ComponentPreview>
+  <Row gap="sm">
+    <Button variant="primary">Confirm</Button>
+    <Button variant="secondary">Cancel</Button>
+  </Row>
+</ComponentPreview>
+
+```tsx
+<Row gap="sm">
+  <Button variant="primary" onClick={handleConfirm}>Confirm</Button>
+  <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+</Row>
+```
+
+### Disabled State
+
+<ComponentPreview>
+  <Button disabled>Disabled Primary</Button>
+  <Button variant="secondary" disabled>Disabled Secondary</Button>
+  <Button variant="ghost" disabled>Disabled Ghost</Button>
+</ComponentPreview>
+
+```tsx
+<Button disabled>Can't act yet</Button>
+```
+
+## Key Props
+
+Use these props to configure the Button component.
+
+### variant
+Defines the visual and hierarchical level of the button.
+
+| Type | Default | Description |
+|---|---|---|
+| `'primary' \| 'secondary' \| 'ghost' \| 'debug'` | `'primary'` | Visual style — determines color scheme and hover behavior |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+    <Button variant="primary">Save</Button>
+    <Button variant="secondary">Cancel</Button>
+    <Button variant="ghost">Leave</Button>
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Button variant="primary">Save</Button>
+<Button variant="secondary">Cancel</Button>
+<Button variant="ghost">Leave</Button>
+```
+</details>
+
+### size
+Adjusts dimensions and typography.
+
+| Type | Default | Description |
+|---|---|---|
+| `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Size scale — determines padding and font size |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+    <Button size="xs">Tiny</Button>
+    <Button size="md">Default</Button>
+    <Button size="lg">Prominent</Button>
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Button size="xs">Tiny action</Button>
+<Button size="md">Default action</Button>
+<Button size="lg">Prominent action</Button>
+```
+</details>
+
+### block
+Expands Button to fill parent width.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Full-width mode (`width: 100%`) |
+
+<ComponentPreview>
+  <div style={{ width: '100%' }}>
+    <Button block>Full Width Action</Button>
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<div style={{ width: '300px' }}>
+  <Button block>Full Width Action</Button>
+</div>
+```
+</details>
+
+### disabled
+Non-interactive, dimmed styling.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Disables interaction (opacity 0.4, no pointer events) |
+
+<ComponentPreview>
+  <Button disabled>Not yet available</Button>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Button disabled>Not yet available</Button>
+```
+</details>
+
+### onClick
+Handler triggered when the button is pressed.
+
+| Type | Default | Description |
+|---|---|---|
+| `(e: MouseEvent) => void` | — | Click handler |
+
+<ComponentPreview>
+  <Button>Confirm</Button>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Button onClick={(e) => handleConfirm(e)}>Confirm</Button>
+```
+</details>
+
+### type
+HTML button type attribute.
+
+| Type | Default | Description |
+|---|---|---|
+| `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type |
+
+<ComponentPreview>
+  <Button type="submit">Save Changes</Button>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <Button type="submit">Save Changes</Button>
+</form>
+```
+</details>
+
+### id
+HTML ID attribute.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | HTML id attribute |
+
+<ComponentPreview>
+  <Button id="main-submit-button">Submit</Button>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Button id="main-submit-button">Submit</Button>
+```
+</details>
+
+## Related Components
+
+- **[ActionFooter](/components/molecules/action-footer)** — Use for primary page-level CTA (wraps Button with sticky positioning)
+- **[Toggle](/components/atoms/toggle)** — For binary on/off states (not an action, a setting)
+- **[Icon](/components/atoms/icon)** — Can be placed inside Button as a child for icon+label patterns
+
+:::caution Anti-Pattern: Variant Confusion
+Don't use `ghost` for destructive actions or `secondary` for cancel-and-navigate-away. The variant hierarchy communicates **commitment level**, not action type. A destructive action should still be `primary` (it's the main thing to do) — the confirmation dialog is the safety net, not the button color.
+:::

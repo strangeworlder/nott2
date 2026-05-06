@@ -107,7 +107,7 @@ export function TextArea({
   const errorId = `${textareaId}-error`;
   const hasError = Boolean(error);
   const showCharCount = maxLength !== undefined;
-  const charCount = value.length;
+  const charCount = value?.length ?? 0;
   const isNearLimit = maxLength !== undefined && charCount >= maxLength * 0.9;
 
   const describedBy = [
@@ -129,7 +129,7 @@ export function TextArea({
       <textarea
         id={textareaId}
         name={name}
-        value={value}
+        value={value ?? ''}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}

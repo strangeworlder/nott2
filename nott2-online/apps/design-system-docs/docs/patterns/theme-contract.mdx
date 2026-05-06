@@ -1,0 +1,126 @@
+---
+sidebar_position: 1
+title: Theme Contract
+---
+
+# Theme Contract & Playsets
+
+The entire design system is built on a **theme contract** pattern using Vanilla Extract. This enables complete visual re-theming without modifying any component code.
+
+## How It Works
+
+```
+┌── createThemeContract(vars) ──┐    ┌── createTheme(vars, values) ──┐
+│                                │    │                                │
+│  vars.color.background = null  │───▶│  darkTheme:                    │
+│  vars.color.accent = null      │    │    background: '#0a0a0a'       │
+│  vars.font.display = null      │    │    accent: '#8a0000'           │
+│  vars.space.md = null          │    │    display: 'Playfair Display' │
+│  ...                           │    │    md: '16px'                  │
+└────────────────────────────────┘    └────────────────────────────────┘
+                                               │
+                                      ┌────────┴────────┐
+                                      ▼                  ▼
+                               darkTheme (default)   summerCampTheme
+                               (blood-red horror)    (playset override)
+```
+
+## The Contract (`vars`)
+
+```tsx
+// tokens/theme.css.ts
+import { createThemeContract } from '@vanilla-extract/css';
+
+export const vars = createThemeContract({
+  color: {
+    background: null,
+    surface: null,
+    accent: null,
+    // ...all token slots
+  },
+  font: { display: null, body: null, mono: null },
+  fontSize: { hero: null, h1: null, /* ... */ },
+  space: { xs: null, sm: null, md: null, /* ... */ },
+  radius: { sm: null, md: null, lg: null, full: null },
+  shadow: { glow: null, glowSubtle: null, /* ... */ },
+  transition: { fast: null, normal: null, slow: null },
+});
+```
+
+## The Implementation (`darkTheme`)
+
+```tsx
+export const darkTheme = createTheme(vars, {
+  color: {
+    background: '#0a0a0a',
+    surface: '#141414',
+    accent: '#8a0000',
+    // ...
+  },
+  // ...all values
+});
+```
+
+## Creating a Playset Theme
+
+Playsets can completely change the visual identity:
+
+```tsx
+// playsets/summer-camp/theme.css.ts
+import { createTheme } from '@vanilla-extract/css';
+import { vars } from '@nott2/design-system';
+
+export const summerCampTheme = createTheme(vars, {
+  color: {
+    background: '#0d1b0e',
+    surface: '#1a2e1a',
+    accent: '#2d5a2d',
+    accentBright: '#4ade80',
+    // ... completely different palette
+  },
+  font: {
+    display: "'Creepster', cursive",
+    body: "'Cabin', sans-serif",
+    // ... different fonts
+  },
+  // ...
+});
+```
+
+## Component Usage
+
+Components **always** reference `vars.*` tokens — never hardcoded values:
+
+```tsx
+// In a .css.ts file:
+import { vars } from '../../tokens/theme.css';
+
+const myStyle = style({
+  backgroundColor: vars.color.surface,
+  color: vars.color.text,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.md,
+  padding: vars.space.md,
+  transition: `all ${vars.transition.normal}`,
+});
+```
+
+:::caution Key Principle
+Components reference `vars.*` tokens, **never** hardcoded values. This means a playset can completely change the visual identity by providing a single new theme — no component code changes needed.
+:::
+
+## Applying a Theme
+
+The theme is applied by adding the theme class to a container element:
+
+```tsx
+import { darkTheme } from '@nott2/design-system';
+
+function App() {
+  return (
+    <div className={darkTheme}>
+      {/* All children resolve vars.* to darkTheme values */}
+    </div>
+  );
+}
+```
