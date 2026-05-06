@@ -1,0 +1,22 @@
+---
+sidebar_position: 4
+title: PlayerPanel
+---
+
+# PlayerPanel
+
+Phase-aware control surface. Renders different sub-views depending on the current game phase.
+
+## Phase Views
+
+| Phase | Renders | Purpose |
+|---|---|---|
+| `resolution` | DieSelector pair + DiceResult | Dice rolling interface |
+| `fallout` | Strike assignment info | Damage assignment |
+| Generic | ActionFooter with phase label | Simple phase advancement |
+
+## Related Components
+
+- **[DieSelector](/components/molecules/die-selector)** — Dice input (resolution phase)
+- **[ActionFooter](/components/molecules/action-footer)** — Phase advancement button
+- **[PhasePanel](/components/organisms/phase-panel)** — The structural container

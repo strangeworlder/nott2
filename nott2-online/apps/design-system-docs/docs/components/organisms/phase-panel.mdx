@@ -1,0 +1,38 @@
+---
+sidebar_position: 6
+title: PhasePanel
+---
+
+# PhasePanel
+
+The director's desk. Structured container with PhaseHeader + scrollable content area. Used for all active-play operational screens.
+
+## Why to Use
+
+PhasePanel provides a consistent operational screen layout. It's the working counterpart to PhaseDisplay — where PhaseDisplay announces, PhasePanel enables action.
+
+## When to Use
+
+- All active-play screens where the player interacts with controls
+- Scene setup, conversation & stakes, resolution, fallout
+
+## Anatomy
+
+```
+┌── PhasePanel ────────────────────────────┐
+│ ┌── PhaseHeader ──────────────────────┐  │
+│ │  Title | Subtitle | Step X of Y     │  │
+│ └─────────────────────────────────────┘  │
+│ ┌── Scrollable Content ───────────────┐  │
+│ │                                     │  │
+│ │  Phase-specific children            │  │
+│ │                                     │  │
+│ └─────────────────────────────────────┘  │
+└──────────────────────────────────────────┘
+```
+
+## Related Components
+
+- **[PhaseHeader](/components/atoms/phase-header)** — Title block at the top
+- **[PhaseDisplay](/components/organisms/phase-display)** — Cinematic counterpart
+- **[ActionFooter](/components/molecules/action-footer)** — Primary action at the bottom

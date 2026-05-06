@@ -1,0 +1,65 @@
+---
+sidebar_position: 9
+title: Row
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Row, Badge, Button, Text } from '@nott2/design-system';
+
+# Row
+
+Horizontal flex row layout. The counterpart to Stack — arranges children side-by-side with configurable gap, wrapping, and alignment.
+
+## Why to Use
+
+Row ensures consistent horizontal spacing and alignment. It handles flex wrapping gracefully and supports all common alignment patterns.
+
+## When to Use
+
+- Inline button groups
+- Badge clusters
+- Icon + text pairings
+- Any horizontal arrangement of elements
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `gap` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'sm'` | Space between children |
+| `wrap` | `boolean` | `false` | Allow flex wrapping |
+| `justify` | `'start' \| 'center' \| 'end' \| 'between'` | `'start'` | Justify content |
+| `align` | `'start' \| 'center' \| 'end' \| 'stretch'` | `'center'` | Align items |
+
+## Implementation Examples
+
+<ComponentPreview label="Button Group">
+  <Row gap="sm">
+    <Button variant="primary" size="sm">Accept</Button>
+    <Button variant="secondary" size="sm">Decline</Button>
+    <Button variant="ghost" size="sm">Skip</Button>
+  </Row>
+</ComponentPreview>
+
+<ComponentPreview label="Badge Cluster">
+  <Row gap="xs" wrap>
+    <Badge variant="red">Killer</Badge>
+    <Badge variant="outline">Act II</Badge>
+    <Badge variant="success">Weakness Found</Badge>
+  </Row>
+</ComponentPreview>
+
+```tsx
+<Row gap="sm">
+  <Button variant="primary">Accept</Button>
+  <Button variant="secondary">Decline</Button>
+</Row>
+
+<Row gap="xs" wrap>
+  <Badge variant="red">Killer</Badge>
+  <Badge variant="outline">Act II</Badge>
+</Row>
+```
+
+## Related Components
+
+- **[Stack](/components/atoms/stack)** — Vertical equivalent

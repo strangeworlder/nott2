@@ -1,0 +1,38 @@
+---
+sidebar_position: 5
+title: StrikeIndicator
+---
+
+# StrikeIndicator
+
+Three strikes = death. Renders 0–3 strike marks: ○ (empty) → ✕ (blood-red). The third strike or `isDead` shows a ☠ skull.
+
+## Why to Use
+
+Provides a clear, at-a-glance health indicator for each hunter. The escalating visual severity (empty → red × → skull) creates tension.
+
+## When to Use
+
+- Inside PlayerAvatar or CharacterBar
+- On player status panels
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `strikes` | `0 \| 1 \| 2 \| 3` | `0` | Number of strikes |
+| `isDead` | `boolean` | `false` | Show skull (overrides strikes) |
+
+## Implementation Examples
+
+```tsx
+<StrikeIndicator strikes={0} />  {/* ○ ○ ○ */}
+<StrikeIndicator strikes={2} />  {/* ✕ ✕ ○ */}
+<StrikeIndicator strikes={3} />  {/* ☠ */}
+<StrikeIndicator isDead />       {/* ☠ */}
+```
+
+## Related Components
+
+- **[PlayerAvatar](/components/molecules/player-avatar)** — Contains StrikeIndicator
+- **[CharacterBar](/components/organisms/character-bar)** — Shows strikes for all players

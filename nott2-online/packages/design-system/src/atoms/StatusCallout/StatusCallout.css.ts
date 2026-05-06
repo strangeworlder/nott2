@@ -7,7 +7,9 @@ export const statusCalloutRecipe = recipe({
     padding: `${vars.space.sm} ${vars.space.md}`,
     borderRadius: vars.radius.md,
     border: '1px solid',
+    fontFamily: vars.font.display,
     fontSize: vars.fontSize.label,
+    fontWeight: 600,
     lineHeight: 1.5,
     display: 'flex',
     alignItems: 'flex-start',
@@ -23,7 +25,7 @@ export const statusCalloutRecipe = recipe({
       warning: {
         backgroundColor: 'rgba(234, 179, 8, 0.06)',
         borderColor: 'rgba(234, 179, 8, 0.3)',
-        color: '#fbbf24',
+        color: vars.color.warning,
       },
       danger: {
         backgroundColor: 'rgba(220, 38, 38, 0.08)',
@@ -33,7 +35,7 @@ export const statusCalloutRecipe = recipe({
       success: {
         backgroundColor: 'rgba(45, 90, 45, 0.1)',
         borderColor: vars.color.success,
-        color: '#4ade80',
+        color: vars.color.successBright,
       },
       highlight: {
         backgroundColor: 'rgba(139, 92, 246, 0.08)',

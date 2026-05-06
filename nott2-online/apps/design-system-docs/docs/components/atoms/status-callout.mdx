@@ -1,0 +1,179 @@
+---
+sidebar_position: 5
+title: StatusCallout
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { StatusCallout, Stack, Text, Icon, Badge } from '@nott2/design-system';
+
+# StatusCallout
+
+The game's stage directions — system messages that tell the player what is happening, what just happened, or what they need to do next. Each variant carries a different emotional temperature, but they share a common voice: calm, precise, and in-world. They do not shout. They observe and instruct.
+
+StatusCallout is the workhorse of the game's feedback system. During a single FalloutScreen resolution, a player might see 4–6 callouts in sequence — each one narrating a different mechanical consequence of their dice roll. This is the component that *explains the rules as they happen*.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { StatusCallout } from '@nott2/design-system';
+
+<StatusCallout variant="danger">
+  <strong>Host</strong> has taken a Strike.
+</StatusCallout>
+```
+</details>
+
+## Why to Use
+
+A tabletop roleplaying game relies on the Game Master to narrate consequences, explain rules, and guide the flow of play. In this digital companion, StatusCallout acts as the mechanical GM. It provides a standardized, diegetic voice that players trust to tell them what just happened and what they must do next. By using consistent semantic coloring, it trains the player to instinctively recognize the severity of an event (e.g., green for victory, red for pain, purple for instruction) before they even read the text.
+
+## When to Use
+
+Use StatusCallout whenever the game engine needs to speak directly to the player to explain a state change or prompt an action.
+
+> **Do**
+> - Use StatusCallout for narrative instructions like designating the Active Player.
+> - Use it to narrate the mechanical fallout of a challenge (e.g., cards shuffling, difficulty changing).
+> - Match the variant to the emotional tone (e.g., `highlight` for instructions, `danger` for Strikes).
+
+> **Don't**
+> - Don't use it for 1–3 word status tags — use [Badge](/components/atoms/badge) instead.
+> - Don't use it for dramatic roll outcomes — use [ResultBanner](/components/molecules/result-banner) (that's the cinematic moment, not a stage direction).
+> - Don't use it for body text or general descriptions — use [Text](/components/atoms/text).
+> - Don't use it for a single icon without text — use [Icon](/components/atoms/icon) directly.
+
+## Anatomy
+
+```
+┌─────────────────────────────────────────────┐
+│ [Icon?]  Message content                     │  ← 1px all-around border
+│          (any React children)               │  ← tinted background
+└─────────────────────────────────────────────┘
+```
+
+The border and background tint are determined by the variant. The icon is optional and rendered at 18px. Children are wrapped in a flex-1 container so they fill the remaining width.
+
+The base typography uses the **display font** at `label` size with `600` weight — the same font family as headings and badges, giving callouts an authoritative, premium feel. No `uppercase` transform is applied (unlike `Badge` or `Text variant="label"`) because callout content is prose, not a tag.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `variant` | `'info' \| 'warning' \| 'danger' \| 'success' \| 'highlight'` | `'info'` | Semantic color — choose based on what happened, not what color you want |
+| `icon` | `IconName` | — | Optional icon prepended to content. Use icons from the [Icon vocabulary](/components/atoms/icon) |
+| `children` | `ReactNode` | — | Callout content — text, inline icons, `<strong>` tags |
+| `id` | `string` | — | HTML id attribute |
+
+## Content Guidelines
+
+> **Do**
+> - Keep messages concise (1–2 sentences max).
+> - Write in a consistent "stage direction" voice (the narrator telling you what happened).
+> - Use `<strong>` for emphasis on key game terms (deck names, character names, suit names).
+
+> **Don't**
+> - Don't use exclamation marks — the color carries the urgency ("A Weakness has been found" not "A Weakness has been found!").
+> - Don't mix voices (e.g., don't jump from objective narrator to in-character dialogue).
+
+## Behavior
+
+- Renders with `role="status"` for screen reader announcement.
+- The icon is rendered via the `<Icon>` component at 18px size.
+- All five variants use a 1px solid border on all four sides with a subtle background tint. There is no left-border-only styling.
+
+## Accessibility
+
+- `role="status"` makes the element a live region — screen readers announce new callouts automatically.
+- Always combine an icon with text. Never rely on color alone.
+- In the FalloutScreen, multiple callouts are rendered in sequence — each is a separate `role="status"` element, so they are announced individually.
+
+## Real Usage Examples
+
+### Player Instruction (SceneSetupScreen)
+
+<ComponentPreview>
+  <StatusCallout variant="highlight" icon="playing_cards">
+    Click the <strong>Threat Deck</strong> on the table to draw the first card and begin the scene.
+  </StatusCallout>
+</ComponentPreview>
+
+```tsx
+<StatusCallout variant="highlight" icon="playing_cards">
+  Click the <strong>Threat Deck</strong> on the table to draw the first card.
+</StatusCallout>
+```
+
+### Round Progress (SceneSetupScreen)
+
+<ComponentPreview>
+  <StatusCallout variant="info" icon="movie">Round 2: 1 of 4 players have acted this round.</StatusCallout>
+</ComponentPreview>
+
+```tsx
+<StatusCallout variant="info" icon="movie">{roundInfo}</StatusCallout>
+```
+
+### Aptitude Applied (FalloutScreen)
+
+<ComponentPreview>
+  <StatusCallout variant="highlight" icon="auto_awesome">
+    Aptitude applied — Effort modified from <strong>4</strong> to <strong>3</strong>
+  </StatusCallout>
+</ComponentPreview>
+
+### Deck Change Events (FalloutScreen)
+
+This is the most common usage pattern — multiple callouts rendered from a data array:
+
+<ComponentPreview column>
+  <StatusCallout variant="success" icon="emoji_events">7 of Hearts placed on the Trophy Pile. New base difficulty for Face Cards: 7.</StatusCallout>
+  <StatusCallout variant="info" icon="input">Next card drawn from the Number Reserve → added to bottom of the Threat Deck.</StatusCallout>
+  <StatusCallout variant="danger" icon="bolt">Breaking Point (d4 = 4) — the Active Player earns a Strike.</StatusCallout>
+</ComponentPreview>
+
+```tsx
+{events.map((evt, i) => (
+  <StatusCallout key={i} variant={evt.variant} icon={evt.icon}>
+    {evt.text}
+  </StatusCallout>
+))}
+```
+
+### Escalation Warning (ConversationStakesScreen)
+
+<ComponentPreview>
+  <StatusCallout variant="warning" icon="warning">Escalation used this scene.</StatusCallout>
+</ComponentPreview>
+
+### All Variants at a Glance
+
+<ComponentPreview column>
+  <StatusCallout variant="info" icon="movie">Round progress: 2 of 4 have acted this round.</StatusCallout>
+  <StatusCallout variant="warning" icon="warning">Escalation used this scene.</StatusCallout>
+  <StatusCallout variant="danger" icon="bolt">Breaking Point — the Active Player earns a Strike.</StatusCallout>
+  <StatusCallout variant="success" icon="emoji_events">7 of Hearts placed on the Trophy Pile.</StatusCallout>
+  <StatusCallout variant="highlight" icon="playing_cards">Click the <strong>Threat Deck</strong> to draw the first card.</StatusCallout>
+</ComponentPreview>
+
+## API Reference
+
+### CalloutVariant
+
+| Value | Border / Background | Semantic Role | Typical Icons |
+|---|---|---|---|
+| `info` | Blue-tinted (hardcoded RGBA) | Neutral bookkeeping — what the machine is doing | `movie`, `shuffle`, `input`, `delete` |
+| `warning` | Amber-tinted (`warning` token) | Escalation — something got worse, but nobody died | `warning`, `arrow_downward`, `dangerous` |
+| `danger` | Red-tinted (`accentBright` token) | Pain — a Strike, a death, a loss | `bolt`, `dangerous` |
+| `success` | Green-tinted (`success` token) | Progress — a threat removed, a trophy earned | `emoji_events`, `delete`, `key` |
+| `highlight` | Purple-tinted (hardcoded RGBA) | Attention — an instruction, a special event, a rare moment | `playing_cards`, `auto_awesome`, `person_raised_hand`, `military_tech` |
+
+:::note
+`info` and `highlight` use hardcoded RGBA colors because blue and purple are UI-only — they are not part of the brand token contract. Red, amber, and green have corresponding tokens.
+:::
+
+## Related Components
+
+- **[Badge](/components/atoms/badge)** — Inline 1–3 word status stamps (less visual weight, scanned not read)
+- **[Text](/components/atoms/text)** — For prose content without semantic coloring
+- **[ResultBanner](/components/molecules/result-banner)** — For the dramatic roll outcome moment (success/failure) — the cinematic climax, not a stage direction

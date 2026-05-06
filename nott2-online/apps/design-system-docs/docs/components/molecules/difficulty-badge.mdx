@@ -1,0 +1,27 @@
+---
+sidebar_position: 9
+title: DifficultyBadge
+---
+
+# DifficultyBadge
+
+The omen before the roll. A large display-font number showing the target difficulty, with optional breakdown text explaining modifiers.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `difficulty` | `number` | — | Target number |
+| `breakdown` | `string` | — | Optional modifier explanation |
+
+## Implementation Examples
+
+```tsx
+<DifficultyBadge difficulty={10} />
+<DifficultyBadge difficulty={12} breakdown="Base 10 + 2 (Act III)" />
+```
+
+## Related Components
+
+- **[EffortBand](/components/molecules/effort-band)** — Effort level indicator
+- **[ResultBanner](/components/molecules/result-banner)** — Roll outcome

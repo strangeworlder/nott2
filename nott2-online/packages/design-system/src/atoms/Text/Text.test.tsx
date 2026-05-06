@@ -49,4 +49,28 @@ describe('Text', () => {
     );
     expect(container.querySelector('strong')).toBeTruthy();
   });
+
+  it('renders as <p> for flavor variant', () => {
+    const { container } = render(<Text variant="flavor">Scene prompt</Text>);
+    expect(container.querySelector('p')).toBeTruthy();
+  });
+
+  it('forwards style prop to the rendered tag', () => {
+    const { container } = render(
+      <Text style={{ marginBottom: '12px' }}>Spaced</Text>
+    );
+    const el = container.querySelector('p');
+    expect(el).toBeTruthy();
+    expect((el as HTMLElement).style.marginBottom).toBe('12px');
+  });
+
+  it('forwards onClick prop to the rendered tag', () => {
+    let clicked = false;
+    const { container } = render(
+      <Text onClick={() => { clicked = true; }}>Clickable</Text>
+    );
+    const el = container.querySelector('p') as HTMLElement;
+    el.click();
+    expect(clicked).toBe(true);
+  });
 });

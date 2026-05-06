@@ -21,7 +21,7 @@ export const panelTitle = style({
   fontSize: vars.fontSize.label,
   color: vars.color.textMuted,
   textTransform: 'uppercase',
-  letterSpacing: '0.08em',
+  letterSpacing: vars.letterSpacing.normal,
 });
 
 export const panelBody = style({
@@ -50,9 +50,9 @@ export const resultBanner = style({
   padding: `${vars.space.sm} ${vars.space.md}`,
   borderRadius: vars.radius.md,
   fontFamily: vars.font.display,
-  fontSize: '1.125rem',
+  fontSize: vars.fontSize.bodyLg,
   fontWeight: 700,
-  letterSpacing: '0.05em',
+  letterSpacing: vars.letterSpacing.tight,
   textAlign: 'center',
 });
 
@@ -60,7 +60,7 @@ export const success = style({
   backgroundColor: 'rgba(45, 90, 45, 0.2)',
   borderColor: vars.color.success,
   border: `1px solid ${vars.color.success}`,
-  color: '#4ade80',
+  color: vars.color.successBright,
 });
 
 export const failure = style({

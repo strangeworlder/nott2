@@ -1,6 +1,6 @@
-/* ============================================================
+﻿/* ============================================================
    Landing Page Styles
-   Night of the Thirteenth 2 — Online Play
+   Night of the Thirteenth 2 â€” Online Play
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600&display=swap');
@@ -20,7 +20,7 @@
   overflow: hidden;
 }
 
-/* ── Atmospheric grain overlay ──────────────────────────────── */
+/* â”€â”€ Atmospheric grain overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .landing__grain {
   position: fixed;
   inset: 0;
@@ -56,7 +56,7 @@
   z-index: 0;
 }
 
-/* ── Hero ────────────────────────────────────────────────────── */
+/* â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .landing__hero {
   position: relative;
   z-index: 1;
@@ -85,18 +85,20 @@
   animation: fadeUp 0.9s ease 0.1s both;
 }
 
-.landing__title {
+h1.landing__title {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(3.5rem, 10vw, 6.5rem);
   font-weight: 900;
   line-height: 1.0;
   color: #f0f0f0;
+  text-transform: none;
   letter-spacing: -0.02em;
   animation: fadeUp 0.9s ease 0.15s both;
 }
 
-.landing__title-num {
+span.landing__title-num {
   color: #dc2626;
+  text-transform: none;
   text-shadow:
     0 0 40px rgba(220, 38, 38, 0.5),
     0 0 80px rgba(220, 38, 38, 0.2);
@@ -111,7 +113,7 @@
   animation: fadeUp 0.9s ease 0.25s both;
 }
 
-/* ── CTAs ─────────────────────────────────────────────────────── */
+/* â”€â”€ CTAs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .landing__ctas {
   display: flex;
   gap: 14px;
@@ -159,7 +161,7 @@
   transform: translateY(-1px);
 }
 
-/* ── Secondary links ─────────────────────────────────────────── */
+/* â”€â”€ Secondary links â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .landing__secondary-links {
   display: flex;
   align-items: center;
@@ -180,7 +182,7 @@
   font-size: 0.75rem;
 }
 
-/* ── Footer ───────────────────────────────────────────────────── */
+/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .landing__footer {
   position: fixed;
   bottom: 24px;
@@ -197,9 +199,9 @@
   animation: fadeUp 0.9s ease 0.55s both;
 }
 
-/* -- Responsive � Tablet (=768px) ------------------------------ */
+/* -- Responsive — Tablet (=768px) ------------------------------ */
 @media (max-width: 768px) {
-  .landing__title {
+  h1.landing__title {
     font-size: clamp(2.5rem, 12vw, 4rem);
   }
   .landing__ctas {
@@ -235,3 +237,7 @@
   .landing-btn { transition: none; }
   .landing-link { transition: none; }
 }
+
+
+
+

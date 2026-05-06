@@ -31,9 +31,10 @@ import { PlayerAvatar } from '../../molecules/PlayerAvatar/PlayerAvatar';
 import { StrikeIndicator } from '../../molecules/StrikeIndicator/StrikeIndicator';
 import { PlayingCard } from '../../molecules/PlayingCard/PlayingCard';
 import { Icon } from '../../atoms/Icon/Icon';
+import { Badge } from '../../atoms/Badge/Badge';
 import {
   barRoot, barInner, charCard, charCardInner, charCardActive, charCardDead,
-  gpBadge, genrePool, genrePoolLabel, genrePoolCount,
+  genrePool, genrePoolLabel, genrePoolCount,
   aceToken, aceTokenAvailable, aceTokenActed,
 } from './CharacterBar.css';
 
@@ -101,15 +102,16 @@ export function CharacterBar({
                 </div>
               )}
               <div className={charCardInner}>
+                {c.isDead && <Icon name="strike_dead" size={14} color="red" />}
                 <PlayerAvatar
-                  name={c.isDead ? `☠ ${c.name}` : c.name}
+                  name={c.name}
                   suit={c.id}
                   isActivePlayer={isActive}
                   isConnected={!c.isDead}
                   size="sm"
                 />
                 <StrikeIndicator strikes={c.strikes} isDead={c.isDead} />
-                <div className={gpBadge}>{gp > 0 ? `${gp} GP` : '\u00a0'}</div>
+                {gp > 0 ? <Badge variant="warning">{gp} GP</Badge> : null}
               </div>
             </button>
           );

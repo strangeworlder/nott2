@@ -7,7 +7,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PhasePanel, Card, ActionFooter } from '@nott2/design-system';
+import { PhasePanel, Card, ActionFooter, Text } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
 import CardEntry from '../CardEntry';
 import type { Suit, Rank } from '@nott2/game-engine';
@@ -25,7 +25,7 @@ export function TrophySetupScreen() {
       <Card>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div>
-            <span className="field-label">Trophy Card</span>
+            <Text variant="label" as="span">Trophy Card</Text>
             <CardEntry
               onCard={(s, r) => { setSuit(s); setRank(r); setTrophyTop(s, r); }}
               includeFaceCards={false}

@@ -1,0 +1,30 @@
+---
+sidebar_position: 3
+title: ChatPanel
+---
+
+# ChatPanel
+
+Player voice at the table. Scrollable message list + text input with four distinct message types.
+
+## Message Types
+
+| Type | Visual | Use |
+|---|---|---|
+| `chat` | Player bubble (own = right-aligned) | Player-to-player messages |
+| `system` | Impersonal, centered | Game state announcements |
+| `escalation` | ⚠ weighted, warning-toned | Escalation warnings |
+| `genre-point` | ★ highlighted | Genre point notifications |
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `messages` | `ChatMessage[]` | — | Message list |
+| `onSend` | `(text: string) => void` | — | Send handler |
+| `currentPlayerId` | `string` | — | Current user (for alignment) |
+
+## Related Components
+
+- **[TextField](/components/atoms/text-field)** — Chat input
+- **[Text](/components/atoms/text)** — Message rendering

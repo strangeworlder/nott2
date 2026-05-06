@@ -1,0 +1,30 @@
+---
+sidebar_position: 12
+title: WaitingIndicator
+---
+
+# WaitingIndicator
+
+The held breath. A pulsing dot + message for multiplayer waiting states.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `message` | `string` | — | Waiting message text |
+
+## Behavior
+
+- Renders a pulsing dot animation next to the message text.
+- Respects `prefers-reduced-motion` — animation stops when reduced motion is preferred.
+
+## Implementation Examples
+
+```tsx
+<WaitingIndicator message="Waiting for other players..." />
+<WaitingIndicator message="The Killer is choosing..." />
+```
+
+## Related Components
+
+- **[StatusCallout](/components/atoms/status-callout)** — For non-waiting system messages

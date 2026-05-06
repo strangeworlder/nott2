@@ -1,0 +1,30 @@
+---
+sidebar_position: 10
+title: SceneChallengeOverlay
+---
+
+# SceneChallengeOverlay
+
+The evidence photo. Positioned absolutely within `.game-main` (NOT a portal) to show scene prompt, suit theme, difficulty, and a crime-scene-style photo.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `prompt` | `string` | — | Scene narrative prompt |
+| `suit` | `string` | — | Scene's suit theme |
+| `difficulty` | `number` | — | Scene difficulty number |
+| `jumpScare` | `boolean` | `false` | White flash + screen shake (Killer encounters) |
+| `onDismiss` | `() => void` | — | Dismiss handler |
+
+## Behavior
+
+- **Not a portal** — positioned absolutely within the game main area to avoid z-index warfare.
+- `jumpScare` variant triggers a white flash + screen shake for Killer encounters and Jokers.
+- Evidence-photo aesthetic: crime scene styling, polaroid framing.
+
+## Related Components
+
+- **[ActBreakOverlay](/components/organisms/act-break-overlay)** — Act-level transitions
+- **[TransitionOverlay](/components/organisms/transition-overlay)** — Generic transitions
+- **[DifficultyBadge](/components/molecules/difficulty-badge)** — Difficulty number display

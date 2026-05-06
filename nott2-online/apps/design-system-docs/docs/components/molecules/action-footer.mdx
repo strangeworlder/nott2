@@ -1,0 +1,47 @@
+---
+sidebar_position: 2
+title: ActionFooter
+---
+
+# ActionFooter
+
+The threshold before commitment — a sticky bottom footer with a single primary action button.
+
+## Why to Use
+
+ActionFooter ensures the primary page-level CTA is always visible and consistently positioned. It replaces raw `<Button>` at the bottom of screens with proper sticky positioning and optional hint text.
+
+## When to Use
+
+- **Always** for the primary page-level action (the big button at the bottom of a phase screen)
+- **Never** use a raw `<Button>` for this purpose
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `string` | — | Button text |
+| `onClick` | `() => void` | — | Click handler |
+| `disabled` | `boolean` | `false` | Disable the button |
+| `variant` | `ButtonVariant` | `'primary'` | Button variant |
+| `hint` | `string` | — | Explanatory text above the button |
+
+## Implementation Examples
+
+```tsx
+<ActionFooter
+  label="Begin Act II"
+  onClick={handleBeginAct}
+/>
+
+<ActionFooter
+  label="Roll Dice"
+  onClick={handleRoll}
+  hint="You're about to roll for the challenge"
+  disabled={!canRoll}
+/>
+```
+
+## Related Components
+
+- **[Button](/components/atoms/button)** — The underlying button (use ActionFooter for page-level CTAs)

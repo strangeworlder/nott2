@@ -11,6 +11,7 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Text } from '@nott2/design-system';
 import './landing.css';
 
 export const metadata: Metadata = {
@@ -27,17 +28,17 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="landing__hero">
-        <div className="landing__eyebrow">A Horror TTRPG for 4 Players</div>
+        <Text variant="label" className="landing__eyebrow">A Horror TTRPG for 4 Players</Text>
 
-        <h1 className="landing__title">
+        <Text variant="hero" as="h1" className="landing__title">
           Night of the<br />
-          <span className="landing__title-num">Thirteenth</span>
-        </h1>
+          <Text variant="hero" as="span" className="landing__title-num">Thirteenth</Text>
+        </Text>
 
-        <p className="landing__tagline">
+        <Text variant="lead" as="p" className="landing__tagline">
           You are not heroes. You are victims in a slasher movie,<br />
           and the script is already written.
-        </p>
+        </Text>
 
         <div className="landing__ctas">
           <Link href="/lobby" className="landing-btn landing-btn--primary">
@@ -50,16 +51,16 @@ export default function LandingPage() {
 
         <div className="landing__secondary-links">
           <Link href="/demo" className="landing-link">Solo Demo</Link>
-          <span className="landing__dot">·</span>
+          <Text variant="body" as="span" color="muted" className="landing__dot">·</Text>
           <Link href="/rules" className="landing-link">Rules Reference</Link>
         </div>
       </section>
 
       {/* Decorative footer */}
       <footer className="landing__footer">
-        <span>Night of the Thirteenth 2</span>
-        <span className="landing__dot">·</span>
-        <span>Online Play</span>
+        <Text variant="micro" as="span" color="muted">Night of the Thirteenth 2</Text>
+        <Text variant="micro" as="span" color="muted" className="landing__dot">·</Text>
+        <Text variant="micro" as="span" color="muted">Online Play</Text>
       </footer>
     </main>
   );

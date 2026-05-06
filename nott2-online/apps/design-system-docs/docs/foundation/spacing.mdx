@@ -1,0 +1,141 @@
+---
+sidebar_position: 3
+title: Spacing
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Stack, Row, Text, Card } from '@nott2/design-system';
+
+# Spacing
+
+Spacing is the silence between words. In a horror film, the gap between a sound and its echo matters more than the sound itself. The same is true here — the empty space between interface elements controls pacing, focus, and tension.
+
+All spacing follows a **4px grid**. Every token is a multiple of 4, creating consistent visual rhythm. This isn't arbitrary — the 4px grid ensures elements align cleanly across screen densities and resolutions.
+
+## Scale
+
+The scale is intentionally limited. Seven values is enough. If you're reaching for a value that doesn't exist, reconsider your layout — the constraint is the point.
+
+| Token | Value | The Role It Plays |
+|---|---|---|
+| `space.xs` | `4px` | The tight breath — icon-to-text gaps, inline clusters, packed metadata. Used in CharacterBar for player info density and ChatPanel message internals. |
+| `space.sm` | `8px` | Controlled proximity — groups that belong together. Default Row gap. Badge pill padding. Chat bubbles. |
+| `space.md` | `16px` | The default pulse. Stack gap, PhasePanel padding, standard interior content spacing. If you don't know which to use, it's probably this one. |
+| `space.lg` | `24px` | Room to breathe — Card inner padding, GameBoard section gaps, comfortable section spacing. |
+| `space.xl` | `32px` | Deliberate distance — major section breaks, overlay padding. |
+| `space.2xl` | `48px` | The pause before the scare — hero section margins, SceneChallengeOverlay horizontal padding. |
+| `space.3xl` | `64px` | The long silence — only for hero-level spacing at the top of the page. |
+
+## Visual Scale
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '16px 0 24px' }}>
+  {[
+    { token: 'xs', px: 4 },
+    { token: 'sm', px: 8 },
+    { token: 'md', px: 16 },
+    { token: 'lg', px: 24 },
+    { token: 'xl', px: 32 },
+    { token: '2xl', px: 48 },
+    { token: '3xl', px: 64 },
+  ].map(({ token, px }) => (
+    <div key={token} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ width: 60, fontFamily: 'monospace', fontSize: '0.75rem', color: '#dc2626', textAlign: 'right' }}>
+        {token}
+      </div>
+      <div style={{ width: px, height: 24, backgroundColor: 'rgba(138, 0, 0, 0.4)', borderRadius: 2, border: '1px solid rgba(138, 0, 0, 0.6)' }} />
+      <div style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#6a6a6a' }}>
+        {px}px
+      </div>
+    </div>
+  ))}
+</div>
+
+:::tip When in doubt, use `md`
+`space.md` (16px) is the system's heartbeat. It's the default Stack gap, the default PhasePanel padding, the standard content spacing. Start there and only deviate with intention.
+:::
+
+## Layout Primitives
+
+Stack and Row exist so you never write `display: flex; gap: Npx` by hand. They enforce the token scale and ensure every layout decision is traceable back to the spacing system.
+
+### Stack (Vertical)
+
+Stack is the spine of every phase screen — a vertical column of moments, each leading to the next. It's deliberately invisible, serving only to space and order.
+
+The default gap is `md` (16px). Tighten to `sm` for groups that need cohesion (form fields, related items). Expand to `lg` for sections that need visual separation.
+
+<ComponentPreview column label="Stack gap='sm' — tight cohesion">
+  <Stack gap="sm">
+    <Card><Text variant="label">Item 1</Text></Card>
+    <Card><Text variant="label">Item 2</Text></Card>
+    <Card><Text variant="label">Item 3</Text></Card>
+  </Stack>
+</ComponentPreview>
+
+<ComponentPreview column label="Stack gap='lg' — section separation">
+  <Stack gap="lg">
+    <Card><Text variant="label">Section A</Text></Card>
+    <Card><Text variant="label">Section B</Text></Card>
+    <Card><Text variant="label">Section C</Text></Card>
+  </Stack>
+</ComponentPreview>
+
+### Row (Horizontal)
+
+Row arranges things side-by-side. Default gap is `sm` (8px) — tighter than Stack's `md`, because horizontal elements tend to be shorter (buttons, badges, icons) and need less breathing room to feel grouped.
+
+<ComponentPreview label="Row gap='md' — button group">
+  <Row gap="md">
+    <Card><Text variant="label">A</Text></Card>
+    <Card><Text variant="label">B</Text></Card>
+    <Card><Text variant="label">C</Text></Card>
+  </Row>
+</ComponentPreview>
+
+## Border Radius
+
+The system favors **sharp corners**. This is not a friendly productivity app — it's a horror game. Soft, rounded containers feel safe and inviting. We don't want safe and inviting. We want deliberate, gritty, slightly raw.
+
+| Token | Value | Feel | Where It's Used |
+|---|---|---|---|
+| `radius.sm` | `2px` | Sharp, raw | **Badges** — the smallest containers. Their sharpness is deliberate: they feel stamped, not polished. Also used for ActBreakOverlay UI chrome. |
+| `radius.md` | `4px` | Default | **Buttons, inputs, callouts, chat bubbles, die selectors** — the standard interactive element radius. Functional without being decorative. |
+| `radius.lg` | `8px` | Soft | **Cards, panels, game board, result banners** — larger containers get the softest radius because at their scale, 2-4px would feel like a rendering artifact. |
+| `radius.full` | `9999px` | Pill | **Online indicators, toggle knobs, deck count badges** — perfect circles or pill shapes for very small, round elements. |
+
+<div style={{ display: 'flex', gap: 16, margin: '16px 0 24px' }}>
+  {[
+    { label: 'sm (2px)', radius: 2 },
+    { label: 'md (4px)', radius: 4 },
+    { label: 'lg (8px)', radius: 8 },
+    { label: 'full', radius: 9999 },
+  ].map(({ label, radius }) => (
+    <div key={label} style={{ textAlign: 'center' }}>
+      <div style={{
+        width: 64, height: 64,
+        backgroundColor: '#141414',
+        border: '1px solid #2a2a2a',
+        borderRadius: radius,
+        marginBottom: 8,
+      }} />
+      <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#6a6a6a' }}>{label}</span>
+    </div>
+  ))}
+</div>
+
+### The Decision Rule
+
+```
+Is it a badge or tiny label?     → radius.sm (2px)
+Is it a button, input, or chip? → radius.md (4px)
+Is it a card, panel, or board?   → radius.lg (8px)
+Is it a dot, pill, or circle?    → radius.full (9999px)
+```
+
+:::caution No freeform values
+Never use hardcoded border-radius values in component styles. Always use a `vars.radius.*` token. If none of the four options fit, reconsider whether the element belongs in this design system.
+:::
+
+## A Note on Button Padding
+
+Button padding intentionally uses **hardcoded pixel values** rather than spacing tokens. This is a deliberate design decision, not an oversight. Button padding needs asymmetric horizontal/vertical values (`8px 24px` for md, `12px 32px` for lg) that don't map cleanly to the symmetric spacing scale. The spacing tokens are for **layout** — the space between things. Button internals are a **component concern**, tuned per-size for visual balance.

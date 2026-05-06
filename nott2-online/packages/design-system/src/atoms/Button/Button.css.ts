@@ -9,7 +9,7 @@ export const buttonRecipe = recipe({
     fontFamily: vars.font.display,
     fontWeight: 600,
     textTransform: 'uppercase',
-    letterSpacing: '0.08em',
+    letterSpacing: vars.letterSpacing.normal,
     border: '1px solid transparent',
     borderRadius: vars.radius.md,
     cursor: 'pointer',
@@ -34,7 +34,7 @@ export const buttonRecipe = recipe({
         backgroundColor: vars.color.accent,
         color: vars.color.text,
         borderColor: 'transparent',
-        boxShadow: `0 0 10px rgba(138, 0, 0, 0.5)`,
+        boxShadow: vars.shadow.glowSubtle,
         ':hover': {
           backgroundColor: vars.color.accentBright,
           boxShadow: vars.shadow.glow,
@@ -61,20 +61,20 @@ export const buttonRecipe = recipe({
       },
       debug: {
         backgroundColor: 'transparent',
-        color: '#4ade80',
+        color: vars.color.successBright,
         borderColor: 'rgba(45, 90, 45, 0.4)',
         ':hover': {
-          borderColor: '#4ade80',
+          borderColor: vars.color.successBright,
           backgroundColor: 'rgba(45, 90, 45, 0.1)',
         },
       },
     },
 
     size: {
-      xs: { padding: '4px 8px', fontSize: '0.75rem' },
+      xs: { padding: '4px 8px', fontSize: vars.fontSize.small },
       sm: { padding: '6px 12px', fontSize: '0.8125rem' },
       md: { padding: '8px 24px', fontSize: vars.fontSize.body },
-      lg: { padding: '12px 32px', fontSize: '1.125rem' },
+      lg: { padding: '12px 32px', fontSize: vars.fontSize.bodyLg },
       xl: { padding: '16px 48px', fontSize: '1.25rem' },
     },
 

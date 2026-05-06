@@ -1,0 +1,33 @@
+---
+sidebar_position: 13
+title: TabBar
+---
+
+# TabBar
+
+Two-road sign. Horizontal tab navigation for switching between views. Understated and bureaucratic.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `tabs` | `{ label: string; value: string }[]` | — | Tab definitions |
+| `activeTab` | `string` | — | Currently selected tab value |
+| `onTabChange` | `(value: string) => void` | — | Tab change handler |
+
+## Implementation Examples
+
+```tsx
+<TabBar
+  tabs={[
+    { label: 'Create Room', value: 'create' },
+    { label: 'Join Room', value: 'join' },
+  ]}
+  activeTab={currentTab}
+  onTabChange={setCurrentTab}
+/>
+```
+
+## Related Components
+
+- **[Button](/components/atoms/button)** — Individual actions (TabBar is for view switching)

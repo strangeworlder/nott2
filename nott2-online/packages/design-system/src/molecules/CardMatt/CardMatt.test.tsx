@@ -39,9 +39,15 @@ describe('CardMatt', () => {
     const { container: containerGlow } = render(<CardMatt glow={true} />);
     const { container: containerNoGlow } = render(<CardMatt glow={false} />);
     // Vanilla-extract hashes class names, so we compare the number of classes
-    // on the surface div. The glow variant adds a second class to the surface.
-    const surfaceGlow = containerGlow.querySelectorAll('[class]')[1] as HTMLElement;
-    const surfaceNoGlow = containerNoGlow.querySelectorAll('[class]')[1] as HTMLElement;
+    // on the surface element. When glow=true the component joins two class strings.
+    // We find the surface by looking for the element that directly contains the
+    // target area (the element with aria-hidden inside it).
+    const getTargetParent = (c: HTMLElement) =>
+      c.querySelector('[aria-hidden="true"]')?.parentElement as HTMLElement;
+
+    const surfaceGlow = getTargetParent(containerGlow);
+    const surfaceNoGlow = getTargetParent(containerNoGlow);
+
     expect(surfaceGlow).toBeTruthy();
     expect(surfaceNoGlow).toBeTruthy();
     // Glowing surface should have more classes than non-glowing

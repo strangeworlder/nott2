@@ -6,7 +6,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card, Button, TextField, Icon } from '@nott2/design-system';
+import { Card, Button, TextField, Icon, Text } from '@nott2/design-system';
 import { useGameStore } from '../../store/game-store';
 
 export function CreateForm({ onCreated }: { onCreated: () => void }) {
@@ -40,7 +40,7 @@ export function CreateForm({ onCreated }: { onCreated: () => void }) {
     return (
       <Card title="Create a Game">
         <div className="lobby-form">
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', textAlign: 'center' }}>Checking authentication…</p>
+          <Text variant="caption" color="muted" align="center">Checking authentication…</Text>
         </div>
       </Card>
     );
@@ -50,15 +50,15 @@ export function CreateForm({ onCreated }: { onCreated: () => void }) {
     return (
       <Card title="Create a Game">
         <div className="lobby-form" style={{ gap: 16 }}>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', lineHeight: 1.6 }}>
+          <Text variant="body" color="muted">
             To host a game, you need to verify your subscription by signing in with Discord.
-          </p>
+          </Text>
           <Button variant="primary" onClick={() => window.location.href = '/auth/signin'}>
             <Icon name="login" size={20} /> Sign in with Discord
           </Button>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', textAlign: 'center' }}>
+          <Text variant="caption" color="muted" align="center">
             Players joining a game don't need to sign in — use the "Join Game" tab.
-          </p>
+          </Text>
         </div>
       </Card>
     );

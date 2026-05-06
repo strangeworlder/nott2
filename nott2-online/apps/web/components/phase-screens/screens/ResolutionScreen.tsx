@@ -8,7 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   PhasePanel, Card, Button, ActionFooter,
-  DifficultyBadge, DiceResult, EffortBand, Icon,
+  DifficultyBadge, DiceResult, EffortBand, Icon, Text, SegmentedControl,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
 import DicePanel from '../DicePanel';
@@ -88,32 +88,33 @@ export function ResolutionScreen() {
 
       {hasRolled && !isRolling && hasAptitude && (
         <Card title={`Aptitude — ${activeChar!.aptitude}`}>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 12 }}>
+          <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
             Your aptitude lets you adjust the Effort Die (d4) by ±1. Explore the options — your choice is only locked in when you proceed.
-          </p>
-          <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-            <Button variant={aptitudeChoice === -1 ? 'primary' : 'secondary'} size="sm"
-              onClick={() => setAptitudeChoice(aptitudeChoice === -1 ? 0 : -1)} disabled={rawD4 !== null && rawD4 <= 1}>−1 Effort</Button>
-            <Button variant={aptitudeChoice === 0 ? 'primary' : 'ghost'} size="sm"
-              onClick={() => setAptitudeChoice(0)}>No Change</Button>
-            <Button variant={aptitudeChoice === 1 ? 'primary' : 'secondary'} size="sm"
-              onClick={() => setAptitudeChoice(aptitudeChoice === 1 ? 0 : 1)} disabled={rawD4 !== null && rawD4 >= 4}>+1 Effort</Button>
-          </div>
+          </Text>
+          <SegmentedControl
+            options={[
+              { value: -1 as const, label: '−1 Effort', disabled: rawD4 !== null && rawD4 <= 1 },
+              { value: 0 as const, label: 'No Change' },
+              { value: 1 as const, label: '+1 Effort', disabled: rawD4 !== null && rawD4 >= 4 },
+            ]}
+            value={aptitudeChoice}
+            onChange={(v) => setAptitudeChoice(v as -1 | 0 | 1)}
+          />
         </Card>
       )}
 
       {canSpendGP && !isRolling && (
         <Card variant="instruction" title="Spend Genre Point? (Reroll d13, d10 gets +1)">
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 8 }}>
+          <Text variant="caption" color="muted" style={{ marginBottom: 8 }}>
             Spend 1 Genre Point to reroll. The new d10 gets +1. You must accept the result.
-          </p>
+          </Text>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             {use3D && diceHook ? (
               <GenrePointDiceRoller useDiceRoll={diceHook} slasherTheme={SLASHER_THEME}
                 onResult={(d10) => { useGenrePoint(d10); setAptitudeChoice(0); }} />
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 8 }}>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', textAlign: 'center' }}>Select your new d10 (will add +1):</p>
+                <Text variant="caption" color="muted" align="center">Select your new d10 (will add +1):</Text>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, justifyContent: 'center' }}>
                   {([0,1,2,3,4,5,6,7,8,9] as const).map(v => (
                     <Button key={v} variant="secondary" size="sm"

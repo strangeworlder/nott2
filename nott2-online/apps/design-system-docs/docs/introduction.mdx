@@ -1,0 +1,89 @@
+---
+slug: /
+sidebar_position: 1
+title: Introduction
+---
+
+# Night of the Thirteenth — Design System
+
+The visual language of survival horror. This documentation defines the **design tokens**, **component library**, and **usage patterns** that power the Night of the Thirteenth 2 game interface.
+
+## Philosophy
+
+Every element in this system serves the horror fantasy. The interface is not merely functional — it is **diegetic**. Buttons feel like instruments of fate. Cards are totems. Colors bleed. The system enforces a premium, cinematic aesthetic that makes the player feel like they're inside a slasher film, not just playing a game about one.
+
+### Core Principles
+
+| Principle | In Practice |
+|---|---|
+| **Dark by default** | Near-black backgrounds (`#0a0a0a`), no light mode. The darkness is the design. |
+| **Blood-red accent** | `#8a0000` is the brand. Red IS danger — there is no separate "danger" color. |
+| **Two typefaces** | Playfair Display commands (headings, buttons). Inter explains (body, captions). |
+| **Sharp corners** | `2px–8px` radii. This isn't a friendly SaaS — it's gritty and deliberate. |
+| **Glow, not shadow** | Elements radiate blood-red light. Green glows are reserved for survival moments. |
+| **Component authority** | No raw HTML. `<Text>` for all text. `<Button>` for all actions. `<Card>` for all containers. |
+
+## Architecture
+
+The system follows **atomic design** principles:
+
+```
+Atoms (primitives — no game logic)
+├── Text, Button, Icon, Badge, Toggle, Separator
+├── TextField, TextArea
+├── Stack, Row (layout)
+├── StatusCallout, PhaseHeader
+
+Molecules (composed atoms — single-purpose game widgets)
+├── Card, ActionFooter, PlayingCard, PlayerAvatar
+├── StrikeIndicator, DieSelector, ResultBanner
+├── EffortBand, DifficultyBadge, DiceResult
+├── WeaknessTracker, WaitingIndicator, TabBar
+├── CardMatt, Deck, DoomClock, DoomClockTransition
+
+Organisms (compound — full screen sections)
+├── GameBoard, Header, ChatPanel, PlayerPanel
+├── PhaseDisplay, PhasePanel, CharacterBar
+├── TransitionOverlay, ActBreakOverlay, SceneChallengeOverlay
+```
+
+## Technology
+
+- **Styling**: [Vanilla Extract](https://vanilla-extract.style/) (zero-runtime CSS-in-TS)
+- **Recipes**: `@vanilla-extract/recipes` for variant-driven component styles
+- **Theme**: Contract-based (`createThemeContract` + `createTheme`) — playsets override tokens without touching components
+- **Framework**: React 18/19, TypeScript strict mode
+
+## Getting Started
+
+```bash
+# Install dependencies from monorepo root
+cd nott2-online
+npm install
+
+# Run Storybook (interactive component playground)
+npm run storybook:dev --workspace=@nott2/design-system
+
+# Run this documentation site
+npm run dev --workspace=@nott2/design-system-docs
+```
+
+### Using Components
+
+```tsx
+import { Text, Button, Card, Stack } from '@nott2/design-system';
+
+function MyScreen() {
+  return (
+    <Stack gap="lg">
+      <Text variant="h2">Scene Setup</Text>
+      <Card variant="instruction">
+        <Text>Draw a card from the threat deck.</Text>
+      </Card>
+      <Button variant="primary" onClick={handleDraw}>
+        Draw Card
+      </Button>
+    </Stack>
+  );
+}
+```

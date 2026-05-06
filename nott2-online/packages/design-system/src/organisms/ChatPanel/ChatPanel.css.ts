@@ -39,7 +39,7 @@ export const bubbleSender = style({
   color: vars.color.textMuted,
   marginBottom: '2px',
   textTransform: 'uppercase',
-  letterSpacing: '0.06em',
+  letterSpacing: vars.letterSpacing.tight,
 });
 
 export const bubbleText = style({
@@ -76,7 +76,7 @@ export const genrePointMessage = style({
   backgroundColor: 'rgba(45, 90, 45, 0.1)',
   border: `1px solid ${vars.color.success}`,
   borderRadius: vars.radius.md,
-  color: '#4ade80',
+  color: vars.color.successBright,
   padding: `${vars.space.xs} ${vars.space.sm}`,
   fontSize: vars.fontSize.label,
 });

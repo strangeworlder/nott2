@@ -10,7 +10,7 @@ export const toggleButtonStyle = style({
   fontSize: vars.fontSize.micro,
   fontWeight: 600,
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
+  letterSpacing: vars.letterSpacing.normal,
   border: `1px solid`,
   borderRadius: vars.radius.md,
   cursor: 'pointer',
@@ -24,14 +24,14 @@ export const toggleButtonStyle = style({
 });
 
 export const toggleButtonOn = style({
-  borderColor: '#4ade80',
-  color: '#4ade80',
+  borderColor: vars.color.successBright,
+  color: vars.color.successBright,
   backgroundColor: 'rgba(45, 90, 45, 0.1)',
-  boxShadow: '0 0 10px rgba(74, 222, 128, 0.2)',
+  boxShadow: vars.shadow.glowGreenBright,
 });
 
 export const toggleButtonOff = style({
-  borderColor: 'rgba(255,255,255,0.2)',
+  borderColor: vars.color.borderSubtle,
   color: vars.color.textMuted,
   ':hover': {
     borderColor: vars.color.text,
@@ -59,12 +59,12 @@ export const switchTrack = style({
 
 export const switchTrackOn = style({
   backgroundColor: 'rgba(45, 90, 45, 0.2)',
-  border: `1px solid #4ade80`,
+  border: `1px solid ${vars.color.successBright}`,
 });
 
 export const switchTrackOff = style({
   backgroundColor: 'rgba(255,255,255,0.06)',
-  border: `1px solid rgba(255,255,255,0.2)`,
+  border: `1px solid ${vars.color.borderSubtle}`,
 });
 
 export const switchThumb = style({
@@ -79,8 +79,8 @@ export const switchThumb = style({
 
 export const switchThumbOn = style({
   left: '27px',
-  backgroundColor: '#4ade80',
-  boxShadow: '0 0 8px rgba(74, 222, 128, 0.5)',
+  backgroundColor: vars.color.successBright,
+  boxShadow: vars.shadow.glowGreenSubtle,
 });
 
 export const switchThumbOff = style({
@@ -93,9 +93,9 @@ export const switchLabel = style({
   fontSize: vars.fontSize.micro,
   fontWeight: 600,
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
+  letterSpacing: vars.letterSpacing.normal,
   transition: `color ${vars.transition.normal}`,
 });
 
-export const switchLabelOn = style({ color: '#4ade80' });
+export const switchLabelOn = style({ color: vars.color.successBright });
 export const switchLabelOff = style({ color: vars.color.textMuted });

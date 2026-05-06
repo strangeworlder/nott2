@@ -9,6 +9,8 @@
  */
 
 import type { Metadata } from 'next';
+import { darkTheme } from '@nott2/design-system/src/tokens/theme.css';
+import { Text } from '@nott2/design-system/src/atoms/Text/Text';
 import './rules.css';
 
 export const metadata: Metadata = {
@@ -18,28 +20,28 @@ export const metadata: Metadata = {
 
 export default function RulesPage() {
   return (
-    <main className="rules-page">
+    <main className={`rules-page ${darkTheme}`}>
       <header className="rules-header">
         <a href="/" className="rules-back">← Home</a>
-        <h1 className="rules-title">Rules Reference</h1>
-        <span className="rules-subtitle">Night of the Thirteenth 2</span>
+        <Text variant="h1" color="red" glow className="rules-title">Rules Reference</Text>
+        <Text variant="micro" color="muted" as="span" className="rules-subtitle">Night of the Thirteenth 2</Text>
       </header>
 
       <article className="rules-body">
 
         {/* Overview */}
         <section className="rules-section">
-          <h2>The Game</h2>
-          <p>A director-less horror TTRPG for 4 players. One player per character (Spades, Hearts, Clubs, Diamonds). No GM. The table narrates collectively. You are victims in a slasher movie — the script is already written.</p>
+          <Text variant="h2" border="bottom">The Game</Text>
+          <Text variant="body" color="muted">A director-less horror TTRPG for 4 players. One player per character (Spades, Hearts, Clubs, Diamonds). No GM. The table narrates collectively. You are victims in a slasher movie — the script is already written.</Text>
         </section>
 
         {/* The Dice */}
         <section className="rules-section">
-          <h2>The Roll — d13</h2>
-          <p>Every challenge is resolved with a <strong>d13</strong> = d10 (0–9) + d4 (1–4), clamped to [1–13].</p>
-          <p>Roll <strong>equal to or over the Difficulty</strong> to succeed.</p>
+          <Text variant="h2" border="bottom">The Roll — d13</Text>
+          <Text variant="body" color="muted">Every challenge is resolved with a <strong>d13</strong> = d10 (0–9) + d4 (1–4), clamped to [1–13].</Text>
+          <Text variant="body" color="muted">Roll <strong>equal to or over the Difficulty</strong> to succeed.</Text>
 
-          <h3>Effort Levels (d4)</h3>
+          <Text variant="label" color="muted">Effort Levels (d4)</Text>
           <table className="rules-table">
             <thead><tr><th>d4</th><th>Level</th><th>Cost</th></tr></thead>
             <tbody>
@@ -53,7 +55,7 @@ export default function RulesPage() {
 
         {/* Difficulty */}
         <section className="rules-section">
-          <h2>Difficulty</h2>
+          <Text variant="h2" border="bottom">Difficulty</Text>
           <table className="rules-table">
             <thead><tr><th>Card Type</th><th>Difficulty</th></tr></thead>
             <tbody>
@@ -69,29 +71,29 @@ export default function RulesPage() {
 
         {/* Acts */}
         <section className="rules-section">
-          <h2>Acts</h2>
+          <Text variant="h2" border="bottom">Acts</Text>
           <div className="rules-acts">
             <div className="rules-act">
-              <div className="rules-act__num">Act I</div>
-              <div className="rules-act__name">The Setup</div>
-              <p>4 Aces on top of the Threat Deck — one per character. Only Jacks appear. Resolving a Face Card ends Act 1.</p>
+              <Text variant="micro" color="muted" as="div" className="rules-act__num">Act I</Text>
+              <Text variant="h3" as="div" className="rules-act__name">The Setup</Text>
+              <Text variant="body" color="muted" as="p">4 Aces on top of the Threat Deck — one per character. Only Jacks appear. Resolving a Face Card ends Act 1.</Text>
             </div>
             <div className="rules-act rules-act--2">
-              <div className="rules-act__num">Act II</div>
-              <div className="rules-act__name">The Horror Story</div>
-              <p>The Killer is active. People will die. More and more Face Cards get added to the Threat Deck.</p>
+              <Text variant="micro" color="muted" as="div" className="rules-act__num">Act II</Text>
+              <Text variant="h3" as="div" className="rules-act__name">The Horror Story</Text>
+              <Text variant="body" color="muted" as="p">The Killer is active. People will die. More and more Face Cards get added to the Threat Deck.</Text>
             </div>
             <div className="rules-act rules-act--3">
-              <div className="rules-act__num">Act III</div>
-              <div className="rules-act__name">The Climax</div>
-              <p>All Number Cards removed from Threat Deck. Only Face Cards remain. Every scene is a direct confrontation.</p>
+              <Text variant="micro" color="muted" as="div" className="rules-act__num">Act III</Text>
+              <Text variant="h3" color="red" as="div" className="rules-act__name">The Climax</Text>
+              <Text variant="body" color="muted" as="p">All Number Cards removed from Threat Deck. Only Face Cards remain. Every scene is a direct confrontation. The Finale begins when all 4 weaknesses are found.</Text>
             </div>
           </div>
         </section>
 
         {/* Phase Sequence */}
         <section className="rules-section">
-          <h2>Scene Sequence</h2>
+          <Text variant="h2" border="bottom">Scene Sequence</Text>
           <ol className="rules-phases">
             <li><strong>Scene Setup</strong> — Draw cards, fill the table (max 2 visible). Select the challenge card. Face Cards must be selected if visible.</li>
             <li><strong>Conversation &amp; Stakes</strong> — Role-play the scene. One non-AP player may use Escalation once. Define the Sacrifice.</li>
@@ -103,42 +105,42 @@ export default function RulesPage() {
 
         {/* Aptitude */}
         <section className="rules-section">
-          <h2>Aptitude</h2>
+          <Text variant="h2" border="bottom">Aptitude</Text>
           <table className="rules-table">
             <thead><tr><th>Suit</th><th>Aptitude</th><th>Applies to</th></tr></thead>
             <tbody>
-              <tr><td>♠ Spades</td><td>Power</td><td>High-rank (6–10) Spades cards</td></tr>
-              <tr><td>♥ Hearts</td><td>Resolve</td><td>Low-rank (2–5) Hearts cards</td></tr>
-              <tr><td>♣ Clubs</td><td>Intellect</td><td>High-rank Clubs cards</td></tr>
-              <tr><td>♦ Diamonds</td><td>Finesse</td><td>Low-rank Diamonds cards</td></tr>
+              <tr><td>♠ Spades</td><td>Power</td><td>Any Spades card</td></tr>
+              <tr><td>♥ Hearts</td><td>Resolve</td><td>Any Hearts card</td></tr>
+              <tr><td>♣ Clubs</td><td>Intellect</td><td>Any Clubs card</td></tr>
+              <tr><td>♦ Diamonds</td><td>Finesse</td><td>Any Diamonds card</td></tr>
             </tbody>
           </table>
-          <p>When the active player's Aptitude matches the challenge card, they may modify their d4 by ±1 <em>after</em> rolling, once per roll.</p>
+          <Text variant="body" color="muted">When the active player's Aptitude matches the challenge card, they may modify their d4 by ±1 <em>after</em> rolling, once per roll.</Text>
         </section>
 
         {/* Genre Points */}
         <section className="rules-section">
-          <h2>Genre Points</h2>
-          <p>The table starts with <strong>13 Genre Points</strong> in a shared pool. Players earn them during play (escalation, great roleplay). They may spend one to reroll the d10 and add +1 to the new result.</p>
-          <p>Spending a Genre Point is once per roll, before Aptitude is applied.</p>
+          <Text variant="h2" border="bottom">Genre Points</Text>
+          <Text variant="body" color="muted">The table starts with <strong>13 Genre Points</strong> in a shared pool. Players earn them during play (escalation, great roleplay). They may spend one to reroll the d10 and add +1 to the new result.</Text>
+          <Text variant="body" color="muted">Spending a Genre Point is once per roll, before Aptitude is applied.</Text>
         </section>
 
         {/* Strikes */}
         <section className="rules-section">
-          <h2>Strikes &amp; Death</h2>
-          <p>A character receives a Strike from:</p>
+          <Text variant="h2" border="bottom">Strikes &amp; Death</Text>
+          <Text variant="body" color="muted">A character receives a Strike from:</Text>
           <ul className="rules-list">
             <li>A d4 result of 4 (Breaking Point)</li>
             <li>Losing against a Face Card</li>
             <li>Final Girl module: any Face Card encounter</li>
           </ul>
-          <p>At <strong>3 Strikes</strong>, the character dies. They are removed from the game. If all characters die, the players lose.</p>
+          <Text variant="body" color="muted">At <strong>3 Strikes</strong>, the character dies. They are removed from the game. If all characters die, the players lose.</Text>
         </section>
 
         {/* Jokers */}
         <section className="rules-section">
-          <h2>Jokers (Endgame)</h2>
-          <p>When Act 3 begins, two Jokers are added to the Threat Deck:</p>
+          <Text variant="h2" border="bottom">Jokers (Endgame)</Text>
+          <Text variant="body" color="muted">When The Finale begins (4 weaknesses found), two Jokers are added to the Threat Deck:</Text>
           <ul className="rules-list">
             <li><strong>Red Joker</strong> — The End. Immediate lose condition if drawn and failed.</li>
             <li><strong>Black Joker</strong> — The Twist. Removed from deck on first encounter.</li>

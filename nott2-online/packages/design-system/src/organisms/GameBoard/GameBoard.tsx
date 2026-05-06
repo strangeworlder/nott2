@@ -35,6 +35,8 @@ import type { Suit, Rank } from '../../molecules/PlayingCard/PlayingCard';
 import { Deck } from '../../molecules/Deck/Deck';
 import type { DeckStatus } from '../../molecules/Deck/Deck';
 import { DoomClock } from '../../molecules/DoomClock/DoomClock';
+import { Icon } from '../../atoms/Icon/Icon';
+import { Badge } from '../../atoms/Badge/Badge';
 import * as styles from './GameBoard.css';
 
 interface GameBoardProps { children: React.ReactNode; vertical?: boolean; }
@@ -138,7 +140,7 @@ function TrophyZone({ topCard, count = 0, isRandomized, vertical }: TrophyZonePr
 function PhaseInfo({ phase, act, isEndgame }: PhaseInfoProps) {
   return (
     <div className={styles.phaseInfo}>
-      <span className={styles.actBadge} data-act={act}>Act {act}{isEndgame ? ' ☠' : ''}</span>
+      <Badge variant="red">Act {act}{isEndgame ? <> <Icon name="strike_dead" size={14} /></> : ''}</Badge>
       <span className={styles.phaseName}>{phase.replace(/-/g, ' ')}</span>
     </div>
   );

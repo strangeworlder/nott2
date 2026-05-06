@@ -1,0 +1,174 @@
+---
+sidebar_position: 7
+title: SegmentedControl
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { SegmentedControl, Row, Text, Card, Stack } from '@nott2/design-system';
+
+# SegmentedControl
+
+A row of mutually exclusive options where exactly one is always selected. Unlike [Toggle](/components/atoms/toggle) (binary on/off), SegmentedControl presents a small set of discrete choices — adjusting effort by −1/0/+1, selecting an input mode, choosing a tier.
+
+The active segment glows green (the same "active" language as Toggle), while inactive segments recede into muted gray. The player scans, chooses, commits.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { SegmentedControl } from '@nott2/design-system';
+
+<SegmentedControl 
+  options={[
+    { label: '-1', value: -1 }, 
+    { label: '0', value: 0 }, 
+    { label: '+1', value: 1 }
+  ]}
+  value={effort}
+  onChange={setEffort}
+/>
+```
+</details>
+
+## Why to Use
+
+A SegmentedControl reduces cognitive load by presenting all available options at once. Unlike a dropdown menu, the user doesn't have to click to discover what choices are available. By displaying choices horizontally, it creates a visual spatial relationship between options — particularly useful for ranges (like −1, 0, +1) where the position of the segment directly correlates with its value. It forces the UI to be opinionated and concise, preventing sprawling lists of options.
+
+## When to Use
+
+Use a SegmentedControl when you need the user to make a single selection from a small, mutually exclusive set of closely related options.
+
+> **Do**
+> - Use SegmentedControl for adjusting a mechanical value with clear steps (e.g., −1, 0, +1).
+> - Use it for switching between distinct operational modes (e.g., Auto-Deal vs Manual Entry).
+> - Keep the number of options small (ideally 2 to 4 choices).
+
+> **Don't**
+> - Don't use it for strictly binary on/off settings — use [Toggle](/components/atoms/toggle), as it carries stronger semantic weight for boolean states.
+> - Don't use it if there are more than 4–5 options — it becomes cramped and hard to scan. Fall back to a traditional radio group or dropdown.
+> - Don't use it for one-time actions — use [Button](/components/atoms/button). Segments represent state, not verbs.
+
+## Content Guidelines
+
+> **Do**
+> - Keep labels extremely concise (1–3 words max).
+> - Ensure labels are parallel in structure (e.g., all nouns or all verbs).
+> - Order options logically (e.g., lowest to highest, or most common to least common).
+
+> **Don't**
+> - Don't use icons alone without text labels unless space is severely constrained and the icon is universally understood.
+> - Don't use long explanatory text inside the segments.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `options` | `SegmentOption<T>[]` | — | Array of `{ value, label, disabled? }` defining each segment |
+| `value` | `T` | — | Currently selected value (controlled) |
+| `onChange` | `(value: T) => void` | — | Fired when a non-disabled, non-selected segment is clicked |
+| `id` | `string` | — | HTML id attribute on the root element |
+
+### SegmentOption
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `value` | `string \| number` | — | The value this segment represents |
+| `label` | `ReactNode` | — | Display content — typically short text |
+| `disabled` | `boolean` | `false` | Prevents selection and reduces opacity |
+
+## Anatomy
+
+```
+┌────────────────────────────────────────────────┐
+│  −1 EFFORT  │  NO CHANGE  │  +1 EFFORT         │
+│   (muted)   │  (active ✓) │   (muted)          │
+└────────────────────────────────────────────────┘
+ └── outer border: 1px solid border token
+     segments separated by 1px vertical dividers
+     active segment: green text + green-tinted background + subtle glow
+     disabled segment: 35% opacity, no interaction
+```
+
+Typography: display font, micro size, 600 weight, uppercase — same treatment as Badge and Toggle for visual consistency across all compact controls.
+
+## Behavior
+
+- **Controlled component** — state managed by parent via `value` + `onChange`.
+- Clicking an unselected segment fires `onChange` with the new value.
+- Clicking the *already selected* segment does nothing — there's no "deselect" state. One option is always active.
+- Disabled segments are visually faded and non-interactive. The `disabled` HTML attribute is applied for proper keyboard/screen-reader behavior.
+- The component is **generic** (`<T extends string | number>`) — TypeScript infers the value type from your options array.
+
+## Accessibility
+
+- Root element has `role="radiogroup"`.
+- Each segment has `role="radio"` with `aria-checked`.
+- Disabled segments use `aria-disabled` and the native `disabled` attribute.
+- Keyboard-focusable with visible focus rings (`focus-visible`).
+
+## Real Usage Examples
+
+### Aptitude Effort Adjustment (ResolutionScreen)
+
+The primary usage — adjusting the effort die (d4) by ±1 when a character has aptitude for the challenged card's suit. Boundary values are disabled (can't go below 1 or above 4).
+
+<ComponentPreview>
+  <SegmentedControl
+    options={[
+      { value: -1, label: '−1 Effort', disabled: false },
+      { value: 0, label: 'No Change' },
+      { value: 1, label: '+1 Effort', disabled: false },
+    ]}
+    value={0}
+    onChange={() => {}}
+  />
+</ComponentPreview>
+
+```tsx
+<SegmentedControl
+  options={[
+    { value: -1, label: '−1 Effort', disabled: rawD4 !== null && rawD4 <= 1 },
+    { value: 0, label: 'No Change' },
+    { value: 1, label: '+1 Effort', disabled: rawD4 !== null && rawD4 >= 4 },
+  ]}
+  value={aptitudeChoice}
+  onChange={(v) => setAptitudeChoice(v)}
+/>
+```
+
+### With Disabled Boundary
+
+When d4 = 1, the "−1 Effort" option is disabled (can't reduce below 1):
+
+<ComponentPreview>
+  <SegmentedControl
+    options={[
+      { value: -1, label: '−1 Effort', disabled: true },
+      { value: 0, label: 'No Change' },
+      { value: 1, label: '+1 Effort' },
+    ]}
+    value={0}
+    onChange={() => {}}
+  />
+</ComponentPreview>
+
+### Two-Option Mode Selector
+
+Also works as a compact mode toggle (future adoption candidate for CardEntry Auto/Manual):
+
+<ComponentPreview>
+  <SegmentedControl
+    options={[
+      { value: 'auto', label: 'Auto-Deal' },
+      { value: 'manual', label: 'Manual Entry' },
+    ]}
+    value="auto"
+    onChange={() => {}}
+  />
+</ComponentPreview>
+
+## Related Components
+
+- **[Toggle](/components/atoms/toggle)** — For binary on/off state (2 options only, with switch or button visual)
+- **[Button](/components/atoms/button)** — For one-time actions, not persistent state selection
+- **[Badge](/components/atoms/badge)** — For displaying a selected state as a read-only label

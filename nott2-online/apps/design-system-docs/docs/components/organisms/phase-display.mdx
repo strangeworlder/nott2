@@ -1,0 +1,38 @@
+---
+sidebar_position: 5
+title: PhaseDisplay
+---
+
+# PhaseDisplay
+
+The narrator's voice. Full-screen, full-bleed phase announcement with title, subtitle, and optional body text. Used for **dramatic moments**, NOT for operational screens.
+
+## Why to Use
+
+PhaseDisplay creates cinematic, atmospheric transitions between game phases. It's the game's equivalent of a title card in a horror film.
+
+## When to Use
+
+- Phase transitions (entering a new phase)
+- Dramatic revelations
+- **Never** for screens where the player needs to interact with controls — use PhasePanel instead
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `title` | `string` | — | Main title |
+| `subtitle` | `string` | — | Secondary text |
+| `body` | `string` | — | Optional body text |
+
+:::important PhaseDisplay vs PhasePanel
+**PhaseDisplay** = cinematic narration (full-bleed, dramatic, no controls).
+**PhasePanel** = operational workspace (structured, scrollable, interactive).
+Never use PhaseDisplay for operational screens.
+:::
+
+## Related Components
+
+- **[PhasePanel](/components/organisms/phase-panel)** — Operational counterpart
+- **[PhaseHeader](/components/atoms/phase-header)** — Title component inside PhasePanel
+- **[TransitionOverlay](/components/organisms/transition-overlay)** — Full-screen transitions

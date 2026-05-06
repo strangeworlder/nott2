@@ -18,9 +18,10 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { darkTheme, Card, Button, Text, Icon } from '@nott2/design-system';
+import type { IconName } from '@nott2/design-system';
 import './denied.css';
 
-const REASONS: Record<string, { title: string; message: string; icon: string }> = {
+const REASONS: Record<string, { title: string; message: string; icon: IconName }> = {
   'no-role': {
     title: 'Subscription Not Found',
     message:
@@ -47,7 +48,7 @@ const REASONS: Record<string, { title: string; message: string; icon: string }> 
   },
 };
 
-const DEFAULT_REASON = {
+const DEFAULT_REASON: { title: string; message: string; icon: IconName } = {
   title: 'Access Denied',
   message: 'You don\'t have permission to host a game. Please sign in with a valid subscription.',
   icon: 'lock',
@@ -64,7 +65,7 @@ function DeniedContent() {
         <Card>
           <div className="denied-inner">
             <div className="denied-icon-ring">
-              <Icon name={reason.icon as any} size={32} />
+              <Icon name={reason.icon} size={32} />
             </div>
 
             <Text variant="h2">{reason.title}</Text>

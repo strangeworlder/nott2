@@ -13,9 +13,9 @@ export const trophyRoot = style({
 });
 
 export const trophyLabel = style({
-  fontSize: '0.5rem',
+  fontSize: vars.fontSize.nano,
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
+  letterSpacing: vars.letterSpacing.normal,
   color: 'rgba(234, 179, 8, 0.7)',
   fontWeight: 600,
 });
@@ -24,14 +24,14 @@ export const trophyCard = style({
   fontFamily: vars.font.display,
   fontSize: vars.fontSize.h3,
   fontWeight: 700,
-  color: '#fbbf24',
+  color: vars.color.warning,
   lineHeight: 1,
 });
 
 export const trophyRank = style({
-  fontSize: '0.55rem',
+  fontSize: vars.fontSize.nano,
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
-  color: '#fbbf24',
+  letterSpacing: vars.letterSpacing.normal,
+  color: vars.color.warning,
   opacity: 0.7,
 });

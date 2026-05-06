@@ -31,7 +31,7 @@ import { iconRecipe, materialIconStyle } from './Icon.css';
 
 // ── Custom SVG Icons (card suits — future custom icon candidates) ───────────
 
-const CUSTOM_ICON_NAMES = ['spades', 'hearts', 'diamonds', 'clubs'] as const;
+const CUSTOM_ICON_NAMES = ['spades', 'hearts', 'diamonds', 'clubs', 'strike_filled', 'strike_empty', 'strike_dead'] as const;
 type CustomIconName = (typeof CUSTOM_ICON_NAMES)[number];
 
 const CUSTOM_SVGS: Record<CustomIconName, React.ReactElement> = {
@@ -55,6 +55,24 @@ const CUSTOM_SVGS: Record<CustomIconName, React.ReactElement> = {
       fill="currentColor"
       d="M12 2a4 4 0 0 0-3.1 6.54A4 4 0 1 0 12 14.07V17H9v2h6v-2h-3v-2.93A4 4 0 1 0 15.1 8.54 4 4 0 0 0 12 2z"
     />
+  ),
+  // ── Strike / death marks (custom SVGs for artist replacement) ──────────
+  strike_filled: (
+    <path
+      fill="currentColor"
+      d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12 5.7 16.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z"
+    />
+  ),
+  strike_empty: (
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
+  ),
+  strike_dead: (
+    <>
+      <circle cx="12" cy="10" r="6" fill="currentColor" />
+      <path fill="currentColor" d="M8 16l-2 6h3l3-3 3 3h3l-2-6z" />
+      <circle cx="10" cy="9" r="1.5" fill="var(--nott2-color-bg, #0e0e0e)" />
+      <circle cx="14" cy="9" r="1.5" fill="var(--nott2-color-bg, #0e0e0e)" />
+    </>
   ),
 };
 
@@ -102,15 +120,17 @@ type MaterialIconName =
   | 'assignment'
   | 'settings'
   | 'shuffle'
-  | 'undo'
   | 'delete'
-  | 'style'
+  | 'playing_cards'
   // Misc
   | 'crown'
   | 'swords'
   | 'check_circle'
   | 'arrow_downward'
-  | 'inventory_2'
+  | 'key'
+  | 'military_tech'
+  | 'input'
+  | 'person_raised_hand'
   | 'deployed_code'
   // Auth / access
   | 'lock'

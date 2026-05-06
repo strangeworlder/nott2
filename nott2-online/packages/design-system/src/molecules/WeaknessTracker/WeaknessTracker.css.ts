@@ -22,7 +22,7 @@ export const pipBase = style({
 });
 
 export const pipFound = style({
-  borderColor: '#22c55e',
-  color: '#4ade80',
-  backgroundColor: 'rgba(34, 197, 94, 0.08)',
+  borderColor: vars.color.successBright,
+  color: vars.color.successBright,
+  backgroundColor: 'rgba(74, 222, 128, 0.08)',
 });

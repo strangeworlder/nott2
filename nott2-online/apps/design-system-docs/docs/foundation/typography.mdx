@@ -1,0 +1,169 @@
+---
+sidebar_position: 2
+title: Typography
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Text } from '@nott2/design-system';
+
+# Typography
+
+Two typefaces define the voice of Night of the Thirteenth. One commands; the other explains. Together they create a tonal hierarchy that mirrors the structure of a horror film — dramatic beats alternating with clinical exposition.
+
+## Typefaces
+
+### Playfair Display — The Commanding Voice
+
+Used for: headings, buttons, labels, badges — anything that **commands attention**. Also used for `flavor` text — dramatic narration where the display font's weight is needed but the text speaks as prose, not as a label.
+
+Decision rule: If text is UPPERCASE or a heading → `font.display`. If text is dramatic narration in the commanding voice (scene prompts) → `flavor`.
+
+<div style={{ padding: '24px 32px', backgroundColor: '#141414', border: '1px solid #2a2a2a', borderRadius: 8, margin: '16px 0 24px' }}>
+  <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2rem', color: '#e8e8e8', lineHeight: 1.3, marginBottom: 8 }}>
+    Night falls. No one escapes.
+  </div>
+  <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#6a6a6a' }}>
+    font.display → 'Playfair Display', Georgia, serif
+  </div>
+</div>
+
+### Inter — The Explaining Voice
+
+Used for: body copy, captions, quotes, helper text — anything that **explains or narrates**.
+
+Decision rule: If text is a sentence or paragraph → `font.body`.
+
+<div style={{ padding: '24px 32px', backgroundColor: '#141414', border: '1px solid #2a2a2a', borderRadius: 8, margin: '16px 0 24px' }}>
+  <div style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: '1rem', color: '#e8e8e8', lineHeight: 1.75, marginBottom: 8 }}>
+    Draw a card from the threat deck. Apply its effect to the current hunter. If the card is a face card, the Killer strikes.
+  </div>
+  <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#6a6a6a' }}>
+    font.body → 'Inter', system-ui, sans-serif
+  </div>
+</div>
+
+### Monospace — The Diagnostic Voice
+
+Used for: version numbers, room codes, debug output, technical metadata — anything that needs **fixed-width clarity**.
+
+Decision rule: If text is a code, version, or technical identifier → `font.mono`.
+
+<div style={{ padding: '24px 32px', backgroundColor: '#141414', border: '1px solid #2a2a2a', borderRadius: 8, margin: '16px 0 24px' }}>
+  <div style={{ fontFamily: 'monospace', fontSize: '0.875rem', color: '#e8e8e8', lineHeight: 1.75, marginBottom: 8 }}>
+    v0.4.2 · Room: X7K-9M · Build 2026.05.04
+  </div>
+  <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#6a6a6a' }}>
+    font.mono → monospace
+  </div>
+</div>
+
+## Type Scale
+
+All sizes are defined in `vars.fontSize`. Hero, H1, H2, Lead, and Quote use `clamp()` for fluid responsive scaling.
+
+| Token | Value | Usage |
+|---|---|---|
+| `fontSize.hero` | `clamp(3rem, 8vw, 6rem)` | Full-screen splash titles only |
+| `fontSize.h1` | `clamp(2rem, 5vw, 3.5rem)` | Page-level headings (one per screen) |
+| `fontSize.h2` | `clamp(1.5rem, 3vw, 2.5rem)` | Section headings, PhaseHeader title |
+| `fontSize.h3` | `1.25rem` | Card titles, sub-section headings |
+| `fontSize.lead` | `clamp(1.125rem, 2vw, 1.25rem)` | Introductory paragraphs, slightly elevated body |
+| `fontSize.quote` | `clamp(1.25rem, 3vw, 1.5rem)` | Flavor text, in-world narration, blockquotes |
+| `fontSize.bodyLg` | `1.125rem` | Large button text (lg size) |
+| `fontSize.body` | `1rem` | Default body text, medium buttons |
+| `fontSize.label` | `0.875rem` | Labels, captions, callout text |
+| `fontSize.small` | `0.75rem` | XS buttons |
+| `fontSize.micro` | `0.625rem` | Badges, tiny annotations |
+| `fontSize.nano` | `0.5rem` | Extreme micro text (rarely used) |
+
+## Live Type Scale
+
+<ComponentPreview column>
+  <Text variant="hero">Hero</Text>
+  <Text variant="h1">Heading 1</Text>
+  <Text variant="h2">Heading 2</Text>
+  <Text variant="h3">Heading 3</Text>
+  <Text variant="lead">Lead paragraph text — slightly larger for introductions.</Text>
+  <Text variant="body">Body text — the default for all paragraphs and content.</Text>
+  <Text variant="flavor">Flavor — "The house remembers. It always remembers."</Text>
+  <Text variant="label">Label — UI labels, zone labels</Text>
+  <Text variant="caption">Caption — attributions, footnotes</Text>
+  <Text variant="quote">Quote — flavor text, in-world narration</Text>
+  <Text variant="micro">Micro — badges, annotations</Text>
+</ComponentPreview>
+
+## Letter Spacing
+
+The system uses deliberate tracking to create visual hierarchy and genre-appropriate texture.
+
+| Token | Value | Use |
+|---|---|---|
+| `letterSpacing.tight` | `0.04em` | Headings — elegant, close-set |
+| `letterSpacing.normal` | `0.08em` | Buttons — balanced |
+| `letterSpacing.wide` | `0.12em` | Labels — functional clarity |
+| `letterSpacing.wider` | `0.2em` | Emphasis labels |
+| `letterSpacing.widest` | `0.35em` | Micro text — the widest spread for extreme small sizes |
+
+:::note Heading Letter-Spacing Exception
+The `h2` and `h3` Text variants use bespoke letter-spacing values (`0.06em` and `0.05em` respectively) that fall between `tight` and `normal`. These are optical-balance decisions — the intermediate tracking is tuned per-heading level for the best visual weight with the Playfair Display typeface. This is a **component-level exception**, similar to how button padding uses hardcoded pixel values rather than spacing tokens.
+:::
+
+## Text Colors
+
+Color in text is not decoration — it is **narrative voice**. Each color carries a specific emotional register in the horror fantasy.
+
+### White — The Narrator
+
+The default. White text on near-black backgrounds is the game's steady, observational voice — the camera's neutral gaze. It reads clearly without calling attention to itself. Use it for everything unless there's a specific reason not to.
+
+### Red — The Threat
+
+Red text is the brand bleeding through. It marks danger, warnings, the Killer's presence, important mechanical consequences. There is no separate "danger" color — the brand IS the danger. When text turns red, the game is telling you something wants you dead.
+
+### Muted — The Whisper
+
+De-emphasized text for information that should be available but shouldn't compete for attention: helper text, captions, secondary labels, metadata. The player's eye should skip over muted text unless they're looking for it.
+
+### Success — The Reprieve
+
+Green is the rarest color in the system. It means survival, discovery, hope. A weakness found, a challenge overcome. Use it sparingly — if green appears too often, it loses its emotional punch.
+
+<ComponentPreview label="The four voices">
+  <Text color="white">White — the steady narrator</Text>
+  <Text color="red">Red — the threat speaks</Text>
+  <Text color="muted">Muted — the whispered aside</Text>
+  <Text color="success">Success — the breath of relief</Text>
+</ComponentPreview>
+
+:::caution
+Never use color as the sole carrier of meaning. A red label should also have contextual cues (icons, position, surrounding copy) that communicate danger to users who can't perceive color differences.
+:::
+
+## Text with Glow
+
+Glow is **cinematic punctuation** — a text-shadow halo that makes words feel like they're radiating light from within. It's the typographic equivalent of a dramatic camera push: use it for moments that need to land with weight.
+
+### When to Use Glow
+
+- **Phase titles** that announce a dramatic shift ("THE KILLER STRIKES")
+- **Roll outcomes** where the result needs visceral impact
+- **Discovery moments** — green glow for weakness found, survival confirmed
+
+### When NOT to Use Glow
+
+- Body text, labels, captions — glow on small text is illegible noise
+- Multiple glowing elements on the same screen — if everything glows, nothing does
+- Decorative purposes — glow has narrative meaning, not aesthetic
+
+The glow color is **automatic**: it follows the text's `color` prop. Red text glows red. Success text glows green. You don't choose the glow color — the system decides based on what the text is saying.
+
+<ComponentPreview column label="Glow as narrative weight">
+  <Text variant="h2" glow>The Killer Strikes</Text>
+  <Text variant="h2" color="success" glow>Weakness Discovered</Text>
+</ComponentPreview>
+
+```tsx
+{/* Glow follows color automatically */}
+<Text variant="h2" glow>The Killer Strikes</Text>
+<Text variant="h2" color="success" glow>Weakness Discovered</Text>
+```

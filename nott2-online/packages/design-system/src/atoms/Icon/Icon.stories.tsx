@@ -41,7 +41,7 @@ export const TheaterComedy: Story = { args: { name: 'theater_comedy', color: 'mu
 
 // ── All Icons Gallery ───────────────────────────────────────────────────────
 
-const CUSTOM_ICONS: IconName[] = ['spades', 'hearts', 'diamonds', 'clubs'];
+const CUSTOM_ICONS: IconName[] = ['spades', 'hearts', 'diamonds', 'clubs', 'strike_filled', 'strike_empty', 'strike_dead'];
 
 const MATERIAL_ICONS: IconName[] = [
   'schedule', 'chevron_right', 'chevron_left', 'expand_more', 'refresh',
@@ -49,8 +49,8 @@ const MATERIAL_ICONS: IconName[] = [
   'star', 'target', 'air', 'local_fire_department', 'dangerous',
   'casino', 'emoji_events', 'theater_comedy', 'skull',
   'movie', 'mic', 'mic_off', 'videocam', 'videocam_off',
-  'description', 'assignment', 'settings', 'shuffle', 'undo', 'delete', 'style',
-  'check_circle', 'arrow_downward', 'inventory_2',
+  'description', 'assignment', 'settings', 'shuffle', 'delete', 'playing_cards',
+  'check_circle', 'arrow_downward', 'key', 'military_tech', 'input', 'person_raised_hand',
 ];
 
 export const AllIcons: Story = {

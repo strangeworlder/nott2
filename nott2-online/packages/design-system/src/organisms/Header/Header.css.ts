@@ -20,7 +20,7 @@ export const headerTitle = style({
   fontSize: vars.fontSize.label,
   color: vars.color.text,
   fontWeight: 700,
-  letterSpacing: '0.05em',
+  letterSpacing: vars.letterSpacing.tight,
   flexShrink: 0,
 });
 
@@ -39,7 +39,7 @@ export const pill = style({
   fontSize: vars.fontSize.micro,
   fontFamily: vars.font.body,
   textTransform: 'uppercase',
-  letterSpacing: '0.06em',
+  letterSpacing: vars.letterSpacing.tight,
   whiteSpace: 'nowrap',
 });
 
@@ -48,8 +48,8 @@ export const pillAct2 = style({ borderColor: vars.color.accent, color: vars.colo
 export const pillAct3 = style({ borderColor: vars.color.accentBright, color: vars.color.accentBright });
 export const pillDanger = style({ borderColor: vars.color.accentBright, color: vars.color.accentBright });
 export const pillCode = style({
-  fontFamily: 'monospace',
-  letterSpacing: '0.15em',
+  fontFamily: vars.font.mono,
+  letterSpacing: vars.letterSpacing.wide,
   borderColor: vars.color.textMuted,
   color: vars.color.text,
 });

@@ -1,0 +1,207 @@
+---
+sidebar_position: 5
+title: Motion
+---
+
+# Motion & Transitions
+
+Motion in Night of the Thirteenth is a **cinematic instrument**. Every transition, every pulse, every flicker is borrowed from the language of horror filmmaking: the slow pan, the held breath, the sudden snap. Nothing moves without purpose, and nothing moves in a way that feels cheerful, bouncy, or "delightful." This is not a productivity app. This is a game about surviving the night.
+
+## Two Systems of Motion
+
+The system uses motion in two fundamentally different ways. Confusing them will break the feel.
+
+### CSS Transitions — Reactive
+
+Property changes in response to state: a border color shifting on hover, opacity fading, a button lifting. These are **synchronous with user input** — the user does something, the UI responds.
+
+**Governed by `vars.transition.*` tokens.**
+
+### Keyframe Animations — Autonomous
+
+Continuous or one-shot effects that run independently of user input: a breathing glow, a flickering crack, a cinematic overlay entrance. These are **asynchronous** — the system is alive, even when the player isn't touching anything.
+
+**Governed by component-level conventions (documented below).**
+
+---
+
+## Transition Tokens
+
+| Token | Value | Where It's Used | Purpose |
+|---|---|---|---|
+| `transition.fast` | `150ms ease-out` | TabBar tab switch, Header status, StrikeIndicator, DieSelector, Deck hover, ChatPanel send button | **Micro-feedback** — things that respond instantly. The user should barely register the transition; it should feel like a light switch. |
+| `transition.normal` | `200ms ease-out` | **Button** hover, **Card** hover, Toggle, TextField, CharacterBar, PlayingCard, PlayerAvatar, DoomClock segments, WeaknessTracker pips | **The default**. If you don't know which to use, it's this one. Visible but not sluggish. |
+| `transition.slow` | `400ms ease-out` | CardMatt border, DoomClock hand, DoomClock broken segments | **Dramatic weight** — things that move slowly to communicate importance. The clock hand sweeping, the card table border fading. Reserved for elements where the motion itself is part of the narrative. |
+
+### The Easing Rules
+
+**Transitions** always use `ease-out`. Elements arrive quickly and settle gently — like something dropping into place. This creates the feeling of finality: the state has changed, and it's done.
+
+**Exception:** TransitionOverlay *exit* uses `ease-in` (the inverse: starting slowly, accelerating away). This is correct — a fading overlay should feel like it's receding from the viewer, not snapping shut.
+
+:::caution
+Never use `linear` for UI transitions. Linear easing feels mechanical and lifeless — appropriate for loading progress bars, nothing else. Never use `bounce` or `elastic` easing — they feel playful and undercut the horror atmosphere.
+:::
+
+### The `transition: all` Pattern
+
+The codebase uses `transition: all ${vars.transition.normal}` extensively. This is a pragmatic trade-off:
+
+- **Pro**: Simple, covers all property changes without listing them individually
+- **Con**: Can trigger transitions on properties you didn't intend to animate (layout shifts, color inheritance changes)
+
+For most components, `all` is fine. For performance-critical elements (large lists, frequently-updating components), prefer explicit properties:
+
+```ts
+// Prefer explicit for hot paths:
+transition: `border-color ${vars.transition.normal}, box-shadow ${vars.transition.normal}`,
+
+// Fine for most components:
+transition: `all ${vars.transition.normal}`,
+```
+
+---
+
+## Keyframe Animations
+
+Keyframe animations fall into three categories, each with different rules.
+
+### 1. Breathing Effects — Ambient Life
+
+Continuous, looping animations that make the UI feel alive. They pulse in and out like a heartbeat.
+
+| Component | Animation | Duration | Easing | What It Does |
+|---|---|---|---|---|
+| **CardMatt** | `borderPulse` | `4s` | `ease-in-out` | Gold border shimmer — ambient diegetic texture, always on |
+| **CardMatt** | `cardMattGlowPulse` | `2.5s` | `ease-in-out` | Gold glow beacon — signals card selectability |
+| **Deck** | `glowPulse` | `2.5s` | `ease-in-out` | Gold glow beacon — signals deck drawability |
+| **DoomClock** | `pulseGlow` | `2s` | `ease-in-out` | Red ring pulse — warns when clock is near-full (10-12 segments) |
+| **DoomClock** | `crackFlicker` | `3s` | `ease-in-out` | Crack line flicker — broken state in Act 3 |
+| **WaitingIndicator** | `pulse` | `2s` | `ease-in-out` | Opacity pulse — something is loading, wait |
+| **Text** | `pulseAnimation` | `2s` | `ease-in-out` | Opacity pulse — text is pulsing for emphasis |
+
+All breathing effects use **`ease-in-out`**, not `ease-out`. The symmetrical easing creates a smooth inhale-exhale quality. All run `infinite`.
+
+#### Duration Conventions
+
+- **`2s`** — Standard breathing for small elements (dots, text, SVG rings)
+- **`2.5s`** — Beacon breathing for interactive elements (card selectability, deck drawability). Slightly slower than standard to feel weightier.
+- **`3s`** — Atmospheric flicker (damage cracks, environmental decay)
+- **`4s`** — Slow ambient shimmer (decorative border effects, background texture)
+
+### 2. Entry Animations — Dramatic Arrivals
+
+One-shot animations that play when an element enters. They run once and stop.
+
+| Component | Animation | Duration | Easing | What It Does |
+|---|---|---|---|---|
+| **TransitionOverlay** (backdrop) | `fadeIn` | `400ms` | `ease-out` | Black backdrop fades in smoothly |
+| **TransitionOverlay** (backdrop exit) | `fadeOut` | `400ms` | `ease-in` | Backdrop recedes — `ease-in` makes it feel like it's pulling away |
+| **TransitionOverlay** (content) | `scaleIn` | `500ms` | `cubic-bezier(0.16, 1, 0.3, 1)` | Content scales up from 85% with a spring-like settle |
+| **Deck** (status badge) | `fadeInScale` | `300ms` | `ease-out` | Badge pops in from 85% scale |
+
+Entry animations use `forwards` fill mode — the element stays at its final keyframe state.
+
+The content `scaleIn` uses a **spring-like cubic-bezier** (`0.16, 1, 0.3, 1`) — this is the one place in the system where motion has a slight overshoot. It makes overlays feel like they're arriving with physical weight, not just fading in.
+
+### 3. Cinematic Set-Pieces — Horror Choreography
+
+Complex, multi-element animations used for narrative moments. These are **not reusable patterns** — they're hand-crafted sequences.
+
+| Component | Animations | Purpose |
+|---|---|---|
+| **ActBreakOverlay** | `backdropIn/Out`, `panelSlam/Exit`, `numeralFlicker`, `fadeUp`, `hintFade` | VHS-style act break reveals — the act number flickers in like a damaged tape |
+| **SceneChallengeOverlay** | `backdropIn/Out`, `jumpScareFlash`, `slamIn`, `fadeUp`, `photoIn`, `shake`, `hintFade` | Evidence photo reveal with optional jump scare — the most complex animation sequence in the system |
+| **DoomClockTransition** | `newSegmentGlow`, `crackFlicker`, `shakeAnim`, `pulseGlow`, `hintFade` | Clock tick cinematic — hand sweeps, segments glow, the clock shows damage |
+
+:::tip When to go cinematic
+Cinematic animations are justified only for **phase-boundary moments** — act breaks, scene transitions, clock ticks. They should never be used for routine UI state changes. If the player sees a cinematic effect, something narratively significant just happened.
+:::
+
+---
+
+## Breathing Beacons
+
+The attention beacon (gold glow on CardMatt, Deck, and future selectable elements) is documented in detail in the [Shadows & Glows](/foundation/shadows#gold-glow--the-attention-beacon) foundation page. In summary:
+
+- **2.5s `ease-in-out` infinite** — the standard beacon rhythm
+- Colors reference `vars.color.gold` / `vars.color.goldBright` tokens
+- Blur/spread geometry scales proportionally to the component's physical size
+- Static `vars.shadow.beacon` fallback for `prefers-reduced-motion`
+
+---
+
+## Respecting Reduced Motion
+
+All animations **must** implement `prefers-reduced-motion: reduce` fallbacks. This is a non-negotiable accessibility requirement — some users have vestibular disorders where motion can cause physical discomfort.
+
+The system already has comprehensive coverage: **34 `prefers-reduced-motion` media queries** across 12 component files.
+
+### Fallback Strategies
+
+| Animation Type | Reduced-Motion Behavior | Example |
+|---|---|---|
+| **Beacon glows** | Static `vars.shadow.beacon` | Gold glow visible, not pulsing |
+| **Breathing pulses** | Static mid-state opacity | `opacity: 0.6–0.85` — present but still |
+| **Entry animations** | Instant final state | `opacity: 1`, no transition |
+| **Cinematic sequences** | Fully disabled | Content appears at end state immediately |
+| **Cracks / environmental** | Static high opacity | `opacity: 0.85` — visible damage, no flicker |
+
+### The Pattern
+
+```ts
+// In a .css.ts file:
+export const myAnimatedElement = style({
+  animationName: breathe,
+  animationDuration: '2s',
+  animationTimingFunction: 'ease-in-out',
+  animationIterationCount: 'infinite',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.8, // or boxShadow, or whatever the static fallback is
+    },
+  },
+});
+```
+
+:::warning
+Never rely on a global "disable all animations" approach. Each component must define its own **meaningful static fallback**. A DoomClock pulse disabled should still show the danger ring at a fixed opacity — removing the animation shouldn't remove the information.
+:::
+
+---
+
+## Usage
+
+```tsx
+// CSS transitions — use tokens:
+import { vars } from '../../tokens/theme.css';
+
+const myElement = style({
+  transition: `all ${vars.transition.normal}`,
+  ':hover': {
+    borderColor: vars.color.accentBright,
+  },
+});
+
+// Keyframe animations — define locally, use conventions:
+const breathe = keyframes({
+  '0%, 100%': { opacity: 0.5 },
+  '50%': { opacity: 1 },
+});
+
+const myPulsingElement = style({
+  animationName: breathe,
+  animationDuration: '2s',          // Standard breathing
+  animationTimingFunction: 'ease-in-out', // Always for breathing
+  animationIterationCount: 'infinite',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.8,
+    },
+  },
+});
+```

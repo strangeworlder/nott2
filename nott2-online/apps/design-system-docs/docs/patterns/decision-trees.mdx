@@ -1,0 +1,66 @@
+---
+sidebar_position: 2
+title: Decision Trees
+---
+
+# Decision Trees
+
+Quick-reference flowcharts for choosing the right component.
+
+## "Which component do I use for text?"
+
+```
+Is it any text at all? → <Text>
+  Is it a heading? → variant="h1" | "h2" | "h3"
+  Is it a paragraph? → variant="body" (default)
+  Is it introductory? → variant="lead"
+  Is it a UI label? → variant="label"
+  Is it flavor/narration? → variant="quote"
+  Is it a footnote? → variant="caption"
+  Is it a tiny annotation? → variant="micro"
+```
+
+## "Which container do I use?"
+
+```
+Grouping related content? → <Card>
+  Needs emphasis? → variant="highlighted"
+  Is it an instruction? → variant="instruction"
+  Is it a positive result? → variant="success"
+Vertical spacing? → <Stack>
+Horizontal layout? → <Row>
+Phase operational screen? → <PhasePanel>
+Phase dramatic moment? → <PhaseDisplay>
+```
+
+## "Which feedback component?"
+
+```
+System message to the player? → <StatusCallout>
+  Neutral info → variant="info"
+  Warning → variant="warning"
+  Critical/danger → variant="danger"
+  Positive → variant="success"
+  Special ability → variant="highlight"
+Roll outcome? → <ResultBanner>
+Inline tag/label? → <Badge>
+Waiting state? → <WaitingIndicator>
+```
+
+## "How do I handle a page action?"
+
+```
+Primary page CTA? → <ActionFooter label="..." onClick={...}>
+  (NOT <Button> directly — ActionFooter handles sticky positioning)
+Secondary inline actions? → <Button variant="secondary">
+Subtle/inline toggle? → <Button variant="ghost"> or <Toggle>
+```
+
+## "PhaseDisplay or PhasePanel?"
+
+```
+Is the player interacting with controls? → <PhasePanel>
+Is it a cinematic announcement? → <PhaseDisplay>
+Does it need a scrollable content area? → <PhasePanel>
+Is it full-bleed and dramatic? → <PhaseDisplay>
+```

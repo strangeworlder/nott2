@@ -1,0 +1,38 @@
+---
+sidebar_position: 7
+title: ResultBanner
+---
+
+# ResultBanner
+
+The verdict. **SUCCESS** (green) or **FAILURE** (red) in dramatic display font. The most dramatic single-moment UI element in the game.
+
+## Why to Use
+
+ResultBanner creates an unmistakable, emotionally-charged announcement of roll outcomes. The large display font and color-coding make the result instantly readable.
+
+## When to Use
+
+- After dice resolution to show the final outcome
+- Inside the resolution phase panel
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `result` | `'success' \| 'failure'` | — | Outcome type |
+| `total` | `number` | — | Roll total |
+| `difficulty` | `number` | — | Target difficulty |
+| `breakdown` | `string` | — | Optional text breakdown (e.g., "d10(7) + d4(3)") |
+
+## Implementation Examples
+
+```tsx
+<ResultBanner result="success" total={12} difficulty={10} breakdown="d10(7) + d4(3) + 2" />
+<ResultBanner result="failure" total={6} difficulty={10} />
+```
+
+## Related Components
+
+- **[DieSelector](/components/molecules/die-selector)** — Input that leads to this result
+- **[DiceResult](/components/molecules/dice-result)** — Clinical breakdown of the roll

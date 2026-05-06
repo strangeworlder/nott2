@@ -1,0 +1,23 @@
+---
+sidebar_position: 2
+title: Header
+---
+
+# Header
+
+Orientation bar. Sticky top with title, act/phase pills, optional room code, reset button, and action slot. Uses backdrop blur.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `title` | `string` | — | Game title |
+| `act` | `number` | — | Current act number |
+| `phase` | `string` | — | Current phase name |
+| `roomCode` | `string` | — | Optional multiplayer room code |
+| `onReset` | `() => void` | — | Reset button handler |
+| `actions` | `ReactNode` | — | Action slot (right side) |
+
+## Related Components
+
+- **[Badge](/components/atoms/badge)** — Act/phase pills in the header

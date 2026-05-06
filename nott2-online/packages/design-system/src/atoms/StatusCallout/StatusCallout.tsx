@@ -2,15 +2,16 @@
  * StatusCallout
  *
  * Philosophical:
- * These are the game's stage directions — contextual whispers from the system
- * to the player. A purple highlight when aptitude activates. A blue note about
+ * These are the game's stage directions — contextual messages from the system
+ * to the player. A purple highlight when the player must act. A blue note about
  * round order. A red warning when the breaking point arrives. Each has its own
  * emotional temperature, but they share a common voice: calm, precise, diegetic.
- * They do not shout. They observe.
+ * They do not shout. They observe and instruct.
  *
  * Technical:
- * A bordered callout box with 5 semantic variants. Accepts any children for
- * maximum flexibility. Optionally prepends an icon from the design system.
+ * A bordered callout box with 5 semantic variants. Uses the display font at
+ * label size (600 weight) for a premium, authoritative feel — the system
+ * speaking with quiet confidence. Optionally prepends an icon.
  *
  * Props:
  * - variant: 'info' | 'warning' | 'danger' | 'success' | 'highlight'. Defaults to 'info'.

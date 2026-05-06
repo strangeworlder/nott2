@@ -1,0 +1,39 @@
+---
+sidebar_position: 15
+title: Deck
+---
+
+# Deck
+
+A shrouded stack of fate. Renders layered PlayingCard components (face-down) with optional top card (face-up for trophy pile).
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `status` | `DeckStatus` | — | Deck state information |
+| `topCard` | `TopCardInfo` | — | Optional face-up top card (trophy pile) |
+| `glow` | `boolean` | `false` | Pulsing glow for draw prompts |
+| `showCount` | `boolean` | `false` | Show numeric card count badge |
+| `onClick` | `() => void` | — | Click handler (for drawing) |
+
+## Implementation Examples
+
+```tsx
+<Deck
+  status={{ remaining: 12, total: 52 }}
+  glow={isDrawPhase}
+  onClick={handleDraw}
+/>
+
+{/* Trophy pile with top card visible */}
+<Deck
+  status={{ remaining: 3, total: 52 }}
+  topCard={{ suit: 'Hearts', rank: 'K' }}
+/>
+```
+
+## Related Components
+
+- **[PlayingCard](/components/molecules/playing-card)** — Individual cards in the deck
+- **[CardMatt](/components/molecules/card-matt)** — Surface where drawn cards land

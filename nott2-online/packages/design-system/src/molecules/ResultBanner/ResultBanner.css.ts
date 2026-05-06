@@ -32,7 +32,7 @@ export const bannerWord = style({
   lineHeight: 1,
 });
 
-export const bannerWordSuccess = style({ color: '#4ade80' });
+export const bannerWordSuccess = style({ color: vars.color.successBright });
 export const bannerWordFailure = style({ color: vars.color.accentBright });
 
 export const bannerDetail = style({

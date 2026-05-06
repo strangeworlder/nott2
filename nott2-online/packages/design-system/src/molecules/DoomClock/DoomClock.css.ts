@@ -77,7 +77,7 @@ export const clockSubLabel = style({
   fontSize: vars.fontSize.micro,
   fontWeight: 600,
   textTransform: 'uppercase',
-  letterSpacing: '0.12em',
+  letterSpacing: vars.letterSpacing.wide,
   color: vars.color.textMuted,
 });
 
@@ -96,6 +96,13 @@ export const pulseRing = style({
   animationDuration: '2s',
   animationIterationCount: 'infinite',
   animationTimingFunction: 'ease-in-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.6,
+    },
+  },
 });
 
 /* ── Broken state (Act 3) ────────────────────────────────────────────────── */
@@ -120,6 +127,13 @@ export const crackLine = style({
   animationDuration: '3s',
   animationIterationCount: 'infinite',
   animationTimingFunction: 'ease-in-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.85,
+    },
+  },
 });
 
 export const brokenLabel = style({

@@ -1,0 +1,61 @@
+---
+sidebar_position: 8
+title: Stack
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Stack, Card, Text } from '@nott2/design-system';
+
+# Stack
+
+The spine of every phase screen — a vertical column of moments, each leading inexorably to the next. Stack is deliberately invisible, serving only to space and order.
+
+## Why to Use
+
+Stack provides consistent vertical spacing between children without manual margin management. It uses the spacing token scale to maintain rhythm across the interface.
+
+## When to Use
+
+- **Always** for vertical layouts — never use manual `margin-bottom` between elements.
+- Default gap `md` (16px) works for most content.
+- Use `lg` gap for generous section spacing, `sm` for tight groupings.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `gap` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Space between children |
+| `className` | `string` | — | Additional CSS class |
+
+## Implementation Examples
+
+<ComponentPreview column label="gap='sm'">
+  <Stack gap="sm">
+    <Card><Text variant="label">Item A</Text></Card>
+    <Card><Text variant="label">Item B</Text></Card>
+    <Card><Text variant="label">Item C</Text></Card>
+  </Stack>
+</ComponentPreview>
+
+<ComponentPreview column label="gap='lg'">
+  <Stack gap="lg">
+    <Card><Text variant="label">Section 1</Text></Card>
+    <Card><Text variant="label">Section 2</Text></Card>
+    <Card><Text variant="label">Section 3</Text></Card>
+  </Stack>
+</ComponentPreview>
+
+```tsx
+<Stack gap="lg">
+  <Text variant="h2">Scene Setup</Text>
+  <Card variant="instruction">
+    <Text>Draw a card from the threat deck.</Text>
+  </Card>
+  <ActionFooter label="Continue" />
+</Stack>
+```
+
+## Related Components
+
+- **[Row](/components/atoms/row)** — Horizontal equivalent
+- **[Card](/components/molecules/card)** — Content container (often stacked)

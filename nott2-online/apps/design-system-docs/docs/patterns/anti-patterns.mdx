@@ -1,0 +1,49 @@
+---
+sidebar_position: 3
+title: Anti-Patterns
+---
+
+# Anti-Patterns
+
+Common mistakes and their corrections. Commit these to muscle memory.
+
+## Component Usage
+
+| ❌ Don't | ✅ Do | Why |
+|---|---|---|
+| `<p>`, `<h1>`, `<span>` for text | `<Text variant="body">`, `<Text variant="h1">` | Raw elements leak browser defaults and break theming |
+| `<div>` for content grouping | `<Card>` with appropriate variant | Cards carry consistent padding, borders, and backgrounds |
+| `<button>` for actions | `<Button>` with variant/size props | Buttons carry the brand visual weight and consistent states |
+| Raw `<hr>` for dividers | `<Separator>` | Themed, consistent styling |
+| Inline SVGs for icons | `<Icon name="...">` | Dual-mode rendering, themed colors |
+| Hardcoded suit symbols (♠♥♦♣) | `<Icon name={suitToIconName(suit)}>` | Consistent rendering, future custom artwork support |
+
+## Styling
+
+| ❌ Don't | ✅ Do | Why |
+|---|---|---|
+| Utility classes on `<Text>` (`font-bold`, `text-red-400`) | Use `color`, `glow`, `border` props | Components own their styling; utilities bypass the system |
+| Ad-hoc color values (`color: '#ff0000'`) | Reference `vars.color.*` tokens | Tokens enable playset theming |
+| Inline styles for spacing | Use `<Stack gap="md">` or `<Row gap="sm">` | Consistent with the 4px grid |
+| `font-bold` or `font-weight: 700` overrides | Use component props or variants | Typography is controlled by the Text recipe |
+
+## Component Selection
+
+| ❌ Don't | ✅ Do | Why |
+|---|---|---|
+| `<Button>` at page bottom for primary CTA | `<ActionFooter label="...">` | ActionFooter handles sticky positioning |
+| PhaseDisplay for interactive screens | PhasePanel for operational, PhaseDisplay for cinematic | PhaseDisplay has no scrolling or controls |
+| `<Text variant="quote">` for introductions | Use `<Text variant="lead">` or a specialized component | Semantic accuracy matters for future tooling |
+| Raw `<div>` with manual flex | `<Row>` or `<Stack>` | Layout primitives handle gap and alignment |
+
+## Data Management
+
+| ❌ Don't | ✅ Do | Why |
+|---|---|---|
+| Hardcode long strings in components | Store in external JSON files | Separation enables content updates and localization |
+| Hardcode lists in templates | Use `v-for` / `.map()` over data arrays | Data-driven templates are maintainable |
+| Copy entire default playset to create a new one | Only override what differs | Playsets are overrides, not copies |
+
+:::tip Golden Rule
+If you're reaching for a CSS class, an inline style, or a raw HTML element — stop and check the design system first. There's almost certainly a component or token for what you need.
+:::

@@ -67,7 +67,7 @@ export const textFieldRecipe = recipe({
     size: {
       sm: { padding: `${vars.space.xs} ${vars.space.sm}`, fontSize: vars.fontSize.label },
       md: { padding: `${vars.space.sm} ${vars.space.md}`, fontSize: vars.fontSize.body },
-      lg: { padding: `${vars.space.md} ${vars.space.md}`, fontSize: '1.125rem' },
+      lg: { padding: `${vars.space.md} ${vars.space.md}`, fontSize: vars.fontSize.bodyLg },
     },
 
     hasError: {
@@ -125,7 +125,7 @@ export const textAreaRecipe = recipe({
     size: {
       sm: { padding: `${vars.space.xs} ${vars.space.sm}`, fontSize: vars.fontSize.label },
       md: { padding: `${vars.space.sm} ${vars.space.md}`, fontSize: vars.fontSize.body },
-      lg: { padding: `${vars.space.md} ${vars.space.md}`, fontSize: '1.125rem' },
+      lg: { padding: `${vars.space.md} ${vars.space.md}`, fontSize: vars.fontSize.bodyLg },
     },
 
     resize: {
@@ -173,7 +173,7 @@ export const labelStyle = style({
   fontSize: vars.fontSize.label,
   fontWeight: 600,
   color: vars.color.text,
-  letterSpacing: '0.04em',
+  letterSpacing: vars.letterSpacing.tight,
   textTransform: 'uppercase',
   userSelect: 'none',
 });

@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useGameStore } from '../../store/game-store';
 import { useWebRTCStore, getLocalStreamRef } from '../../store/webrtc-store';
 import {
-  PlayerAvatar, Card, Button, ActionFooter, TextField, Icon, suitToIconName,
+  PlayerAvatar, Card, Button, ActionFooter, TextField, Icon, suitToIconName, Text, Badge,
 } from '@nott2/design-system';
 
 const SUIT_LABEL: Record<string, string> = {
@@ -43,9 +43,9 @@ export function WaitingRoom() {
   return (
     <div className="waiting-room">
       <div className="room-code-banner">
-        <div className="room-code-banner__label">Room Code</div>
-        <div className="room-code-banner__code">{roomCode}</div>
-        <button className="room-code-banner__copy" onClick={copyCode}>{copied ? '✔ Copied' : 'Copy'}</button>
+        <Text variant="label" as="div" className="room-code-banner__label" color="muted">Room Code</Text>
+        <Text variant="h2" as="div" className="room-code-banner__code">{roomCode}</Text>
+        <button className="room-code-banner__copy" onClick={copyCode}>{copied ? <><Icon name="check" size={14} /> Copied</> : 'Copy'}</button>
       </div>
 
       <div className="waiting-layout">
@@ -62,14 +62,14 @@ export function WaitingRoom() {
                         <PlayerAvatar name={player.name ?? '???'} suit={suit} characterName={SUIT_LABEL[suit]}
                           isConnected={true} isActivePlayer={player.name === playerName} size="sm" />
                         <div className="seat__meta">
-                          {player.isHost && <span className="seat__badge seat__badge--host">Host</span>}
+                          {player.isHost && <Badge variant="red">Host</Badge>}
                           {player.ready
-                            ? <span className="seat__badge seat__badge--ready">Ready</span>
-                            : <span className="seat__badge seat__badge--waiting">Waiting</span>}
+                            ? <Badge variant="success">Ready</Badge>
+                            : <Badge variant="outline">Waiting</Badge>}
                         </div>
                       </div>
                     ) : (
-                      <div className="seat__empty-label"><Icon name={suitToIconName(suit)} size={16} /> Empty</div>
+                      <Text variant="label" as="div" color="muted" className="seat__empty-label"><Icon name={suitToIconName(suit)} size={16} /> Empty</Text>
                     )}
                   </div>
                 );
@@ -86,9 +86,9 @@ export function WaitingRoom() {
               ) : (
                 <div className="video-preview__placeholder">
                   <span style={{ fontSize: '2rem' }}><Icon name="videocam" size={32} /></span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                  <Text variant="caption" color="muted" as="span">
                     {webrtc.mediaError ? 'Camera unavailable' : 'Starting camera…'}
-                  </span>
+                  </Text>
                 </div>
               )}
             </div>
@@ -115,7 +115,7 @@ export function WaitingRoom() {
             hint={remotePlayers.length < 2 ? 'Share the room code to invite players' : 'All players will be sent to the game'}
             onClick={handleStart} />
         ) : (
-          <p className="text-muted" style={{ textAlign: 'center', fontSize: '0.875rem' }}>Waiting for the host to start the game…</p>
+          <Text variant="caption" color="muted" align="center">Waiting for the host to start the game…</Text>
         )}
         <Button variant="ghost" size="sm" onClick={handleLeave}>Leave Room</Button>
       </div>

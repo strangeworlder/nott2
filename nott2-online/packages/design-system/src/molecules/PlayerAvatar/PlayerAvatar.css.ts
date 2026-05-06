@@ -17,7 +17,7 @@ export const avatarRecipe = recipe({
     size: {
       sm: { padding: `${vars.space.xs} ${vars.space.sm}`, fontSize: vars.fontSize.label },
       md: { padding: `${vars.space.sm} ${vars.space.md}`, fontSize: vars.fontSize.body },
-      lg: { padding: `${vars.space.md} ${vars.space.lg}`, fontSize: '1.125rem' },
+      lg: { padding: `${vars.space.md} ${vars.space.lg}`, fontSize: vars.fontSize.bodyLg },
     },
     active: {
       true: {
@@ -59,7 +59,7 @@ export const onlineIndicator = style({
   borderRadius: vars.radius.full,
   flexShrink: 0,
   selectors: {
-    '&[data-online="true"]': { backgroundColor: '#4ade80' },
+    '&[data-online="true"]': { backgroundColor: vars.color.successBright },
     '&[data-online="false"]': { backgroundColor: vars.color.textMuted },
   },
 });

@@ -9,6 +9,7 @@
 
 import { useState } from 'react';
 import { useGameStore } from '../../store/game-store';
+import { Button, Text } from '@nott2/design-system';
 import type { Suit, Rank } from '@nott2/game-engine';
 
 const SUITS: { id: Suit; symbol: string; className: string }[] = [
@@ -78,25 +79,29 @@ export default function CardEntry({
     <div className="stack">
       {/* Mode toggle */}
       <div className="row">
-        <button
-          className={`btn btn--sm ${mode === 'auto' ? 'btn--primary' : 'btn--secondary'}`}
+        <Button
+          variant={mode === 'auto' ? 'primary' : 'secondary'}
+          size="sm"
           onClick={() => setMode('auto')}
-        >Auto-Deal</button>
-        <button
-          className={`btn btn--sm ${mode === 'manual' ? 'btn--primary' : 'btn--secondary'}`}
+        >Auto-Deal</Button>
+        <Button
+          variant={mode === 'manual' ? 'primary' : 'secondary'}
+          size="sm"
           onClick={() => setMode('manual')}
-        >Manual Entry</button>
+        >Manual Entry</Button>
       </div>
 
       {mode === 'auto' ? (
-        <button className="btn btn--primary btn--block" onClick={autoDeal}>
-          🎴 Deal Random Card
-        </button>
+        <div style={{ width: '100%' }}>
+          <Button variant="primary" onClick={autoDeal}>
+            🎴 Deal Random Card
+          </Button>
+        </div>
       ) : (
         <>
           {/* Suit selection */}
           <div>
-            <span className="field-label">Suit</span>
+            <Text variant="label" as="span">Suit</Text>
             <div className="row" style={{ gap: 8 }}>
               {SUITS.map(s => (
                 <button
@@ -113,7 +118,7 @@ export default function CardEntry({
 
           {/* Rank selection */}
           <div>
-            <span className="field-label">Rank</span>
+            <Text variant="label" as="span">Rank</Text>
             <div className="card-grid">
               {ranks.map(r => {
                 const disabled = !isRankAvailable(r) || (!!suit && !isSuitRankAvailable(suit, r));
@@ -133,13 +138,14 @@ export default function CardEntry({
           </div>
 
           {/* Confirm */}
-          <button
-            className="btn btn--primary btn--block"
-            onClick={handleConfirm}
-            disabled={!suit || !rank}
-          >
-            Draw {suit ? `${SUITS.find(s => s.id === suit)?.symbol}` : ''} {rank ? getRankLabel(rank) : '—'}
-          </button>
+          <div style={{ width: '100%' }}>
+            <Button
+              variant="primary"
+              onClick={handleConfirm}
+            >
+              Draw {suit ? `${SUITS.find(s => s.id === suit)?.symbol}` : ''} {rank ? getRankLabel(rank) : '—'}
+            </Button>
+          </div>
         </>
       )}
     </div>

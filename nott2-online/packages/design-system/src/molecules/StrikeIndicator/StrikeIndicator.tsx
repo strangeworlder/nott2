@@ -7,10 +7,14 @@
  * building toward. The animation on a new strike makes the moment land.
  *
  * Technical:
- * Renders 0–3 visual strike marks. Empty slots show ○ (hollow ring); filled
- * marks show ✕ in blood-red with a glow — shape, weight, and color all differ.
- * The third strike or `isDead` prop shows a skull overlay.
+ * Renders 0–3 visual strike marks using Icon component. Empty slots show
+ * `strike_empty` (hollow ring); filled marks show `strike_filled` (×-mark)
+ * in blood-red with a glow. The third strike or `isDead` prop shows
+ * `strike_dead` (skull-and-crossbones).
  * `animated` triggers a brief scale animation on mount.
+ *
+ * All three strike icons are custom SVGs routed through the Icon system
+ * so the commissioned artist can replace them in one place.
  *
  * Props:
  * - strikes: Current strike count (0–3). Defaults to 0.
@@ -20,6 +24,7 @@
 
 import React from 'react';
 import { indicatorRoot, strikeMark, strikeEmpty, skullMark } from './StrikeIndicator.css';
+import { Icon } from '../../atoms/Icon/Icon';
 
 type Strikes = 0 | 1 | 2 | 3;
 
@@ -39,7 +44,9 @@ export function StrikeIndicator({
   if (isDead || strikes >= 3) {
     return (
       <div id={id} className={indicatorRoot} aria-label="Character eliminated">
-        <span className={skullMark} data-animated={animated}>☠</span>
+        <span className={skullMark} data-animated={animated}>
+          <Icon name="strike_dead" size={20} />
+        </span>
       </div>
     );
   }
@@ -53,7 +60,7 @@ export function StrikeIndicator({
           data-animated={animated && i === strikes - 1}
           aria-hidden="true"
         >
-          {i < strikes ? '✕' : '○'}
+          <Icon name={i < strikes ? 'strike_filled' : 'strike_empty'} size={16} />
         </span>
       ))}
     </div>

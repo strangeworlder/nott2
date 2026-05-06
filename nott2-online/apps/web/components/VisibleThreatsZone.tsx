@@ -106,7 +106,7 @@ export function VisibleThreatsZone() {
         ref={tableCallbackRef}
         title="Visible Threats"
         count={cardCount}
-        emptyHint="Draw from deck"
+        emptyHint={canDraw ? "Draw from deck" : ""}
         glow={canSelectCard}
       />
 

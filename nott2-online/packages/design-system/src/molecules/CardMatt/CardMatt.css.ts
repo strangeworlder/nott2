@@ -3,14 +3,16 @@ import { vars } from '../../tokens/theme.css';
 
 // ── Gold-crimson shimmer on the dashed border — evokes casino table trim ──────
 const borderPulse = keyframes({
-  '0%, 100%': { borderColor: 'rgba(180, 100, 40, 0.45)' },
-  '50%': { borderColor: 'rgba(220, 160, 60, 0.70)' },
+  '0%, 100%': { borderColor: `color-mix(in srgb, ${vars.color.gold} 45%, transparent)` },
+  '50%': { borderColor: `color-mix(in srgb, ${vars.color.goldBright} 70%, transparent)` },
 });
 
 // ── Glow pulse — gold/crimson box-shadow that breathes, signals card selectability ──
+// Dimensions are proportional to CardMatt's large surface area.
+// Colors reference tokens; blur/spread are component-specific.
 const cardMattGlowPulse = keyframes({
-  '0%, 100%': { boxShadow: '0 0 10px 3px rgba(180, 100, 40, 0.40), 0 0 30px 6px rgba(180, 60, 20, 0.20)' },
-  '50%':      { boxShadow: '0 0 20px 8px rgba(220, 150, 50, 0.70), 0 0 50px 14px rgba(220, 80, 30, 0.35)' },
+  '0%, 100%': { boxShadow: `0 0 10px 3px color-mix(in srgb, ${vars.color.gold} 40%, transparent), 0 0 30px 6px color-mix(in srgb, ${vars.color.gold} 20%, transparent)` },
+  '50%': { boxShadow: `0 0 20px 8px color-mix(in srgb, ${vars.color.goldBright} 70%, transparent), 0 0 50px 14px color-mix(in srgb, ${vars.color.goldBright} 35%, transparent)` },
 });
 
 // ── Root container: rotated title on left + matt on right ────────────────────
@@ -29,7 +31,7 @@ export const cardMattTitle = style({
   fontFamily: vars.font.display,
   fontSize: vars.fontSize.micro,
   fontWeight: 700,
-  letterSpacing: '0.2em',
+  letterSpacing: vars.letterSpacing.wider,
   textTransform: 'uppercase',
   color: vars.color.textMuted,
   whiteSpace: 'nowrap',
@@ -46,13 +48,13 @@ export const cardMattSurface = style({
   flex: 1,
   minHeight: '180px',
   borderRadius: vars.radius.lg,
-  border: '2px dashed rgba(180, 100, 40, 0.45)',
+  border: `2px dashed color-mix(in srgb, ${vars.color.gold} 45%, transparent)`,
   animation: `${borderPulse} 4s ease-in-out infinite`,
   position: 'relative',
   overflow: 'hidden',
 
   // Red velvet surface — photographic texture with woven pattern overlay
-  backgroundColor: '#3a0505',
+  backgroundColor: vars.color.diegeticSurface,
   backgroundImage: [
     // Damask-style diamond weave overlay — adds elegant, fabric-like depth
     'repeating-linear-gradient(45deg,  transparent, transparent 10px, rgba(0,0,0,0.06) 10px, rgba(0,0,0,0.06) 11px)',
@@ -66,6 +68,13 @@ export const cardMattSurface = style({
   backgroundBlendMode: ['multiply', 'screen', 'normal', 'normal'].join(', '),
 
   transition: `border-color ${vars.transition.slow}`,
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      borderColor: `color-mix(in srgb, ${vars.color.gold} 55%, transparent)`,
+    },
+  },
 });
 
 // ── Glow variant — pulsing amber/crimson halo signalling card selectability ───
@@ -73,7 +82,14 @@ export const cardMattSurface = style({
 // a more dramatic box-shadow beacon. Stop borderPulse by overriding animationName.
 export const cardMattSurfaceGlow = style({
   animation: `${cardMattGlowPulse} 2.5s ease-in-out infinite`,
-  borderColor: 'rgba(220, 160, 60, 0.80)',
+  borderColor: `color-mix(in srgb, ${vars.color.goldBright} 80%, transparent)`,
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      boxShadow: vars.shadow.beacon,
+    },
+  },
 });
 
 // ── Empty state hint text ────────────────────────────────────────────────────
@@ -83,11 +99,11 @@ export const cardMattEmpty = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: 'rgba(220, 160, 80, 0.28)',
+  color: `color-mix(in srgb, ${vars.color.goldBright} 58%, transparent)`,
   fontFamily: vars.font.display,
   fontSize: vars.fontSize.label,
   fontWeight: 700,
-  letterSpacing: '0.15em',
+  letterSpacing: vars.letterSpacing.wide,
   textTransform: 'uppercase',
   userSelect: 'none',
   pointerEvents: 'none',
@@ -101,7 +117,7 @@ export const cardMattCount = style({
   fontFamily: vars.font.body,
   fontSize: vars.fontSize.micro,
   color: vars.color.textMuted,
-  letterSpacing: '0.1em',
+  letterSpacing: vars.letterSpacing.normal,
   textTransform: 'uppercase',
   pointerEvents: 'none',
   userSelect: 'none',

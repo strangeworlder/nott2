@@ -186,20 +186,6 @@
   align-items: center;
 }
 
-.seat__badge {
-  font-size: 0.5rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border-radius: 999px;
-  border: 1px solid;
-}
-
-.seat__badge--host   { border-color: #8a0000; color: #dc2626; }
-.seat__badge--ready  { border-color: #2a5a2a; color: #4ade80; }
-.seat__badge--waiting { border-color: #3a3a3a; color: #6a6a6a; }
-
 .seat__empty-label {
   font-size: 0.75rem;
   color: #2a2a2a;

@@ -15,7 +15,7 @@
 import React from 'react';
 import {
   PhasePanel, Card, Button, ActionFooter,
-  StatusCallout, WaitingIndicator, Icon, suitToIconName,
+  StatusCallout, WaitingIndicator, Icon, suitToIconName, Text, Badge,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
 import { getRankLabel } from '../helpers';
@@ -96,7 +96,7 @@ export function SceneSetupScreen() {
 
         {/* Step 1: Draw first card (table empty) */}
         {needsFirstDraw && canControl && (
-          <StatusCallout variant="highlight" icon="style">
+          <StatusCallout variant="highlight" icon="playing_cards">
             Click the <strong>Threat Deck</strong> on the table to draw the first card and begin the scene.
           </StatusCallout>
         )}
@@ -113,12 +113,12 @@ export function SceneSetupScreen() {
             : '';
           return (
             <Card title="Who Rises to the Challenge?">
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 12 }}>
+              <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
                 Choose the Active Player for this scene. This is a half-blind decision — you can only see one threat card.
                 {firstCard && (
                   <> The visible card is <Icon name={suitToIconName(firstCard.suit)} size={14} />{getRankLabel(firstCard.rank)}.</>
                 )}
-              </p>
+              </Text>
               {roundInfo && (
                 <StatusCallout variant="info" icon="movie">{roundInfo}</StatusCallout>
               )}
@@ -134,14 +134,16 @@ export function SceneSetupScreen() {
                       disabled={hasActed}
                     >
                       <Icon name={suitToIconName(c.id)} size={20} />
-                      <span>{c.name}</span>
+                      <Text variant="label" as="span">{c.name}</Text>
                       {c.strikes > 0 && (
-                        <span style={{ color: 'var(--color-accent-bright)', fontSize: '0.7rem' }}>
-                          {'✕'.repeat(c.strikes)}
-                        </span>
+                        <Text variant="micro" color="red" as="span">
+                          {Array.from({ length: c.strikes }, (_, i) => (
+                            <Icon key={i} name="strike_filled" size={12} />
+                          ))}
+                        </Text>
                       )}
                       {hasActed && (
-                        <span style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>Done</span>
+                        <Badge variant="outline">Done</Badge>
                       )}
                     </Button>
                   );
@@ -156,7 +158,7 @@ export function SceneSetupScreen() {
 
         {/* Prologue auto-AP indicator */}
         {isPrologueAce && apSelected && activeChar && (
-          <StatusCallout variant="highlight" icon="theater_comedy">
+          <StatusCallout variant="highlight" icon="person_raised_hand">
             <Icon name={suitToIconName(activeChar.id)} size={16} /> <strong>{activeChar.name}</strong> must rise to the challenge — the Ace of {firstCard?.suit} demands it.
           </StatusCallout>
         )}
@@ -168,7 +170,7 @@ export function SceneSetupScreen() {
             {activeChar.aptitude && scene.selectedCardId && (() => {
               const challengedCard = visibleCards.find(c => c.id === scene.selectedCardId);
               return challengedCard && activeChar.aptitude === challengedCard.suit ? (
-                <span style={{ color: 'var(--color-success)', marginLeft: 8 }}><Icon name="auto_awesome" size={14} /> Aptitude match!</span>
+                <Text variant="caption" color="success" as="span" style={{ marginLeft: 8 }}><Icon name="auto_awesome" size={14} /> Aptitude match!</Text>
               ) : null;
             })()}
           </StatusCallout>
@@ -176,7 +178,7 @@ export function SceneSetupScreen() {
 
         {/* Step 3: Draw second card (AP selected, only number cards on table) */}
         {needsSecondDraw && canControl && (
-          <StatusCallout variant="highlight" icon="style">
+          <StatusCallout variant="highlight" icon="playing_cards">
             Click the <strong>Threat Deck</strong> on the table to draw a second card and give {activeChar?.name ?? 'the Active Player'} a choice.
           </StatusCallout>
         )}

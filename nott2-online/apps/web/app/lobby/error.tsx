@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Text, Button } from '@nott2/design-system';
 
 /**
  * Lobby Route Error Boundary — /lobby
@@ -27,32 +28,23 @@ export default function LobbyError({
       alignItems: 'center', justifyContent: 'center',
       gap: 24, padding: 32, textAlign: 'center',
     }}>
-      <div style={{ fontSize: '2rem' }}>🚪</div>
+      <div style={{ fontSize: '2rem' }}>🚶</div>
       <div>
-        <h2 style={{ margin: '0 0 8px', fontSize: '1.125rem', fontWeight: 600 }}>
+        <Text variant="h3" style={{ margin: '0 0 8px' }}>
           Couldn't connect to the lobby
-        </h2>
-        <p style={{ margin: 0, fontSize: '0.875rem', color: '#6a6a6a', maxWidth: 360 }}>
+        </Text>
+        <Text variant="caption" color="muted" style={{ maxWidth: 360 }}>
           This is usually a network or Firebase configuration issue.
           Check your connection and try again.
-        </p>
+        </Text>
         {error.message && (
-          <p style={{ margin: '8px 0 0', fontSize: '0.75rem', color: '#3a3a3a', fontFamily: 'monospace' }}>
+          <Text variant="micro" color="muted" style={{ margin: '8px 0 0', fontFamily: 'monospace' }}>
             {error.message}
-          </p>
+          </Text>
         )}
       </div>
       <div style={{ display: 'flex', gap: 12 }}>
-        <button
-          onClick={reset}
-          style={{
-            padding: '10px 20px', borderRadius: 6, border: 'none',
-            background: '#dc2626', color: '#fff', fontWeight: 600,
-            fontSize: '0.875rem', cursor: 'pointer',
-          }}
-        >
-          Try Again
-        </button>
+        <Button variant="primary" onClick={reset}>Try Again</Button>
         <a
           href="/"
           style={{

@@ -9,9 +9,11 @@ const fadeInScale = keyframes({
 });
 
 // ── Glow pulse — gold/crimson box-shadow that breathes, matching CardMatt ───
+// Dimensions are proportional to Deck's smaller size.
+// Colors reference tokens; blur/spread are component-specific.
 const glowPulse = keyframes({
-  '0%, 100%': { boxShadow: '0 0 8px 2px rgba(180, 100, 40, 0.40), 0 0 24px 4px rgba(180, 60, 20, 0.20)' },
-  '50%':      { boxShadow: '0 0 16px 6px rgba(220, 150, 50, 0.70), 0 0 40px 10px rgba(220, 80, 30, 0.35)' },
+  '0%, 100%': { boxShadow: `0 0 8px 2px color-mix(in srgb, ${vars.color.gold} 40%, transparent), 0 0 24px 4px color-mix(in srgb, ${vars.color.gold} 20%, transparent)` },
+  '50%':      { boxShadow: `0 0 16px 6px color-mix(in srgb, ${vars.color.goldBright} 70%, transparent), 0 0 40px 10px color-mix(in srgb, ${vars.color.goldBright} 35%, transparent)` },
 });
 
 // ── Root ────────────────────────────────────────────────────────────────────
@@ -32,7 +34,7 @@ export const deckLabel = style({
   fontSize: vars.fontSize.micro,
   color: vars.color.textMuted,
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
+  letterSpacing: vars.letterSpacing.normal,
   lineHeight: 1,
 });
 
@@ -63,6 +65,13 @@ export const deckStackInteractive = style({
 export const deckStackGlow = style({
   borderRadius: vars.radius.md,
   animation: `${glowPulse} 2.5s ease-in-out infinite`,
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      boxShadow: vars.shadow.beacon,
+    },
+  },
 });
 
 // ── Count overlay ───────────────────────────────────────────────────────────
@@ -82,39 +91,22 @@ export const deckCount = style({
 });
 
 export const deckCountCompact = style({
-  fontSize: '0.875rem',
+  fontSize: vars.fontSize.label,
 });
 
-// ── Status badge ────────────────────────────────────────────────────────────
+// ── Status badge wrapper ────────────────────────────────────────────────────
+// Positions the Badge atom at the bottom-centre of the deck stack.
+// Visual styling (colors, font, border) lives in the Badge component.
 
-export const deckStatusBadge = style({
+export const deckStatusBadgeWrapper = style({
   position: 'absolute',
   bottom: '-6px',
   left: '50%',
   transform: 'translateX(-50%)',
   zIndex: 20,
-  fontFamily: vars.font.body,
-  fontSize: '0.5rem',
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: '0.08em',
-  padding: '1px 6px',
-  borderRadius: vars.radius.full,
   whiteSpace: 'nowrap',
   animation: `${fadeInScale} 300ms ease-out both`,
   pointerEvents: 'none',
-});
-
-export const deckStatusShuffled = style({
-  backgroundColor: vars.color.accent,
-  color: vars.color.text,
-  boxShadow: vars.shadow.glow,
-});
-
-export const deckStatusEmpty = style({
-  backgroundColor: vars.color.surface,
-  color: vars.color.textMuted,
-  border: `1px solid ${vars.color.border}`,
 });
 
 // ── Hover/Focus status reveal ───────────────────────────────────────────────
@@ -126,10 +118,10 @@ export const deckStatusHover = style({
   transform: 'translateX(-50%)',
   zIndex: 20,
   fontFamily: vars.font.body,
-  fontSize: '0.5rem',
+  fontSize: vars.fontSize.nano,
   fontWeight: 600,
   textTransform: 'uppercase',
-  letterSpacing: '0.08em',
+  letterSpacing: vars.letterSpacing.normal,
   padding: '1px 6px',
   borderRadius: vars.radius.full,
   whiteSpace: 'nowrap',
@@ -162,5 +154,5 @@ export const deckEmpty = style({
 });
 
 export const deckEmptyCompact = style({
-  fontSize: '0.875rem',
+  fontSize: vars.fontSize.label,
 });

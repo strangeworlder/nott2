@@ -13,7 +13,7 @@
 'use client';
 
 import { useGameStore } from '../../store/game-store';
-import { DieSelector, Button, Card } from '@nott2/design-system';
+import { DieSelector, Button, Card, Text } from '@nott2/design-system';
 import type { D10Result, D4Result } from '@nott2/game-engine';
 import RandomDiceRoller from './RandomDiceRoller';
 import { getEffortLevel, calculateTotal, canUseAptitude } from '@nott2/game-engine';
@@ -70,7 +70,7 @@ export default function DicePanel() {
           disabled={false}
         />
         <div className="dice-roller-divider">
-          <span>or select manually</span>
+          <Text variant="caption" color="muted" as="span">or select manually</Text>
         </div>
       </div>
 
@@ -96,8 +96,8 @@ export default function DicePanel() {
       {effortInfo && (
         <div className={`effort-band effort-band--${effortLevel}`}>
           <span className="effort-band__icon">{effortInfo.icon}</span>
-          <span className="effort-band__label">{effortInfo.label}</span>
-          <span className="effort-band__desc">{effortInfo.desc}</span>
+          <Text variant="label" as="span" className="effort-band__label">{effortInfo.label}</Text>
+          <Text variant="caption" as="span" className="effort-band__desc">{effortInfo.desc}</Text>
         </div>
       )}
 
@@ -118,9 +118,9 @@ export default function DicePanel() {
       {/* Modified effort display */}
       {modD4 !== null && (
         <div className="row">
-          <span className="label-sm">Modified d4:</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700 }}>{modD4}</span>
-          <span className="text-muted">(was {d4})</span>
+          <Text variant="label" as="span">Modified d4:</Text>
+          <Text variant="h3" as="span">{modD4}</Text>
+          <Text variant="caption" color="muted" as="span">(was {d4})</Text>
         </div>
       )}
 
@@ -128,10 +128,8 @@ export default function DicePanel() {
       {total !== null && (
         <div className="row" style={{ justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
-            <div className="label-sm">Roll Total</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', fontWeight: 700, color: 'var(--color-text)', lineHeight: 1 }}>
-              {total}
-            </div>
+            <Text variant="label">Roll Total</Text>
+            <Text variant="hero">{total}</Text>
           </div>
         </div>
       )}

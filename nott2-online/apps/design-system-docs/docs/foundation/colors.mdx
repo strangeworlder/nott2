@@ -1,0 +1,187 @@
+---
+sidebar_position: 1
+title: Colors
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Badge, Text, Button, StatusCallout, Card } from '@nott2/design-system';
+
+# Colors
+
+In *Night of the Thirteenth 2*, color is not just decoration. It is the game engine's vocabulary. The palette is intentionally constrained so that when a color speaks, the player instinctively understands what the system is telling them before they read a single word.
+
+All color tokens live in the theme contract (`vars.color.*`). Components reference tokens, never hardcoded values — this means a playset can completely change the visual identity by providing a single new theme.
+
+## The Vocabulary of Color
+
+The game relies on six distinct semantic "voices." Every application of color must align with these emotional temperatures.
+
+### 1. Red: Pain & Interaction
+Blood-red is the brand. It is the color of the Killer, the color of a Strike, and the color of an interactive element waiting to be clicked. There is no separate "danger" color — interaction and danger are inherently linked in a Slasher game.
+
+- **Use for:** Hover states, focus rings, primary actions, strikes earned, characters killed.
+
+| Token | Value | Role |
+|---|---|---|
+| `color.accent` | `#8a0000` | Primary brand color — borders, fills, decorations |
+| `color.accentBright` | `#dc2626` | Hover/active states, error text, focus rings |
+
+<div style={{ display: 'flex', gap: 0, borderRadius: 8, overflow: 'hidden', margin: '16px 0 24px' }}>
+  <div style={{ flex: 1, height: 80, backgroundColor: '#8a0000', display: 'flex', alignItems: 'flex-end', padding: 8, boxShadow: '0 0 20px rgba(138,0,0,0.5)' }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#e8e8e8' }}>accent</span>
+  </div>
+  <div style={{ flex: 1, height: 80, backgroundColor: '#dc2626', display: 'flex', alignItems: 'flex-end', padding: 8, boxShadow: '0 0 20px rgba(220,38,38,0.5)' }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#e8e8e8' }}>accentBright</span>
+  </div>
+</div>
+
+### 2. Green: Survival
+Green is the color of relief. It confirms that a threat has been neutralized, a weakness has been discovered, or a player is safe and ready. It is a rare color, appearing only when the players earn a victory against the deck.
+
+- **Use for:** Defeated face cards, trophy additions, "Ready" states.
+
+| Token | Value | Role |
+|---|---|---|
+| `color.success` | `#2d5a2d` | Positive (dark) — borders, glow base |
+| `color.successBright` | `#4ade80` | Positive (bright) — text, highlights |
+
+<div style={{ display: 'flex', gap: 8, borderRadius: 8, margin: '16px 0 24px' }}>
+  <div style={{ flex: 1, height: 60, backgroundColor: '#2d5a2d', borderRadius: 4, display: 'flex', alignItems: 'flex-end', padding: 8 }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.65rem', color: '#4ade80' }}>success</span>
+  </div>
+  <div style={{ flex: 1, height: 60, backgroundColor: 'rgba(74,222,128,0.15)', borderRadius: 4, display: 'flex', alignItems: 'flex-end', padding: 8, border: '1px solid rgba(74,222,128,0.3)' }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.65rem', color: '#4ade80' }}>successBright</span>
+  </div>
+</div>
+
+### 3. Amber: Escalation
+Amber is caution. Nobody died, but the situation just got worse. The machine is grinding against the players, adding Kings to the deck, or consuming a limited resource like Genre Points.
+
+- **Use for:** Failed number challenges, deck escalation, spent resources.
+
+| Token | Value | Role |
+|---|---|---|
+| `color.warning` | `#fbbf24` | Caution — warning callouts |
+
+<div style={{ display: 'flex', gap: 8, borderRadius: 8, margin: '16px 0 24px' }}>
+  <div style={{ flex: 1, height: 60, backgroundColor: 'rgba(251,191,36,0.15)', borderRadius: 4, display: 'flex', alignItems: 'flex-end', padding: 8, border: '1px solid rgba(251,191,36,0.3)' }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.65rem', color: '#fbbf24' }}>warning</span>
+  </div>
+</div>
+
+### 4. Gold: The Attention Beacon
+Gold means one thing: *"act here next."* It is the navigational heartbeat of the game. Where red responds to hover and green confirms an outcome, gold guides the player's eye before they've acted.
+
+- **Use for:** Selectable cards on the matt, the drawable threat deck.
+
+| Token | Value | Role |
+|---|---|---|
+| `color.gold` | `rgb(180, 100, 40)` | Beacon base — resting glow |
+| `color.goldBright` | `rgb(220, 160, 60)` | Beacon active — hover states, pulsing highlights |
+
+<div style={{ display: 'flex', gap: 0, borderRadius: 8, overflow: 'hidden', margin: '16px 0 24px' }}>
+  <div style={{ flex: 1, height: 80, backgroundColor: 'rgb(180, 100, 40)', display: 'flex', alignItems: 'flex-end', padding: 8 }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#0a0a0a' }}>gold</span>
+  </div>
+  <div style={{ flex: 1, height: 80, backgroundColor: 'rgb(220, 160, 60)', display: 'flex', alignItems: 'flex-end', padding: 8 }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#0a0a0a' }}>goldBright</span>
+  </div>
+</div>
+
+### 5. Purple: Instruction
+Purple is the Game Master's voice pointing a finger. It demands attention without threatening the player. It is narrative intervention.
+
+- **Use for:** "Click the Threat Deck," designating the Prologue active player, aptitude activation.
+- **Note:** Purple is UI-only and does not exist in the brand token contract; it is used via hardcoded RGBA in components like StatusCallout.
+
+### 6. Blue: The Machine
+Blue is cold, neutral bookkeeping. It represents the mechanical state of the game without any emotional weight.
+
+- **Use for:** Round progress ("2 of 4 players have acted"), shuffling the deck.
+- **Note:** Like purple, blue is UI-only and used via hardcoded RGBA.
+
+---
+
+## The Theme Contract
+
+### Surfaces
+
+The surface hierarchy creates depth through near-imperceptible luminance shifts, keeping the interface recessive so the game pieces pop.
+
+| Token | Value | Role |
+|---|---|---|
+| `color.background` | `#0a0a0a` | Page root, `<body>` |
+| `color.surface` | `#141414` | Card/panel fill |
+| `color.surfaceElevated` | `#1a1a1a` | Modals, overlays, popovers |
+
+<div style={{ display: 'flex', gap: 0, borderRadius: 8, overflow: 'hidden', margin: '16px 0 24px' }}>
+  <div style={{ flex: 1, height: 80, backgroundColor: '#0a0a0a', display: 'flex', alignItems: 'flex-end', padding: 8 }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#6a6a6a' }}>background</span>
+  </div>
+  <div style={{ flex: 1, height: 80, backgroundColor: '#141414', display: 'flex', alignItems: 'flex-end', padding: 8 }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#6a6a6a' }}>surface</span>
+  </div>
+  <div style={{ flex: 1, height: 80, backgroundColor: '#1a1a1a', display: 'flex', alignItems: 'flex-end', padding: 8 }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#6a6a6a' }}>surfaceElevated</span>
+  </div>
+</div>
+
+### Diegetic Surfaces
+
+The gold palette provides the colors for physical game props (felt table, card stock) that ground the digital experience in tactile reality.
+
+| Token | Value | Role |
+|---|---|---|
+| `color.diegeticSurface` | `#3a0505` | Deep crimson felt — physical game surface backgrounds (CardMatt) |
+
+<div style={{ display: 'flex', gap: 0, borderRadius: 8, overflow: 'hidden', margin: '16px 0 24px' }}>
+  <div style={{ flex: 1, height: 80, backgroundColor: '#3a0505', display: 'flex', alignItems: 'flex-end', padding: 8, boxShadow: '0 0 20px rgba(180, 100, 40, 0.4)' }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#6a6a6a' }}>diegeticSurface</span>
+  </div>
+</div>
+
+### Text
+
+| Token | Value | Role |
+|---|---|---|
+| `color.text` | `#e8e8e8` | Primary body text, headings |
+| `color.textMuted` | `#6a6a6a` | Captions, placeholders, helper text |
+
+### Border Colors
+
+| Token | Value | Role |
+|---|---|---|
+| `color.border` | `#2a2a2a` | Default dividers, card borders |
+| `color.borderSubtle` | `rgba(255,255,255,0.12)` | Faint dividers, outline badges |
+| `color.borderActive` | `#8a0000` | Selected card borders, active tabs |
+
+:::note Intentional Hardcoded Hover Tints
+Some components use hardcoded low-opacity RGBA values for hover backgrounds (e.g., `rgba(138, 0, 0, 0.05)` on secondary buttons). These are **atmospheric tints** at near-invisible opacity — they derive from brand colors but are too subtle and context-specific to warrant dedicated tokens. See the [Shadows & Glows](/foundation/shadows#hover-tints) page for the full list.
+:::
+
+## Usage in Components
+
+Components reference tokens through the Vanilla Extract `vars` contract:
+
+```tsx
+import { vars } from '../../tokens/theme.css';
+
+// In a .css.ts file:
+const myStyle = style({
+  color: vars.color.text,
+  backgroundColor: vars.color.surface,
+  border: `1px solid ${vars.color.border}`,
+});
+```
+
+## Live Examples
+
+<ComponentPreview label="Semantic colors in context">
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
+    <StatusCallout variant="danger" icon="bolt">The active player earns a Strike.</StatusCallout>
+    <StatusCallout variant="success" icon="emoji_events">The 7 of Hearts is placed on the Trophy Pile.</StatusCallout>
+    <StatusCallout variant="warning" icon="warning">Escalation used this scene.</StatusCallout>
+    <StatusCallout variant="highlight" icon="playing_cards">Click the Threat Deck to draw.</StatusCallout>
+    <StatusCallout variant="info" icon="movie">Round 2: 1 of 4 players have acted.</StatusCallout>
+  </div>
+</ComponentPreview>

@@ -1,0 +1,31 @@
+---
+sidebar_position: 9
+title: ActBreakOverlay
+---
+
+# ActBreakOverlay
+
+The VHS title card. Full-screen portal (z-index 15000) for act transitions with wall texture backdrop, VHS grain panel, and self-contained copy matrix.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `act` | `'prologue' \| 1 \| 2 \| 3 \| 'finale'` | — | Which act break to show |
+| `onDismiss` | `() => void` | — | Click-to-dismiss handler |
+| `onExited` | `() => void` | — | Fires after exit animation |
+
+## Behavior
+
+- Self-contained: includes its own title, subtitle, and body text per act.
+- `prologue` variant replaces the start of Act I with an atmospheric "The Night Begins" introduction.
+- Has a visible "Begin Act" button for explicit user advancement.
+
+:::caution
+Use `onExited` for state advancement, not `onDismiss`. Using both will double-trigger.
+:::
+
+## Related Components
+
+- **[TransitionOverlay](/components/organisms/transition-overlay)** — Generic transition (ActBreakOverlay is specialized)
+- **[SceneChallengeOverlay](/components/organisms/scene-challenge-overlay)** — Scene-level transition

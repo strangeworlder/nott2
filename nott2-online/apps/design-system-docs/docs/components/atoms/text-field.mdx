@@ -1,0 +1,291 @@
+---
+sidebar_position: 7
+title: TextField
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { TextField, Stack, Text } from '@nott2/design-system';
+
+# TextField
+
+The gateway to player expression. A single-line field that allows players and the Game Master to enter short, structured information such as character names, room codes, or custom numeric values.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { TextField } from '@nott2/design-system';
+
+<TextField label="Player Name" placeholder="Enter your name..." />
+```
+</details>
+
+## Why to use
+
+TextField ensures all form inputs share consistent styling, error handling, and theme compliance. In a horror TTRPG, every input carries weight; the field's dark surface and blood-red focus glow remind the player they are inscribing something into the game's reality. Error states pulse with warning, and helper text whispers guidance from the margins.
+
+## When to use
+
+Use TextField when users need to enter short, single-line information that benefits from clarity, validation, or guidance.
+
+> **Do**
+> - Use TextField for short, single-line input (e.g., "Player Name", "Room Code").
+> - Use it when input follows clear rules or formats (like max lengths or required fields).
+> - Use it in setup forms, dialogs, and inline parameter edits.
+> - Use it when the value fits naturally on one line and should be easy to scan.
+
+> **Don't**
+> - Don't use TextField for multi-line or long-form input (e.g., Backstory or Scene Notes) — use [TextArea](/components/atoms/text-field). *(Note: TextArea shares the same file export and design logic).*
+> - Don't use it for choosing from predefined options — use a [SegmentedControl](/components/atoms/segmented-control) or [Toggle](/components/atoms/toggle).
+
+## Content Guidelines
+
+TextField content should clearly communicate what information is required without unnecessary cognitive effort.
+
+> **Do**
+> - Use short, descriptive labels (e.g., "Room Code", "Character Name").
+> - Use placeholder text only as an example, not as instructions.
+> - Add concise `helperText` for extra context (e.g., "4–6 characters").
+> - Write specific error messages that explain how to fix the problem (e.g., "Room code must be exactly 6 characters").
+
+> **Don't**
+> - Don't use placeholder text instead of a label.
+> - Don't repeat the label text inside the placeholder.
+> - Don't use vague or generic labels (e.g., "Input", "Value").
+> - Don't rely on placeholder text alone — it disappears when typing starts.
+
+## Anatomy
+
+```
+ 1. Label ──────────────┐    ┌───────── 5. Required indicator (*)
+                        ▼    ▼
+                      Player Name *
+ 2. Input Field ────► [ Enter your name... ] ◄──── 3. Placeholder
+                      ▲
+                      │
+ 4. Helper/Error ─────┴─ Must be unique        12/20 ◄──── 6. Character Count
+```
+
+1. **Label** — Describes the purpose of the field. Appears above the input.
+2. **Input field** — Dark surface area where users enter text. Glows blood-red on focus.
+3. **Placeholder** — Example or hint text inside the field. Disappears on typing.
+4. **Helper / Error** — Provides additional guidance or validation feedback below the field. Error text turns the input border red.
+5. **Required indicator** — An asterisk `*` indicating the field is mandatory.
+6. **Character Count** — Shows `current/max` characters when `maxLength` is set. Turns amber when approaching the limit.
+
+## Key Props
+
+### `variant`
+Visual mode — `default` for standard forms, `ghost` for borderless inline contexts.
+
+| Value | Description |
+|---|---|
+| `default` | Standard dark surface with borders. |
+| `ghost` | No border or background. Blends into parent container. |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+    <TextField label="Name" placeholder="Default variant" value="" onChange={() => {}} />
+    <TextField label="Search" placeholder="Ghost variant" variant="ghost" value="" onChange={() => {}} />
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextField label="Name" placeholder="Default variant" value={name} onChange={setName} />
+<TextField label="Search" placeholder="Ghost variant" variant="ghost" value={search} onChange={setSearch} />
+```
+</details>
+
+### `type`
+Supported HTML input types. Invalid values fall back to `text`.
+
+| Value | Description |
+|---|---|
+| `text` | Generic free-form text. |
+| `number` | Numeric value. Triggers numeric keyboard on mobile. |
+| `password` | Obscures characters for secrets (e.g., GM passcodes). |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+    <TextField label="Passcode" type="password" value="secret" onChange={() => {}} />
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextField label="Passcode" type="password" value={code} onChange={setCode} />
+```
+</details>
+
+### `error`
+Displays a validation error below the field and turns the input border red. Sets `aria-invalid`.
+
+| Type | Description |
+|---|---|
+| `string` | Describes how to fix the validation issue. |
+
+<ComponentPreview>
+  <TextField label="Room Code" error="Invalid code format" value="12" onChange={() => {}} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextField label="Room Code" error="Invalid code format" value={code} onChange={setCode} />
+```
+</details>
+
+### `helperText`
+Helper guidance placed below the field. Replaced by `error` if both are provided.
+
+| Type | Description |
+|---|---|
+| `string` | Provides additional context. |
+
+<ComponentPreview>
+  <TextField label="Username" helperText="Used for display purposes" value="" onChange={() => {}} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextField label="Username" helperText="Used for display purposes" value={username} onChange={setUsername} />
+```
+</details>
+
+### `maxLength`
+Enables a live character counter at the bottom right of the input.
+
+| Type | Description |
+|---|---|
+| `number` | Prevents typing beyond the limit and warns when approaching it. |
+
+<ComponentPreview>
+  <TextField label="Title" maxLength={30} value="The Cabin" onChange={() => {}} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextField label="Title" maxLength={30} value={title} onChange={setTitle} />
+```
+</details>
+
+### `disabled` & `required`
+
+| Prop | Description |
+|---|---|
+| `disabled` | Temporarily prevents user interaction. Dimmed styling. |
+| `required` | Marks field mandatory for submission with a visual `*`. |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+    <TextField label="ID" disabled value="NOTT-842" onChange={() => {}} />
+    <TextField label="Name" required value="" onChange={() => {}} />
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextField label="ID" disabled value={id} onChange={setId} />
+<TextField label="Name" required value={name} onChange={setName} />
+```
+</details>
+
+## Behavior
+
+- **Focus**: The input border glows blood-red (`color.accentBright`) when focused, anchoring the player's attention.
+- **Error**: If an `error` string is provided, the border turns red immediately, and the error message appears below, replacing any `helperText`.
+- **Character limit**: When `maxLength` is set, a counter (`0/50`) appears. When the user reaches 90% of the limit, the counter text turns amber (`color.warning`) to signal the approaching boundary.
+- **Controlled vs Uncontrolled**: Designed to be used as a controlled component via `value` and `onChange`.
+
+## Accessibility
+
+- Every TextField automatically associates its `<label>` with the `<input>` using React's `useId()` if an explicit `id` is not provided.
+- Validation feedback (errors) and helper text are programmatically linked to the input via `aria-describedby`.
+- When `error` is present, the input is marked with `aria-invalid="true"`.
+- When `required` is true, the input receives `aria-required="true"`.
+- When `maxLength` is set, the character counter is announced to screen readers via `aria-live="polite"`.
+- Ensure full keyboard accessibility — users can navigate using `Tab`, `Shift+Tab`, and type normally.
+
+## Implementation Examples
+
+### With Validation Error
+Error state provides a clear indication of what went wrong. The border and text turn red.
+
+<ComponentPreview>
+  <TextField 
+    label="Room Code" 
+    value="NOTT-12" 
+    onChange={() => {}}
+    error="Room codes must be exactly 6 characters long." 
+  />
+</ComponentPreview>
+
+```tsx
+<TextField 
+  label="Room Code" 
+  value={code} 
+  onChange={setCode}
+  error={code.length !== 6 ? "Room codes must be exactly 6 characters long." : undefined} 
+/>
+```
+
+### With Character Limit
+Adding `maxLength` automatically renders the counter.
+
+<ComponentPreview>
+  <TextField 
+    label="Character Concept" 
+    value="The jock who" 
+    onChange={() => {}}
+    maxLength={15} 
+  />
+</ComponentPreview>
+
+```tsx
+<TextField 
+  label="Character Concept" 
+  value={concept} 
+  onChange={setConcept}
+  maxLength={15} 
+/>
+```
+
+### Ghost Variant
+Use the `ghost` variant when embedding inputs into dense UI spaces (like table cells or tight toolbars) where standard borders would cause visual clutter.
+
+<ComponentPreview>
+  <div style={{ padding: '8px', border: '1px solid #2a2a2a', borderRadius: '8px' }}>
+    <TextField 
+      variant="ghost"
+      placeholder="Search active cards..." 
+      value=""
+      onChange={() => {}}
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+<TextField 
+  variant="ghost"
+  placeholder="Search active cards..." 
+  value={query}
+  onChange={setQuery}
+/>
+```
+
+## Related Components
+
+- **[Button](/components/atoms/button)** — For form submission.
+- **[ActionFooter](/components/molecules/action-footer)** — For primary form action buttons at the bottom of the screen.

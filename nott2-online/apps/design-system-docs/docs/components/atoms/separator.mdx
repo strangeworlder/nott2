@@ -1,0 +1,53 @@
+---
+sidebar_position: 10
+title: Separator
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Text, Stack } from '@nott2/design-system';
+import { Separator } from '@nott2/design-system';
+
+# Separator
+
+A horizontal rule. A visual breath between content sections.
+
+## Why to Use
+
+Separator replaces raw `<hr>` elements with a themed, consistent divider that uses the `border` token color.
+
+## When to Use
+
+- Between distinct content sections within a card or panel
+- Before action footers
+- As visual punctuation in long content flows
+
+## Key Props
+
+No props. A single-purpose element.
+
+## Implementation Examples
+
+<ComponentPreview column>
+  <Stack gap="md">
+    <Text>Content section one</Text>
+    <Separator />
+    <Text>Content section two</Text>
+  </Stack>
+</ComponentPreview>
+
+```tsx
+<Stack gap="md">
+  <Text>Content above</Text>
+  <Separator />
+  <Text>Content below</Text>
+</Stack>
+```
+
+## Related Components
+
+- **[Card](/components/molecules/card)** — Groups content (may contain Separators)
+- **[Stack](/components/atoms/stack)** — Vertical layout (Separator is a Stack child)
+
+:::caution Anti-Pattern
+Never use raw `<hr>` — always use `<Separator>`.
+:::

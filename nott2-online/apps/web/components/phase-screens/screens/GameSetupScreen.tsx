@@ -8,7 +8,7 @@
 
 import React, { useState } from 'react';
 import {
-  PhasePanel, Card, ActionFooter, Icon, suitToIconName,
+  PhasePanel, Card, ActionFooter, Icon, suitToIconName, Text, Toggle,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
 import type { Suit } from '@nott2/game-engine';
@@ -39,9 +39,9 @@ export function GameSetupScreen() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           {(['Spades', 'Hearts', 'Clubs', 'Diamonds'] as Suit[]).map(suit => (
             <div key={suit}>
-              <label className="field-label" htmlFor={`name-${suit}`}>
+              <Text variant="label" as="label" className="field-label" htmlFor={`name-${suit}`}>
                 <Icon name={suitToIconName(suit)} size={16} /> {suit}
-              </label>
+              </Text>
               <input
                 id={`name-${suit}`}
                 type="text"
@@ -57,24 +57,24 @@ export function GameSetupScreen() {
 
       <Card title="Rules Modules">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <label style={{ display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }}>
-            <input type="checkbox" checked={classicSetup} onChange={e => setClassicSetup(e.target.checked)} style={{ marginTop: 2 }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <Toggle variant="switch" value={classicSetup} onChange={setClassicSetup} labelOn="On" labelOff="Off" />
             <div>
-              <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>Classic Setup</div>
-              <div style={{ fontSize: '0.75rem', marginTop: 2, color: 'var(--color-text-muted)' }}>
+              <Text variant="label" as="div">Classic Setup</Text>
+              <Text variant="caption" color="muted" as="div" style={{ marginTop: 2 }}>
                 Curated deck: 2s, 3s, 4s in threat deck. Ordered reserve: 5–10. Starts with a random 10 as trophy.
-              </div>
+              </Text>
             </div>
-          </label>
-          <label style={{ display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }}>
-            <input type="checkbox" checked={finalGirl} onChange={e => setFinalGirl(e.target.checked)} style={{ marginTop: 2 }} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <Toggle variant="switch" value={finalGirl} onChange={setFinalGirl} labelOn="On" labelOff="Off" />
             <div>
-              <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>Final Girl</div>
-              <div style={{ fontSize: '0.75rem', marginTop: 2, color: 'var(--color-text-muted)' }}>
+              <Text variant="label" as="div">Final Girl</Text>
+              <Text variant="caption" color="muted" as="div" style={{ marginTop: 2 }}>
                 Increased lethality. Any face card encounter earns a Strike. Solo survivor triggers Act 3.
-              </div>
+              </Text>
             </div>
-          </label>
+          </div>
         </div>
       </Card>
 
