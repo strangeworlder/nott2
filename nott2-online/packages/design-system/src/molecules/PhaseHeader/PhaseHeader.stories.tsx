@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { PhaseHeader } from './PhaseHeader';
 
 const meta = {
-  title: 'Atoms/PhaseHeader',
+  title: 'Molecules/PhaseHeader',
   component: PhaseHeader,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
@@ -33,7 +33,7 @@ export const WithStep: Story = {
 
 export const AllPhases: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <PhaseHeader title="Game Setup" subtitle="Name your characters." step={{ current: 1, total: 2 }} />
       <PhaseHeader title="Scene Setup" subtitle="Draw a card and choose the Active Player." />
       <PhaseHeader title="Conversation & Stakes" subtitle="Frame the scene, define the sacrifice, and decide what you stand to lose." />

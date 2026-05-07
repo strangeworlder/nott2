@@ -1,0 +1,305 @@
+---
+sidebar_position: 8
+title: TextArea
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { TextArea, Stack } from '@nott2/design-system';
+
+# TextArea
+
+The space for longer thoughts. Where [TextField](/components/atoms/text-field) is a scrawled note, TextArea is a journal page — inviting the player to pour more of themselves into the game. A character's backstory, a GM's scene description, a player's post-session reflection. The resizable handle is a subtle affordance: *"there's always room for more horror."*
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { TextArea } from '@nott2/design-system';
+
+<TextArea
+  label="Character Backstory"
+  placeholder="What happened to them before the night began..."
+  value={backstory}
+  onChange={setBackstory}
+/>
+```
+</details>
+
+## Why to Use
+
+TextArea shares the same design contract as TextField — identical label, error, helper text, and character count systems — but expands vertically to accommodate long-form content. In a TTRPG, there are moments when a player needs space to *write*, not just fill in a value. TextArea is that space. It enforces the same blood-red focus glow and dark surface aesthetic so that longer writing still feels like inscribing something into the game's reality.
+
+## When to Use
+
+> **Do**
+> - Use TextArea for multi-line or open-ended input (e.g., "Character Backstory", "Scene Notes", "GM Journal").
+> - Use it when the expected content is a sentence or more — long enough that a single line would feel cramped.
+> - Use it in setup flows, session logs, and any context where a player is authoring content rather than filling a value.
+
+> **Don't**
+> - Don't use TextArea for short, structured values (e.g., "Room Code", "Player Name") — use [TextField](/components/atoms/text-field). A large textarea for a one-word answer creates visual imbalance and misleads the player about expected input length.
+> - Don't use it for choosing from options — use [SegmentedControl](/components/atoms/segmented-control) or [Toggle](/components/atoms/toggle).
+> - Don't set `resize="horizontal"` or `resize="both"` in game UI — horizontal resize breaks column layouts. `vertical` is the safe default.
+
+## Content Guidelines
+
+> **Do**
+> - Use labels that describe the *type of content*, not the action (e.g., "Scene Description", not "Describe your scene").
+> - Use `placeholder` to hint at the expected length and tone (e.g., "What happened to them before the night began...").
+> - Set `maxLength` for any field where length matters to the game mechanic (e.g., a concept limited to 280 characters).
+> - Add `helperText` if the player needs guidance on what to write.
+
+> **Don't**
+> - Don't rely on placeholder alone — it disappears as soon as typing starts.
+> - Don't use labels that feel bureaucratic ("Enter your text here"). Keep the voice in-world.
+
+## Anatomy
+
+```
+  Character Backstory *   ← 1. Label + Required indicator (*)
+ ┌────────────────────────────────────┐
+ │ What happened to them before the   │ ← 2. Textarea surface (dark, bordered)
+ │ night began...                     │    Glows blood-red on focus
+ │                                    │
+ │                                   ↕│ ← 3. Resize handle (vertical by default)
+ └────────────────────────────────────┘
+  Must be at least 10 characters.   12/280 ← 4. Helper/Error text + 5. Character count
+```
+
+1. **Label** — Describes the purpose of the field. Required indicator `*` when `required` is set.
+2. **Textarea surface** — Multi-line dark input. Glows blood-red on focus. `rows` controls initial height.
+3. **Resize handle** — Browser native. Direction controlled by `resize` prop. Defaults to `vertical`.
+4. **Helper / Error** — Guidance or validation message below the field. Error replaces helper text and turns the border red.
+5. **Character Count** — Shows `current/max` when `maxLength` is set. Turns amber at 90% of the limit.
+
+## Key Props
+
+Use these props to configure the TextArea component.
+
+### `value` & `onChange`
+TextArea is a **controlled component** — you must always provide both `value` and `onChange`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `value` | `string` | Current textarea value. |
+| `onChange` | `(value: string) => void` | Called with the new string value on every keystroke. |
+
+<ComponentPreview>
+  <TextArea
+    label="Character Backstory"
+    value="She was a counselor at Camp Redwood before the summer everything changed."
+    onChange={() => {}}
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+const [backstory, setBackstory] = React.useState('');
+
+<TextArea
+  label="Character Backstory"
+  value={backstory}
+  onChange={setBackstory}
+/>
+```
+</details>
+
+### `rows`
+Controls the initial visible height of the textarea in lines of text.
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | `4` | Number of visible text rows before scrolling. |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+    <TextArea label="2 rows" rows={2} value="" onChange={() => {}} placeholder="Compact..." />
+    <TextArea label="6 rows" rows={6} value="" onChange={() => {}} placeholder="Spacious..." />
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextArea label="Scene Notes" rows={6} value={notes} onChange={setNotes} />
+```
+</details>
+
+### `resize`
+Controls whether and how the player can resize the textarea.
+
+| Value | Description |
+|---|---|
+| `none` | Not resizable. Use when the height is fixed by design. |
+| `vertical` | **Default.** Drag to make taller or shorter. Safe for column layouts. |
+| `horizontal` | Resize horizontally. Avoid in game UI — breaks column layouts. |
+| `both` | Full 2D resize. Only for standalone editors. |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+    <TextArea label="Not resizable" resize="none" value="" onChange={() => {}} placeholder="Fixed height..." />
+    <TextArea label="Vertically resizable (default)" resize="vertical" value="" onChange={() => {}} placeholder="Drag the corner..." />
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextArea label="Scene Notes" resize="vertical" value={notes} onChange={setNotes} />
+<TextArea label="Fixed Height" resize="none" value={notes} onChange={setNotes} />
+```
+</details>
+
+### `variant`
+Visual mode — matches the TextField variants exactly.
+
+| Value | Description |
+|---|---|
+| `default` | Standard dark surface with borders. |
+| `ghost` | No border or background. Blends into parent container. |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+    <TextArea label="Default" placeholder="Standard surface..." value="" onChange={() => {}} />
+    <TextArea label="Ghost" variant="ghost" placeholder="Borderless..." value="" onChange={() => {}} />
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextArea variant="default" label="Notes" value={notes} onChange={setNotes} />
+<TextArea variant="ghost" label="Notes" value={notes} onChange={setNotes} />
+```
+</details>
+
+### `error`
+Displays a validation error below the field and turns the border red.
+
+| Type | Description |
+|---|---|
+| `string` | Error message. Sets `aria-invalid` on the textarea. |
+
+<ComponentPreview>
+  <TextArea
+    label="Scene Description"
+    error="Scene description cannot be empty."
+    value=""
+    onChange={() => {}}
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextArea
+  label="Scene Description"
+  error={description.length === 0 ? "Scene description cannot be empty." : undefined}
+  value={description}
+  onChange={setDescription}
+/>
+```
+</details>
+
+### `helperText`
+Guidance placed below the field. Replaced by `error` if both are provided.
+
+| Type | Description |
+|---|---|
+| `string` | Provides additional context about expected input. |
+
+<ComponentPreview>
+  <TextArea
+    label="GM Notes"
+    helperText="Only visible to the Game Master."
+    value=""
+    onChange={() => {}}
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextArea
+  label="GM Notes"
+  helperText="Only visible to the Game Master."
+  value={notes}
+  onChange={setNotes}
+/>
+```
+</details>
+
+### `maxLength`
+Enables a live character counter at the bottom right.
+
+| Type | Description |
+|---|---|
+| `number` | Prevents input beyond the limit. Counter turns amber at 90%. |
+
+<ComponentPreview>
+  <TextArea
+    label="Character Concept"
+    maxLength={140}
+    value="A washed-up detective haunted by a case she never solved."
+    onChange={() => {}}
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextArea label="Character Concept" maxLength={140} value={concept} onChange={setConcept} />
+```
+</details>
+
+### `disabled` & `required`
+
+| Prop | Description |
+|---|---|
+| `disabled` | Prevents interaction. Dimmed styling. |
+| `required` | Marks the field mandatory with a visual `*`. Sets `aria-required`. |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+    <TextArea label="Locked Notes" disabled value="This content is read-only." onChange={() => {}} />
+    <TextArea label="Scene Description" required value="" onChange={() => {}} placeholder="Required..." />
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<TextArea label="Locked Notes" disabled value={notes} onChange={setNotes} />
+<TextArea label="Scene Description" required value={desc} onChange={setDesc} />
+```
+</details>
+
+## Behavior
+
+- **Focus**: The textarea border glows blood-red (`color.accentBright`) on focus — identical to TextField.
+- **Error**: When `error` is set, the border turns red and `role="alert"` ensures screen readers announce the message.
+- **Character limit**: Counter appears when `maxLength` is set. Turns amber at 90% of the limit. The textarea prevents input beyond the limit via the native `maxLength` attribute.
+- **Resize**: The `resize` prop controls the CSS `resize` property directly. Default is `vertical`.
+- **Controlled only**: TextArea is always controlled. There is no uncontrolled mode — always provide `value` and `onChange`.
+
+## Accessibility
+
+- Label is programmatically linked to the textarea via `htmlFor` / `id` (auto-generated if not provided).
+- Error messages are linked via `aria-describedby` and announced by `role="alert"`.
+- `aria-invalid="true"` is set when `error` is present.
+- `aria-required="true"` is set when `required` is true.
+- Character counter uses `aria-live="polite"` — screen readers announce count changes without interrupting focus.
+
+## Related Components
+
+- **[TextField](/components/atoms/text-field)** — Single-line counterpart. Use for short, structured values.
+- **[Text](/components/atoms/text)** — For rendering static text, not input.

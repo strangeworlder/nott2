@@ -23,7 +23,7 @@
  */
 
 import React from 'react';
-import { PhaseHeader } from '../../atoms/PhaseHeader/PhaseHeader';
+import { PhaseHeader } from '../../molecules/PhaseHeader/PhaseHeader';
 import { panelRoot, panelStack } from './PhasePanel.css';
 
 interface PhasePanelProps {

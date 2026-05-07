@@ -132,7 +132,6 @@ export default function RulesPage() {
           <ul className="rules-list">
             <li>A d4 result of 4 (Breaking Point)</li>
             <li>Losing against a Face Card</li>
-            <li>Final Girl module: any Face Card encounter</li>
           </ul>
           <Text variant="body" color="muted">At <strong>3 Strikes</strong>, the character dies. They are removed from the game. If all characters die, the players lose.</Text>
         </section>

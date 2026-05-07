@@ -33,10 +33,10 @@ const sidebars: SidebarsConfig = {
             'components/atoms/toggle',
             'components/atoms/segmented-control',
             'components/atoms/text-field',
+            'components/atoms/text-area',
             'components/atoms/stack',
             'components/atoms/row',
             'components/atoms/separator',
-            'components/atoms/phase-header',
           ],
         },
         {
@@ -60,6 +60,7 @@ const sidebars: SidebarsConfig = {
             'components/molecules/card-matt',
             'components/molecules/deck',
             'components/molecules/doom-clock',
+            'components/molecules/phase-header',
           ],
         },
         {
