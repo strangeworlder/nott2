@@ -3,30 +3,149 @@ sidebar_position: 14
 title: CardMatt
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { CardMatt, Stack } from '@nott2/design-system';
+
 # CardMatt
 
-The physical playing surface. A textured felt-like surface for 3D card landing zones. Ref-forwarding so `react-ttrpg-cards` can measure the bounding rect.
+The physical playing surface where 3D cards land. The CardMatt acts as a designated zone — a textured, felt-like table segment with a dashed border that grounds the physical game pieces.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { CardMatt } from '@nott2/design-system';
+
+<CardMatt 
+  title="Threats"
+  count={3}
+  glow={false}
+  ref={mattRef}
+/>
+```
+</details>
+
+## Why to Use
+
+Every card game needs a table. CardMatt provides the visual and technical context for the 3D cards rendered by the `react-ttrpg-cards` physics engine. It serves two purposes:
+1. **Visual grounding**: It provides a red velvet textured surface and bounds for the cards.
+2. **Technical targeting**: It acts as a ref-forwarding container so the physics engine can measure a specific, tight bounding box (the right 75% of the surface) for card placement, preventing cards from scattering across the entire screen.
+
+## When to Use
+
+> **Do**
+> - **Always** use CardMatt as the drop zone for the active game cards (like the Threat Deck cards currently in play).
+> - Use the `glow` prop when the game state specifically requires the player to select a card on the matt.
+
+> **Don't**
+> - **Never** use CardMatt for UI cards (like the `Card` molecule). It is strictly for diegetic 3D playing cards.
+> - Don't use raw `<div>`s to collect cards.
+
+## Anatomy
+
+```
+ ┌────────────────────────────────────────────────────────┐
+ │                                                        │
+ │  T   ┌─ dashed border, velvet texture ──────────────┐  │
+ │  I   │                                              │  │
+ │  T   │           [Empty Hint]                       │  │
+ │  L   │                or                            │  │
+ │  E   │           [Count Badge] (top right)          │  │
+ │      │                                              │  │
+ │      │       [Invisible Target Area (ref)]          │  │
+ │      └──────────────────────────────────────────────┘  │
+ │                                                        │
+ └────────────────────────────────────────────────────────┘
+```
+
+1. **Title** — Rotated 90° CCW on the left edge, mimicking casino table printed labels.
+2. **Surface** — Red velvet texture with a dashed gold border.
+3. **Empty Hint / Count** — Status text indicating either the action to take when empty, or the current card count.
+4. **Target Area** — An invisible inner `div` that receives the forwarded `ref` for physics targeting.
 
 ## Key Props
 
+### `title`
+The label rendered rotated on the left edge of the matt.
+
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `glow` | `boolean` | `false` | Pulsing halo when cards are selectable |
-| `label` | `string` | — | Optional label text (rotated, embossed) |
-| `ref` | `React.Ref` | — | Forwarded ref for 3D card overlay measurement |
+| `title` | `string` | `'Visible Threats'` | The text identifier for this matt area. |
+
+<ComponentPreview>
+  <CardMatt title="Active Encounter" />
+</ComponentPreview>
+
+### `count` & `emptyHint`
+Status indicators for the cards on the matt.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `count` | `number` | `0` | The number of cards currently on the matt. Shown in the top right. |
+| `emptyHint` | `string` | `'Draw from deck'` | The text shown centered when `count === 0`. |
+
+<ComponentPreview column>
+  <Stack gap="md">
+    <CardMatt count={0} emptyHint="Awaiting Dealer" />
+    <CardMatt count={4} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<CardMatt 
+  count={visibleCards.length}
+  emptyHint="Draw a card to begin" 
+/>
+```
+</details>
+
+### `glow`
+A state modifier that changes the border animation to a brighter, faster gold pulse. Used to signal that the player needs to interact with the cards on the matt.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `glow` | `boolean` | `false` | When true, applies the selection signal animation. |
+
+<ComponentPreview>
+  <CardMatt glow={true} count={1} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<CardMatt 
+  glow={gameState.requiresCardSelection} 
+/>
+```
+</details>
+
+### `ref` (Forwarded)
+CardMatt forwards its ref directly to an internal, invisible `div` that represents the ideal drop zone for the cards. This inner div is horizontally offset to avoid the title and provides a tighter area for the physics engine to calculate landing positions.
+
+```tsx
+const mattRef = useRef<HTMLDivElement>(null);
+
+<CardMatt ref={mattRef} />
+```
 
 ## Behavior
 
-- `glow` prop triggers a pulsing border animation to signal that the player should interact with the card area.
-- The ref is essential for the 3D card physics system — it measures the matt's position to know where to drop cards.
+- The dashed border is static by default to establish the space without drawing excess attention.
+- The `glow` prop switches the surface to use `cardMattGlowPulse`, a dramatic box-shadow beacon signalling card selectability.
+- Text elements (`title`, `emptyHint`) utilize the standardized `Text` component (`label` variant). The `emptyHint` text is colored gold to prompt action, while the `title` remains muted.
+- The `count` utilizes the `Badge` atom (`outline` variant) for a clean, recognizable stamp that is easily scanned.
 
-## Implementation Examples
+## Accessibility
 
-```tsx
-<CardMatt ref={mattRef} glow={isSelectablePhase} label="Threat Cards" />
-```
+- `CardMatt` is a visual and layout container. The 3D cards themselves handle their own accessibility (such as ARIA live regions for screen readers announcing the dealt cards).
+- The text inside the matt (`title`, `emptyHint`, `count`) provides visual context but is not interactive.
+- All animations respect `prefers-reduced-motion` by disabling the pulse keyframes and setting static fallback borders.
 
 ## Related Components
 
-- **[PlayingCard](/components/molecules/playing-card)** — Cards that land on the matt
-- **[Deck](/components/molecules/deck)** — The card stack that feeds the matt
+- **[PlayingCard](/components/molecules/playing-card)** — The 3D cards that land on the matt.
+- **[Deck](/components/molecules/deck)** — The source of the cards, which sits adjacent to the matt on the GameBoard.

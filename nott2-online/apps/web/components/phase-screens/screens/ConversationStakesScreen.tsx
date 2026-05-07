@@ -54,7 +54,11 @@ export function ConversationStakesScreen() {
   }
 
   return (
-    <PhasePanel title="Conversation & Stakes" subtitle="Focus the camera. Define the sacrifice. Then proceed to roll.">
+    <PhasePanel
+      title="Conversation & Stakes"
+      subtitle="Focus the camera. Define the sacrifice. Then proceed to roll."
+      step={{ current: 2, total: 4 }}
+    >
       <Card variant="instruction" title="Scene Prompt">
         <Text variant="flavor">
           &ldquo;{prompt}&rdquo;
@@ -74,28 +78,29 @@ export function ConversationStakesScreen() {
         />
       )}
 
-      {!scene.escalationUsed && (
-        <Card title="Escalation — Something Not Right">
-          <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
-            Any non-AP player can add a terrifying detail. Once per scene.
-          </Text>
+      <Card
+        title="Escalation — Something Not Right"
+        complete={scene.escalationUsed}
+        completionLabel="Escalation used this scene."
+      >
+        <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
+          Any non-AP player can add a terrifying detail. Once per scene.
+        </Text>
+        {!scene.escalationUsed && (
           <Button variant="secondary" size="sm" onClick={escalate}>Use Escalation</Button>
-        </Card>
-      )}
+        )}
+      </Card>
 
-      {scene.escalationUsed && (
-        <StatusCallout variant="warning" icon="warning">Escalation used this scene.</StatusCallout>
-      )}
-
-      <Card title="The Stakes — Define the Sacrifice">
+      <Card
+        title="The Stakes — Define the Sacrifice"
+        complete={scene.sacrificeConfirmed}
+        completionLabel="Sacrifice confirmed."
+      >
         <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
           &ldquo;If you push yourself, what are you willing to sacrifice?&rdquo; Define the Overexertion result — specific and a genuine loss.
         </Text>
         {!scene.sacrificeConfirmed && (
           <Button variant="secondary" size="sm" onClick={confirmSacrifice}>Sacrifice Defined</Button>
-        )}
-        {scene.sacrificeConfirmed && (
-          <Text variant="micro" color="success" as="div"><Icon name="check_circle" size={14} /> Sacrifice confirmed.</Text>
         )}
       </Card>
 

@@ -213,7 +213,11 @@ export function FalloutScreen() {
   const { total, difficulty, success, effortLevel } = snapshot.current;
 
   return (
-    <PhasePanel title="The Result" subtitle="Narrate the outcome, then resolve deck changes and proceed to the next scene.">
+    <PhasePanel
+      title="The Result"
+      subtitle="Narrate the outcome, then resolve deck changes and proceed to the next scene."
+      step={{ current: 4, total: 4 }}
+    >
       <ResultBanner outcome={success ? 'success' : 'failure'} total={total} difficulty={difficulty ?? undefined} />
 
       {scene.modifiedEffort !== null && (
@@ -246,7 +250,12 @@ export function FalloutScreen() {
       )}
 
       {strikesToAssign > 0 && (
-        <Card variant="failure" title={`Assign ${strikesToAssign} Strike${strikesToAssign > 1 ? 's' : ''}`}>
+        <Card
+          variant="failure"
+          title={`Assign ${strikesToAssign} Strike${strikesToAssign > 1 ? 's' : ''}`}
+          complete={remainingToStage <= 0}
+          completionLabel="All strikes assigned."
+        >
           <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
             {remainingToStage > 0
               ? `${remainingToStage} strike${remainingToStage > 1 ? 's' : ''} left to assign. Strikes are committed when you click Next Scene.`
@@ -275,19 +284,25 @@ export function FalloutScreen() {
         </Card>
       )}
 
-      {!scene.isGenrePointAwarded && gameState.tableGenrePoints > 0 && (
-        <Card title="Award Genre Point?">
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {players.map(p => {
-              const char = characters.find(c => c.id === p.characterId);
-              if (!char || char.isDead) return null;
-              return (
-                <Button key={p.id} variant="secondary" size="sm" onClick={() => awardGenrePoint(p.id)}>
-                  To <Icon name={suitToIconName(p.characterId)} size={16} /> {char.name}
-                </Button>
-              );
-            })}
-          </div>
+      {gameState.tableGenrePoints > 0 && (
+        <Card
+          title="Award Genre Point?"
+          complete={scene.isGenrePointAwarded}
+          completionLabel="Genre point awarded."
+        >
+          {!scene.isGenrePointAwarded && (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {players.map(p => {
+                const char = characters.find(c => c.id === p.characterId);
+                if (!char || char.isDead) return null;
+                return (
+                  <Button key={p.id} variant="secondary" size="sm" onClick={() => awardGenrePoint(p.id)}>
+                    To <Icon name={suitToIconName(p.characterId)} size={16} /> {char.name}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
         </Card>
       )}
 

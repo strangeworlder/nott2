@@ -11,6 +11,10 @@ export { Icon, suitToIconName } from './atoms/Icon/Icon';
 export type { IconName, IconColor } from './atoms/Icon/Icon';
 export { Badge } from './atoms/Badge/Badge';
 export { Toggle } from './atoms/Toggle/Toggle';
+export { Grid } from './atoms/Grid/Grid';
+export type { GridProps } from './atoms/Grid/Grid';
+export { SelectableTile } from './atoms/SelectableTile/SelectableTile';
+export type { SelectableTileProps } from './atoms/SelectableTile/SelectableTile';
 export { SegmentedControl } from './atoms/SegmentedControl/SegmentedControl';
 export type { SegmentOption } from './atoms/SegmentedControl/SegmentedControl';
 export { Separator } from './atoms/Separator/Separator';
@@ -33,6 +37,9 @@ export { ActionFooter } from './molecules/ActionFooter/ActionFooter';
 
 export { PlayerAvatar } from './molecules/PlayerAvatar/PlayerAvatar';
 export type { AvatarSize } from './molecules/PlayerAvatar/PlayerAvatar';
+
+export { CharacterCard } from './molecules/CharacterCard/CharacterCard';
+export type { CharacterCardProps } from './molecules/CharacterCard/CharacterCard';
 
 export { StrikeIndicator } from './molecules/StrikeIndicator/StrikeIndicator';
 

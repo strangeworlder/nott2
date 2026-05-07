@@ -3,25 +3,111 @@ sidebar_position: 10
 title: DiceResult
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { DiceResult, Stack } from '@nott2/design-system';
+
 # DiceResult
 
-The autopsy report. Clinical `d10 + d4 = Total` layout with optional aptitude modifier (struck-through original value).
+The autopsy report. Clinical `d10 + d4 = Total` layout. 
+
+After the dice have settled, this component presents the clinical breakdown of what happened. It is the most-viewed UI state in the game. Its typography is precise and unambiguous — no drama here, just the truth of the numbers.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { DiceResult } from '@nott2/design-system';
+
+<DiceResult d10={7} d4={3} />
+```
+</details>
+
+## Why to Use
+
+`DiceResult` provides a standardized, mathematical layout for the core resolution mechanic. It leverages `subgrid` to ensure the d10, operator, d4, and Total columns always align perfectly across the horizontal axis, regardless of whether a modifier is present.
+
+## When to Use
+
+> **Do**
+> - Use as the primary display immediately after a player has committed their effort and threat rolls.
+> - Provide the `modifier` and `originalD4` props when a player's Aptitude alters the roll.
+
+> **Don't**
+> - Do not use this component to declare success or failure. This component is just the math; use `ResultBanner` for the verdict.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `d10` | `number` | — | Threat die value |
-| `d4` | `number` | — | Effort die value |
-| `total` | `number` | — | Calculated total |
-| `aptitudeModifier` | `number` | — | Optional modifier (shows struck-through original) |
+Use these props to configure the DiceResult component.
 
-## Implementation Examples
+### d10
+The threat die result.
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | — | **Required.** The base threat value (usually 0-9). |
+
+<ComponentPreview>
+  <DiceResult d10={7} d4={1} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<DiceResult d10={7} d4={3} total={10} />
-<DiceResult d10={7} d4={3} total={12} aptitudeModifier={2} />
+<DiceResult d10={7} d4={1} />
 ```
+</details>
+
+### d4
+The effort die result (or final modified effort value).
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | — | **Required.** The effort value. If modified, this should be the post-modification value. |
+
+<ComponentPreview>
+  <DiceResult d10={5} d4={4} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DiceResult d10={5} d4={4} />
+```
+</details>
+
+### modifier & originalD4
+Used when an Aptitude modifies the d4 effort roll. Both must be provided together to trigger the modified visual state (red text and struck-through original).
+
+| Type | Default | Description |
+|---|---|---|
+| `{ value: -1 \| 1, label: string }` | — | The applied modifier object. |
+| `number` | — | The original d4 value before modification. |
+
+<ComponentPreview>
+  <Stack gap="xl">
+    <DiceResult 
+      d10={7} 
+      d4={4} 
+      originalD4={3} 
+      modifier={{ value: 1, label: 'Athletics' }} 
+    />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DiceResult 
+  d10={7} 
+  d4={4} 
+  originalD4={3} 
+  modifier={{ value: 1, label: 'Athletics' }} 
+/>
+```
+</details>
 
 ## Related Components
 

@@ -17,7 +17,7 @@ import { CharacterBar as DSCharacterBar } from '@nott2/design-system';
 import type { Suit } from '@nott2/game-engine';
 
 export default function CharacterBar() {
-  const { gameState, setActivePlayer } = useGameStore();
+  const { gameState } = useGameStore();
   const { characters, players, scene, playerGenrePoints, tableGenrePoints, turnOrder, deck } = gameState;
 
   // A character earns their Ace token when their Ace (rank 1) has been
@@ -53,7 +53,6 @@ export default function CharacterBar() {
       activeCharacterId={activeCharacterId}
       genrePoints={genrePoints}
       tableGenrePoints={tableGenrePoints}
-      onSelectCharacter={(characterId) => setActivePlayer(characterId as Suit)}
     />
   );
 }

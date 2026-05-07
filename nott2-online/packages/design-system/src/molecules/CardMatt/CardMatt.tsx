@@ -26,6 +26,8 @@
 
 
 import React from 'react';
+import { Text } from '../../atoms/Text/Text';
+import { Badge } from '../../atoms/Badge/Badge';
 import * as styles from './CardMatt.css';
 
 export interface CardMattProps {
@@ -52,20 +54,20 @@ export const CardMatt = React.forwardRef<HTMLDivElement, CardMattProps>(
     return (
       <div className={styles.cardMattRoot}>
         {/* Rotated title on the left edge */}
-        <div className={styles.cardMattTitle}>
+        <Text variant="label" color="muted" className={styles.cardMattTitle}>
           {title}
-        </div>
+        </Text>
 
         {/* The felt surface — this is the 3D card landing zone */}
         <div className={surfaceClass}>
           {count === 0 && emptyHint && (
-            <div className={styles.cardMattEmpty}>
+            <Text variant="label" className={`${styles.cardMattEmpty} ${styles.cardMattEmptyText}`}>
               {emptyHint}
-            </div>
+            </Text>
           )}
           {count > 0 && (
             <div className={styles.cardMattCount}>
-              {count} {count === 1 ? 'card' : 'cards'}
+              <Badge>{count} {count === 1 ? 'card' : 'cards'}</Badge>
             </div>
           )}
           {/* Invisible precision target area — ref is forwarded here so

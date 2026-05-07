@@ -18,7 +18,6 @@ describe('CharacterBar', () => {
         activeCharacterId="Spades"
         genrePoints={{}}
         tableGenrePoints={3}
-        onSelectCharacter={() => {}}
       />
     );
     expect(screen.getByText('Alex')).toBeTruthy();
@@ -26,35 +25,6 @@ describe('CharacterBar', () => {
     expect(screen.getByText('Sam')).toBeTruthy();
   });
 
-  it('calls onSelectCharacter when a living character is clicked', () => {
-    const handler = vi.fn();
-    render(
-      <CharacterBar
-        characters={CHARACTERS}
-        activeCharacterId={null}
-        genrePoints={{}}
-        tableGenrePoints={0}
-        onSelectCharacter={handler}
-      />
-    );
-    fireEvent.click(screen.getByLabelText('Alex — 0 strikes'));
-    expect(handler).toHaveBeenCalledWith('Spades');
-  });
-
-  it('does not call onSelectCharacter for dead characters', () => {
-    const handler = vi.fn();
-    render(
-      <CharacterBar
-        characters={CHARACTERS}
-        activeCharacterId={null}
-        genrePoints={{}}
-        tableGenrePoints={0}
-        onSelectCharacter={handler}
-      />
-    );
-    const deadBtn = screen.getByLabelText(/Casey/);
-    expect(deadBtn).toHaveProperty('disabled', true);
-  });
 
   it('renders genre pool', () => {
     render(
@@ -63,7 +33,6 @@ describe('CharacterBar', () => {
         activeCharacterId={null}
         genrePoints={{}}
         tableGenrePoints={5}
-        onSelectCharacter={() => {}}
       />
     );
     expect(screen.getByText('5')).toBeTruthy();
@@ -76,7 +45,6 @@ describe('CharacterBar', () => {
         activeCharacterId={null}
         genrePoints={{ Spades: 2 }}
         tableGenrePoints={2}
-        onSelectCharacter={() => {}}
       />
     );
     expect(screen.getByText('2 GP')).toBeTruthy();
@@ -98,7 +66,6 @@ describe('CharacterBar', () => {
         activeCharacterId={null}
         genrePoints={{}}
         tableGenrePoints={0}
-        onSelectCharacter={() => {}}
       />
     );
     // Alex (available) and Sam (available) have face-up Aces showing "A".
@@ -114,7 +81,6 @@ describe('CharacterBar', () => {
         activeCharacterId={null}
         genrePoints={{}}
         tableGenrePoints={0}
-        onSelectCharacter={() => {}}
       />
     );
     const aceCards = container.querySelectorAll('[class*="aceToken"]');

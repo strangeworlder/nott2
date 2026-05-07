@@ -1,12 +1,6 @@
 import { style, keyframes } from '@vanilla-extract/css';
 import { vars } from '../../tokens/theme.css';
 
-// ── Gold-crimson shimmer on the dashed border — evokes casino table trim ──────
-const borderPulse = keyframes({
-  '0%, 100%': { borderColor: `color-mix(in srgb, ${vars.color.gold} 45%, transparent)` },
-  '50%': { borderColor: `color-mix(in srgb, ${vars.color.goldBright} 70%, transparent)` },
-});
-
 // ── Glow pulse — gold/crimson box-shadow that breathes, signals card selectability ──
 // Dimensions are proportional to CardMatt's large surface area.
 // Colors reference tokens; blur/spread are component-specific.
@@ -28,12 +22,6 @@ export const cardMattRoot = style({
 export const cardMattTitle = style({
   writingMode: 'vertical-rl',
   transform: 'rotate(180deg)',
-  fontFamily: vars.font.display,
-  fontSize: vars.fontSize.micro,
-  fontWeight: 700,
-  letterSpacing: vars.letterSpacing.wider,
-  textTransform: 'uppercase',
-  color: vars.color.textMuted,
   whiteSpace: 'nowrap',
   display: 'flex',
   alignItems: 'center',
@@ -49,7 +37,6 @@ export const cardMattSurface = style({
   minHeight: '180px',
   borderRadius: vars.radius.lg,
   border: `2px dashed color-mix(in srgb, ${vars.color.gold} 45%, transparent)`,
-  animation: `${borderPulse} 4s ease-in-out infinite`,
   position: 'relative',
   overflow: 'hidden',
 
@@ -71,15 +58,13 @@ export const cardMattSurface = style({
 
   '@media': {
     '(prefers-reduced-motion: reduce)': {
-      animation: 'none',
       borderColor: `color-mix(in srgb, ${vars.color.gold} 55%, transparent)`,
     },
   },
 });
 
 // ── Glow variant — pulsing amber/crimson halo signalling card selectability ───
-// Applied on top of cardMattSurface. The animation overrides borderPulse with
-// a more dramatic box-shadow beacon. Stop borderPulse by overriding animationName.
+// Applied on top of cardMattSurface. The more dramatic box-shadow beacon.
 export const cardMattSurfaceGlow = style({
   animation: `${cardMattGlowPulse} 2.5s ease-in-out infinite`,
   borderColor: `color-mix(in srgb, ${vars.color.goldBright} 80%, transparent)`,
@@ -99,14 +84,12 @@ export const cardMattEmpty = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: `color-mix(in srgb, ${vars.color.goldBright} 58%, transparent)`,
-  fontFamily: vars.font.display,
-  fontSize: vars.fontSize.label,
-  fontWeight: 700,
-  letterSpacing: vars.letterSpacing.wide,
-  textTransform: 'uppercase',
   userSelect: 'none',
   pointerEvents: 'none',
+});
+
+export const cardMattEmptyText = style({
+  color: vars.color.goldBright,
 });
 
 // ── Card count badge ─────────────────────────────────────────────────────────
@@ -114,11 +97,6 @@ export const cardMattCount = style({
   position: 'absolute',
   top: vars.space.sm,
   right: vars.space.sm,
-  fontFamily: vars.font.body,
-  fontSize: vars.fontSize.micro,
-  color: vars.color.textMuted,
-  letterSpacing: vars.letterSpacing.normal,
-  textTransform: 'uppercase',
   pointerEvents: 'none',
   userSelect: 'none',
 });

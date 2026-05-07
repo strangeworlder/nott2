@@ -53,8 +53,8 @@ export function ResolutionScreen() {
   const previewTotal = scene.rollMain !== null && previewD4 !== null ? calculateTotal(scene.rollMain, previewD4) : null;
   const previewEffort = previewD4 !== null ? getEffortLevel(previewD4) : null;
 
-  const canSpendGP = hasRolled && !scene.isGenrePointUsed
-    && (gameState.playerGenrePoints[scene.activePlayerId ?? ''] ?? 0) > 0;
+  const playerGP = gameState.playerGenrePoints[scene.activePlayerId ?? ''] ?? 0;
+  const showGP = hasRolled && (playerGP > 0 || scene.isGenrePointUsed);
 
   const [diceHook, setDiceHook] = useState<any>(null);
   useEffect(() => {
@@ -67,7 +67,11 @@ export function ResolutionScreen() {
   };
 
   return (
-    <PhasePanel title="The Roll" subtitle="Roll the d13 — d10 for luck, d4 for effort. Beat the difficulty to survive.">
+    <PhasePanel
+      title="The Roll"
+      subtitle="Roll the d13 — d10 for luck, d4 for effort. Beat the difficulty to survive."
+      step={{ current: 3, total: 4 }}
+    >
       {difficulty !== null && <DifficultyBadge value={difficulty} breakdown={difficultyBreakdown} />}
 
       {use3D && diceHook ? (
@@ -103,12 +107,18 @@ export function ResolutionScreen() {
         </Card>
       )}
 
-      {canSpendGP && !isRolling && (
-        <Card variant="instruction" title="Spend Genre Point? (Reroll d13, d10 gets +1)">
+      {showGP && !isRolling && (
+        <Card
+          variant="instruction"
+          title="Spend Genre Point? (Reroll d13, d10 gets +1)"
+          complete={scene.isGenrePointUsed}
+          completionLabel="Genre Point spent."
+        >
           <Text variant="caption" color="muted" style={{ marginBottom: 8 }}>
             Spend 1 Genre Point to reroll. The new d10 gets +1. You must accept the result.
           </Text>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          {!scene.isGenrePointUsed && (
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
             {use3D && diceHook ? (
               <GenrePointDiceRoller useDiceRoll={diceHook} slasherTheme={SLASHER_THEME}
                 onResult={(d10) => { useGenrePoint(d10); setAptitudeChoice(0); }} />
@@ -123,7 +133,8 @@ export function ResolutionScreen() {
                 </div>
               </div>
             )}
-          </div>
+            </div>
+          )}
         </Card>
       )}
 

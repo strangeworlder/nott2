@@ -25,7 +25,6 @@ export const Default: Story = {
     activeCharacterId: 'Spades',
     genrePoints: { Hearts: 2 },
     tableGenrePoints: 4,
-    onSelectCharacter: () => {},
   },
 };
 
@@ -35,7 +34,6 @@ export const NoneActive: Story = {
     activeCharacterId: null,
     genrePoints: {},
     tableGenrePoints: 2,
-    onSelectCharacter: () => {},
   },
 };
 
@@ -50,7 +48,6 @@ export const AllAlive: Story = {
     activeCharacterId: 'Clubs',
     genrePoints: { Spades: 1, Clubs: 2 },
     tableGenrePoints: 6,
-    onSelectCharacter: () => {},
   },
 };
 
@@ -65,7 +62,6 @@ export const TurnOrderMidRound: Story = {
     activeCharacterId: 'Hearts',
     genrePoints: { Hearts: 1 },
     tableGenrePoints: 8,
-    onSelectCharacter: () => {},
   },
 };
 
@@ -80,7 +76,6 @@ export const PrologueNoTokens: Story = {
     activeCharacterId: 'Spades',
     genrePoints: {},
     tableGenrePoints: 13,
-    onSelectCharacter: () => {},
   },
 };
 
@@ -95,6 +90,5 @@ export const RoundComplete: Story = {
     activeCharacterId: null,
     genrePoints: { Spades: 2, Hearts: 1 },
     tableGenrePoints: 5,
-    onSelectCharacter: () => {},
   },
 };

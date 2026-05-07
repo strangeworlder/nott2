@@ -3,36 +3,151 @@ sidebar_position: 6
 title: DieSelector
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { DieSelector, Stack } from '@nott2/design-system';
+
 # DieSelector
 
 Tactile die selection. A grid of clickable faces for d4 (1–4) or d10 (0–9).
 
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { DieSelector } from '@nott2/design-system';
+
+<DieSelector 
+  sides={10} 
+  color="red" 
+  value={4} 
+  onChange={(val) => console.log(val)} 
+  label="Threat Die (d10)" 
+/>
+```
+</details>
+
 ## Why to Use
 
-DieSelector provides a tangible, visual way to input die rolls rather than typing numbers. The color-coded faces (red for threat, white for effort) reinforce the game's mechanical language.
+Rolling dice is the moment the horror has been building toward — the determination of fate. This component makes die selection tactile and deliberate. Clicking a face is a choice, not a roll.
+
+Internally, it utilizes the `Grid` and `SelectableTile` atoms to enforce a strict layout and standard selection interactions.
 
 ## When to Use
 
-- During the Resolution phase for effort (d4) and threat (d10) die entry
-- In the PlayerPanel resolution sub-view
+> **Do**
+> - Use as a manual fallback during the Resolution phase when 3D dice are unavailable.
+> - Use `color="red"` for the Threat Die (d10) to reinforce danger.
+> - Use `color="white"` for the Effort Die (d4).
+
+> **Don't**
+> - Do not use this for generic numerical input (like selecting a number of players). It is strictly for die roll inputs.
+> - Do not try to override the width or grid layout; it is strictly controlled by its internal `Grid` atom.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `dieType` | `'d4' \| 'd10'` | — | Die type (determines face count) |
-| `color` | `'red' \| 'white'` | `'white'` | `red` for threat die, `white` for effort |
-| `value` | `number \| null` | — | Currently selected face |
-| `onSelect` | `(value: number) => void` | — | Selection handler |
+Use these props to configure the DieSelector component.
 
-## Implementation Examples
+### sides
+Determines the die type and number of faces.
+
+| Type | Default | Description |
+|---|---|---|
+| `4 \| 10` | — | **Required.** `4` generates faces 1–4. `10` generates faces 0–9. |
+
+<ComponentPreview>
+  <Stack gap="xl">
+    <DieSelector sides={4} color="white" value={null} onChange={() => {}} />
+    <DieSelector sides={10} color="red" value={null} onChange={() => {}} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<DieSelector dieType="d4" color="white" value={effortRoll} onSelect={setEffortRoll} />
-<DieSelector dieType="d10" color="red" value={threatRoll} onSelect={setThreatRoll} />
+<DieSelector sides={4} value={null} onChange={setVal} />
+<DieSelector sides={10} value={null} onChange={setVal} />
 ```
+</details>
+
+### value
+The currently selected face value.
+
+| Type | Default | Description |
+|---|---|---|
+| `number \| null` | — | **Required.** The active face. |
+
+<ComponentPreview>
+  <DieSelector sides={4} color="white" value={2} onChange={() => {}} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieSelector sides={4} value={2} onChange={setVal} />
+```
+</details>
+
+### onChange
+Callback fired when a face is clicked.
+
+| Type | Default | Description |
+|---|---|---|
+| `(val: number) => void` | — | **Required.** Selection handler. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieSelector sides={4} value={val} onChange={(newVal) => setVal(newVal)} />
+```
+</details>
+
+### label
+Optional text displayed above the grid.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Header label above the die grid. |
+
+<ComponentPreview>
+  <DieSelector sides={4} color="white" value={null} onChange={() => {}} label="Effort Die (d4)" />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieSelector sides={4} value={null} onChange={setVal} label="Effort Die (d4)" />
+```
+</details>
+
+### color
+Determines the visual glow color.
+
+| Type | Default | Description |
+|---|---|---|
+| `'red' \| 'white'` | `'white'` | Visual theme. `red` implies danger/threat, `white` implies neutral effort. |
+
+<ComponentPreview>
+  <Stack gap="xl">
+    <DieSelector sides={4} color="white" value={3} onChange={() => {}} />
+    <DieSelector sides={4} color="red" value={3} onChange={() => {}} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieSelector sides={4} color="white" value={3} onChange={setVal} />
+<DieSelector sides={4} color="red" value={3} onChange={setVal} />
+```
+</details>
 
 ## Related Components
 
-- **[DiceResult](/components/molecules/dice-result)** — Shows the roll calculation after selection
-- **[ResultBanner](/components/molecules/result-banner)** — Shows SUCCESS/FAILURE verdict
+- **[Grid](/components/atoms/grid)** — The atomic layout container used internally.
+- **[SelectableTile](/components/atoms/selectable-tile)** — The atomic interactive squares used internally.
+- **[DiceResult](/components/molecules/dice-result)** — Shows the roll calculation after selection.

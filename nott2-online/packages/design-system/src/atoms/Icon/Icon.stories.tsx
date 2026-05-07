@@ -51,6 +51,8 @@ const MATERIAL_ICONS: IconName[] = [
   'movie', 'mic', 'mic_off', 'videocam', 'videocam_off',
   'description', 'assignment', 'settings', 'shuffle', 'delete', 'playing_cards',
   'check_circle', 'arrow_downward', 'key', 'military_tech', 'input', 'person_raised_hand',
+  'crown', 'swords', 'deployed_code', 'lock', 'link_off', 'group_off', 'error_outline', 'login',
+  'expand_less',
 ];
 
 export const AllIcons: Story = {

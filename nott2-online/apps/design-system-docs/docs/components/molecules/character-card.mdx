@@ -1,0 +1,184 @@
+---
+sidebar_position: 6
+title: CharacterCard
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { CharacterCard, Stack } from '@nott2/design-system';
+
+# CharacterCard
+
+A single player's status on the stage. It combines their identity, suffering (strikes), luck (genre points), and readiness (Ace token) into a single, cohesive block.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { CharacterCard } from '@nott2/design-system';
+
+<CharacterCard
+  name="Alex"
+  suit="Spades"
+  strikes={1}
+  genrePoints={2}
+  isActive={true}
+  hasAceToken={true}
+/>
+```
+</details>
+
+## Why to Use
+
+The CharacterCard encapsulates all of a player's vital statistics into one dense, highly readable component. It takes atomic and molecular indicators (`PlayerAvatar`, `StrikeIndicator`, `Badge`, `PlayingCard`) and orchestrates them into a unified status card. 
+
+Crucially, **CharacterCard is a presentational container, not an interactive button**. The game's flow dictates who is in the spotlight (the active player), not the player's clicks. 
+
+## When to Use
+
+> **Do**
+> - **In application code**, always use `CharacterCard` inside the `CharacterBar` organism to render the array of players.
+> - Pass all relevant state (strikes, GP, Ace tokens) downward into this molecule.
+
+> **Don't**
+> - **Never** wrap `CharacterCard` in a `<button>` or attach `onClick` handlers to it to drive game state. It is a mirror of the game state, not a controller.
+> - Don't use `CharacterCard` outside of footer/bar contexts where its dense vertical layout might look out of place. Use `PlayerPanel` for larger contextual areas.
+
+## Anatomy
+
+```
+ ┌──────────────────────┐
+ │  ┌───┐               │
+ │  │ A♠│      [AVATAR] │
+ │  └───┘               │
+ │            O  O  O   │
+ │                      │
+ │             2 GP     │
+ └──────────────────────┘
+      ▲           ▲
+  Ace Token    Inner Stack
+```
+
+1. **Ace Token** — A micro `PlayingCard` showing the player's suit. It represents their turn order readiness.
+2. **Inner Stack** — A vertically centered layout containing the `PlayerAvatar`, `StrikeIndicator`, and optional Genre Points `Badge`.
+
+## Key Props
+
+### `name` & `suit`
+The core identity. Passed directly to the internal `PlayerAvatar`.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | **Required.** The player's display name. |
+| `string` | — | **Required.** The player's assigned suit. |
+
+<ComponentPreview>
+  <CharacterCard name="Sam" suit="Hearts" strikes={0} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<CharacterCard name="Sam" suit="Hearts" strikes={0} />
+```
+</details>
+
+### `strikes` & `isDead`
+The player's physical/mental toll. Passed to the `StrikeIndicator`. `isDead` takes ultimate priority.
+
+| Type | Default | Description |
+|---|---|---|
+| `0 \| 1 \| 2 \| 3` | — | **Required.** The number of strikes. |
+| `boolean` | `false` | When true, greys out the entire card and shows the death skull. |
+
+<ComponentPreview column>
+  <Stack gap="md" style={{ flexDirection: 'row' }}>
+    <CharacterCard name="Healthy" suit="Clubs" strikes={0} />
+    <CharacterCard name="Wounded" suit="Clubs" strikes={2} />
+    <CharacterCard name="Deceased" suit="Clubs" strikes={3} isDead />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<CharacterCard name="Healthy" suit="Clubs" strikes={0} />
+<CharacterCard name="Wounded" suit="Clubs" strikes={2} />
+<CharacterCard name="Deceased" suit="Clubs" strikes={3} isDead />
+```
+</details>
+
+### `genrePoints`
+Optional luck/currency indicator.
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | `0` | If greater than 0, renders a warning-colored badge at the bottom of the card. |
+
+<ComponentPreview>
+  <CharacterCard name="Lucky" suit="Diamonds" strikes={0} genrePoints={4} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<CharacterCard name="Lucky" suit="Diamonds" strikes={0} genrePoints={4} />
+```
+</details>
+
+### `isActive`
+The spotlight/camera focus. 
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | When true, applies a pulsing blood-red glow to the outer border and sets `aria-current`. |
+
+<ComponentPreview>
+  <CharacterCard name="Active Turn" suit="Spades" strikes={0} isActive />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<CharacterCard name="Active Turn" suit="Spades" strikes={0} isActive />
+```
+</details>
+
+### `hasAceToken` & `hasActed`
+Turn order management states.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Renders the micro Ace card on the left side of the component. |
+| `boolean` | `false` | Flips the Ace token face-down and dims it, indicating the player has taken their turn this round. |
+
+<ComponentPreview column>
+  <Stack gap="md" style={{ flexDirection: 'row' }}>
+    <CharacterCard name="Ready" suit="Hearts" strikes={0} hasAceToken />
+    <CharacterCard name="Acted" suit="Hearts" strikes={0} hasAceToken hasActed />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<CharacterCard name="Ready" suit="Hearts" strikes={0} hasAceToken />
+<CharacterCard name="Acted" suit="Hearts" strikes={0} hasAceToken hasActed />
+```
+</details>
+
+## Behavior
+
+- The `CharacterCard` is entirely presentational and devoid of interaction states (no `cursor: pointer` or `:hover` borders).
+- `isDead` applies `opacity: 0.4` to the entire card layout.
+- If `hasAceToken` is false, the card horizontally shrinks to its minimum width since the left Ace Token slot collapses.
+
+## Related Components
+
+- **[CharacterBar](/components/organisms/character-bar)** — The organism that maps and renders multiple `CharacterCard`s.
+- **[PlayerAvatar](/components/molecules/player-avatar)** — Internal molecule.
+- **[StrikeIndicator](/components/molecules/strike-indicator)** — Internal molecule.

@@ -37,6 +37,8 @@ const sidebars: SidebarsConfig = {
             'components/atoms/stack',
             'components/atoms/row',
             'components/atoms/separator',
+            'components/atoms/grid',
+            'components/atoms/selectable-tile',
           ],
         },
         {
@@ -48,6 +50,7 @@ const sidebars: SidebarsConfig = {
             'components/molecules/action-footer',
             'components/molecules/playing-card',
             'components/molecules/player-avatar',
+            'components/molecules/character-card',
             'components/molecules/strike-indicator',
             'components/molecules/die-selector',
             'components/molecules/result-banner',
@@ -60,7 +63,9 @@ const sidebars: SidebarsConfig = {
             'components/molecules/card-matt',
             'components/molecules/deck',
             'components/molecules/doom-clock',
+            'components/molecules/doom-clock-transition',
             'components/molecules/phase-header',
+            'components/molecules/trophy-indicator',
           ],
         },
         {
