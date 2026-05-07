@@ -1,0 +1,108 @@
+---
+sidebar_position: 13
+title: Grid
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Grid } from '@nott2/design-system';
+
+# Grid
+
+A rigid structure of confinement. Unlike the `Row` or `Stack` which flow and wrap naturally, the `Grid` forces content into a predefined matrix. It is mathematical and unyielding — perfect for arrays of choices, dice faces, or systematic data.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Grid } from '@nott2/design-system';
+
+<Grid columns={4} gap="sm">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+  <div>4</div>
+  <div>5</div>
+</Grid>
+```
+</details>
+
+## Why to Use
+
+The `Grid` atom replaces manual CSS grid definitions and inline styles when you need exact, equal-width column layouts. It guarantees consistent structural rhythm aligned with the design system's spacing tokens.
+
+## When to Use
+
+> **Do**
+> - Use for strict multi-column layouts like dice selection grids, character grids, or data matrices.
+> - Use when items must align perfectly vertically across multiple rows.
+
+> **Don't**
+> - Do not use `Grid` when items should natural flow or wrap based on their intrinsic width (use `Row` with the `wrap` prop instead).
+> - Do not use for simple vertical stacking (use `Stack`).
+
+## Key Props
+
+Use these props to configure the Grid component.
+
+### columns
+The number of equal-width columns in the grid.
+
+| Type | Default | Description |
+|---|---|---|
+| `1-12` | `1` | The number of equal-width columns. |
+
+<ComponentPreview>
+  <Grid columns={3} gap="sm" style={{ width: '100%' }}>
+    <div style={{ padding: '8px', background: 'rgba(255,0,0,0.2)', textAlign: 'center' }}>Col 1</div>
+    <div style={{ padding: '8px', background: 'rgba(255,0,0,0.2)', textAlign: 'center' }}>Col 2</div>
+    <div style={{ padding: '8px', background: 'rgba(255,0,0,0.2)', textAlign: 'center' }}>Col 3</div>
+  </Grid>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Grid columns={3} gap="sm">
+  <div>Col 1</div>
+  <div>Col 2</div>
+  <div>Col 3</div>
+</Grid>
+```
+</details>
+
+### gap
+The spacing between items in the grid.
+
+| Type | Default | Description |
+|---|---|---|
+| `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'sm'` | Spacing between grid items, mapping to design tokens. |
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+    <Grid columns={2} gap="none" style={{ width: '100%' }}>
+      <div style={{ padding: '8px', background: 'rgba(255,0,0,0.2)' }}>No gap</div>
+      <div style={{ padding: '8px', background: 'rgba(255,0,0,0.2)' }}>No gap</div>
+    </Grid>
+    <Grid columns={2} gap="md" style={{ width: '100%' }}>
+      <div style={{ padding: '8px', background: 'rgba(255,0,0,0.2)' }}>md gap</div>
+      <div style={{ padding: '8px', background: 'rgba(255,0,0,0.2)' }}>md gap</div>
+    </Grid>
+  </div>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Grid columns={2} gap="none">
+  <div>Item</div>
+  <div>Item</div>
+</Grid>
+
+<Grid columns={2} gap="md">
+  <div>Item</div>
+  <div>Item</div>
+</Grid>
+```
+</details>

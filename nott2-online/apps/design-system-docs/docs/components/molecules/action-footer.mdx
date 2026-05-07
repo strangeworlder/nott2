@@ -3,45 +3,162 @@ sidebar_position: 2
 title: ActionFooter
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { ActionFooter, Text } from '@nott2/design-system';
+
 # ActionFooter
 
-The threshold before commitment — a sticky bottom footer with a single primary action button.
+The threshold before commitment — a sticky bottom footer with a single primary action button. ActionFooter anchors the bottom of a phase screen, always visible, always beckoning the player toward the next scene or the resolution of a mechanic.
 
-## Why to Use
-
-ActionFooter ensures the primary page-level CTA is always visible and consistently positioned. It replaces raw `<Button>` at the bottom of screens with proper sticky positioning and optional hint text.
-
-## When to Use
-
-- **Always** for the primary page-level action (the big button at the bottom of a phase screen)
-- **Never** use a raw `<Button>` for this purpose
-
-## Key Props
-
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `label` | `string` | — | Button text |
-| `onClick` | `() => void` | — | Click handler |
-| `disabled` | `boolean` | `false` | Disable the button |
-| `variant` | `ButtonVariant` | `'primary'` | Button variant |
-| `hint` | `string` | — | Explanatory text above the button |
-
-## Implementation Examples
+<details open>
+<summary>Code example</summary>
 
 ```tsx
+import { ActionFooter } from '@nott2/design-system';
+
 <ActionFooter
   label="Begin Act II"
   onClick={handleBeginAct}
 />
+```
+</details>
 
+## Why to Use
+
+ActionFooter ensures the primary page-level CTA is consistently positioned and styled. It replaces raw `<Button>` elements at the bottom of screens with proper structural container padding, a top border, and built-in support for disabled states and explanatory hint text. By using ActionFooter, you guarantee that the primary action always anchors perfectly to the bottom of the `PhasePanel`.
+
+## When to Use
+
+> **Do**
+> - **Always** use ActionFooter for the primary page-level action (the big button at the bottom of a phase screen).
+> - Use the `disabled` prop to withhold progression until a required action is taken (e.g., "Assign 2 Strikes first").
+> - Use the `hint` prop to explain *why* the button is disabled or what will happen when clicked.
+
+> **Don't**
+> - **Never** use a raw `<Button>` at the bottom of a phase screen layout for progression.
+> - Don't use ActionFooter for secondary actions (like "Cancel" or "Back") — those belong in the phase header or within specific cards.
+
+## Anatomy
+
+```
+ ┌─ borderTop: 1px solid vars.color.border ───────┐
+ │                                                │
+ │     [Hint Text] ← optional, italic             │
+ │                                                │
+ │  ┌──────────────────────────────────────────┐  │
+ │  │                [Button]                  │  │
+ │  └──────────────────────────────────────────┘  │
+ │                                                │
+ └─ padding: vars.space.md vars.space.lg ─────────┘
+```
+
+1. **Container** — Provides consistent padding and a top border separator.
+2. **Hint Text** — Optional explanatory paragraph rendered in italics using the `label` font size but `muted` color.
+3. **Button** — A full-width (`block=true`) large (`size="lg"`) action button.
+
+## Key Props
+
+### `label` & `onClick`
+The core functionality of the footer. `label` defines the button text, and `onClick` provides the action.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `string` | — | **Required.** The text displayed on the button. |
+| `onClick` | `() => void` | — | The action triggered when the button is clicked. |
+
+<ComponentPreview>
+  <ActionFooter
+    label="Next Scene →"
+    onClick={() => console.log('Proceeding')}
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
 <ActionFooter
-  label="Roll Dice"
-  onClick={handleRoll}
-  hint="You're about to roll for the challenge"
-  disabled={!canRoll}
+  label="Next Scene →"
+  onClick={handleNextScene}
 />
 ```
+</details>
+
+### `disabled` & `hint`
+Use these together to gate progression. The `hint` text is typically used to explain the disabled state, but can also clarify the consequence of clicking.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `disabled` | `boolean` | `false` | Prevents interaction and dims the button. |
+| `hint` | `string` | `undefined` | Optional explanatory text rendered above the button. |
+
+<ComponentPreview column>
+  <ActionFooter
+    label="Assign 2 Strikes first"
+    disabled={true}
+  />
+  <ActionFooter
+    label="Lock In Roll →"
+    hint="You cannot change your aptitude once locked in."
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+// Disabled state blocking progression
+<ActionFooter
+  label="Assign 2 Strikes first"
+  disabled={!strikesReady}
+/>
+
+// Active state with consequence hint
+<ActionFooter
+  label="Lock In Roll →"
+  hint="You cannot change your aptitude once locked in."
+  onClick={handleLockIn}
+/>
+```
+</details>
+
+### `variant`
+Passes through to the underlying Button component. Usually left as the default (`primary`), but can be changed for specific contexts.
+
+| Type | Default | Description |
+|---|---|---|
+| `'primary' \| 'secondary' \| 'ghost'` | `'primary'` | The visual style of the button. |
+
+<ComponentPreview>
+  <ActionFooter
+    label="Skip Setup"
+    variant="ghost"
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<ActionFooter
+  label="Skip Setup"
+  variant="ghost"
+  onClick={skipSetup}
+/>
+```
+</details>
+
+## Behavior
+
+- The button is forced to `block` (full width) and `size="lg"` to ensure it serves as a massive, unmissable hit target at the bottom of mobile and desktop screens alike.
+- The `hint` text uses `vars.fontSize.label` and `font-style: italic` to distinguish it from standard body copy.
+
+## Accessibility
+
+- `ActionFooter` delegates its interactive accessibility to the underlying `Button` component.
+- The `hint` text is currently purely visual. If the hint is critical context for screen readers when the button is focused, it should ideally be linked via `aria-describedby` (though this is not currently implemented in the component).
 
 ## Related Components
 
-- **[Button](/components/atoms/button)** — The underlying button (use ActionFooter for page-level CTAs)
+- **[Button](/components/atoms/button)** — The underlying atom used by ActionFooter.
+- **[PhasePanel](/components/organisms/phase-panel)** — The main layout wrapper that expects ActionFooter at its bottom.

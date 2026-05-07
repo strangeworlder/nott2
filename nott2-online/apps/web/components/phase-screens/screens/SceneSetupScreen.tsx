@@ -90,6 +90,7 @@ export function SceneSetupScreen() {
           ? 'Draw a second card to give the Active Player a choice.'
           : 'Select a card to challenge, then proceed.'
       }
+      step={{ current: 1, total: 4 }}
     >
 
 

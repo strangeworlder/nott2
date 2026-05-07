@@ -3,32 +3,94 @@ sidebar_position: 7
 title: CharacterBar
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { CharacterBar } from '@nott2/design-system';
+
 # CharacterBar
 
-The playbill. Footer bar showing all 4 characters: avatar, strikes, genre points, Ace turn tokens. Active player glows red. Dead characters are greyed out.
+The playbill at the bottom of the stage. Four characters, always visible, always watching.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { CharacterBar } from '@nott2/design-system';
+
+<CharacterBar
+  characters={[
+    { id: 'Spades', name: 'Alex', strikes: 0, isDead: false, hasAceToken: true, hasActed: false },
+    { id: 'Hearts', name: 'Sam', strikes: 2, isDead: false, hasAceToken: true, hasActed: true },
+    { id: 'Clubs', name: 'Jordan', strikes: 3, isDead: true },
+    { id: 'Diamonds', name: 'Taylor', strikes: 0, isDead: false },
+  ]}
+  activeCharacterId="Spades"
+  genrePoints={{ 'Spades': 2, 'Diamonds': 1 }}
+  tableGenrePoints={4}
+/>
+```
+</details>
+
+## Why to Use
+
+The CharacterBar is the persistent emotional register of the game. It shows who is still alive, who is in danger, who has acted this round, and how much luck (genre points) remains at the table. By keeping this organism pinned to the bottom of the viewport, the stakes are always visible.
+
+## When to Use
+
+> **Do**
+> - **Always** use `CharacterBar` as the sticky footer across all active game phases (Prologue, Setup, Game Loop).
+> - Bind it to the global game state to ensure it accurately reflects the current status.
+
+> **Don't**
+> - **Never** use `CharacterBar` for interaction or selection logic. Character selection is handled implicitly by the game rules engine, not by clicking on these cards.
 
 ## Key Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `characters` | `CharacterBarCharacter[]` | — | Array of 4 character objects |
-| `activePlayerId` | `string` | — | Currently active player's ID |
-| `genrePoolCount` | `number` | — | Genre Pool total at end of bar |
+| `characters` | `CharacterBarCharacter[]` | — | **Required.** Array of up to 4 character data objects. |
+| `activeCharacterId` | `string \| null` | — | **Required.** The suit ID of the currently active player (applies the active glow). |
+| `genrePoints` | `Record<string, number>` | — | **Required.** A map of `characterId` to individual held Genre Points. |
+| `tableGenrePoints` | `number` | — | **Required.** The shared Genre Pool token count, displayed on the far right. |
 
-## CharacterBarCharacter
+### CharacterBarCharacter Interface
 
-| Field | Type | Description |
-|---|---|---|
-| `id` | `string` | Player ID |
-| `suit` | `string` | Assigned suit |
-| `playerName` | `string` | Display name |
-| `characterName` | `string` | In-game character |
-| `strikes` | `number` | Strike count (0–3) |
-| `isDead` | `boolean` | Character death state |
-| `genrePoints` | `number` | Individual genre points |
-| `hasAceTurn` | `boolean` | Whether Ace turn is available |
+The object structure expected in the `characters` array prop:
+
+```typescript
+export interface CharacterBarCharacter {
+  id: string; // Used as the character's Suit
+  name: string;
+  strikes: 0 | 1 | 2 | 3;
+  isDead: boolean;
+  hasAceToken?: boolean;
+  hasActed?: boolean;
+}
+```
+
+## Implementation Example
+
+<ComponentPreview>
+  <div style={{ width: '100%', border: '1px solid #333', borderRadius: '8px', overflow: 'hidden' }}>
+    <CharacterBar
+      characters={[
+        { id: 'Spades', name: 'Alex', strikes: 0, isDead: false, hasAceToken: true, hasActed: false },
+        { id: 'Hearts', name: 'Sam', strikes: 2, isDead: false, hasAceToken: true, hasActed: true },
+        { id: 'Clubs', name: 'Jordan', strikes: 3, isDead: true },
+        { id: 'Diamonds', name: 'Taylor', strikes: 0, isDead: false },
+      ]}
+      activeCharacterId="Spades"
+      genrePoints={{ 'Spades': 2, 'Diamonds': 1 }}
+      tableGenrePoints={4}
+    />
+  </div>
+</ComponentPreview>
+
+## Behavior
+
+- **Iteration**: The bar internally maps over the `characters` array, rendering a separate [CharacterCard](/components/molecules/character-card) molecule for each entry.
+- **Scrolling**: On narrow screens (mobile), the inner container will allow horizontal scrolling to ensure all character cards are accessible without breaking layout.
+- **Genre Pool**: The `tableGenrePoints` is rendered separately from the character cards on the far right edge of the bar.
 
 ## Related Components
 
-- **[PlayerAvatar](/components/molecules/player-avatar)** — Individual player representation
-- **[StrikeIndicator](/components/molecules/strike-indicator)** — Health marks
+- **[CharacterCard](/components/molecules/character-card)** — The extracted molecule that handles the rendering of each individual player in the bar.

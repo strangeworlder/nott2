@@ -19,7 +19,7 @@ export const badgeRecipe = recipe({
   variants: {
     variant: {
       default: {
-        backgroundColor: 'rgba(255,255,255,0.08)',
+        backgroundColor: 'rgba(25,25,25,0.8)',
         color: vars.color.textMuted,
         borderColor: 'transparent',
       },

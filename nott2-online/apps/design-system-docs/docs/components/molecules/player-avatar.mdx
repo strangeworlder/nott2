@@ -3,46 +3,145 @@ sidebar_position: 4
 title: PlayerAvatar
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { PlayerAvatar, Stack } from '@nott2/design-system';
+
 # PlayerAvatar
 
-Player identity at the table. Shows suit icon, name, character name, online indicator, and active-player glow.
+The player's face at the table — their identity, their suit, and their connection to the horror unfolding. 
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { PlayerAvatar } from '@nott2/design-system';
+
+<PlayerAvatar
+  name="Alex"
+  characterName="The Jock"
+  suit="Spades"
+  isActivePlayer={true}
+  isConnected={true}
+  size="md"
+/>
+```
+</details>
 
 ## Why to Use
 
-PlayerAvatar provides a consistent player identity component across lobby, character bar, and panel contexts. It handles all visual states: online/offline, active/inactive, alive/dead.
+PlayerAvatar provides a consistent visual representation of a player's identity across the entire application. It unifies the player's display name, their assigned character archetype (if applicable), their assigned suit (rendered via the central `Icon` atom), and vital status indicators like network connection and active turn states.
 
 ## When to Use
 
-- Character bar (footer) — `sm` size
-- Player panels — `md` size
-- Lobby screens — `lg` size
+> **Do**
+> - **Always** use PlayerAvatar to represent a human player or their character in the UI.
+> - Use the `size="sm"` variant in dense layouts like the `CharacterBar` footer.
+> - Use the `size="md"` variant in standard player panels or character sheets.
+> - Use the `size="lg"` variant in spacious pre-game screens like the Lobby or Waiting Room.
+
+> **Don't**
+> - **Never** attempt to recreate a player's avatar using raw typography and icons — always use this molecule.
+> - Don't use PlayerAvatar for NPCs or non-player entities unless they have been explicitly assigned a suit and identity within the game's mechanics.
+
+## Anatomy
+
+```
+ ┌──────────────────────────────────────────┐
+ │                                          │
+ │  ┌─────┐   [Player Name]               🟢 │
+ │  │  ♠  │                                 │
+ │  └─────┘   [Character Name (optional)]   │
+ │                                          │
+ └──────────────────────────────────────────┘
+      ▲                   ▲               ▲
+   1. Symbol          2. Meta         3. Status
+```
+
+1. **Symbol** — A bordered square containing the player's assigned suit icon. If `isActivePlayer` is true, this box glows red.
+2. **Meta** — The player's display name, and an optional, smaller character archetype name below it.
+3. **Status Indicator** — A small dot indicating online connectivity (`isConnected`).
 
 ## Key Props
 
+### `name`, `characterName`, & `suit`
+The core identity fields for the avatar.
+
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `suit` | `string` | — | Player's assigned suit |
-| `playerName` | `string` | — | Player display name |
-| `characterName` | `string` | — | In-game character name |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Avatar size |
-| `isActive` | `boolean` | `false` | Red glow for active player |
-| `isOnline` | `boolean` | `false` | Green dot indicator |
-| `isDead` | `boolean` | `false` | Grey out the avatar |
+| `name` | `string` | — | **Required.** The player's display name. |
+| `suit` | `string` | — | The player's assigned suit ('Spades', 'Hearts', 'Clubs', 'Diamonds'). |
+| `characterName` | `string` | `undefined` | Optional character archetype name, rendered below the player name. |
 
-## Implementation Examples
+<ComponentPreview column>
+  <Stack gap="md" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+    <PlayerAvatar name="Sam" suit="Hearts" />
+    <PlayerAvatar name="Alex" suit="Spades" characterName="The Final Girl" />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<PlayerAvatar
-  suit="Spades"
-  playerName="Alex"
-  characterName="The Jock"
-  size="md"
-  isActive
-  isOnline
+<PlayerAvatar name="Sam" suit="Hearts" />
+<PlayerAvatar name="Alex" suit="Spades" characterName="The Final Girl" />
+```
+</details>
+
+### `size`
+Scale variants for different UI contexts.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Determines the overall scale of the avatar, including text, spacing, and icon sizes. |
+
+<ComponentPreview column>
+  <Stack gap="md" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+    <PlayerAvatar size="sm" name="Small Avatar" suit="Clubs" />
+    <PlayerAvatar size="md" name="Medium Avatar" suit="Clubs" />
+    <PlayerAvatar size="lg" name="Large Avatar" suit="Clubs" />
+  </Stack>
+</ComponentPreview>
+
+### `isActivePlayer` & `isConnected`
+State indicators that provide immediate visual feedback on a player's status.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `isActivePlayer` | `boolean` | `false` | When true, applies a pulsing blood-red glow and border to the suit symbol, indicating it is this player's turn or they require attention. |
+| `isConnected` | `boolean` | `true` | Controls the online indicator dot. True = Green (Online), False = Grey (Offline). |
+
+<ComponentPreview column>
+  <Stack gap="md" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+    <PlayerAvatar name="Active Turn" suit="Diamonds" isActivePlayer={true} />
+    <PlayerAvatar name="Disconnected" suit="Diamonds" isConnected={false} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<PlayerAvatar 
+  name="Morgan" 
+  suit="Diamonds" 
+  isActivePlayer={currentPlayer === 'Morgan'}
+  isConnected={networkStatus === 'online'} 
 />
 ```
+</details>
+
+## Behavior
+
+- The `suitSymbol` prop is technically supported for backward compatibility (e.g., passing `'♠'`), but the `suit` string prop (e.g., `'Spades'`) is strongly preferred as it integrates directly with the `Icon` atom.
+- The `isActivePlayer` glow respects `prefers-reduced-motion` by disabling the pulse animation while retaining the static red border.
+
+## Accessibility
+
+- The `isConnected` dot includes an `aria-label` ("Online" or "Offline") to ensure screen readers announce the connectivity state.
+- The suit symbol relies on the underlying `Icon` component, which should ideally provide semantic context if the suit is critical information.
 
 ## Related Components
 
-- **[CharacterBar](/components/organisms/character-bar)** — Footer bar containing PlayerAvatars
-- **[Icon](/components/atoms/icon)** — Suit icons used internally
+- **[CharacterBar](/components/organisms/character-bar)** — The persistent footer organism that uses the `sm` variant of PlayerAvatar for all players.
+- **[Icon](/components/atoms/icon)** — The atomic component used to render the suit symbols within the avatar.

@@ -20,7 +20,10 @@
  */
 
 import React from 'react';
-import { dieSelectorRoot, dieSelectorLabel, dieGrid, dieFace } from './DieSelector.css';
+import { Grid } from '../../atoms/Grid/Grid';
+import { SelectableTile } from '../../atoms/SelectableTile/SelectableTile';
+import { Text } from '../../atoms/Text/Text';
+import { dieSelectorRoot } from './DieSelector.css';
 
 interface DieSelectorProps {
   sides: 4 | 10;
@@ -43,23 +46,21 @@ export function DieSelector({
 
   return (
     <div id={id} className={dieSelectorRoot}>
-      {label && <span className={dieSelectorLabel}>{label}</span>}
-      <div className={dieGrid} data-sides={sides}>
+      {label && <Text variant="label">{label}</Text>}
+      <Grid columns={sides === 10 ? 5 : 4} gap="xs">
         {faces.map(face => (
-          <button
+          <SelectableTile
             key={face}
-            type="button"
-            className={dieFace}
-            data-selected={face === value}
-            data-color={color}
+            selected={face === value}
+            variant={color === 'red' ? 'danger' : 'neutral'}
             onClick={() => onChange(face)}
             aria-label={`${face}`}
-            aria-pressed={face === value}
+            style={{ width: '42px', height: '42px' }}
           >
             {face}
-          </button>
+          </SelectableTile>
         ))}
-      </div>
+      </Grid>
     </div>
   );
 }

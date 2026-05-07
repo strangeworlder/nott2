@@ -3,42 +3,157 @@ sidebar_position: 3
 title: PlayingCard
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { PlayingCard, Stack } from '@nott2/design-system';
+
 # PlayingCard
 
-The central totem — a diegetic card face rendering suit and rank with correct pip layout. This is the game's physical card, not a UI container.
+The central totem — a diegetic card face rendering suit and rank with correct pip layout. The PlayingCard component is the visual representation of the game's physical cards, not a UI container.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { PlayingCard } from '@nott2/design-system';
+
+<PlayingCard 
+  suit="Spades" 
+  rank={13} 
+  selected={false} 
+/>
+```
+</details>
 
 ## Why to Use
 
-PlayingCard provides a visually faithful representation of a standard playing card, styled to match the game's dark horror aesthetic. It handles suit icons, rank display, pip layouts, and special states like jokers and face-down cards.
+PlayingCard provides a visually faithful 2D representation of a standard playing card, meticulously styled to match the game's dark horror aesthetic. It handles the complexities of rendering:
+- Correct suit icons and colors (red/black)
+- Rank display (A, 2-10, J, Q, K)
+- Special layouts like Jokers
+- Face-down card back patterns
+- Responsive sizing variants (default, compact, micro)
 
 ## When to Use
 
-- Displaying threat cards in the game board
-- Showing the top card of the trophy pile
-- Rendering card selections and hands
+> **Do**
+> - **Always** use PlayingCard when representing a physical card in the game (e.g., drawing a threat, showing the top of a discard pile).
+> - Use the `size` variants (`compact`, `micro`) when displaying cards in tight UI spaces like the Character Bar or turn order trackers.
+
+> **Don't**
+> - **Never** use PlayingCard as a layout container for generic UI text or buttons. For interface cards (like step-by-step resolution steps), use the [Card](/components/molecules/card) molecule instead.
+
+## 3D Physics Integration (`react-ttrpg-cards`)
+
+The `PlayingCard` component operates in two distinct modes within the broader application architecture:
+
+1. **2D Interface Mode**: When used in standard React DOM trees (like player hands, UI overlays, or the `CardMatt` empty states), it renders as a standard 2D HTML/CSS component.
+2. **3D Texture Mode**: The `react-ttrpg-cards` physics engine uses `PlayingCard` as an HTML overlay (via `Html` from `@react-three/drei`) mapped onto its 3D physical card meshes. The engine handles the rotation, velocity, and positioning, while this `PlayingCard` component handles the actual pixel-perfect rendering of the card's face or back.
+
+## Anatomy
+
+```
+ ┌─────────────────────────┐
+ │ 10♠                     │
+ │                         │
+ │                         │
+ │            ♠            │
+ │                         │
+ │                         │
+ │                     ♠01 │
+ └─────────────────────────┘
+```
+
+1. **Top-Left Corner** — Rank and Suit icon.
+2. **Center** — Large Suit icon (or custom Joker layout).
+3. **Bottom-Right Corner** — Rotated Rank and Suit icon.
+4. **Selection Ring** — Optional glowing red border when `selected` is true.
 
 ## Key Props
 
+### `suit` & `rank`
+The core identity of the card. `rank` expects a number from 1 to 13 (where 1=A, 11=J, 12=Q, 13=K).
+
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `suit` | `Suit` | — | Card suit (Spades, Hearts, Diamonds, Clubs) |
-| `rank` | `Rank` | — | Card rank (A, 2-10, J, Q, K) |
-| `size` | `'default' \| 'compact' \| 'micro'` | `'default'` | Size variant |
-| `selected` | `boolean` | `false` | Red glow selection ring |
-| `faceDown` | `boolean` | `false` | Show card back pattern |
-| `joker` | `boolean` | `false` | Special joker layout |
+| `suit` | `'Spades' \| 'Hearts' \| 'Clubs' \| 'Diamonds'` | `'Spades'` | The card suit. Hearts and Diamonds automatically render in red. |
+| `rank` | `1-13` | `1` | The card rank. |
 
-## Implementation Examples
+<ComponentPreview column>
+  <Stack gap="md" align="center" style={{ flexDirection: 'row' }}>
+    <PlayingCard suit="Hearts" rank={12} />
+    <PlayingCard suit="Spades" rank={1} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<PlayingCard suit="Spades" rank="A" />
-<PlayingCard suit="Hearts" rank="Q" selected />
-<PlayingCard faceDown />
-<PlayingCard suit="Spades" rank="A" size="micro" />
+<PlayingCard suit="Hearts" rank={12} /> // Queen of Hearts
 ```
+</details>
+
+### `faceDown`
+Renders the ornate, thematic card back pattern instead of the face.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `faceDown` | `boolean` | `false` | When true, ignores rank/suit and shows the card back. |
+
+<ComponentPreview>
+  <PlayingCard faceDown />
+</ComponentPreview>
+
+### `joker` & `jokerColor`
+Special override props to render Joker cards.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `joker` | `boolean` | `false` | Overrides rank/suit to render the Joker layout. |
+| `jokerColor` | `'Red' \| 'Black'` | `'Black'` | Determines the ink color of the Joker text and stars. |
+
+<ComponentPreview column>
+  <Stack gap="md" align="center" style={{ flexDirection: 'row' }}>
+    <PlayingCard joker jokerColor="Black" />
+    <PlayingCard joker jokerColor="Red" />
+  </Stack>
+</ComponentPreview>
+
+### `selected`
+Applies a blood-red glowing selection ring. Essential when players must choose a card from a spread.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `selected` | `boolean` | `false` | Enables the selection glow. |
+
+<ComponentPreview>
+  <PlayingCard suit="Diamonds" rank={8} selected />
+</ComponentPreview>
+
+### `compact` & `micro`
+Size variants for different UI contexts.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `compact` | `boolean` | `false` | Smaller card size (commonly used in player hands). |
+| `micro` | `boolean` | `false` | Tiny token size (28x40px). Strips out corners and center graphics in favor of a single centered rank+suit layout. |
+
+<ComponentPreview column>
+  <Stack gap="md" align="center" style={{ flexDirection: 'row' }}>
+    <PlayingCard suit="Clubs" rank={10} compact />
+    <PlayingCard suit="Clubs" rank={10} micro />
+  </Stack>
+</ComponentPreview>
+
+## Behavior
+
+- **Colors**: Face cards (`Hearts` and `Diamonds`) and Red Jokers automatically apply the `vars.color.red` token to their typography and icons.
+- **Micro Layout**: When `micro=true`, the standard poker layout is completely overridden. It renders a single, centered block containing the rank and a small suit icon to remain legible at token scale.
+- **Interactivity**: If an `onClick` prop is provided, the card automatically receives `role="button"` and hover interaction states.
 
 ## Related Components
 
-- **[Card](/components/molecules/card)** — UI container (not a playing card)
-- **[Deck](/components/molecules/deck)** — Stack of face-down PlayingCards
-- **[Icon](/components/atoms/icon)** — Suit icons used internally
+- **[Card](/components/molecules/card)** — UI layout container (not a playing card).
+- **[Deck](/components/molecules/deck)** — A stack of `faceDown` PlayingCards.
+- **[Icon](/components/atoms/icon)** — The underlying atom used for suit symbols.
+- **[CardMatt](/components/molecules/card-matt)** — The surface where these cards are played.

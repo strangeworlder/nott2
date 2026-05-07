@@ -21,6 +21,7 @@ export function TrophySetupScreen() {
     <PhasePanel
       title="Trophy Pile Setup"
       subtitle="The Trophy Pile starts with one Number Card drawn face-up from the reserve. Enter the card you drew."
+      step={{ current: 2, total: 2 }}
     >
       <Card>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

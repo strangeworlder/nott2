@@ -21,10 +21,9 @@
  * - id: Optional id attribute.
  */
 
-import React from 'react';
+import { Text } from '../../atoms/Text/Text';
 import {
-  resultRoot, dieCell, dieCellTotal, dieLabel, dieValue, dieValueTotal,
-  dieValueModified, dieOriginal, operatorStyle,
+  resultRoot, dieCell, dieCellTotal,
 } from './DiceResult.css';
 
 interface DiceResultProps {
@@ -44,29 +43,31 @@ export function DiceResult({ d10, d4, modifier, originalD4, id }: DiceResultProp
     <div id={id} className={resultRoot} aria-label={`Roll result: d10=${d10}, d4=${d4}, total=${total}`}>
       {/* d10 */}
       <div className={dieCell}>
-        <span className={dieLabel}>d10</span>
-        <span className={dieValue}>{d10}</span>
+        <Text variant="label" color="muted">d10</Text>
+        <Text variant="h3">{d10}</Text>
       </div>
 
-      <span className={operatorStyle} aria-hidden="true">+</span>
+      <Text variant="h3" color="muted" aria-hidden="true" style={{ alignSelf: 'center', gridRow: '1 / 4' }}>+</Text>
 
       {/* d4 (with optional modifier) */}
       <div className={dieCell}>
-        <span className={dieLabel}>{d4LabelText}</span>
-        <span className={[dieValue, isModified ? dieValueModified : ''].filter(Boolean).join(' ')}>
+        <Text variant="label" color="muted">{d4LabelText}</Text>
+        <Text variant="h3" color={isModified ? "red" : "white"}>
           {d4}
-        </span>
+        </Text>
         {isModified && originalD4 !== undefined && (
-          <span className={dieOriginal} aria-label={`Original: ${originalD4}`}>{originalD4}</span>
+          <Text variant="micro" color="muted" style={{ textDecoration: 'line-through' }} aria-label={`Original: ${originalD4}`}>
+            {originalD4}
+          </Text>
         )}
       </div>
 
-      <span className={operatorStyle} aria-hidden="true">=</span>
+      <Text variant="h3" color="muted" aria-hidden="true" style={{ alignSelf: 'center', gridRow: '1 / 4' }}>=</Text>
 
       {/* Total */}
       <div className={[dieCell, dieCellTotal].join(' ')}>
-        <span className={dieLabel}>Total</span>
-        <span className={[dieValue, dieValueTotal].join(' ')}>{total}</span>
+        <Text variant="label" color="muted">Total</Text>
+        <Text variant="h2">{total}</Text>
       </div>
     </div>
   );

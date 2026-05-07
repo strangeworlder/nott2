@@ -1,0 +1,108 @@
+---
+sidebar_position: 14
+title: SelectableTile
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { SelectableTile, Row } from '@nott2/design-system';
+
+# SelectableTile
+
+A discrete choice laid bare. Unlike a `Toggle` strip which feels like a settings switch, a `SelectableTile` is tactile and independent. It is a die face on the table, a card waiting to be flipped, a module waiting to be activated. When selected, it glows with intent — danger (red), safety (green), or neutral.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { SelectableTile } from '@nott2/design-system';
+
+<SelectableTile selected={true} variant="danger" onClick={() => {}}>
+  10
+</SelectableTile>
+```
+</details>
+
+## Why to Use
+
+The `SelectableTile` encapsulates the visual logic of a mutually exclusive grid choice. It provides out-of-the-box support for the design system's signature glowing selection states, eliminating the need for manual `box-shadow` or hover CSS.
+
+## When to Use
+
+> **Do**
+> - Use in a `Grid` or `Row` when the user must pick exactly one item from a visual matrix (e.g., Die faces, character grid).
+> - Use appropriate variants to signal the nature of the choice (`danger` for threats, `default` for safety/activation).
+
+> **Don't**
+> - Do not use as a simple binary on/off switch for a single setting; use `Toggle` for that.
+> - Do not use as a generic call to action; use `Button`.
+
+## Key Props
+
+Use these props to configure the SelectableTile component.
+
+### selected
+Whether the tile is currently active and glowing.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Whether the tile is currently active. |
+
+<ComponentPreview>
+  <Row gap="md">
+    <SelectableTile selected={false} style={{ width: '64px', height: '64px' }}>Off</SelectableTile>
+    <SelectableTile selected={true} style={{ width: '64px', height: '64px' }}>On</SelectableTile>
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<SelectableTile selected={isActive}>Option A</SelectableTile>
+```
+</details>
+
+### variant
+The color of the active glow.
+
+| Type | Default | Description |
+|---|---|---|
+| `'default' \| 'danger' \| 'neutral'` | `'default'` | The color of the active glow. `default` is green, `danger` is red, `neutral` is subtle red. |
+
+<ComponentPreview>
+  <Row gap="md">
+    <SelectableTile selected={true} variant="default" style={{ width: '64px', height: '64px' }}>Safe</SelectableTile>
+    <SelectableTile selected={true} variant="danger" style={{ width: '64px', height: '64px' }}>Threat</SelectableTile>
+    <SelectableTile selected={true} variant="neutral" style={{ width: '64px', height: '64px' }}>Neutral</SelectableTile>
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<SelectableTile selected variant="default">Safe</SelectableTile>
+<SelectableTile selected variant="danger">Threat</SelectableTile>
+```
+</details>
+
+### disabled
+Standard HTML disabled state.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Disables interaction and dims the tile. |
+
+<ComponentPreview>
+  <Row gap="md">
+    <SelectableTile disabled style={{ width: '64px', height: '64px' }}>Locked</SelectableTile>
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<SelectableTile disabled>Locked</SelectableTile>
+```
+</details>

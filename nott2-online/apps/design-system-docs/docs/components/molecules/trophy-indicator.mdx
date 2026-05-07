@@ -1,0 +1,50 @@
+---
+sidebar_position: 16
+title: TrophyIndicator
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { TrophyIndicator } from '@nott2/design-system';
+
+# TrophyIndicator
+
+A visual representation of the Slasher's power scaling across Acts. As the Acts progress, the base difficulty of the game increases. The `TrophyIndicator` shows this baseline Threat Level at a glance.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { TrophyIndicator } from '@nott2/design-system';
+
+<TrophyIndicator level={2} />
+```
+</details>
+
+## Why to Use
+
+The Trophy rank dictates the minimum baseline difficulty (1 for Act 1, 2 for Act 2, 3 for Act 3). This molecule is used in phase headers or game boards to remind players of the ambient danger level, mapping a numerical level to a row of skull icons.
+
+## When to Use
+
+> **Do**
+> - Use inside Phase Headers or the Game Board to persistently display the current Trophy rank.
+> - Pass the `level` directly from the `deck.trophyTop.rank` game state.
+
+> **Don't**
+> - Do not use this as a health bar or strike indicator; it strictly represents the Act/Trophy level. (Use `StrikeIndicator` for player health).
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `level` | `1 \| 2 \| 3` | — | **Required.** The current Trophy rank/Act number. Renders this many skull icons. |
+
+## Implementation Example
+
+<ComponentPreview>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <TrophyIndicator level={1} />
+    <TrophyIndicator level={2} />
+    <TrophyIndicator level={3} />
+  </div>
+</ComponentPreview>

@@ -3,36 +3,140 @@ sidebar_position: 5
 title: StrikeIndicator
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { StrikeIndicator, Stack } from '@nott2/design-system';
+
 # StrikeIndicator
 
-Three strikes = death. Renders 0–3 strike marks: ○ (empty) → ✕ (blood-red). The third strike or `isDead` shows a ☠ skull.
+Three strikes means death. StrikeIndicator renders the escalating visual severity of a player's physical and mental degradation: from empty rings, to blood-red crosses, to the final inevitable skull.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { StrikeIndicator } from '@nott2/design-system';
+
+<StrikeIndicator 
+  strikes={2} 
+  animated={true} 
+/>
+```
+</details>
 
 ## Why to Use
 
-Provides a clear, at-a-glance health indicator for each hunter. The escalating visual severity (empty → red × → skull) creates tension.
+The StrikeIndicator is not just a health bar; it is a mechanism of dread. By explicitly separating the three states (empty, filled, dead) and optionally animating the arrival of a new strike, it makes the consequence of failure feel weighty and visceral. 
 
 ## When to Use
 
-- Inside PlayerAvatar or CharacterBar
-- On player status panels
+> **Do**
+> - **Always** use this component to represent a player character's strikes.
+> - Use the `animated` prop specifically during the Fallout Phase when a player *receives* a new strike to make the impact land.
+> - Use the `isDead` prop as an absolute override when a player is eliminated, regardless of their strike count.
+
+> **Don't**
+> - **Never** use raw text (`X X O`) or generic icons to represent strikes. The custom SVGs within this component are explicitly designed for this game's visual identity.
+> - Don't use the `animated` prop for passive rendering (e.g., when a player joins the lobby with pre-existing strikes from a saved game).
+
+## Anatomy
+
+```
+ ┌───────────────────────┐
+ │                       │
+ │    O      ✕      ✕    │
+ │                       │
+ └───────────────────────┘
+```
+
+1. **Empty Strike (`strike_empty`)** — A hollow ring, indicating remaining capacity to endure horror.
+2. **Filled Strike (`strike_filled`)** — A blood-red cross mark, glowing slightly, indicating endured trauma.
+3. **Death (`strike_dead`)** — A skull icon that replaces the entire row, rendered when `strikes >= 3` or `isDead=true`.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `strikes` | `0 \| 1 \| 2 \| 3` | `0` | Number of strikes |
-| `isDead` | `boolean` | `false` | Show skull (overrides strikes) |
+### `strikes`
+The core state of the indicator. Expects a value between `0` and `3`.
 
-## Implementation Examples
+| Type | Default | Description |
+|---|---|---|
+| `0 \| 1 \| 2 \| 3` | `0` | The number of strikes to render as filled marks. |
+
+<ComponentPreview column>
+  <Stack gap="md" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+    <StrikeIndicator strikes={0} />
+    <StrikeIndicator strikes={1} />
+    <StrikeIndicator strikes={2} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<StrikeIndicator strikes={0} />  {/* ○ ○ ○ */}
-<StrikeIndicator strikes={2} />  {/* ✕ ✕ ○ */}
-<StrikeIndicator strikes={3} />  {/* ☠ */}
-<StrikeIndicator isDead />       {/* ☠ */}
+<StrikeIndicator strikes={1} />
 ```
+</details>
+
+### `isDead`
+A fatal override. Whether triggered by `strikes >= 3` or this boolean prop, the component collapses into a single skull icon.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | When true, renders the skull indicator regardless of the `strikes` value. |
+
+<ComponentPreview column>
+  <Stack gap="md" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+    <StrikeIndicator strikes={3} />
+    <StrikeIndicator isDead={true} strikes={0} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<StrikeIndicator strikes={3} />
+<StrikeIndicator isDead={true} strikes={0} />
+```
+</details>
+
+### `animated`
+Triggers a brief, visceral scaling animation on mount. It only animates the *newest* strike (the last filled mark).
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Applies a scale "pop" animation to the most recently acquired strike or death skull. |
+
+<ComponentPreview>
+  <StrikeIndicator strikes={2} animated={true} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+// Only animate if the player just received a strike this turn
+<StrikeIndicator 
+  strikes={player.strikes} 
+  animated={justTookDamage} 
+/>
+```
+</details>
+
+## Behavior
+
+- **Icon Routing**: The component uses three custom SVGs (`strike_empty`, `strike_filled`, `strike_dead`) managed by the `Icon` atom.
+- **Visual Priority**: The `isDead` prop takes precedence over the `strikes` count. If `strikes` is `3`, the component automatically switches to the `strike_dead` state.
+- **Animation Targeting**: When `animated` is true, the `data-animated` attribute is only applied to the *last* filled strike (e.g., if `strikes={2}`, only the second 'X' animates, not the first).
+
+## Accessibility
+
+- The root container uses `aria-label` to announce the exact state to screen readers (e.g., `"2 of 3 strikes"` or `"Character eliminated"`).
+- Individual strike spans are hidden from assistive technology (`aria-hidden="true"`) to prevent redundant or confusing SVG announcements.
+- The `animated` scale effect is brief and should respect global `prefers-reduced-motion` settings in the underlying CSS.
 
 ## Related Components
 
-- **[PlayerAvatar](/components/molecules/player-avatar)** — Contains StrikeIndicator
-- **[CharacterBar](/components/organisms/character-bar)** — Shows strikes for all players
+- **[PlayerAvatar](/components/molecules/player-avatar)** — Often rendered adjacent to the StrikeIndicator.
+- **[CharacterBar](/components/organisms/character-bar)** — The persistent footer organism that displays strikes for all players.
+- **[Icon](/components/atoms/icon)** — The atomic component responsible for rendering the custom SVG strike marks.

@@ -1,0 +1,55 @@
+---
+sidebar_position: 15
+title: DoomClockTransition
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+
+# DoomClockTransition
+
+A full-screen cinematic overlay that triggers when the Doom Clock advances. It completely obscures the screen, forces the player's attention, and plays a rhythmic, terrifying sequence to announce the changing of the hour.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { DoomClockTransition } from '@nott2/design-system';
+
+<DoomClockTransition
+  visible={true}
+  previousHour={11}
+  newHour={12}
+  variant="tick"
+  onComplete={() => {}}
+/>
+```
+</details>
+
+## Why to Use
+
+The `DoomClockTransition` is not a standard UI component; it is an event. It uses `framer-motion` to orchestrate a multi-step animation sequence that interrupts gameplay. When the clock strikes, the game stops.
+
+## When to Use
+
+> **Do**
+> - Trigger this overlay *only* when the Doom Clock advances.
+> - Use the `chime` variant for the stroke of midnight (Act breaks).
+> - Use the `tick` variant for standard hour advancements.
+
+> **Don't**
+> - Do not render this permanently. It must be conditionally mounted or controlled via the `visible` prop.
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `visible` | `boolean` | `false` | When true, the transition mounts and plays. |
+| `previousHour` | `number` | — | **Required.** The hour the clock is changing from. |
+| `newHour` | `number` | — | **Required.** The new hour. |
+| `variant` | `'tick' \| 'chime'` | `'tick'` | Determines the animation pacing and audio cues. |
+| `onComplete` | `() => void` | — | **Required.** Callback fired when the animation sequence is fully finished. |
+
+## Related Components
+
+- **[DoomClock](/components/molecules/doom-clock)** — The standard, persistent UI indicator of the current hour.
+- **[TransitionOverlay](/components/organisms/transition-overlay)** — Generic full-screen overlay component used for lesser interruptions.
