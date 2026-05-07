@@ -137,7 +137,10 @@ type MaterialIconName =
   | 'link_off'
   | 'group_off'
   | 'error_outline'
-  | 'login';
+  | 'login'
+  // Collapse / expand
+  | 'expand_more'
+  | 'expand_less';
 
 // ── Combined type ───────────────────────────────────────────────────────────
 

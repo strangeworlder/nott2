@@ -34,8 +34,12 @@ export const cardRecipe = recipe({
       true: { padding: 0 },
       false: {},
     },
+    complete: {
+      true: { borderColor: vars.color.success },
+      false: {},
+    },
   },
-  defaultVariants: { variant: 'default', interactive: false, noPadding: false },
+  defaultVariants: { variant: 'default', interactive: false, noPadding: false, complete: false },
 });
 
 export const cardTitle = style({
@@ -44,4 +48,61 @@ export const cardTitle = style({
   color: vars.color.text,
   marginBottom: vars.space.md,
   marginTop: 0,
+});
+
+export const cardTitleRow = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: vars.space.sm,
+  marginBottom: vars.space.md,
+  marginTop: 0,
+});
+
+export const cardTitleText = style({
+  fontFamily: vars.font.display,
+  fontSize: vars.fontSize.h3,
+  margin: 0,
+  lineHeight: 1.2,
+  transition: `color ${vars.transition.normal}`,
+});
+
+export const completionIndicator = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: vars.space.xs,
+  fontSize: vars.fontSize.micro,
+  color: vars.color.success,
+  marginTop: vars.space.xs,
+});
+
+export const collapsibleContent = style({
+  overflow: 'hidden',
+  transition: `max-height ${vars.transition.normal}, opacity ${vars.transition.normal}`,
+});
+
+export const collapsibleContentOpen = style({
+  maxHeight: '2000px',
+  opacity: 1,
+});
+
+export const collapsibleContentClosed = style({
+  maxHeight: '0px',
+  opacity: 0,
+});
+
+export const collapseToggle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: vars.space.xs,
+  cursor: 'pointer',
+  background: 'none',
+  border: 'none',
+  color: vars.color.textMuted,
+  fontSize: vars.fontSize.micro,
+  padding: `${vars.space.xs} 0`,
+  marginTop: vars.space.sm,
+  transition: `color ${vars.transition.normal}`,
+  ':hover': {
+    color: vars.color.text,
+  },
 });

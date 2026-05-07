@@ -231,7 +231,7 @@ Don't use `star` for victories or achievements — use `military_tech`. `star` o
 | Icon | Why This Icon | Where Used |
 |---|---|---|
 | `warning` | Standard hazard triangle — used for system-level notices and consumed resources. | `ConversationStakesScreen`: "Escalation used this scene"; `FalloutScreen`: act transition pending; `SceneChallengeOverlay`: Joker encounter suit icon |
-| `check_circle` | Filled checkmark — confirmed, verified, done. | `CreateForm`: Discord sign-in confirmed badge; `DebugPanel`: available-to-act turn order indicator |
+| `check_circle` | Filled checkmark — confirmed, verified, done. | `CreateForm`: Discord sign-in confirmed badge; `DebugPanel`: available-to-act turn order indicator; `Card`: step completion indicator (title row icon when `complete={true}`) |
 
 ---
 
@@ -270,6 +270,20 @@ Don't use `star` for victories or achievements — use `military_tech`. `star` o
 
 ---
 
+#### Collapsible UI
+
+<ComponentPreview>
+  <Icon name="expand_more" size={32} color="muted" />
+  <Icon name="expand_less" size={32} color="muted" />
+</ComponentPreview>
+
+| Icon | Why This Icon | Where Used |
+|---|---|---|
+| `expand_more` | A downward chevron — the universal affordance for "more content is hidden below, click to reveal." Chosen because it is the most universally understood expand/collapse indicator across web and mobile interfaces. The arrow points toward the hidden content. | `Card`: collapsible content toggle (collapsed state) |
+| `expand_less` | An upward chevron — the inverse of `expand_more`. Indicates that the content is currently visible and can be collapsed. The arrow points away from the content, suggesting "push it back up." | `Card`: collapsible content toggle (expanded state) |
+
+---
+
 ### Reserved — Registered but Not Currently Used
 
 These icons are in the `MaterialIconName` type and are valid to use, but have no current usage in any component. Pre-registered for anticipated features.
@@ -278,7 +292,7 @@ These icons are in the `MaterialIconName` type and are valid to use, but have no
 |---|---|
 | `schedule` | Time/phase timer displays |
 | `chevron_right` / `chevron_left` | Navigation arrows |
-| `expand_more` | Collapsible section toggle |
+
 | `refresh` | Deck reset or game restart |
 | `group` | Multiplayer player list |
 | `person` | Single player / character reference |

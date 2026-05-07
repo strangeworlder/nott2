@@ -4,62 +4,198 @@ title: Row
 ---
 
 import { ComponentPreview } from '@site/src/components/ComponentPreview';
-import { Row, Badge, Button, Text } from '@nott2/design-system';
+import { Row, Badge, Button, Text, Stack } from '@nott2/design-system';
 
 # Row
 
-Horizontal flex row layout. The counterpart to Stack — arranges children side-by-side with configurable gap, wrapping, and alignment.
+Horizontal momentum — the side-by-side placement of choices, of characters, of cards on a table. Where [Stack](/components/atoms/stack) descends like a story, Row spreads like a crime scene, laying options out in parallel so the eye can weigh them simultaneously.
 
-## Why to Use
-
-Row ensures consistent horizontal spacing and alignment. It handles flex wrapping gracefully and supports all common alignment patterns.
-
-## When to Use
-
-- Inline button groups
-- Badge clusters
-- Icon + text pairings
-- Any horizontal arrangement of elements
-
-## Key Props
-
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `gap` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'sm'` | Space between children |
-| `wrap` | `boolean` | `false` | Allow flex wrapping |
-| `justify` | `'start' \| 'center' \| 'end' \| 'between'` | `'start'` | Justify content |
-| `align` | `'start' \| 'center' \| 'end' \| 'stretch'` | `'center'` | Align items |
-
-## Implementation Examples
-
-<ComponentPreview label="Button Group">
-  <Row gap="sm">
-    <Button variant="primary" size="sm">Accept</Button>
-    <Button variant="secondary" size="sm">Decline</Button>
-    <Button variant="ghost" size="sm">Skip</Button>
-  </Row>
-</ComponentPreview>
-
-<ComponentPreview label="Badge Cluster">
-  <Row gap="xs" wrap>
-    <Badge variant="red">Killer</Badge>
-    <Badge variant="outline">Act II</Badge>
-    <Badge variant="success">Weakness Found</Badge>
-  </Row>
-</ComponentPreview>
+<details open>
+<summary>Code example</summary>
 
 ```tsx
+import { Row } from '@nott2/design-system';
+
 <Row gap="sm">
   <Button variant="primary">Accept</Button>
   <Button variant="secondary">Decline</Button>
 </Row>
+```
+</details>
 
+## Why to Use
+
+Row ensures consistent horizontal spacing, alignment, and flex-wrapping without ad-hoc `display: flex` declarations on every container. It enforces the spacing token scale horizontally, the same way Stack does vertically. The `justify` and `align` props cover the most common flex alignment patterns without ever writing a CSS property directly.
+
+**Never use `display: flex; flex-direction: row` directly on a layout container. If it's horizontal spacing, it's Row.**
+
+## When to Use
+
+> **Do**
+> - Use Row for inline button groups (primary + secondary action pairs).
+> - Use Row for badge clusters and status tag collections.
+> - Use Row for icon + text pairings where the icon sits alongside its label.
+> - Use `wrap` when the number of items is dynamic or variable in length (e.g., a list of tags).
+> - Use `justify="between"` to push items to opposite ends (e.g., a label on the left and a counter on the right).
+
+> **Don't**
+> - Don't use Row for vertical layouts — use [Stack](/components/atoms/stack).
+> - Don't use Row when items need individual, non-uniform spacing — a Row applies `gap` uniformly. Use nested Rows if you need different gaps for different groups.
+> - Don't use `wrap` when items must stay on a single line (e.g., segmented controls, tab bars) — the layout depends on the fixed row.
+
+## Key Props
+
+### `gap`
+Controls the horizontal space between every direct child.
+
+| Value | Token | Approx. px | When to use |
+|---|---|---|---|
+| `xs` | `vars.space.xs` | 4px | Badge clusters, icon + label |
+| `sm` | `vars.space.sm` | 8px | **Default.** Button groups, tag pairs |
+| `md` | `vars.space.md` | 16px | Larger grouped elements |
+| `lg` | `vars.space.lg` | 24px | Section-level horizontal splits |
+| `xl` | `vars.space.xl` | 32px | Wide panel horizontal layouts |
+
+<ComponentPreview>
+  <Stack gap="md">
+    <Row gap="xs">
+      <Badge variant="red">Killer</Badge>
+      <Badge variant="outline">Act II</Badge>
+      <Badge variant="success">Weakness Found</Badge>
+    </Row>
+    <Row gap="sm">
+      <Button variant="primary" size="sm">Accept</Button>
+      <Button variant="secondary" size="sm">Decline</Button>
+      <Button variant="ghost" size="sm">Skip</Button>
+    </Row>
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+{/* Badge cluster — tight gap */}
 <Row gap="xs" wrap>
   <Badge variant="red">Killer</Badge>
   <Badge variant="outline">Act II</Badge>
+  <Badge variant="success">Weakness Found</Badge>
+</Row>
+
+{/* Button group — standard gap */}
+<Row gap="sm">
+  <Button variant="primary">Accept</Button>
+  <Button variant="secondary">Decline</Button>
 </Row>
 ```
+</details>
+
+### `justify`
+Controls `justify-content` — how children are distributed along the horizontal axis.
+
+| Value | CSS | When to use |
+|---|---|---|
+| `start` | `flex-start` | **Default.** Left-aligned groups |
+| `center` | `center` | Centered items (e.g., modal actions) |
+| `end` | `flex-end` | Right-aligned (e.g., confirm buttons) |
+| `between` | `space-between` | Push items to opposite ends (e.g., label + count) |
+
+<ComponentPreview>
+  <Stack gap="sm">
+    <Row justify="between">
+      <Text variant="label">Characters</Text>
+      <Badge variant="outline">3 / 5</Badge>
+    </Row>
+    <Row justify="end" gap="sm">
+      <Button variant="secondary" size="sm">Cancel</Button>
+      <Button variant="primary" size="sm">Confirm</Button>
+    </Row>
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+{/* Label + counter pushed to opposite ends */}
+<Row justify="between">
+  <Text variant="label">Characters</Text>
+  <Badge variant="outline">3 / 5</Badge>
+</Row>
+
+{/* Right-aligned confirm actions */}
+<Row justify="end" gap="sm">
+  <Button variant="secondary">Cancel</Button>
+  <Button variant="primary">Confirm</Button>
+</Row>
+```
+</details>
+
+### `align`
+Controls `align-items` — how children are aligned on the cross axis (vertically within the row).
+
+| Value | CSS | When to use |
+|---|---|---|
+| `start` | `flex-start` | Top-align items of different heights |
+| `center` | `center` | **Default.** Standard icon + text alignment |
+| `end` | `flex-end` | Bottom-align |
+| `stretch` | `stretch` | Make all children fill the row height |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+{/* Icon + text — center-aligned (default) */}
+<Row align="center" gap="xs">
+  <Icon name="skull" />
+  <Text>Strike applied</Text>
+</Row>
+```
+</details>
+
+### `wrap`
+Enables flex-wrapping when children overflow the available width.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | When `true`, children wrap onto new lines instead of overflowing. |
+
+<ComponentPreview>
+  <Row gap="xs" wrap>
+    <Badge variant="red">Killer</Badge>
+    <Badge variant="outline">Act II</Badge>
+    <Badge variant="success">Weakness Found</Badge>
+    <Badge variant="warning">Final Girl</Badge>
+    <Badge variant="outline">Classic Setup</Badge>
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+{/* Dynamic badge list — wraps gracefully */}
+<Row gap="xs" wrap>
+  {activeTags.map(tag => (
+    <Badge key={tag.id} variant={tag.variant}>{tag.label}</Badge>
+  ))}
+</Row>
+```
+</details>
+
+## Behavior
+
+- Row renders as a `div` with `display: flex; flex-direction: row` and the provided `gap`, `justify`, and `align` values.
+- It imposes no width, padding, or background — it is pure layout infrastructure.
+- `gap` applies uniformly between all direct children. To vary spacing within a row, group children in nested Rows.
+
+## Accessibility
+
+- Row is a generic layout `div` with no ARIA role — semantically invisible to screen readers.
+- Do not rely on Row's visual arrangement to imply semantic grouping. If items are logically related, wrap them in a semantic element or use `role="group"` on a parent.
 
 ## Related Components
 
-- **[Stack](/components/atoms/stack)** — Vertical equivalent
+- **[Stack](/components/atoms/stack)** — Vertical counterpart. Use for top-to-bottom layouts.
+- **[Badge](/components/atoms/badge)** — Most common child in badge cluster Rows.
+- **[Button](/components/atoms/button)** — Most common child in action group Rows.

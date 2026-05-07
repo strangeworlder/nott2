@@ -1,0 +1,179 @@
+---
+sidebar_position: 20
+title: PhaseHeader
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { PhaseHeader } from '@nott2/design-system';
+
+# PhaseHeader
+
+The title card before the action begins. PhaseHeader names the operational screen the player has entered — "Scene Setup," "The Roll," "Fallout" — and anchors their orientation with an optional subtitle and step indicator. A `Separator` beneath the block draws the line between declaration and action.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { PhaseHeader } from '@nott2/design-system';
+
+<PhaseHeader
+  title="The Roll"
+  subtitle="Roll the d13 — d10 for luck, d4 for effort."
+/>
+```
+</details>
+
+## Why to Use
+
+A tabletop RPG session follows a script — the phases are the acts. PhaseHeader is the curtain rising on each act. It prevents the player from losing their place in the flow by giving every operational screen a consistent, scannable identity: a title, optional context, and optional progress ("Step 2 of 4"). It also enforces the atomic hierarchy — rather than hardcoding `<h2>` and `<p>` tags directly, consuming screens get a structured molecule with tokens baked in.
+
+## When to Use
+
+> **Do**
+> - Use PhaseHeader at the top of every `<PhasePanel>` operational screen.
+> - Use the `step` prop when the screen is one of several sequential steps (e.g., Game Setup Step 1 of 2).
+> - Use `subtitle` whenever the player needs a cue about what to *do* on this screen, not just where they are.
+
+> **Don't**
+> - Don't use PhaseHeader for cinematic moments — use [PhaseDisplay](/components/organisms/phase-display) for dramatic, full-bleed announcements.
+> - Don't use it outside of PhasePanel — if you find yourself needing a "title block" elsewhere, check if a simple `<Text variant="h3">` suffices.
+> - Don't use it as a general-purpose section divider — the `Separator` is included specifically for the header/content boundary.
+
+## Content Guidelines
+
+> **Do**
+> - Use the phase name as the title (e.g., "Fallout", "Scene Setup", "Conversation & Stakes").
+> - Write subtitles as a single instructional sentence: what the player needs to do, now.
+> - Step labels are auto-formatted from `{ current, total }` — just pass numbers.
+
+> **Don't**
+> - Don't repeat the phase name in the subtitle.
+> - Don't use long prose for the subtitle — this is a prompt, not an explanation.
+
+## Anatomy
+
+```
+  Step 2 of 4          ← optional step label (Text/label, muted)
+  The Roll             ← title (Text/h3, display font)
+  Roll the d13 → d10   ← optional subtitle (Text/label, muted)
+  ─────────────────── ← Separator (always rendered)
+```
+
+1. **Step Label** — `<span>` styled as a small, uppercase, muted label. Only rendered when `step` prop is provided.
+2. **Title** — `<Text variant="h3">` — display font, primary text color.
+3. **Subtitle** — `<Text variant="lead" color="muted">` — rendered only when `subtitle` prop is provided.
+4. **Separator** — `<Separator />` atom — always rendered below the header block.
+
+## Key Props
+
+Use these props to configure the PhaseHeader component.
+
+### title
+The phase or screen name. Rendered as an `h3`.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | **Required.** Phase/screen name. |
+
+<ComponentPreview>
+  <PhaseHeader title="Fallout" />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<PhaseHeader title="Fallout" />
+```
+</details>
+
+### subtitle
+Instructional text rendered below the title.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | `undefined` | Optional one-sentence action prompt for this screen. |
+
+<ComponentPreview>
+  <PhaseHeader
+    title="Scene Setup"
+    subtitle="Draw the first card from the Threat Deck and choose the Active Player."
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<PhaseHeader
+  title="Scene Setup"
+  subtitle="Draw the first card from the Threat Deck and choose the Active Player."
+/>
+```
+</details>
+
+### step
+Renders a "Step X of Y" label above the title.
+
+| Type | Default | Description |
+|---|---|---|
+| `{ current: number; total: number }` | `undefined` | Shows step progress above the title. |
+
+<ComponentPreview>
+  <PhaseHeader
+    title="Game Setup"
+    subtitle="Name your characters and choose your rules modules."
+    step={{ current: 1, total: 2 }}
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<PhaseHeader
+  title="Game Setup"
+  subtitle="Name your characters and choose your rules modules."
+  step={{ current: 1, total: 2 }}
+/>
+```
+</details>
+
+### id
+HTML id attribute applied to the root `div`.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | `undefined` | Standard HTML id. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<PhaseHeader id="scene-header" title="Scene Setup" />
+```
+</details>
+
+## Behavior
+
+- The `Separator` is **always rendered** — it is not conditional. The visual break between the header and the content area is a structural guarantee, not an option.
+- The step label uses `aria-label` for screen reader accessibility (e.g., `aria-label="Step 1 of 2"`).
+- The component does not scroll or animate — it is a static structural landmark.
+
+## Accessibility
+
+- The title renders as a semantic `h3` (via `Text` atom), providing a proper heading hierarchy within PhasePanel.
+- Step labels include `aria-label` for screen readers ("Step 1 of 2" is also the visible text, so this is redundant but explicit).
+- The `Separator` carries `role="separator"` from the `Separator` atom.
+
+## Related Components
+
+- **[PhasePanel](/components/organisms/phase-panel)** — The organism that wraps PhaseHeader with a scrollable content area and ActionFooter.
+- **[PhaseDisplay](/components/organisms/phase-display)** — Cinematic full-bleed counterpart. Use for dramatic narration, **not** for operational screens.
+- **[Text](/components/atoms/text)** — The `h3` and `label` atoms that PhaseHeader composes internally.
+- **[Separator](/components/atoms/separator)** — The divider atom used beneath the header block.
+
+:::important PhaseHeader vs PhaseDisplay
+**PhaseHeader** = operational workspace title (structured, compact, inside PhasePanel).
+**PhaseDisplay** = cinematic narration (full-bleed, dramatic, standalone). Never use PhaseDisplay for a screen where the player needs to interact with controls.
+:::

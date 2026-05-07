@@ -4,58 +4,128 @@ title: Stack
 ---
 
 import { ComponentPreview } from '@site/src/components/ComponentPreview';
-import { Stack, Card, Text } from '@nott2/design-system';
+import { Stack, Card, Text, Button, Separator } from '@nott2/design-system';
 
 # Stack
 
-The spine of every phase screen — a vertical column of moments, each leading inexorably to the next. Stack is deliberately invisible, serving only to space and order.
+The spine of every phase screen. A vertical column of moments, each leading inexorably to the next. Like the scenes in a horror film, Stack gives rhythm — a beat here, a beat there, always pressing downward. It is deliberately invisible, serving only to space and order.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Stack } from '@nott2/design-system';
+
+<Stack gap="md">
+  <Text variant="h3">Scene Setup</Text>
+  <Text>Draw the first card from the Threat Deck.</Text>
+</Stack>
+```
+</details>
 
 ## Why to Use
 
-Stack provides consistent vertical spacing between children without manual margin management. It uses the spacing token scale to maintain rhythm across the interface.
+Stack eliminates manual margin management. Without it, developers inevitably reach for one-off `margin-bottom` values or hardcoded pixel gaps — both of which leak outside the spacing token system and break visual consistency across screens. Stack enforces the spacing scale, ensuring that the rhythm of vertical content always comes from the same design vocabulary.
+
+**Never use manual `margin-bottom` between elements. If it's vertical spacing, it's Stack.**
 
 ## When to Use
 
-- **Always** for vertical layouts — never use manual `margin-bottom` between elements.
-- Default gap `md` (16px) works for most content.
-- Use `lg` gap for generous section spacing, `sm` for tight groupings.
+> **Do**
+> - Use Stack as the primary vertical layout primitive for any vertical sequence of elements.
+> - Use `gap="sm"` for tightly-grouped related content (labels and their fields, icon + description pairings).
+> - Use `gap="md"` (the default) for general-purpose layouts — cards, callouts, content sections.
+> - Use `gap="lg"` or `gap="xl"` for generous section-level spacing between distinct conceptual groups.
+
+> **Don't**
+> - Don't add `margin` directly to child elements to adjust spacing — change the Stack's `gap` instead.
+> - Don't nest multiple Stacks just to change the gap for a single child — restructure the content grouping instead.
+> - Don't use Stack for horizontal layouts — use [Row](/components/atoms/row) for side-by-side arrangements.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
+### `gap`
+Controls the space between every direct child.
+
+| Value | Token | Approx. px | When to use |
 |---|---|---|---|
-| `gap` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Space between children |
-| `className` | `string` | — | Additional CSS class |
+| `xs` | `vars.space.xs` | 4px | Micro-groupings (e.g., icon + inline label) |
+| `sm` | `vars.space.sm` | 8px | Tight content (form fields and their labels) |
+| `md` | `vars.space.md` | 16px | **Default.** General content rhythm |
+| `lg` | `vars.space.lg` | 24px | Section spacing within a panel |
+| `xl` | `vars.space.xl` | 32px | Major section separations |
 
-## Implementation Examples
-
-<ComponentPreview column label="gap='sm'">
+<ComponentPreview column>
   <Stack gap="sm">
-    <Card><Text variant="label">Item A</Text></Card>
-    <Card><Text variant="label">Item B</Text></Card>
-    <Card><Text variant="label">Item C</Text></Card>
+    <Card><Text variant="label">Tight — gap sm</Text></Card>
+    <Card><Text variant="label">Items are closely grouped</Text></Card>
+    <Card><Text variant="label">Like a form field cluster</Text></Card>
   </Stack>
 </ComponentPreview>
 
-<ComponentPreview column label="gap='lg'">
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Stack gap="sm">
+  <TextField label="Player Name" value={name} onChange={setName} />
+  <TextField label="Character Concept" value={concept} onChange={setConcept} />
+</Stack>
+```
+</details>
+
+<ComponentPreview column>
   <Stack gap="lg">
-    <Card><Text variant="label">Section 1</Text></Card>
-    <Card><Text variant="label">Section 2</Text></Card>
-    <Card><Text variant="label">Section 3</Text></Card>
+    <Card><Text variant="label">Spacious — gap lg</Text></Card>
+    <Card><Text variant="label">Distinct content sections</Text></Card>
+    <Card><Text variant="label">Breathing room between groups</Text></Card>
   </Stack>
 </ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
 <Stack gap="lg">
-  <Text variant="h2">Scene Setup</Text>
+  <PhaseHeader title="Scene Setup" subtitle="Draw a card." />
   <Card variant="instruction">
-    <Text>Draw a card from the threat deck.</Text>
+    <Text>The active player draws from the Threat Deck.</Text>
   </Card>
-  <ActionFooter label="Continue" />
+  <ActionFooter label="Continue" onClick={handleNext} />
 </Stack>
 ```
+</details>
+
+### `id`
+HTML id attribute applied to the root `div`.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | `undefined` | Standard HTML id. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Stack id="setup-form" gap="md">
+  <TextField label="Room Code" value={code} onChange={setCode} />
+</Stack>
+```
+</details>
+
+## Behavior
+
+- Stack renders as a `div` with `display: flex; flex-direction: column` and `gap` set to the token value.
+- It imposes no width, padding, or background — it is pure spacing infrastructure.
+- The `gap` applies uniformly between **every** direct child. To vary spacing within a Stack, group children in nested Stacks with different gaps.
+
+## Accessibility
+
+- Stack is a generic layout `div` with no ARIA role. It is semantically invisible to screen readers — only its children matter.
+- Do not use `id` for ARIA labelling — use it only for scroll targeting or test selection.
 
 ## Related Components
 
-- **[Row](/components/atoms/row)** — Horizontal equivalent
-- **[Card](/components/molecules/card)** — Content container (often stacked)
+- **[Row](/components/atoms/row)** — Horizontal counterpart. Use for side-by-side arrangements.
+- **[Card](/components/molecules/card)** — Content container; often the direct child of a Stack.
+- **[Separator](/components/atoms/separator)** — Can be used as a Stack child to add a visual divider between groups.

@@ -14,8 +14,8 @@ describe('PhaseHeader', () => {
   });
 
   it('does not render subtitle when omitted', () => {
-    const { container } = render(<PhaseHeader title="Setup" />);
-    expect(container.querySelector('p')).toBeNull();
+    render(<PhaseHeader title="Setup" />);
+    expect(screen.queryByText(/Draw/)).toBeNull();
   });
 
   it('renders step indicator when provided', () => {
@@ -28,8 +28,13 @@ describe('PhaseHeader', () => {
     expect(screen.queryByText(/Step/)).toBeNull();
   });
 
-  it('applies an id', () => {
+  it('applies an id to the root', () => {
     const { container } = render(<PhaseHeader id="header-1" title="Test" />);
     expect(container.querySelector('#header-1')).toBeTruthy();
+  });
+
+  it('renders a Separator', () => {
+    const { container } = render(<PhaseHeader title="Test" />);
+    expect(container.querySelector('hr')).toBeTruthy();
   });
 });

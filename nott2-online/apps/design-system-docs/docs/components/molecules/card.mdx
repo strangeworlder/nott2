@@ -4,88 +4,135 @@ title: Card
 ---
 
 import { ComponentPreview } from '@site/src/components/ComponentPreview';
-import { Card, Text, Stack } from '@nott2/design-system';
+import { Card, Text, Stack, Row, Badge, Separator, Button } from '@nott2/design-system';
 
 # Card
 
-The surface on which the game's content rests — a diegetic piece of dark wood or aged paper. Card creates depth and separation, grouping related mechanics into a single visual unit.
+The surface on which the game's content rests. A diegetic piece of dark wood or aged paper — Card creates depth and separation, grouping related mechanics into a single visual unit. Every variant carries a distinct emotional weight: `instruction` whispers with blood-red authority, `success` glows with survival green, `failure` burns with accentBright, and `ghost` vanishes entirely, leaving only the content.
 
 :::caution
 This is a **UI container** component — not a playing card. For the diegetic card face (suit + rank), see [PlayingCard](/components/molecules/playing-card).
 :::
 
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Card } from '@nott2/design-system';
+
+<Card variant="instruction" title="Scene Setup">
+  <Text>Draw a card from the Threat Deck to determine the encounter.</Text>
+</Card>
+```
+</details>
+
 ## Why to Use
 
-Card replaces raw `<div>` grouping with a semantically meaningful container that carries consistent padding, borders, backgrounds, and interactive states from the design system.
+Card replaces raw `<div>` grouping with a semantically meaningful surface that carries consistent padding, border radius, border color, background, and interactive states — all from design tokens. Without it, developers inevitably reach for one-off `div` wrappers with hardcoded `padding`, `border`, and `background-color` values, which break visual consistency and resist theming (playsets).
+
+The variant system encodes **emotional meaning**: a `success` card tells the player something went right before they even read the text, because the green border triggers the same "survival" register as Toggle's active state and Badge's success variant. A `failure` card radiates danger before the words land. The colors are a shared vocabulary across the entire system.
 
 ## When to Use
 
-- **Grouping related content**: Instructions, results, player info
-- **Emphasizing content**: Use `highlighted` or `instruction` variants
-- **Showing outcomes**: `success` or `failure` variants
-- **Layout-only grouping**: `ghost` variant (invisible container)
+In practice, Card serves two distinct roles:
 
-## Writing & Content Guidelines
+**1. Operational step** — The most common pattern in the game. A Card acts as a discrete workflow unit within a phase screen: a titled prompt, explanatory text, and one or more action controls (buttons, selectors, toggles). Examples: "Award Genre Point?", "Assign 2 Strikes", "Escalation — Something Not Right".
 
-- Card titles should be short noun phrases: "Scene Setup", "Roll Result"
-- Use the `title` prop for the built-in h3 header — don't render your own heading inside a card
+**2. Passive container** — Grouping related display-only content: a scene prompt, a results summary, configuration panels in forms.
+
+> **Do**
+> - Use Card as an operational step when the player needs to make a decision — the Card boundary tells them "this is one self-contained thing to resolve".
+> - Use `instruction` for GM-directed game mechanics that tell the player what to do (scene prompts, rule explanations).
+> - Use `success` and `failure` for outcome-specific steps where the variant reinforces the result before the player reads the text.
+> - Use `highlighted` for the currently-selected or active item in a choice list.
+> - Use `muted` for de-emphasized, secondary information.
+> - Use `ghost` as a layout-only grouping when you need Card's padding structure but no visual surface.
+> - Use `interactive` when the entire card surface is clickable (e.g., selecting from a list of options).
+
+> **Don't**
+> - Don't use Card for single-line system messages — use [StatusCallout](/components/atoms/status-callout) instead. Cards are for *grouped content sections*; StatusCallout is for *individual announcements*.
+> - Don't use `highlighted` for "danger" — use `failure`. The red border on `highlighted` means *active/selected*, not *bad*.
+> - Don't nest Cards within Cards — it creates visual clutter. If you need sub-grouping inside a Card, use [Separator](/components/atoms/separator) or layout atoms.
+> - Don't use `interactive` without an `onClick` handler — a glowing hover with no response feels broken.
+
+## Content Guidelines
+
+> **Do**
+> - Use the `title` prop for Card headers — it renders a consistent `h3` with the display font. Don't render your own `<Text variant="h3">` inside a Card when `title` would suffice.
+> - **Operational steps**: Titles are often questions or directives — "Award Genre Point?", "Define the Sacrifice", "Spend Genre Point?". This is correct; the title frames the decision.
+> - **Passive containers**: Titles are noun phrases — "Deck Changes", "Weaknesses Found", "Character Names".
+> - Follow the title with a brief `caption`-variant explanation, then the controls. This pattern (title → context → action) is used consistently across phase screens.
+
+> **Don't**
+> - Don't put long prose directly into a Card without breaking it up with Text variants or Separator.
+> - Don't use full sentences as titles — "Here is what you need to do" → "Instructions" or "What do you do?".
+> - Don't use Card for purely decorative grouping with no conceptual boundary. If items are related and need spacing, a [Stack](/components/atoms/stack) with a [Separator](/components/atoms/separator) is lighter.
 
 ## Anatomy
 
 ```
-┌─ border (variant-colored) ─────────────────┐
-│                                             │
-│  [Title]  ← optional h3 via title prop      │
-│                                             │
-│  Children content                           │
-│  (any React nodes)                          │
-│                                             │
-└─────────────────────────────────────────────┘
+ ┌─ border (variant-colored) ─────────────────────┐
+ │                                                 │
+ │  [Title]  ← optional h3 via title prop          │
+ │                                                 │
+ │  ┌─ children ────────────────────────────────┐  │
+ │  │  Any React nodes: Text, Stack, Row, etc.  │  │
+ │  └───────────────────────────────────────────┘  │
+ │                                                 │
+ └──── padding: vars.space.lg (24px) ─────────────┘
 ```
+
+1. **Border** — 1px solid, color determined by `variant`. The border is the primary emotional signal.
+2. **Title** — Optional `<h3>` rendered via the `title` prop. Uses `vars.font.display` and `vars.fontSize.h3`.
+3. **Children** — Arbitrary React content. The Card imposes no layout on children — use [Stack](/components/atoms/stack) or [Row](/components/atoms/row) inside.
+4. **Padding** — `vars.space.lg` on all sides. Removed when `noPadding` is `true`.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
+Use these props to configure the Card component.
+
+### `variant`
+The emotional register of the card surface. Each variant has a distinct background color, border color, and semantic purpose.
+
+| Value | Border | Background | Purpose |
 |---|---|---|---|
-| `variant` | `CardVariant` | `'default'` | Visual style |
-| `title` | `string` | — | Optional h3 header |
-| `interactive` | `boolean` | `false` | Hover glow + lift effect |
-| `noPadding` | `boolean` | `false` | Remove internal padding |
-
-## Behavior
-
-- `interactive` adds a hover glow and subtle transform on mouseover.
-- `noPadding` removes all internal padding — useful for cards containing full-bleed content like images or custom layouts.
-- The `title` prop renders an h3 with the `cardTitle` style — styled consistently across all variants.
-
-## Accessibility
-
-- Card is a `<div>` container — no implicit role. Content inside determines semantics.
-- If `interactive` is true, consider adding `role="button"` and keyboard handlers to the card.
-
-## Implementation Examples
-
-### All Variants
+| `default` | `vars.color.border` | `vars.color.surface` | General content grouping |
+| `muted` | `vars.color.border` | `vars.color.background` (70%) | De-emphasized, secondary |
+| `highlighted` | `vars.color.borderActive` (red) | `vars.color.surfaceElevated` | Selected / active item |
+| `success` | `vars.color.success` (green) | `vars.color.surface` | Positive outcome |
+| `failure` | `vars.color.accentBright` (red) | `vars.color.surface` | Negative outcome |
+| `instruction` | `vars.color.accent` | Red-tinted transparent | Game directions from the GM |
+| `ghost` | Transparent | Transparent | Layout-only, invisible |
 
 <ComponentPreview column>
-  <Card variant="default"><Text>Default — general content grouping</Text></Card>
-  <Card variant="muted"><Text>Muted — de-emphasized content</Text></Card>
-  <Card variant="highlighted"><Text>Highlighted — selected or important</Text></Card>
-  <Card variant="success"><Text>Success — positive outcome</Text></Card>
-  <Card variant="failure"><Text>Failure — negative outcome</Text></Card>
-  <Card variant="instruction"><Text>Instruction — game directions</Text></Card>
-  <Card variant="ghost"><Text>Ghost — invisible container</Text></Card>
+  <Stack gap="sm">
+    <Card variant="default"><Text>Default — general content grouping</Text></Card>
+    <Card variant="muted"><Text>Muted — de-emphasized content</Text></Card>
+    <Card variant="highlighted"><Text>Highlighted — selected or important</Text></Card>
+    <Card variant="success"><Text>Success — positive outcome</Text></Card>
+    <Card variant="failure"><Text>Failure — negative outcome</Text></Card>
+    <Card variant="instruction"><Text>Instruction — game directions</Text></Card>
+    <Card variant="ghost"><Text>Ghost — invisible container</Text></Card>
+  </Stack>
 </ComponentPreview>
 
+<details>
+<summary>Code example</summary>
+
 ```tsx
-<Card variant="default"><Text>Default</Text></Card>
-<Card variant="highlighted"><Text>Selected item</Text></Card>
-<Card variant="instruction"><Text>Draw a card.</Text></Card>
+<Card variant="default"><Text>General content</Text></Card>
 <Card variant="success"><Text>You survived!</Text></Card>
 <Card variant="failure"><Text>The Killer strikes.</Text></Card>
+<Card variant="instruction"><Text>Draw a card from the Threat Deck.</Text></Card>
 ```
+</details>
 
-### With Title
+### `title`
+Renders an `h3` header inside the card, above the children. Uses the display font and `vars.fontSize.h3`.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | `undefined` | Optional header. Replaces the need for a manual `<Text variant="h3">` inside the Card. |
 
 <ComponentPreview column>
   <Card title="Scene Setup">
@@ -93,40 +140,249 @@ Card replaces raw `<div>` grouping with a semantically meaningful container that
   </Card>
 </ComponentPreview>
 
+<details>
+<summary>Code example</summary>
+
 ```tsx
 <Card title="Scene Setup">
-  <Text>Draw a card from the threat deck.</Text>
+  <Text>Draw a card from the threat deck to determine the encounter.</Text>
 </Card>
 ```
+</details>
 
-### Interactive Cards
+### `interactive`
+Enables hover effects: a blood-red border glow (`vars.shadow.glow`), border color change to `borderActive`, and a subtle `translateY(-1px)` lift. Use when the entire card is clickable.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Enables pointer cursor, hover glow, and lift transform. |
 
 <ComponentPreview>
   <Card interactive><Text>Hover me — I glow</Text></Card>
 </ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
 <Card interactive onClick={handleSelect}>
   <Text>Selectable option</Text>
 </Card>
 ```
+</details>
 
-## API Reference
+### `noPadding`
+Removes all internal padding. Use for cards containing full-bleed content like images, custom layouts, or nested components that manage their own spacing.
 
-### CardVariant
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Zeroes out the `vars.space.lg` padding. |
 
-| Value | Background | Border | Use |
+<ComponentPreview column>
+  <Row gap="md">
+    <Card><Text variant="label">With padding (default)</Text></Card>
+    <Card noPadding><Text variant="label" style={{ padding: '16px' }}>noPadding — content manages own spacing</Text></Card>
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Card noPadding>
+  <img src={coverImage} alt="Scene" style={{ width: '100%' }} />
+</Card>
+```
+</details>
+
+### `id`
+HTML id attribute applied to the root `div`.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | `undefined` | Standard HTML id. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Card id="setup-card" title="Game Setup">
+  <Text>Configure the session.</Text>
+</Card>
+```
+</details>
+
+### `complete`
+Marks the card as a resolved operational step. The border transitions to `success` green, and the title gains a `check_circle` icon. Children remain visible — the information is still relevant after completion.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Green border + checkmark icon on the title. |
+
+<ComponentPreview column>
+  <Stack gap="sm">
+    <Card title="Escalation — Something Not Right">
+      <Text variant="caption" color="muted">Available — click to use.</Text>
+    </Card>
+    <Card title="Escalation — Something Not Right" complete completionLabel="Escalation used this scene.">
+      <Text variant="caption" color="muted">Any non-active player can add a terrifying detail. Once per scene.</Text>
+    </Card>
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Card
+  title="Define the Sacrifice"
+  complete={sacrificeConfirmed}
+  completionLabel="Sacrifice confirmed."
+>
+  <Text variant="caption" color="muted">
+    "If you push yourself, what are you willing to sacrifice?"
+  </Text>
+  {!sacrificeConfirmed && (
+    <Button variant="secondary" size="sm" onClick={confirmSacrifice}>
+      Sacrifice Defined
+    </Button>
+  )}
+</Card>
+```
+</details>
+
+### `completionLabel`
+Optional text shown below the title when `complete` is true. Provides a brief summary of what was resolved.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | `undefined` | Shown as green micro text below the title row. Only rendered when `complete` is also `true`. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Card title="Assign Strikes" complete completionLabel="All strikes assigned">
+  {/* Strike controls still visible for review */}
+</Card>
+```
+</details>
+
+### `collapsible` & `collapsed`
+Controls whether the card's children can be collapsed (hidden) and their current visibility. These are **independent from `complete`** — you can collapse a card that isn't complete, and a complete card can remain expanded.
+
+| Prop | Type | Default | Description |
 |---|---|---|---|
-| `default` | `surface` | `border` | General grouping |
-| `muted` | `background` 70% | `border` | De-emphasized |
-| `highlighted` | `surfaceElevated` | `borderActive` (red) | Selected/important |
-| `success` | `surface` | `success` (green) | Positive outcome |
-| `failure` | `surface` | `accentBright` (red) | Negative outcome |
-| `instruction` | Red-tinted transparent | `accent` | Game instructions |
-| `ghost` | Transparent | None | Layout-only |
+| `collapsible` | `boolean` | `false` | Shows a toggle button at the bottom of the card. |
+| `collapsed` | `boolean` | `false` | Whether the children are currently hidden. |
+| `onToggleCollapse` | `() => void` | `undefined` | Callback fired when the user clicks the toggle. |
+
+<ComponentPreview column>
+  <Card title="Rules Modules" collapsible collapsed={false}>
+    <Text variant="caption" color="muted">Classic Setup and Final Girl toggles would appear here.</Text>
+  </Card>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+const [collapsed, setCollapsed] = React.useState(false);
+
+<Card
+  title="Rules Modules"
+  collapsible
+  collapsed={collapsed}
+  onToggleCollapse={() => setCollapsed(c => !c)}
+>
+  <Toggle variant="switch" value={classicSetup} onChange={setClassicSetup} />
+  <Toggle variant="switch" value={finalGirl} onChange={setFinalGirl} />
+</Card>
+```
+</details>
+
+## Implementation Examples
+
+### Operational Step Pattern
+
+The most common real-world Card pattern: a titled prompt, brief context, and action controls. This is how Cards work in FalloutScreen, ConversationStakes, and DicePanel.
+
+<ComponentPreview column>
+  <Card title="Escalation — Something Not Right">
+    <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
+      Any non-active player can add a terrifying detail to the scene. Once per scene.
+    </Text>
+    <Button variant="secondary" size="sm">Use Escalation</Button>
+  </Card>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+{/* Operational step: title = prompt, caption = context, button = action */}
+<Card title="Escalation — Something Not Right">
+  <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
+    Any non-active player can add a terrifying detail. Once per scene.
+  </Text>
+  <Button variant="secondary" size="sm" onClick={escalate}>
+    Use Escalation
+  </Button>
+</Card>
+```
+</details>
+
+### Outcome Variants
+
+Use `success` and `failure` to reinforce the result visually before the player reads the text.
+
+<ComponentPreview column>
+  <Stack gap="sm">
+    <Card variant="success" title="Weaknesses Found">
+      <Text variant="caption" color="muted">The Killer's vulnerabilities have been revealed.</Text>
+    </Card>
+    <Card variant="failure" title="Assign 2 Strikes">
+      <Text variant="caption" color="muted">Distribute the consequences among your characters.</Text>
+    </Card>
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Card variant="success" title="Weaknesses Found">
+  <WeaknessTracker found={deck.weaknessesBySuit} />
+</Card>
+
+<Card variant="failure" title={`Assign ${strikes} Strike${strikes > 1 ? 's' : ''}`}>
+  <Text variant="caption" color="muted">
+    {remaining > 0 ? `${remaining} left to assign.` : 'All strikes assigned.'}
+  </Text>
+  {/* strike assignment controls */}
+</Card>
+```
+</details>
+
+## Behavior
+
+- All variants transition smoothly via `transition: all vars.transition.normal` — border color, background, and box-shadow changes animate on state change.
+- `interactive` adds `cursor: pointer` and a hover state that lifts the card by 1px with a blood-red glow. This transition is also smooth.
+- `instruction` variant applies `font-style: italic` to the card container, which cascades into all child text. This is an intentional design choice — GM instructions have a distinct voice.
+- The `title` prop renders a raw `<h3>` (not a `<Text>` atom). This is a known deviation; it uses the same font tokens directly via `cardTitle` style.
+- **Complete**: When `complete={true}`, the border color overrides to `vars.color.success` regardless of the original variant, and a `check_circle` icon appears next to the title (which also turns green). Children remain fully visible — the content is still relevant after completion.
+- **Collapsible**: When `collapsible={true}`, a toggle button appears at the bottom of the card. The children area uses a `max-height` + `opacity` transition for smooth expand/collapse animation. `collapsible` and `collapsed` are independent from `complete` — all combinations are valid.
+
+## Accessibility
+
+- Card is a generic `<div>` container with no implicit ARIA role. The content inside determines semantics.
+- When `interactive` is true, you should add an `onClick` handler and consider adding `role="button"` and `tabIndex={0}` to ensure keyboard accessibility.
+- The `title` prop renders an `<h3>` — be aware of heading hierarchy in the surrounding context.
+- The collapse toggle button sets `aria-expanded` to reflect the current state, and has an `aria-label` of "Expand card content" or "Collapse card content".
 
 ## Related Components
 
-- **[PlayingCard](/components/molecules/playing-card)** — Diegetic card face (suit + rank)
-- **[Stack](/components/atoms/stack)** — Vertical layout for card content
-- **[StatusCallout](/components/atoms/status-callout)** — Semantic feedback (different purpose than Card)
+- **[PlayingCard](/components/molecules/playing-card)** — Diegetic card face (suit + rank). Completely different component.
+- **[StatusCallout](/components/atoms/status-callout)** — For single-line system messages. If your content is a single announcement, use StatusCallout, not Card.
+- **[Stack](/components/atoms/stack)** — The most common layout inside a Card.
+- **[Separator](/components/atoms/separator)** — Use inside a Card to divide sub-sections instead of nesting Cards.

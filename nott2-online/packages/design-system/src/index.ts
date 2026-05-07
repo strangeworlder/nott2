@@ -21,7 +21,6 @@ export type { TextAreaProps } from './atoms/TextField/TextArea';
 export { Stack } from './atoms/Stack/Stack';
 export { Row } from './atoms/Row/Row';
 export { StatusCallout } from './atoms/StatusCallout/StatusCallout';
-export { PhaseHeader } from './atoms/PhaseHeader/PhaseHeader';
 
 // ── Molecules ─────────────────────────────────────────────────────────────────
 export { PlayingCard } from './molecules/PlayingCard/PlayingCard';
@@ -48,6 +47,7 @@ export { TrophyIndicator } from './molecules/TrophyIndicator/TrophyIndicator';
 export { WeaknessTracker } from './molecules/WeaknessTracker/WeaknessTracker';
 export { WaitingIndicator } from './molecules/WaitingIndicator/WaitingIndicator';
 export { TabBar } from './molecules/TabBar/TabBar';
+export { PhaseHeader } from './molecules/PhaseHeader/PhaseHeader';
 
 export { CardMatt } from './molecules/CardMatt/CardMatt';
 export type { CardMattProps } from './molecules/CardMatt/CardMatt';

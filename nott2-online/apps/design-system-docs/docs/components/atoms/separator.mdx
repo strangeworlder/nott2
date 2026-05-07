@@ -4,28 +4,59 @@ title: Separator
 ---
 
 import { ComponentPreview } from '@site/src/components/ComponentPreview';
-import { Text, Stack } from '@nott2/design-system';
-import { Separator } from '@nott2/design-system';
+import { Text, Stack, Separator, Card } from '@nott2/design-system';
 
 # Separator
 
-A horizontal rule. A visual breath between content sections.
+The visual breath between content sections. In horror, silence is as important as sound — a separator creates a moment of pause, a thin line between what came before and what lurks ahead. It is deliberately understated: a suggestion of division, not a wall.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Separator } from '@nott2/design-system';
+
+<Separator />
+```
+</details>
 
 ## Why to Use
 
-Separator replaces raw `<hr>` elements with a themed, consistent divider that uses the `border` token color.
+Separator replaces raw `<hr>` elements with a themed, token-consistent divider. It uses `vars.color.border` — the same color contract used by cards, inputs, and interactive borders — ensuring the dividing line always feels *of the system*, not bolted on. Using a raw `<hr>` would inherit browser-default styles and break the visual language.
 
 ## When to Use
 
-- Between distinct content sections within a card or panel
-- Before action footers
-- As visual punctuation in long content flows
+> **Do**
+> - Use Separator between distinct content sections within a Card or PhasePanel.
+> - Use it to divide a header block from its content (e.g., as used internally by [PhaseHeader](/components/molecules/phase-header)).
+> - Use it as visual punctuation in long, scrollable content flows to give the eye a resting point.
+> - Use it before an action footer when there is no structural boundary (border, card edge) already creating that division.
+
+> **Don't**
+> - Don't use Separator as a substitute for spacing — if sections just need more gap, use `vars.space.*` tokens via `Stack`. A Separator adds *visual division*, not just distance.
+> - Don't use multiple Separators back-to-back — a single line is a pause, two lines are noise.
+> - Don't use Separator purely for aesthetic decoration — every divider should mark a genuine transition between conceptually different content.
+> - Don't use raw `<hr>` — always use `<Separator>` instead.
+
+## Anatomy
+
+The Separator renders as a single `<hr>` element with the following token values:
+
+| Property | Token | Value |
+|---|---|---|
+| `height` | — | `1px` |
+| `background-color` | `vars.color.border` | `#2a2a2a` |
+| `margin` | `vars.space.md` top/bottom | `16px 0` |
+| `border` | — | `none` (browser `<hr>` border cleared) |
+| `role` | — | `"separator"` (explicit ARIA) |
 
 ## Key Props
 
-No props. A single-purpose element.
+None — Separator is a zero-configuration element. Its entire API is placement.
 
 ## Implementation Examples
+
+### Between content sections
 
 <ComponentPreview column>
   <Stack gap="md">
@@ -35,19 +66,58 @@ No props. A single-purpose element.
   </Stack>
 </ComponentPreview>
 
+<details>
+<summary>Code example</summary>
+
 ```tsx
 <Stack gap="md">
-  <Text>Content above</Text>
+  <Text>Content section one</Text>
   <Separator />
-  <Text>Content below</Text>
+  <Text>Content section two</Text>
 </Stack>
 ```
+</details>
+
+### Inside a Card
+
+<ComponentPreview column>
+  <Card>
+    <Text variant="h3">Setup</Text>
+    <Text variant="lead" color="muted">Configure the game before play begins.</Text>
+    <Separator />
+    <Text>Player count, rules modules, and character names go here.</Text>
+  </Card>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Card>
+  <Text variant="h3">Setup</Text>
+  <Text variant="lead" color="muted">Configure the game before play begins.</Text>
+  <Separator />
+  <Text>Player count, rules modules, and character names go here.</Text>
+</Card>
+```
+</details>
+
+## Behavior
+
+- The `margin: vars.space.md 0` provides consistent vertical breathing room above and below the line. Do not add additional margin to the Separator itself — adjust parent `gap` or sibling spacing instead.
+- Separator renders `role="separator"` explicitly rather than relying on the implicit ARIA role of `<hr>`, ensuring consistent screen reader behavior across all environments.
+
+## Accessibility
+
+- The `<hr>` element with `role="separator"` is announced by screen readers as a thematic break between content sections.
+- It is not focusable and has no interactive affordance — purely structural.
 
 ## Related Components
 
-- **[Card](/components/molecules/card)** — Groups content (may contain Separators)
-- **[Stack](/components/atoms/stack)** — Vertical layout (Separator is a Stack child)
+- **[PhaseHeader](/components/molecules/phase-header)** — Composes Separator internally as its permanent footer divider
+- **[Card](/components/molecules/card)** — Common parent container where Separators divide sections
+- **[Stack](/components/atoms/stack)** — The usual layout parent — Separator is a natural Stack child
 
-:::caution Anti-Pattern
-Never use raw `<hr>` — always use `<Separator>`.
+:::caution Anti-Pattern: Raw `<hr>`
+Never use raw `<hr>` elements — always use `<Separator>`. A raw `<hr>` leaks browser-default styles (height, border, margin) and doesn't respect the `vars.color.border` token.
 :::
