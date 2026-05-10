@@ -1,13 +1,11 @@
 ---
-sidebar_position: 15
+sidebar_position: 10
 title: DoomClockTransition
 ---
 
-import { ComponentPreview } from '@site/src/components/ComponentPreview';
-
 # DoomClockTransition
 
-A full-screen cinematic overlay that triggers when the Doom Clock advances. It completely obscures the screen, forces the player's attention, and plays a rhythmic, terrifying sequence to announce the changing of the hour.
+The tick of the clock. Each time a reserve card is added to the threat deck, the hour hand creeps forward toward midnight — toward the 13th hour that a clock was never meant to show. This component dramatises that single tick: a full-screen, large-scale (240px) clock where the sword-shaped hand visibly sweeps from one position to the next, the new segment flares to life, and the countdown number drops by one. When the clock breaks, the face shatters in a burst of cracks, bleeding red through the broken metal texture.
 
 <details open>
 <summary>Code example</summary>
@@ -16,40 +14,215 @@ A full-screen cinematic overlay that triggers when the Doom Clock advances. It c
 import { DoomClockTransition } from '@nott2/design-system';
 
 <DoomClockTransition
-  visible={true}
-  previousHour={11}
-  newHour={12}
-  variant="tick"
-  onComplete={() => {}}
+  from={6}
+  to={7}
+  onComplete={() => advancePhase()}
 />
 ```
 </details>
 
 ## Why to Use
 
-The `DoomClockTransition` is not a standard UI component; it is an event. It uses `framer-motion` to orchestrate a multi-step animation sequence that interrupts gameplay. When the clock strikes, the game stops.
+`DoomClockTransition` is not a standard UI component; it is an *event*. It forces the player's attention away from the game board and onto the inevitability of the clock advancing. The multi-second animation sequence creates a dramatic pause — the game literally stops to announce that another hour has passed.
 
 ## When to Use
 
 > **Do**
-> - Trigger this overlay *only* when the Doom Clock advances.
-> - Use the `chime` variant for the stroke of midnight (Act breaks).
-> - Use the `tick` variant for standard hour advancements.
+> - Trigger this component only when the Doom Clock advances (a reserve card is added to the threat deck).
+> - Use the `isBroken` prop when the 13th card is added — this triggers the shatter sequence instead of a tick.
+> - Always provide `onComplete` — the game cannot proceed until the animation finishes.
 
 > **Don't**
-> - Do not render this permanently. It must be conditionally mounted or controlled via the `visible` prop.
+> - Do not render this component permanently. It should be conditionally mounted when a tick occurs and unmounted after `onComplete` fires.
+> - Do not use this for arbitrary transitions. Use `TransitionOverlay` for non-clock interruptions.
+
+## Anatomy — Two Modes
+
+### Tick Mode (normal advancement)
+
+```
+ ┌──────────────────────────────────────────────┐
+ │                                              │
+ │              ╭───────────╮                   │
+ │            ╱   XII   I    ╲                  │
+ │           │   ╭─────╮      │                 │
+ │           │   │ ⚔→  │      │   ← sword hand sweeps
+ │           │   │     │      │     from → to angle
+ │           │   ╰─────╯      │                 │
+ │            ╲    VII  V    ╱                  │
+ │              ╰───────────╯                   │
+ │                                              │
+ │                  6                           │  ← countdown number (flips)
+ │                to go                         │  ← sub-label
+ │                                              │
+ │           click to continue                  │  ← dismiss hint (fades in)
+ └──────────────────────────────────────────────┘
+```
+
+### Break Mode (13th card — the clock shatters)
+
+```
+ ┌──────────────────────────────────────────────┐
+ │                                              │
+ │              ╭───╳───────╮                   │
+ │            ╱  ╳  XII  ╳   ╲     ← crack lines
+ │           │   ╭─────╮  ╳   │                 │
+ │           │   │  ↓  │      │   ← dead hand (6 o'clock)
+ │           │   │  ●  │      │                 │
+ │           │   ╰─────╯      │                 │
+ │            ╲    ╳    ╳   ╱      ← broken texture overlay
+ │              ╰───────────╯                   │
+ │           ~~~~ shake + glow ~~~~             │
+ │                                              │
+ │                XIII                          │  ← red "XIII"
+ │               broken                         │
+ │                                              │
+ │           click to continue                  │
+ └──────────────────────────────────────────────┘
+```
+
+### Visual Layers
+
+1. **Root** (`transitionRoot`) — Flex column, centered, `user-select: none`. No background — this renders inside a parent overlay.
+2. **SVG** (`transitionSvg`) — 240×240px (3× the compact clock scale). Heavy `drop-shadow` for cinematic depth.
+3. **Face background** — Weathered iron texture via `<pattern>`, same as `DoomClock` but at 3× resolution.
+4. **Decorative rings** — Two ornamental circles (outer and inner) with slightly heavier stroke at this scale.
+5. **Roman numerals** — All 12, now legible at 11px font size.
+6. **Arc segments** — Same color escalation as `DoomClock`. The new segment uses a `segmentNew` class with a `newSegmentGlow` keyframe that flares from 0 to full brightness.
+7. **Sword hand** — A polygon (blade + pommel + guard) rather than a simple line. Animated via CSS `transform: rotate()` with a `cubic-bezier(0.16, 1, 0.3, 1)` easing (600ms delay + 1200ms sweep = 1800ms total).
+8. **Countdown text** — The number "flips" at the 1800ms mark: scales down to 0.6 / fades to 0, updates, then scales back up.
+9. **Dismiss hint** — "click to continue" fades in after 2 seconds.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `visible` | `boolean` | `false` | When true, the transition mounts and plays. |
-| `previousHour` | `number` | — | **Required.** The hour the clock is changing from. |
-| `newHour` | `number` | — | **Required.** The new hour. |
-| `variant` | `'tick' \| 'chime'` | `'tick'` | Determines the animation pacing and audio cues. |
-| `onComplete` | `() => void` | — | **Required.** Callback fired when the animation sequence is fully finished. |
+Use these props to configure the DoomClockTransition component.
+
+### from & to
+The clock positions before and after the tick.
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | — | `from`: **Required.** The clock hour before the tick (0–12). |
+| `number` | — | `to`: **Required.** The clock hour after the tick (1–13). |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+{/* Standard tick: hour 6 → 7 */}
+<DoomClockTransition from={6} to={7} onComplete={advancePhase} />
+
+{/* Near-midnight: hour 11 → 12 */}
+<DoomClockTransition from={11} to={12} onComplete={advancePhase} />
+```
+</details>
+
+### isBroken
+Triggers the shatter animation instead of a tick.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | When true, all segments turn red, cracks appear, the broken texture overlays the face, and the SVG shakes + glows. Duration extends to 3000ms (vs 2500ms for a normal tick). |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DoomClockTransition from={12} to={13} isBroken onComplete={triggerAct3} />
+```
+</details>
+
+### onComplete
+Callback fired when the full animation sequence finishes.
+
+| Type | Default | Description |
+|---|---|---|
+| `() => void` | — | **Required.** Fired after 2500ms (tick) or 3000ms (break). The parent should use this to unmount the overlay and resume gameplay. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DoomClockTransition
+  from={8}
+  to={9}
+  onComplete={() => {
+    setShowTransition(false);
+    advanceToNextScene();
+  }}
+/>
+```
+</details>
+
+### onClockArrived
+Callback fired when the hand settles at the new position (~1800ms).
+
+| Type | Default | Description |
+|---|---|---|
+| `() => void` | — | Used to commit deferred state changes (e.g., updating `cardsAddedFromReserve`) at the exact moment the hand arrives, rather than waiting for the full animation to finish. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DoomClockTransition
+  from={5}
+  to={6}
+  onClockArrived={() => commitReserveCards()}
+  onComplete={() => setShowTransition(false)}
+/>
+```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+## Behavior
+
+### Animation Timeline (Tick Mode)
+
+| Time | Event |
+|---|---|
+| 0ms | Component mounts. Hand is at `from` position. Old countdown displayed. |
+| ~16ms | `requestAnimationFrame` fires — CSS transition begins sweeping the hand. |
+| 600ms | Hand sweep begins (transition delay). |
+| 800ms | New segment `newSegmentGlow` animation starts (800ms delay + 1200ms duration). |
+| 1800ms | Hand arrives at `to` position. `onClockArrived` fires. Countdown number begins flip (scale down → update → scale up, 200ms). |
+| 2000ms | "click to continue" hint fades in. |
+| 2500ms | `onComplete` fires. |
+
+### Animation Timeline (Break Mode)
+
+| Time | Event |
+|---|---|
+| 0ms | Component mounts with full broken state — red segments, crack lines, broken texture. |
+| 400ms | `shakeAnim` begins (600ms duration). The SVG physically shakes. |
+| 0ms–∞ | `pulseGlow` radiates red drop-shadows continuously (2s cycle). `crackFlicker` varies crack opacity (3s cycle). |
+| 2000ms | "click to continue" hint fades in. |
+| 3000ms | `onComplete` fires. |
+
+### Shared Geometry
+
+Both `DoomClock` and `DoomClockTransition` share the same geometry module (`doom-clock-geometry.ts`), which defines segment angles, color scales, and hand positioning. The transition version scales all constants by 3× (80px → 240px).
+
+## Accessibility
+
+- Uses `role="status"` with descriptive `aria-label` values:
+  - Tick mode: "Doom clock ticking to \{countdown\}"
+  - Break mode: "The clock has broken"
+- The SVG is `aria-hidden="true"` — screen readers rely on the status role.
+- The countdown text and dismiss hint are `aria-hidden` to avoid redundant announcements.
+- All animations (`shakeAnim`, `pulseGlow`, `crackFlicker`, `newSegmentGlow`, `brokenReveal`) respect `prefers-reduced-motion: reduce`:
+  - Shake and glow are removed entirely.
+  - New segment and broken texture opacity are set to static values.
+  - Crack lines are set to static 85% opacity.
 
 ## Related Components
 
-- **[DoomClock](/components/molecules/doom-clock)** — The standard, persistent UI indicator of the current hour.
-- **[TransitionOverlay](/components/organisms/transition-overlay)** — Generic full-screen overlay component used for lesser interruptions.
+- **[DoomClock](/components/molecules/doom-clock)** — The compact persistent sidebar indicator
+- **[TransitionOverlay](/components/organisms/transition-overlay)** — Generic full-screen overlay for non-clock interruptions
+- **[GameBoard](/components/organisms/game-board)** — The board that triggers this transition when a reserve card is drawn

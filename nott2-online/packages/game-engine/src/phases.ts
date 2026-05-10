@@ -14,6 +14,7 @@ import {
   addJokersToDeck,
   removeNumberCardsForAct3,
   shuffleThreatDeck,
+  ACT3_RESERVE_TRIGGER,
 } from './deck';
 
 // ── Initial State Factory ───────────────────────────────────────────────────
@@ -197,7 +198,16 @@ export function startAct3(state: GameState): GameState {
     threatDeck: [...state.deck.threatDeck, ...state.deck.visibleCards],
     visibleCards: [],
   };
-  const newDeck = removeNumberCardsForAct3(deckWithVisibleReturned);
+  const purgedDeck = removeNumberCardsForAct3(deckWithVisibleReturned);
+
+  // Force the clock counter to at least the Act 3 trigger. Act 3 can fire
+  // either via the reserve countdown reaching 13, or via all 4 weaknesses
+  // being found (which can happen before the counter reaches 13). In both
+  // cases the DoomClock should display as complete/broken.
+  const newDeck = {
+    ...purgedDeck,
+    cardsAddedFromReserve: Math.max(purgedDeck.cardsAddedFromReserve, ACT3_RESERVE_TRIGGER),
+  };
 
   // Reset turn order — act-setup bypasses startNextScene so the round counter
   // would otherwise carry over stale entries from the previous round.

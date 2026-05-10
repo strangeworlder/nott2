@@ -1,30 +1,100 @@
 ---
-sidebar_position: 12
+sidebar_position: 19
 title: WaitingIndicator
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { WaitingIndicator } from '@nott2/design-system';
+
 # WaitingIndicator
 
-The held breath. A pulsing dot + message for multiplayer waiting states.
+The camera lingers. In multiplayer, not everyone acts at once — some players wait while the host takes control. This indicator is the held breath between cuts: atmospheric, not anxious. It pulses slowly, like something alive in the dark, reminding the waiting player that the scene is still running.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { WaitingIndicator } from '@nott2/design-system';
+
+<WaitingIndicator message="Waiting for other players..." />
+```
+</details>
+
+## Why to Use
+
+WaitingIndicator signals that the game is alive but paused for this player. The slow pulse prevents the screen from feeling dead during multiplayer waits, while the red dot and muted text maintain the horror atmosphere rather than breaking to a generic "loading spinner."
+
+## When to Use
+
+> **Do**
+> - Use during multiplayer phases when the current player is waiting for others to act.
+> - Use as a full-page loading state (e.g., in a Next.js `loading.tsx` route segment).
+> - Provide contextual `message` text that tells the player *why* they're waiting.
+
+> **Don't**
+> - Do not use for error states or system messages. Use `StatusCallout` for those.
+> - Do not use when the player has actions available. This component explicitly communicates "nothing for you to do right now."
+
+## Anatomy
+
+```
+        ●                     ← waitingDot (6px, accent red)
+  Waiting for other           ← message text
+    players...
+```
+
+1. **Root** (`waitingRoot`) — Vertical flex column, centered, with `sm` gap. The entire container pulses (opacity 0.5 → 1.0) over 2 seconds.
+2. **Dot** (`waitingDot`) — A 6px circle in `accent` red. Decorative — inherits the pulse from the parent.
+3. **Message** — A `<span>` with the message text. Uses `label` font size and `textMuted` color.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `message` | `string` | — | Waiting message text |
+Use these props to configure the WaitingIndicator component.
 
-## Behavior
+### message
+The text displayed below the pulsing dot.
 
-- Renders a pulsing dot animation next to the message text.
-- Respects `prefers-reduced-motion` — animation stops when reduced motion is preferred.
+| Type | Default | Description |
+|---|---|---|
+| `string` | `'Waiting…'` | Contextual message explaining the wait state. |
 
-## Implementation Examples
+<ComponentPreview>
+  <WaitingIndicator message="Waiting for other players..." />
+</ComponentPreview>
+
+<ComponentPreview>
+  <WaitingIndicator message="The Killer is choosing..." />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
 <WaitingIndicator message="Waiting for other players..." />
 <WaitingIndicator message="The Killer is choosing..." />
+<WaitingIndicator />  {/* Defaults to "Waiting…" */}
 ```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+## Behavior
+
+- **Full-element pulse**: The entire root container (dot + text) pulses together via a `pulse` keyframe (opacity 0.5 → 1.0, 2s ease-in-out infinite). This creates a breathing effect rather than a frantic loading animation.
+- **Default message**: If no `message` prop is provided, the component displays "Waiting…" (with an ellipsis character).
+- **Text alignment**: The text is center-aligned, so multi-line messages wrap gracefully.
+
+## Accessibility
+
+- Uses `role="status"` with `aria-live="polite"` to announce the waiting state to screen readers without interrupting other announcements.
+- The dot is marked `aria-hidden="true"` — purely decorative.
+- The `pulse` animation respects `prefers-reduced-motion: reduce` — animation is removed and opacity is set to a static 0.8.
 
 ## Related Components
 
-- **[StatusCallout](/components/atoms/status-callout)** — For non-waiting system messages
+- **[StatusCallout](/components/atoms/status-callout)** — For non-waiting system messages (errors, instructions)

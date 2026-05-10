@@ -20,4 +20,10 @@ describe('WeaknessTracker', () => {
     const { container } = render(<WeaknessTracker found={new Set()} />);
     expect(container.querySelector('[aria-label="Weaknesses found: 0 of 4"]')).toBeTruthy();
   });
+
+  it('marks individual pips with correct aria state', () => {
+    render(<WeaknessTracker found={new Set(['Clubs'])} />);
+    expect(screen.getByLabelText('Clubs: weakness found')).toBeTruthy();
+    expect(screen.getByLabelText('Spades: not found')).toBeTruthy();
+  });
 });

@@ -182,6 +182,39 @@ The gold palette provides the colors for physical game props (felt table, card s
 Some components use hardcoded low-opacity RGBA values for hover backgrounds (e.g., `rgba(138, 0, 0, 0.05)` on secondary buttons). These are **atmospheric tints** at near-invisible opacity — they derive from brand colors but are too subtle and context-specific to warrant dedicated tokens. See the [Shadows & Glows](/foundation/shadows#hover-tints) page for the full list.
 :::
 
+## Color as Gradient Wash
+
+Beyond solid fills and borders, the system uses semantic colors at **very low opacity** in directional gradients to create atmospheric "color hazes." This is one of the system's signature visual patterns — a component doesn't just *have* a color, it *emanates* it.
+
+```tsx
+// The EffortBand uses a left-to-right gradient wash at the component's semantic color:
+background: `linear-gradient(90deg, rgba(45,90,45,0.12) 0%, transparent 60%)`,  // green — controlled
+background: `linear-gradient(90deg, rgba(251,191,36,0.08) 0%, transparent 60%)`, // amber — strained
+background: `linear-gradient(90deg, rgba(138,0,0,0.15) 0%, transparent 50%)`,    // red — lethal
+```
+
+The opacity range maps to the temperature gradient: safer states use lower opacity (0.06–0.10), dangerous states use higher opacity (0.15–0.22). The gradient always fades to transparent before reaching the right edge.
+
+See [Compositional Patterns — The Directional Wash](/foundation/patterns#3-the-directional-wash) for the full anatomy and rules.
+
+## The `color-mix()` Pattern
+
+Newer components (CardMatt, Deck) use CSS `color-mix()` to derive transparent variants from token colors at runtime, avoiding hardcoded RGBA values:
+
+```tsx
+// Instead of hardcoded RGBA:
+border: `2px dashed rgba(180, 100, 40, 0.45)`,
+
+// Token-derived transparency:
+border: `2px dashed color-mix(in srgb, ${vars.color.gold} 45%, transparent)`,
+```
+
+This is the preferred approach for new components because it **stays connected to the token** — if a playset overrides `color.gold`, the derived transparent variant automatically updates. Hardcoded RGBA values break this chain.
+
+:::tip Prefer `color-mix()` for New Code
+When you need a transparent variant of a token color, use `color-mix(in srgb, ${vars.color.tokenName} N%, transparent)` instead of hardcoding the RGBA equivalent. This keeps the playset theming contract intact.
+:::
+
 ## Usage in Components
 
 Components reference tokens through the Vanilla Extract `vars` contract:

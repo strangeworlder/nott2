@@ -13,7 +13,9 @@ import { Text, Button, Card, Stack, StatusCallout, Badge, Icon, Row, Separator }
 
 This is the documentation for the **@nott2/design-system** package — the shared component library and design token system that powers every screen in *Night of the Thirteenth 2*. If you're building UI for the game, this is your reference.
 
-**Who this is for:** Developers building features and screens for the NotT2 web application. You'll find design tokens, React components, usage patterns, and the rules that keep the interface consistent.
+:::tip New here?
+Start with the [Visual Identity](/visual-identity) page to understand the system's aesthetic philosophy — the five principles that govern every visual decision. Then explore the Foundation tokens and Components.
+:::
 
 ---
 
@@ -136,11 +138,19 @@ If you're reaching for a CSS class, an inline style, or a raw HTML element — s
 
 <div className="ds-nav-cards">
 
+<a href="/visual-identity" className="ds-nav-card">
+  <div className="ds-nav-card__icon">🎬</div>
+  <div className="ds-nav-card__content">
+    <strong>Visual Identity</strong>
+    <span>The five principles of brutalist horror cinema that define how the system looks and feels.</span>
+  </div>
+</a>
+
 <a href="/foundation/colors" className="ds-nav-card">
   <div className="ds-nav-card__icon">🎨</div>
   <div className="ds-nav-card__content">
     <strong>Foundation</strong>
-    <span>Colors, Typography, Spacing, Shadows, Motion — the design tokens that define the visual language.</span>
+    <span>Colors, Typography, Spacing, Shadows, Motion, Compositional Patterns, Textures — the design tokens and visual idioms.</span>
   </div>
 </a>
 
@@ -174,15 +184,16 @@ If you're reaching for a CSS class, an inline style, or a raw HTML element — s
 
 ## Architecture at a Glance
 
-The system follows **atomic design** — small, single-purpose pieces compose into larger, game-aware structures:
+The system follows **atomic design** — small, single-purpose pieces compose into larger, game-aware structures. A shared layer of [compositional patterns](/foundation/patterns) (the edge bleed, inset wound, gradient wash) provides the recurring visual grammar that gives molecules their cohesive identity.
 
 | Layer | Purpose | Examples |
 |---|---|---|
+| **Foundation** | Design tokens + compositional patterns | Colors, Spacing, Glows, Edge Bleed, Gradient Wash |
 | **Atoms** | Pure UI primitives — no game knowledge | Text, Button, Icon, Badge, Stack, Row |
-| **Molecules** | Single-purpose game widgets — composed from atoms | Card, PlayingCard, DoomClock, ResultBanner |
+| **Molecules** | Single-purpose game widgets — composed from atoms + patterns | Card, PlayingCard, DoomClock, ResultBanner |
 | **Organisms** | Full screen sections — compound compositions | GameBoard, PhasePanel, Header, ChatPanel |
 
-Atoms know nothing about the game. Molecules know about one game concept (a card, a clock, a result). Organisms orchestrate multiple molecules into a full screen experience.
+Atoms know nothing about the game. Molecules know about one game concept (a card, a clock, a result) and use compositional patterns to express it viscerally. Organisms orchestrate multiple molecules into a full screen experience.
 
 ---
 

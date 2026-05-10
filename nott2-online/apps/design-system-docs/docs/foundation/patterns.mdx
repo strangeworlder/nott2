@@ -1,0 +1,385 @@
+---
+sidebar_position: 6
+title: Compositional Patterns
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Text, Card, Stack } from '@nott2/design-system';
+
+# Compositional Patterns
+
+The foundation tokens (colors, spacing, glows) are the alphabet. This page documents the **grammar** — the repeating visual idioms that give the system its cohesive brutalist horror feel. These patterns aren't components; they're CSS recipes that components share.
+
+If you're building a new molecule, start here. These patterns are the building blocks of the system's evolved visual language.
+
+---
+
+## 1. The Edge Bleed
+
+A thin, absolute-positioned `::before` bar on the left edge of a component, with a vertical gradient that fades to transparent at both ends. It is the visual signature of the system — a controlled haemorrhage that signals "this element has a voice."
+
+<div style={{ display: 'flex', gap: 24, margin: '16px 0 24px', flexWrap: 'wrap' }}>
+  {[
+    { label: 'Controlled (2px)', width: 2, color: '#4ade80', animate: false },
+    { label: 'Elevated (3px)', width: 3, color: '#fbbf24', animate: true },
+    { label: 'Critical (4px)', width: 4, color: '#dc2626', animate: true },
+  ].map(({ label, width, color, animate }) => (
+    <div key={label} style={{ position: 'relative', width: 200, padding: '16px 16px 16px 24px', backgroundColor: '#141414', border: '1px solid #2a2a2a', borderRadius: 4, overflow: 'hidden' }}>
+      <div style={{
+        position: 'absolute', top: 0, left: 0, bottom: 0, width,
+        background: `linear-gradient(180deg, transparent, ${color}, transparent)`,
+        borderRadius: '4px 0 0 4px',
+        opacity: animate ? undefined : 0.8,
+      }} />
+      <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#e8e8e8' }}>{label}</div>
+    </div>
+  ))}
+</div>
+
+### Anatomy
+
+```css
+'::before': {
+  content: '""',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  bottom: 0,
+  width: 2,                    /* 2px default, 3px elevated, 4px critical */
+  background: `linear-gradient(180deg, transparent, ${semanticColor}, transparent)`,
+  borderRadius: `${vars.radius.md} 0 0 ${vars.radius.md}`,
+}
+```
+
+### Rules
+
+| Property | Convention | Why |
+|---|---|---|
+| **Width** | 2px (safe), 3px (strained), 4px (lethal) | The bar thickens with danger — a physical metaphor for a wound opening |
+| **Color** | Follows the component's semantic color | Green for controlled, amber for strained, orange for overexertion, red for critical |
+| **Animation** | Static at "safe" levels, breathing pulse at danger levels | Safe = dormant. Danger = alive, bleeding |
+| **Pulse duration** | 3s (amber) → 2.5s (orange) → 2s (red) | Faster pulse = higher urgency |
+| **Reduced motion** | `animation: none; opacity: 0.8` | Static visibility without motion |
+
+### Where It's Used
+
+| Component | Width | Color | Animated |
+|---|---|---|---|
+| **DifficultyBadge** | 3px | `accent` (red) | Yes — 3s pulse |
+| **DiceResult** | 3px | `goldBright` (amber) | Yes — 3s pulse |
+| **EffortBand** (controlled) | 2px | `successBright` (green) | No |
+| **EffortBand** (pushing-it) | 2px | `warning` (amber) | Yes — 3s pulse |
+| **EffortBand** (overexertion) | 3px | `cautionBright` (orange) | Yes — 2.5s pulse |
+| **EffortBand** (breaking-point) | 4px | `accentBright` (red) | Yes — 2s pulse |
+
+---
+
+## 2. The Inset Wound
+
+A 1px inset bottom border (`inset 0 -1px 0 <color>`) that sits *inside* the element, creating the illusion of a glowing cut along the bottom edge. Often paired with an external glow beneath it.
+
+<div style={{ display: 'flex', gap: 24, margin: '16px 0 24px', flexWrap: 'wrap' }}>
+  {[
+    { label: 'Red wound', color: '#8a0000', glow: '0 4px 24px rgba(138, 0, 0, 0.25)' },
+    { label: 'Amber wound', color: 'rgb(180, 100, 40)', glow: '0 4px 20px rgba(180, 100, 40, 0.15)' },
+    { label: 'Green wound', color: '#2d5a2d', glow: 'none' },
+  ].map(({ label, color, glow }) => (
+    <div key={label} style={{
+      width: 200, padding: 16,
+      backgroundColor: '#141414',
+      borderRadius: 4,
+      boxShadow: `inset 0 -1px 0 ${color}, ${glow}`,
+      fontFamily: 'monospace', fontSize: '0.75rem', color: '#e8e8e8',
+    }}>
+      {label}
+    </div>
+  ))}
+</div>
+
+### Anatomy
+
+```css
+boxShadow: `inset 0 -1px 0 ${vars.color.accent}, 0 4px 24px rgba(138, 0, 0, 0.25)`,
+```
+
+The two-part shadow creates a layered effect:
+1. **Inset layer** — the sharp, precise cut (1px, full opacity, inside the element)
+2. **External layer** — the diffuse glow that pools beneath (wide blur, low opacity)
+
+### Rules
+
+- Always use the component's semantic color for the inset border
+- The external glow blur should scale with the component's visual weight (12–24px)
+- External glow opacity should be subtle (0.1–0.25) — it's ambient, not a spotlight
+- Pairs naturally with the Edge Bleed — the two patterns together form the "bleeding component" motif
+
+### Where It's Used
+
+| Component | Inset Color | External Glow |
+|---|---|---|
+| **DifficultyBadge** | `accent` | `0 4px 24px rgba(138, 0, 0, 0.25)` |
+| **DiceResult** | `gold` | `0 4px 20px rgba(180, 100, 40, 0.15)` |
+| **EffortBand** | Follows level color | Scales with intensity |
+| **TabBar** (active tab) | `accent` via `::after` | `glowSubtle` token |
+
+---
+
+## 3. The Directional Wash
+
+A `linear-gradient` background that fades from a low-opacity semantic color on the left to transparent on the right. It creates a "color haze" that establishes mood without overwhelming the content.
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '16px 0 24px' }}>
+  {[
+    { label: 'Green wash (0.12 → 0)', gradient: 'linear-gradient(90deg, rgba(45,90,45,0.12) 0%, transparent 60%)', color: '#4ade80' },
+    { label: 'Amber wash (0.08 → 0)', gradient: 'linear-gradient(90deg, rgba(251,191,36,0.08) 0%, transparent 60%)', color: '#fbbf24' },
+    { label: 'Red wash (0.15 → 0)', gradient: 'linear-gradient(90deg, rgba(138,0,0,0.15) 0%, transparent 50%)', color: '#dc2626' },
+    { label: 'Amber radial (DiceResult)', gradient: 'radial-gradient(ellipse at center, rgba(180, 100, 40, 0.08) 0%, #141414 70%)', color: 'rgb(220, 160, 60)' },
+  ].map(({ label, gradient, color }) => (
+    <div key={label} style={{
+      padding: '12px 16px',
+      background: gradient,
+      backgroundColor: '#141414',
+      borderRadius: 4,
+      border: '1px solid #2a2a2a',
+    }}>
+      <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', color }}>{label}</span>
+    </div>
+  ))}
+</div>
+
+### Anatomy
+
+```css
+/* Linear wash — the standard form */
+background: `linear-gradient(90deg, rgba(${color}, 0.08-0.22) 0%, transparent 50-70%)`,
+
+/* Radial wash — for centerpiece components */
+background: `radial-gradient(ellipse at center, rgba(${color}, 0.08) 0%, ${vars.color.surface} 70%)`,
+```
+
+### Rules
+
+| Property | Convention | Why |
+|---|---|---|
+| **Direction** | Left-to-right (90deg) for linear; center-out for radial | LTR reading direction; the eye enters from the left |
+| **Opacity range** | 0.06 (subtle) → 0.10 (standard) → 0.22 (active/intense) | Higher opacity = higher emotional temperature |
+| **Fade endpoint** | 50–70% of width | The wash should dissolve before the right edge — it's a haze, not a fill |
+| **Active state** | Bump opacity by ~4–6 points | `0.12 → 0.18` on active state, not a color change |
+
+### Where It's Used
+
+| Component | Wash Type | Opacity | Fade Point |
+|---|---|---|---|
+| **DifficultyBadge** | Linear, red → transparent | 30% surface at 30% | via `background` |
+| **EffortBand** (controlled) | Linear, green | 0.12 | 60% |
+| **EffortBand** (pushing-it) | Linear, amber | 0.08 | 60% |
+| **EffortBand** (overexertion) | Linear, orange | 0.10 | 50% |
+| **EffortBand** (breaking-point) | Linear, red | 0.15 | 50% |
+| **DiceResult** | Radial, amber | 0.08 | 70% |
+| **Card** (instruction) | Flat tint | 0.06 | Full |
+
+---
+
+## 4. The Gradient Divider
+
+A thin vertical or horizontal line rendered as a gradient that fades to transparent at both ends. Unlike the `Separator` atom (which is a full-width structural divider), the gradient divider is a *decorative element within a component* — it separates zones inside a molecule without hard edges.
+
+<div style={{ display: 'flex', gap: 32, margin: '16px 0 24px', justifyContent: 'center', alignItems: 'center' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+    <div style={{
+      fontFamily: "'Playfair Display', Georgia, serif",
+      fontSize: '2rem', fontWeight: 700, color: '#dc2626',
+    }}>7</div>
+    <div style={{
+      width: 1, height: 48,
+      background: 'linear-gradient(180deg, transparent 0%, #8a0000 30%, #8a0000 70%, transparent 100%)',
+    }} />
+    <div>
+      <div style={{ fontSize: '0.5rem', fontFamily: "'Inter', sans-serif", textTransform: 'uppercase', letterSpacing: '0.35em', color: '#6a6a6a' }}>Difficulty</div>
+      <div style={{ fontSize: '0.875rem', fontFamily: "'Inter', sans-serif", color: '#6a6a6a' }}>4 + 2 + 1</div>
+    </div>
+  </div>
+</div>
+
+### Anatomy
+
+```css
+/* Vertical divider */
+width: 1,
+alignSelf: 'stretch',
+background: `linear-gradient(180deg, transparent 0%, ${color} 30%, ${color} 70%, transparent 100%)`,
+```
+
+### Rules
+
+- The color should match the component's semantic color
+- The solid portion spans the middle 40–60% of the element height
+- Use `alignSelf: 'stretch'` so the divider scales with content
+- Optional: reduce opacity to 0.5 for less dominant components (DiceResult)
+
+### Where It's Used
+
+| Component | Direction | Color |
+|---|---|---|
+| **DifficultyBadge** | Vertical | `accent` (red) |
+| **DiceResult** | Vertical | `gold` (amber), opacity 0.5 |
+
+---
+
+## 5. The Texture Layer
+
+A full-bleed overlay (`position: absolute; inset: 0`) with a `mix-blend-mode` that composites a photographic texture over a component's base color. This is what makes diegetic components feel *physical* — not flat-colored boxes, but surfaces you could touch.
+
+### Anatomy
+
+```css
+/* Texture overlay */
+const textureOverlay = style({
+  position: 'absolute',
+  inset: 0,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  mixBlendMode: 'color-dodge',     /* or 'overlay', 'multiply' */
+  opacity: 0.7,                     /* typically 0.3–0.8 */
+  pointerEvents: 'none',
+  zIndex: 0,                        /* content must sit above at zIndex: 1 */
+});
+```
+
+### Blend Mode Selection
+
+| Blend Mode | Visual Effect | Where It's Used |
+|---|---|---|
+| `color-dodge` | Brightens base color through texture — creates a luminous, heated surface | ResultBanner overlay |
+| `overlay` | Mid-tone enhancement — adds depth without dramatically changing hue | ResultBanner text clipping |
+| `multiply` | Darkens — diamond weave pattern on CardMatt velvet | CardMatt surface |
+| `screen` | Lightens — subtle grain on CardMatt | CardMatt surface |
+
+### Rules
+
+- Content must sit above the texture layer (`zIndex: 1` on content, `zIndex: 0` on texture)
+- Always set `pointerEvents: 'none'` on the overlay
+- Texture opacity depends on the blend mode — `color-dodge` is aggressive (keep at 0.5–0.7), `multiply` is gentle (0.8–1.0)
+- For animated texture reveals (broken DoomClock), use a keyframe that fades from 0 → target opacity
+
+### The Texture Library
+
+See the full [Texture Library](/foundation/textures) for the catalogue of available texture assets, their visual character, and usage guidelines.
+
+---
+
+## 6. CSS Text Clipping
+
+`background-clip: text` combined with a metallic/grunge texture background to make text look like it's *made of* a physical material rather than rendered in a flat color. This is a rare, high-impact pattern used only for hero-level display text.
+
+### Anatomy
+
+```css
+const materialText = style({
+  fontFamily: vars.font.display,
+  fontSize: vars.fontSize.hero,
+  fontWeight: 900,
+  textTransform: 'uppercase',
+
+  /* The texture fills the text shape */
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+
+  /* Structural stroke for legibility */
+  WebkitTextStroke: '1px rgba(255, 179, 0, 0.8)',
+  textShadow: '0 0 15px rgba(0, 0, 0, 0.8)',
+  mixBlendMode: 'overlay',
+  opacity: 0.9,
+});
+```
+
+### Rules
+
+- **Only for hero text** — `fontSize.hero` or equivalent. Never for body text, labels, or headings.
+- **Always paired with `WebkitTextStroke`** for edge definition — without it, the text dissolves into the texture.
+- **Always paired with `textShadow`** for depth — the shadow grounds the text against the background.
+- **Texture applied via inline `style={{ backgroundImage }}`** in the component, not in the CSS file — this allows dynamic texture selection.
+
+### Where It's Used
+
+| Component | Texture | Stroke Color |
+|---|---|---|
+| **ResultBanner** (`bannerWord`) | `text_texture.png` (dark metallic grunge) | Amber `rgba(255, 179, 0, 0.8)` |
+
+---
+
+## 7. The Viewport Breaker
+
+A layout pattern that forces a component to stretch beyond its parent container to fill the full viewport width. Used for cinematic banner moments that need to *dominate* the screen.
+
+### Anatomy
+
+```css
+const viewportBreaker = style({
+  width: '100vw',
+  marginLeft: 'calc(50% - 50vw)',
+  marginRight: 'calc(50% - 50vw)',
+});
+```
+
+### Rules
+
+- Use only for full-width narrative moments (result banners, act breaks)
+- Always pair with substantial padding (`space.3xl` or greater) to maintain internal breathing room
+- The component must still be semantically inside the document flow — this is a visual override, not a layout restructure
+
+### Where It's Used
+
+| Component | Purpose |
+|---|---|
+| **ResultBanner** | Full-width outcome ribbon that breaks the standard content column |
+
+---
+
+## Pattern Combinations
+
+The real power of these patterns is in **combination**. The most expressive components in the system layer 3–4 patterns together:
+
+### The "Bleeding Component" Stack
+
+The combination of Edge Bleed + Inset Wound + Directional Wash creates the system's signature "bleeding component" — an element that looks like it's haemorrhaging color from its left edge:
+
+```
+┌──────────────────────────────────────────────────┐
+│▌ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░             │
+│▌ ░ Directional wash ░░░░░░░░                    │
+│▌ ░░░░░░░░░░░░░░░░░░░░                          │
+│ Edge   Gradient       Content                    │
+│ Bleed  Divider                                   │
+└══════════════════════════════════════════════════┘
+  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+  Inset wound + external glow pool
+```
+
+**Used by:** DifficultyBadge (all three), DiceResult (all three), EffortBand (all four)
+
+### The "Cinematic Set Piece" Stack
+
+Viewport Breaker + Texture Layer + Text Clipping + Physical Imperfection creates a full-screen narrative moment:
+
+```
+◄──────────────── viewport width ────────────────►
+┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐  ← clip-path: polygon(...)
+╎  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓ texture overlay ▓▓▓▓▓▓▓▓▓▓▓▓ ╎     transform: rotate(-1deg)
+╎                                                ╎
+╎          ████████████████████████               ╎  ← background-clip: text
+╎          █  ELIMINATED  █                      ╎     + textured fill
+╎          ████████████████████████               ╎
+╎                                                ╎
+╎              · detail text ·                   ╎  ← amber glow ::before
+└╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
+```
+
+**Used by:** ResultBanner
+
+:::tip Building a New Molecule?
+Start with the "bleeding component" stack (Edge Bleed + Inset Wound + Directional Wash). It's the system's default voice for molecules that carry semantic weight. Add the Gradient Divider if the component has distinct content zones. Escalate to textures and clipping only for hero-level set pieces.
+:::
