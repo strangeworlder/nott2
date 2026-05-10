@@ -14,7 +14,7 @@ All color tokens live in the theme contract (`vars.color.*`). Components referen
 
 ## The Vocabulary of Color
 
-The game relies on six distinct semantic "voices." Every application of color must align with these emotional temperatures.
+The game relies on seven distinct semantic "voices." Every application of color must align with these emotional temperatures.
 
 ### 1. Red: Pain & Interaction
 Blood-red is the brand. It is the color of the Killer, the color of a Strike, and the color of an interactive element waiting to be clicked. There is no separate "danger" color — interaction and danger are inherently linked in a Slasher game.
@@ -69,7 +69,30 @@ Amber is caution. Nobody died, but the situation just got worse. The machine is 
   </div>
 </div>
 
-### 4. Gold: The Attention Beacon
+### 4. Orange: Physical Strain
+Orange is the body breaking. Amber warns that the situation is worsening; orange says the player *feels* it. It sits between the systemic caution of amber and the lethal finality of red — the moment where effort becomes physical cost. The player hasn't crossed the line yet, but their muscles are screaming.
+
+- **Use for:** EffortBand `overexertion` level, physical strain indicators, high-cost-but-not-lethal consequences.
+
+| Token | Value | Role |
+|---|---|---|
+| `color.caution` | `#92400e` | Strain base (dark) — borders, background tints |
+| `color.cautionBright` | `#fb923c` | Strain bright — text, icon highlights |
+
+<div style={{ display: 'flex', gap: 0, borderRadius: 8, overflow: 'hidden', margin: '16px 0 24px' }}>
+  <div style={{ flex: 1, height: 80, backgroundColor: '#92400e', display: 'flex', alignItems: 'flex-end', padding: 8 }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#e8e8e8' }}>caution</span>
+  </div>
+  <div style={{ flex: 1, height: 80, backgroundColor: '#fb923c', display: 'flex', alignItems: 'flex-end', padding: 8 }}>
+    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#0a0a0a' }}>cautionBright</span>
+  </div>
+</div>
+
+:::note Temperature Gradient
+The four danger temperatures form a continuous gradient: **green** (safe) → **amber** (system strain) → **orange** (physical strain) → **red** (lethal). Each step raises the emotional temperature without jumping. The EffortBand molecule is the primary consumer of this full gradient.
+:::
+
+### 5. Gold: The Attention Beacon
 Gold means one thing: *"act here next."* It is the navigational heartbeat of the game. Where red responds to hover and green confirms an outcome, gold guides the player's eye before they've acted.
 
 - **Use for:** Selectable cards on the matt, the drawable threat deck.
@@ -88,13 +111,13 @@ Gold means one thing: *"act here next."* It is the navigational heartbeat of the
   </div>
 </div>
 
-### 5. Purple: Instruction
+### 6. Purple: Instruction
 Purple is the Game Master's voice pointing a finger. It demands attention without threatening the player. It is narrative intervention.
 
 - **Use for:** "Click the Threat Deck," designating the Prologue active player, aptitude activation.
 - **Note:** Purple is UI-only and does not exist in the brand token contract; it is used via hardcoded RGBA in components like StatusCallout.
 
-### 6. Blue: The Machine
+### 7. Blue: The Machine
 Blue is cold, neutral bookkeeping. It represents the mechanical state of the game without any emotional weight.
 
 - **Use for:** Round progress ("2 of 4 players have acted"), shuffling the deck.

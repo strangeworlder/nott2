@@ -27,4 +27,9 @@ describe('DifficultyBadge', () => {
     const { container } = render(<DifficultyBadge value={7} />);
     expect(container.querySelector('[aria-label="Difficulty: 7"]')).toBeTruthy();
   });
+
+  it('forwards the id prop', () => {
+    const { container } = render(<DifficultyBadge value={9} id="diff-badge" />);
+    expect(container.querySelector('#diff-badge')).toBeTruthy();
+  });
 });

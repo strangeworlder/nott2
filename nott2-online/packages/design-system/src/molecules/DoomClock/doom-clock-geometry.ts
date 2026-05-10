@@ -23,6 +23,15 @@ export const STROKE_W = 6;
 export const MARKER_R_INNER = OUTER_R + 2;
 export const MARKER_R_OUTER = OUTER_R + 7;
 
+// Decorative rings (compact scale)
+// Outer decorative border ring — sits just outside the hour markers
+export const DECO_RING_R = OUTER_R + 10;
+// Inner decorative ring — close to the inner edge of the arc band
+export const DECO_INNER_RING_R = INNER_R - 4;
+
+// Roman numerals are placed just inside the inner decorative ring
+export const NUMERAL_R = INNER_R - 9;
+
 // Hand dimensions
 export const HAND_LENGTH = ARC_MID_R - 2; // nearly reaches arc
 export const HAND_WIDTH = 1.8;
@@ -34,6 +43,13 @@ export const SEGMENT_DEG = 360 / TOTAL_SEGMENTS - GAP_DEG;
 
 // 12 o'clock = -90°
 export const CLOCK_OFFSET_DEG = -90;
+
+// ── Roman numeral labels ──────────────────────────────────────────────────────
+
+export const ROMAN_NUMERALS: readonly string[] = [
+  'XII', 'I', 'II', 'III', 'IV', 'V',
+  'VI', 'VII', 'VIII', 'IX', 'X', 'XI',
+];
 
 // ── Colour scale ─────────────────────────────────────────────────────────────
 

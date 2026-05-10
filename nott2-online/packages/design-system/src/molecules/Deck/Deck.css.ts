@@ -32,9 +32,10 @@ export const deckLabel = style({
   zIndex: 15,
   fontFamily: vars.font.body,
   fontSize: vars.fontSize.micro,
+  fontWeight: 600,
   color: vars.color.textMuted,
   textTransform: 'uppercase',
-  letterSpacing: vars.letterSpacing.normal,
+  letterSpacing: vars.letterSpacing.wide,
   lineHeight: 1,
 });
 
@@ -44,7 +45,7 @@ export const deckStack = style({
   position: 'relative',
   width: '52px',
   height: '72px',
-  marginTop: '14px',
+  marginTop: vars.space.md,
   transition: `transform ${vars.transition.fast}`,
 });
 
@@ -53,7 +54,10 @@ export const deckStackCompact = style({});
 
 export const deckStackInteractive = style({
   cursor: 'pointer',
-  ':hover': { transform: 'scale(1.05)' },
+  ':hover': {
+    transform: 'scale(1.05)',
+    boxShadow: vars.shadow.glow,
+  },
   ':focus-visible': {
     outline: `2px solid ${vars.color.accentBright}`,
     outlineOffset: '2px',
@@ -83,7 +87,7 @@ export const deckCount = style({
   alignItems: 'center',
   justifyContent: 'center',
   fontFamily: vars.font.display,
-  fontSize: '1.25rem',
+  fontSize: vars.fontSize.h3,
   fontWeight: 700,
   color: vars.color.text,
   zIndex: 10,
@@ -122,7 +126,7 @@ export const deckStatusHover = style({
   fontWeight: 600,
   textTransform: 'uppercase',
   letterSpacing: vars.letterSpacing.normal,
-  padding: '1px 6px',
+  padding: '2px 8px',
   borderRadius: vars.radius.full,
   whiteSpace: 'nowrap',
   backgroundColor: vars.color.surfaceElevated,
@@ -150,7 +154,7 @@ export const deckEmpty = style({
   alignItems: 'center',
   justifyContent: 'center',
   color: vars.color.textMuted,
-  fontSize: '1.25rem',
+  fontSize: vars.fontSize.h3,
 });
 
 export const deckEmptyCompact = style({

@@ -4,72 +4,27 @@ sidebar_position: 1
 title: Introduction
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Text, Button, Card, Stack, StatusCallout, Badge, Icon, Row, Separator } from '@nott2/design-system';
+
 # Night of the Thirteenth — Design System
 
-The visual language of survival horror. This documentation defines the **design tokens**, **component library**, and **usage patterns** that power the Night of the Thirteenth 2 game interface.
+*The visual language of survival horror.*
 
-## Philosophy
+This is the documentation for the **@nott2/design-system** package — the shared component library and design token system that powers every screen in *Night of the Thirteenth 2*. If you're building UI for the game, this is your reference.
 
-Every element in this system serves the horror fantasy. The interface is not merely functional — it is **diegetic**. Buttons feel like instruments of fate. Cards are totems. Colors bleed. The system enforces a premium, cinematic aesthetic that makes the player feel like they're inside a slasher film, not just playing a game about one.
+**Who this is for:** Developers building features and screens for the NotT2 web application. You'll find design tokens, React components, usage patterns, and the rules that keep the interface consistent.
 
-### Core Principles
+---
 
-| Principle | In Practice |
-|---|---|
-| **Dark by default** | Near-black backgrounds (`#0a0a0a`), no light mode. The darkness is the design. |
-| **Blood-red accent** | `#8a0000` is the brand. Red IS danger — there is no separate "danger" color. |
-| **Two typefaces** | Playfair Display commands (headings, buttons). Inter explains (body, captions). |
-| **Sharp corners** | `2px–8px` radii. This isn't a friendly SaaS — it's gritty and deliberate. |
-| **Glow, not shadow** | Elements radiate blood-red light. Green glows are reserved for survival moments. |
-| **Component authority** | No raw HTML. `<Text>` for all text. `<Button>` for all actions. `<Card>` for all containers. |
+## Quick Start
 
-## Architecture
-
-The system follows **atomic design** principles:
-
-```
-Atoms (primitives — no game logic)
-├── Text, Button, Icon, Badge, Toggle, Separator
-├── TextField, TextArea
-├── Stack, Row (layout)
-├── StatusCallout
-
-Molecules (composed atoms — single-purpose game widgets)
-├── Card, ActionFooter, PlayingCard, PlayerAvatar
-├── StrikeIndicator, DieSelector, ResultBanner
-├── EffortBand, DifficultyBadge, DiceResult
-├── WeaknessTracker, WaitingIndicator, TabBar
-├── CardMatt, Deck, DoomClock, DoomClockTransition
-├── PhaseHeader
-
-Organisms (compound — full screen sections)
-├── GameBoard, Header, ChatPanel, PlayerPanel
-├── PhaseDisplay, PhasePanel, CharacterBar
-├── TransitionOverlay, ActBreakOverlay, SceneChallengeOverlay
-```
-
-## Technology
-
-- **Styling**: [Vanilla Extract](https://vanilla-extract.style/) (zero-runtime CSS-in-TS)
-- **Recipes**: `@vanilla-extract/recipes` for variant-driven component styles
-- **Theme**: Contract-based (`createThemeContract` + `createTheme`) — playsets override tokens without touching components
-- **Framework**: React 18/19, TypeScript strict mode
-
-## Getting Started
+Install from the monorepo root, then import and use:
 
 ```bash
-# Install dependencies from monorepo root
-cd nott2-online
+# From the nott2-online root
 npm install
-
-# Run Storybook (interactive component playground)
-npm run storybook:dev --workspace=@nott2/design-system
-
-# Run this documentation site
-npm run dev --workspace=@nott2/design-system-docs
 ```
-
-### Using Components
 
 ```tsx
 import { Text, Button, Card, Stack } from '@nott2/design-system';
@@ -81,10 +36,163 @@ function MyScreen() {
       <Card variant="instruction">
         <Text>Draw a card from the threat deck.</Text>
       </Card>
-      <Button variant="primary" onClick={handleDraw}>
-        Draw Card
-      </Button>
+      <Button variant="primary">Draw Card</Button>
     </Stack>
   );
 }
 ```
+
+That code produces this:
+
+<ComponentPreview label="Live preview">
+  <Stack gap="lg" style={{ width: '100%', maxWidth: 400 }}>
+    <Text variant="h2">Scene Setup</Text>
+    <Card variant="instruction">
+      <Text>Draw a card from the threat deck.</Text>
+    </Card>
+    <Button variant="primary">Draw Card</Button>
+  </Stack>
+</ComponentPreview>
+
+### Running Locally
+
+```bash
+# Interactive component playground
+npm run storybook:dev --workspace=@nott2/design-system
+
+# This documentation site
+npm run dev --workspace=@nott2/design-system-docs
+```
+
+---
+
+## The Three Rules
+
+Every contributor to the UI must follow these. They are non-negotiable.
+
+### 1. No Raw HTML
+
+Every visual element has a design system component. Use it. Raw HTML leaks browser defaults and breaks theming.
+
+```tsx
+// ❌ Don't — browser default, unthemeable
+<h2>Scene Setup</h2>
+<p>Draw a card from the threat deck.</p>
+<div style={{ padding: 16 }}>...</div>
+
+// ✅ Do — design system components, fully themed
+<Text variant="h2">Scene Setup</Text>
+<Text>Draw a card from the threat deck.</Text>
+<Card>...</Card>
+```
+
+| Instead of… | Use… |
+|---|---|
+| `<p>`, `<h1>`, `<span>` | `<Text>` with `variant` prop |
+| `<button>` | `<Button>` with `variant` prop |
+| `<div>` for content grouping | `<Card>` with `variant` prop |
+| `<hr>` | `<Separator>` |
+| Inline SVGs | `<Icon name="...">` |
+
+### 2. Tokens, Not Values
+
+Never hardcode colors, fonts, or spacing. Components reference `vars.*` tokens from the [theme contract](/patterns/theme-contract), which means a playset can completely re-skin the game without touching a single component.
+
+```tsx
+// ❌ Don't — hardcoded, breaks when playset changes
+const myStyle = style({
+  color: '#e8e8e8',
+  backgroundColor: '#141414',
+  padding: '16px',
+});
+
+// ✅ Do — token-driven, playset-safe
+const myStyle = style({
+  color: vars.color.text,
+  backgroundColor: vars.color.surface,
+  padding: vars.space.md,
+});
+```
+
+### 3. Props, Not Classes
+
+Control component appearance through props, not utility classes. This keeps the theming contract intact and ensures playsets can override visual behavior.
+
+```tsx
+// ❌ Don't — utility classes bypass the design system
+<Text className="font-bold text-red-400">Warning</Text>
+
+// ✅ Do — props are the API
+<Text variant="label" color="red">Warning</Text>
+```
+
+:::tip Golden Rule
+If you're reaching for a CSS class, an inline style, or a raw HTML element — stop and check the design system first. There's almost certainly a component or token for what you need.
+:::
+
+---
+
+## Explore the System
+
+<div className="ds-nav-cards">
+
+<a href="/foundation/colors" className="ds-nav-card">
+  <div className="ds-nav-card__icon">🎨</div>
+  <div className="ds-nav-card__content">
+    <strong>Foundation</strong>
+    <span>Colors, Typography, Spacing, Shadows, Motion — the design tokens that define the visual language.</span>
+  </div>
+</a>
+
+<a href="/components/atoms/text" className="ds-nav-card">
+  <div className="ds-nav-card__icon">🧱</div>
+  <div className="ds-nav-card__content">
+    <strong>Components</strong>
+    <span>15 Atoms, 18 Molecules, 10 Organisms — from Text and Button to GameBoard and PhasePanel.</span>
+  </div>
+</a>
+
+<a href="/patterns/decision-trees" className="ds-nav-card">
+  <div className="ds-nav-card__icon">🗺️</div>
+  <div className="ds-nav-card__content">
+    <strong>Patterns</strong>
+    <span>Decision trees, theme contract deep-dive, and anti-patterns to avoid.</span>
+  </div>
+</a>
+
+<a href="http://localhost:6006" className="ds-nav-card ds-nav-card--external">
+  <div className="ds-nav-card__icon">⚗️</div>
+  <div className="ds-nav-card__content">
+    <strong>Storybook ↗</strong>
+    <span>Interactive playground — test every component with live controls.</span>
+  </div>
+</a>
+
+</div>
+
+---
+
+## Architecture at a Glance
+
+The system follows **atomic design** — small, single-purpose pieces compose into larger, game-aware structures:
+
+| Layer | Purpose | Examples |
+|---|---|---|
+| **Atoms** | Pure UI primitives — no game knowledge | Text, Button, Icon, Badge, Stack, Row |
+| **Molecules** | Single-purpose game widgets — composed from atoms | Card, PlayingCard, DoomClock, ResultBanner |
+| **Organisms** | Full screen sections — compound compositions | GameBoard, PhasePanel, Header, ChatPanel |
+
+Atoms know nothing about the game. Molecules know about one game concept (a card, a clock, a result). Organisms orchestrate multiple molecules into a full screen experience.
+
+---
+
+## Technology
+
+| Concern | Tool |
+|---|---|
+| **Styling** | [Vanilla Extract](https://vanilla-extract.style/) — zero-runtime CSS-in-TypeScript |
+| **Variants** | `@vanilla-extract/recipes` — type-safe variant-driven component styles |
+| **Theming** | Contract-based (`createThemeContract` + `createTheme`) — playsets override tokens, not components |
+| **Framework** | React 18/19, TypeScript strict mode |
+| **Testing** | Vitest + @testing-library/react |
+| **Docs** | This site (Docusaurus) + Storybook |

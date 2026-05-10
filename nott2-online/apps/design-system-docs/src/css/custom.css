@@ -307,6 +307,79 @@
   background-color: rgba(138, 0, 0, 0.05);
 }
 
+/* ── Navigation Cards (Introduction page) ────────────────────── */
+
+.ds-nav-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 24px 0;
+}
+
+@media (max-width: 768px) {
+  .ds-nav-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ds-nav-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background-color: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.ds-nav-card:hover {
+  border-color: #8a0000;
+  box-shadow: 0 0 20px rgba(138, 0, 0, 0.15);
+  background-color: rgba(138, 0, 0, 0.04);
+}
+
+.ds-nav-card__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ds-nav-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ds-nav-card__content strong {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #e8e8e8;
+}
+
+.ds-nav-card__content span {
+  font-size: 0.875rem;
+  color: #6a6a6a;
+  line-height: 1.5;
+}
+
+.ds-nav-card:hover .ds-nav-card__content strong {
+  color: #dc2626;
+}
+
+.ds-nav-card--external .ds-nav-card__content strong {
+  color: #c8c8c8;
+}
+
+.ds-nav-card--external:hover .ds-nav-card__content strong {
+  color: #dc2626;
+}
+
 /* ── TOC ─────────────────────────────────────────────────────── */
 
 .table-of-contents__link--active {

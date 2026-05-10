@@ -25,6 +25,8 @@ export type { TextAreaProps } from './atoms/TextField/TextArea';
 export { Stack } from './atoms/Stack/Stack';
 export { Row } from './atoms/Row/Row';
 export { StatusCallout } from './atoms/StatusCallout/StatusCallout';
+export { DieChip } from './atoms/DieChip/DieChip';
+export type { DieChipProps } from './atoms/DieChip/DieChip';
 
 // ── Molecules ─────────────────────────────────────────────────────────────────
 export { PlayingCard } from './molecules/PlayingCard/PlayingCard';
@@ -50,6 +52,7 @@ export { EffortBand } from './molecules/EffortBand/EffortBand';
 export type { EffortLevel } from './molecules/EffortBand/EffortBand';
 export { DifficultyBadge } from './molecules/DifficultyBadge/DifficultyBadge';
 export { DiceResult } from './molecules/DiceResult/DiceResult';
+export type { DiceResultProps } from './molecules/DiceResult/DiceResult';
 export { TrophyIndicator } from './molecules/TrophyIndicator/TrophyIndicator';
 export { WeaknessTracker } from './molecules/WeaknessTracker/WeaknessTracker';
 export { WaitingIndicator } from './molecules/WaitingIndicator/WaitingIndicator';

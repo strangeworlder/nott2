@@ -16,13 +16,27 @@ export const clockRoot = style({
 export const clockSvg = style({
   display: 'block',
   overflow: 'visible',
+  filter: 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8))',
+});
+
+/* ── Decorative rings ────────────────────────────────────────────────────── */
+
+export const decoRingOuter = style({
+  fill: 'none',
+  stroke: 'rgba(120, 90, 60, 0.55)',
+  strokeWidth: 1,
+});
+
+export const decoRingInner = style({
+  fill: 'none',
+  stroke: 'rgba(120, 90, 60, 0.35)',
+  strokeWidth: 0.5,
 });
 
 /* ── Segments ────────────────────────────────────────────────────────────── */
 
 export const segmentEmpty = style({
   fill: 'none',
-  stroke: vars.color.border,
   strokeLinecap: 'round',
   transition: `all ${vars.transition.normal}`,
 });
@@ -36,21 +50,37 @@ export const segmentFilled = style({
 /* ── Hour markers ────────────────────────────────────────────────────────── */
 
 export const hourMarker = style({
-  stroke: vars.color.textMuted,
-  opacity: 0.3,
+  stroke: 'rgba(160, 130, 90, 0.5)',
   transition: `opacity ${vars.transition.normal}`,
+});
+
+/* ── Roman numerals ──────────────────────────────────────────────────────── */
+
+export const romanNumeral = style({
+  fontFamily: "'Playfair Display', Georgia, serif",
+  fontWeight: 700,
+  fill: 'rgba(180, 150, 100, 0.55)',
+  textAnchor: 'middle',
+  dominantBaseline: 'central',
+  fontSize: '5.5px',
+  letterSpacing: '-0.3px',
+  userSelect: 'none',
+  transition: `fill ${vars.transition.normal}`,
 });
 
 /* ── Clock hand ──────────────────────────────────────────────────────────── */
 
 export const clockHand = style({
-  stroke: vars.color.text,
+  stroke: '#c8b89a',
   strokeLinecap: 'round',
   transition: `all ${vars.transition.slow}`,
+  filter: 'drop-shadow(0 0 1.5px rgba(200, 180, 150, 0.6))',
 });
 
 export const clockHandPin = style({
-  fill: vars.color.text,
+  fill: '#b0926a',
+  stroke: 'rgba(200, 180, 150, 0.4)',
+  strokeWidth: 0.5,
 });
 
 /* ── Below-clock label ───────────────────────────────────────────────────── */
@@ -84,14 +114,14 @@ export const clockSubLabel = style({
 /* ── Near-full pulse (10–12 segments) ────────────────────────────────────── */
 
 const pulseGlow = keyframes({
-  '0%, 100%': { opacity: 0.4 },
-  '50%': { opacity: 0.8 },
+  '0%, 100%': { opacity: 0.35 },
+  '50%': { opacity: 0.75 },
 });
 
 export const pulseRing = style({
   fill: 'none',
   stroke: vars.color.accentBright,
-  opacity: 0.4,
+  opacity: 0.35,
   animationName: pulseGlow,
   animationDuration: '2s',
   animationIterationCount: 'infinite',
@@ -108,8 +138,9 @@ export const pulseRing = style({
 /* ── Broken state (Act 3) ────────────────────────────────────────────────── */
 
 const crackFlicker = keyframes({
-  '0%, 100%': { opacity: 0.7 },
-  '50%': { opacity: 1 },
+  '0%, 100%': { opacity: 0.6 },
+  '30%': { opacity: 1 },
+  '60%': { opacity: 0.75 },
 });
 
 export const brokenSegment = style({
@@ -143,4 +174,27 @@ export const brokenLabel = style({
   textAnchor: 'middle',
   dominantBaseline: 'central',
   fontSize: '14px',
+});
+
+/* ── Broken texture overlay ──────────────────────────────────────────────── */
+
+const brokenReveal = keyframes({
+  '0%':   { opacity: 0 },
+  '30%':  { opacity: 0.55 },
+  '100%': { opacity: 0.45 },
+});
+
+export const brokenTextureOverlay = style({
+  opacity: 0,
+  animationName: brokenReveal,
+  animationDuration: '1.2s',
+  animationFillMode: 'forwards',
+  animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.45,
+    },
+  },
 });
