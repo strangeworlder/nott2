@@ -3,25 +3,144 @@ sidebar_position: 9
 title: DifficultyBadge
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { DifficultyBadge, Stack } from '@nott2/design-system';
+
 # DifficultyBadge
 
-The omen before the roll. A large display-font number showing the target difficulty, with optional breakdown text explaining modifiers.
+The omen before the roll. The difficulty number is a concrete forecast of how bad things might get. Large numbers loom. Small ones breed false hope. This component renders as "The Scar" — a cinematic horizontal strip that cuts across the page. The number bleeds red on the left. A vertical wound divides it from the clinical label and breakdown on the right. The bottom edge pulses with a faint glow, like a threat that hasn't fully landed yet.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { DifficultyBadge } from '@nott2/design-system';
+
+<DifficultyBadge value={10} breakdown="Trophy (5) + 3 = 8" />
+```
+</details>
+
+## Why to Use
+
+DifficultyBadge conveys the mechanical weight of the challenge *before* the player commits to a roll. It transforms a plain number into a cinematic set piece — the red glow, gradient bleed, and pulsing left edge all reinforce that this number is a threat, not just data.
+
+## When to Use
+
+> **Do**
+> - Use as the primary difficulty display during the Resolution phase, before the player rolls.
+> - Provide the `breakdown` prop when the difficulty was calculated from multiple sources (e.g., "Base 6 + Act modifier 2 + Trophy 3 = 11") so the player understands the composition.
+
+> **Don't**
+> - Do not use this as a generic number display. It carries specific semantic weight (threat, challenge, obstacle).
+> - Do not use the `Badge` atom for difficulty values. `Badge` is for short classification tags ("Act I", "Easy"). `DifficultyBadge` is the purpose-built molecule for numeric challenge thresholds.
+
+## Anatomy
+
+```
+ ┌─────────────────────────────────────────────────────┐
+ ┃ │                                                    │
+ ┃ │   12        │  DIFFICULTY                          │
+ ┃ │             │  Trophy (5) + 3 = 8                  │
+ ┃ │                                                    │
+ └─────────────────────────────────────────────────────┘
+ ↑               ↑        ↑              ↑
+ left-edge     number   divider      meta (label + breakdown)
+ bleed (::before)
+ ────────────── bottom-edge glow (box-shadow) ──────────
+```
+
+1. **Left-edge bleed** (`::before`) — A 3px vertical red gradient sliver on the far left. It pulses via a `glowPulse` keyframe animation (3s ease-in-out infinite), like a wound that hasn't stopped bleeding.
+2. **Number** (`badgeNumber`) — The difficulty value in display font, `accentBright` red, with a cinematic text-shadow for depth. Uses `clamp(2rem, 4vw, 2.75rem)` for responsive sizing.
+3. **Divider** (`badgeDivider`) — A 1px vertical line with a gradient fade (transparent → accent → transparent), visually separating the raw number from the label context.
+4. **Meta block** (`badgeMeta`) — Contains the uppercase "DIFFICULTY" label and the optional breakdown text.
+
+| Layer | CSS detail | Why |
+|---|---|---|
+| Background | `linear-gradient(90deg, transparent 0%, surface 30%)` | The left side fades to nothing, letting the number float against the void |
+| Bottom glow | `inset 0 -1px 0 accent` + `0 4px 24px rgba(138,0,0,0.25)` | A subtle red underline glow — the threat radiates downward |
+| Left bleed | `linear-gradient(180deg, transparent, accent, transparent)` | A vertical wound on the left edge, pulsing with the `glowPulse` animation |
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `difficulty` | `number` | — | Target number |
-| `breakdown` | `string` | — | Optional modifier explanation |
+Use these props to configure the DifficultyBadge component.
 
-## Implementation Examples
+### value
+The numeric difficulty threshold.
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | — | **Required.** The target number the player must meet or exceed. |
+
+<ComponentPreview>
+  <Stack gap="md" style={{ width: '100%' }}>
+    <DifficultyBadge value={6} />
+    <DifficultyBadge value={10} />
+    <DifficultyBadge value={14} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<DifficultyBadge difficulty={10} />
-<DifficultyBadge difficulty={12} breakdown="Base 10 + 2 (Act III)" />
+<DifficultyBadge value={6} />
+<DifficultyBadge value={14} />
 ```
+</details>
+
+### breakdown
+Optional text explaining how the difficulty was calculated.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | A human-readable breakdown of the difficulty composition. Truncates with ellipsis if too long. |
+
+<ComponentPreview>
+  <Stack gap="md" style={{ width: '100%' }}>
+    <DifficultyBadge value={8} breakdown="Trophy (5) + 3 = 8" />
+    <DifficultyBadge value={12} breakdown="Base 10 + Act III modifier (+2)" />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DifficultyBadge value={8} breakdown="Trophy (5) + 3 = 8" />
+```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DifficultyBadge value={10} id="scene-difficulty" />
+```
+</details>
+
+## Behavior
+
+- **Full-width strip**: The badge stretches to fill its parent via `width: 100%`. It is designed to be a dominant horizontal band that cuts across the resolution panel.
+- **Pulsing left edge**: The `::before` pseudo-element runs a `glowPulse` keyframe animation (opacity oscillating between 0.7 and 1.0 over 3 seconds). This creates a subtle, persistent "bleeding wound" effect on the left edge.
+- **Responsive number**: The display number uses `clamp(2rem, 4vw, 2.75rem)` to scale smoothly across viewport sizes without breaking the layout.
+- **Breakdown overflow**: The breakdown text uses `white-space: nowrap` with `text-overflow: ellipsis`, so long modifier strings truncate gracefully rather than wrapping and distorting the layout.
+- **Conditional breakdown**: The breakdown line only renders when the `breakdown` prop is provided. Without it, the meta block shows only the "DIFFICULTY" label.
+
+## Accessibility
+
+- Uses an `aria-label` of "Difficulty: \{value\}" on the root element to announce the difficulty value to screen readers as a single coherent phrase rather than fragmenting across internal elements.
+- The vertical divider is marked `aria-hidden="true"` to prevent screen readers from announcing decorative structural elements.
+- The `glowPulse` animation respects `prefers-reduced-motion: reduce` — when active, the animation is removed and the left edge bleed is set to a static `opacity: 0.8`.
 
 ## Related Components
 
-- **[EffortBand](/components/molecules/effort-band)** — Effort level indicator
-- **[ResultBanner](/components/molecules/result-banner)** — Roll outcome
+- **[EffortBand](/components/molecules/effort-band)** — Effort level indicator shown alongside the difficulty
+- **[ResultBanner](/components/molecules/result-banner)** — The verdict that follows once the roll is resolved
+- **[DiceResult](/components/molecules/dice-result)** — The clinical roll breakdown between difficulty display and result verdict

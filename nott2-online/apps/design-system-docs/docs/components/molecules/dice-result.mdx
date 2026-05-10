@@ -8,9 +8,7 @@ import { DiceResult, Stack } from '@nott2/design-system';
 
 # DiceResult
 
-The autopsy report. Clinical `d10 + d4 = Total` layout. 
-
-After the dice have settled, this component presents the clinical breakdown of what happened. It is the most-viewed UI state in the game. Its typography is precise and unambiguous — no drama here, just the truth of the numbers.
+The verdict after the dice have spoken. One massive amber number flanked by two die-shaped silhouettes. The total radiates warmth; it IS the component. The d10 diamond and d4 pyramid are quiet evidence tokens orbiting the central truth. No plus signs, no equals signs — the spatial relationship implies the math. You see the number before you read anything else. That's the point.
 
 <details open>
 <summary>Code example</summary>
@@ -24,16 +22,39 @@ import { DiceResult } from '@nott2/design-system';
 
 ## Why to Use
 
-`DiceResult` provides a standardized, mathematical layout for the core resolution mechanic. It leverages `subgrid` to ensure the d10, operator, d4, and Total columns always align perfectly across the horizontal axis, regardless of whether a modifier is present.
+`DiceResult` is the most-viewed UI state in the game. After the dice have settled, this component presents the clinical breakdown of what happened. Rather than showing raw arithmetic (`7 + 3 = 10`), it uses spatial composition — the total dominates the center, flanked by `DieChip` atoms that carry their die identity through geometric silhouettes (diamond for d10, pyramid for d4).
 
 ## When to Use
 
 > **Do**
 > - Use as the primary display immediately after a player has committed their effort and threat rolls.
-> - Provide the `modifier` and `originalD4` props when a player's Aptitude alters the roll.
+> - Provide `modifier` and `originalD4` when an Aptitude alters the d4 roll.
+> - Provide `d10Modified` and `originalD10` when a Genre Point Reroll alters the d10.
 
 > **Don't**
 > - Do not use this component to declare success or failure. This component is just the math; use `ResultBanner` for the verdict.
+> - Do not use raw numbers or `Text` atoms for die results. Always compose through `DiceResult` to maintain visual consistency.
+
+## Anatomy
+
+```
+ ┌────────────────────────────────────────────────────┐
+ ┃                                                     │
+ │    ◇        │       10       │       △              │
+ │   D10       │                │      D4              │
+ │             │                │                      │
+ └────────────────────────────────────────────────────┘
+ ↑      ↑      ↑        ↑       ↑       ↑
+ │  DieChip  divider   total  divider  DieChip
+ left-edge bleed (::before, amber pulse)
+ ─────────── bottom-edge gold glow (box-shadow) ───────
+```
+
+1. **Root** (`resultRoot`) — Flex row with centered alignment. Radial amber glow emanating from center. Left-edge amber bleed bar with pulsing animation. Bottom gold `box-shadow` glow.
+2. **d10 DieChip** — Diamond silhouette on the left. Shows the threat die result.
+3. **Divider** (`divider`) — 1px vertical amber gradient line separating the chips from the total.
+4. **Total** (`totalNumber`) — The hero number. `clamp(2.5rem, 5vw, 3.5rem)` display font in `goldBright`. The visual anchor of the entire component.
+5. **d4 DieChip** — Pyramid silhouette on the right. Shows the effort die result with optional modifier label.
 
 ## Key Props
 
@@ -44,7 +65,7 @@ The threat die result.
 
 | Type | Default | Description |
 |---|---|---|
-| `number` | — | **Required.** The base threat value (usually 0-9). |
+| `number` | — | **Required.** The d10 value (0–9). Displayed in the left diamond DieChip. |
 
 <ComponentPreview>
   <DiceResult d10={7} d4={1} />
@@ -59,11 +80,11 @@ The threat die result.
 </details>
 
 ### d4
-The effort die result (or final modified effort value).
+The effort die result (post-modification if applicable).
 
 | Type | Default | Description |
 |---|---|---|
-| `number` | — | **Required.** The effort value. If modified, this should be the post-modification value. |
+| `number` | — | **Required.** The d4 value (1–4). If modified, this should be the final value after Aptitude adjustment. |
 
 <ComponentPreview>
   <DiceResult d10={5} d4={4} />
@@ -78,38 +99,98 @@ The effort die result (or final modified effort value).
 </details>
 
 ### modifier & originalD4
-Used when an Aptitude modifies the d4 effort roll. Both must be provided together to trigger the modified visual state (red text and struck-through original).
+Used when an Aptitude modifies the d4 effort roll. When both are provided, the d4 DieChip glows amber, shows the modified value, and displays the original value as a struck-through ghost.
 
 | Type | Default | Description |
 |---|---|---|
-| `{ value: -1 \| 1, label: string }` | — | The applied modifier object. |
+| `\{ value: -1 \| 1, label: string \}` | — | The applied modifier object. The label appears in the DieChip label (e.g., "D4 +1"). |
 | `number` | — | The original d4 value before modification. |
 
 <ComponentPreview>
-  <Stack gap="xl">
-    <DiceResult 
-      d10={7} 
-      d4={4} 
-      originalD4={3} 
-      modifier={{ value: 1, label: 'Athletics' }} 
-    />
-  </Stack>
+  <DiceResult
+    d10={7}
+    d4={4}
+    originalD4={3}
+    modifier={{ value: 1, label: 'Athletics' }}
+  />
 </ComponentPreview>
 
 <details>
 <summary>Code example</summary>
 
 ```tsx
-<DiceResult 
-  d10={7} 
-  d4={4} 
-  originalD4={3} 
-  modifier={{ value: 1, label: 'Athletics' }} 
+<DiceResult
+  d10={7}
+  d4={4}
+  originalD4={3}
+  modifier={{ value: 1, label: 'Athletics' }}
 />
 ```
 </details>
 
+### d10Modified & originalD10
+Used when a Genre Point Reroll changes the d10 threat die. The d10 DieChip glows amber and shows the original value struck-through.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Whether the d10 was rerolled. |
+| `number` | — | The pre-reroll d10 value, shown as a ghost. |
+
+<ComponentPreview>
+  <DiceResult
+    d10={8}
+    d4={3}
+    d10Modified
+    originalD10={2}
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DiceResult
+  d10={8}
+  d4={3}
+  d10Modified
+  originalD10={2}
+/>
+```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DiceResult d10={7} d4={3} id="roll-result" />
+```
+</details>
+
+## Behavior
+
+- **Auto-calculated total**: The total is computed internally as `d10 + d4`. There is no `total` prop — the component owns its own arithmetic.
+- **Amber glow theme**: The entire component uses a warm amber color palette (gold tones) rather than the red/green used elsewhere. This positions the result as *evidence* — neutral and factual — rather than verdict (which is `ResultBanner`'s job).
+- **Left-edge bleed**: A 3px pulsing amber bar on the left edge (identical pattern to `DifficultyBadge`), tying the two components into the same visual family of "pre-verdict" UI.
+- **Responsive total**: The center number uses `clamp(2.5rem, 5vw, 3.5rem)` to scale smoothly across viewport sizes.
+- **Dual modification support**: Both dice can be independently modified — d4 via Aptitude (`modifier` + `originalD4`) and d10 via Genre Point Reroll (`d10Modified` + `originalD10`).
+
+## Accessibility
+
+- Uses `role="status"` with `aria-label` announcing the full roll (e.g., "Roll result: d10=7, d4=3, total=10").
+- Each `DieChip` has its own `aria-label` providing detailed per-die information (e.g., "D4: 4 (was 3)").
+- The dividers are marked `aria-hidden="true"` as decorative structural elements.
+- The left-edge pulse animation respects `prefers-reduced-motion: reduce`.
+
 ## Related Components
 
-- **[DieSelector](/components/molecules/die-selector)** — Input for die values
-- **[ResultBanner](/components/molecules/result-banner)** — SUCCESS/FAILURE verdict
+- **[DieChip](/components/atoms/die-chip)** — The shaped die silhouette atoms composing this molecule
+- **[DieSelector](/components/molecules/die-selector)** — Input for die values (the input that feeds this display)
+- **[ResultBanner](/components/molecules/result-banner)** — SUCCESS/FAILURE verdict that follows this breakdown
+- **[DifficultyBadge](/components/molecules/difficulty-badge)** — The challenge threshold displayed before the roll

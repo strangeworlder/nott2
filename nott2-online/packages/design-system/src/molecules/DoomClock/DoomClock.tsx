@@ -10,11 +10,17 @@
  * broken. The night is truly here.
  *
  * Technical:
- * Renders an SVG clock face with 12 arc segments, an hour hand that sweeps
- * from 12 o'clock toward midnight as `current` climbs, and crack lines that
- * overlay the face in the broken state. The countdown number and sublabel are
- * rendered as HTML below the SVG for legibility at small sizes. Compact sizing
- * (~80px) suits sidebar use.
+ * Renders an SVG clock face with:
+ * - A texture-filled circular background (weathered iron) via a <pattern>
+ * - Two decorative ornamental rings (outer border, inner border)
+ * - 12 arc segments that fill as reserve cards are added, color-escalating
+ *   from dark grey through amber to blood red
+ * - Roman numerals at each of the 12 hour positions (subtle at 80px)
+ * - An hour hand that sweeps from 12 o'clock as `current` climbs
+ * - Crack lines + broken-texture overlay in the broken state (current ≥ 13)
+ *
+ * The countdown number and sublabel are rendered as HTML below the SVG for
+ * legibility at small sizes. Compact sizing (~80px) suits sidebar use.
  *
  * Props:
  * - current: Number of reserve cards added (0–13). Required.
@@ -39,6 +45,10 @@ import {
   pulseRing,
   brokenSegment,
   crackLine,
+  romanNumeral,
+  decoRingOuter,
+  decoRingInner,
+  brokenTextureOverlay,
 } from './DoomClock.css';
 import {
   TOTAL_SEGMENTS,
@@ -57,11 +67,20 @@ import {
   GAP_DEG,
   SEGMENT_DEG,
   CLOCK_OFFSET_DEG,
+  DECO_RING_R,
+  DECO_INNER_RING_R,
+  NUMERAL_R,
+  ROMAN_NUMERALS,
   segmentColor,
   polarToXY as _polarToXY,
   arcPath as _arcPath,
   handAngleDeg,
 } from './doom-clock-geometry';
+import clockFaceTexture from '../../assets/textures/clock_face_texture.png';
+import clockBrokenTexture from '../../assets/textures/clock_broken_texture.png';
+
+// Handle both string URLs (Vite/Rollup) and StaticImageData objects (Next.js)
+const getImageUrl = (image: any) => (typeof image === 'string' ? image : image?.src);
 
 // ── Local wrappers (bind to default CX/CY) ─────────────────────────────────
 
@@ -73,7 +92,72 @@ function arcPath(startDeg: number, endDeg: number, r: number): string {
   return _arcPath(CX, CY, startDeg, endDeg, r);
 }
 
+// ── Texture pattern ID (unique per-instance via prop, or default) ───────────
+const FACE_PATTERN_ID = 'doom-clock-face';
+const BROKEN_PATTERN_ID = 'doom-clock-broken';
+
 // ── Sub-components ───────────────────────────────────────────────────────────
+
+function ClockDefs() {
+  const faceUrl = getImageUrl(clockFaceTexture);
+  const brokenUrl = getImageUrl(clockBrokenTexture);
+  return (
+    <defs>
+      {/* Clock face background texture */}
+      <pattern id={FACE_PATTERN_ID} x="0" y="0" width={SIZE} height={SIZE} patternUnits="userSpaceOnUse">
+        <image href={faceUrl} x="0" y="0" width={SIZE} height={SIZE} preserveAspectRatio="xMidYMid slice" />
+      </pattern>
+      {/* Broken clock overlay texture */}
+      <pattern id={BROKEN_PATTERN_ID} x="0" y="0" width={SIZE} height={SIZE} patternUnits="userSpaceOnUse">
+        <image href={brokenUrl} x="0" y="0" width={SIZE} height={SIZE} preserveAspectRatio="xMidYMid slice" />
+      </pattern>
+      {/* Circular clip mask for textures */}
+      <clipPath id="doom-clock-face-clip">
+        <circle cx={CX} cy={CY} r={DECO_RING_R} />
+      </clipPath>
+    </defs>
+  );
+}
+
+function ClockFaceBackground() {
+  return (
+    <circle
+      cx={CX} cy={CY} r={DECO_RING_R}
+      fill={`url(#${FACE_PATTERN_ID})`}
+      opacity={0.55}
+    />
+  );
+}
+
+function DecoRings() {
+  return (
+    <>
+      <circle cx={CX} cy={CY} r={DECO_RING_R} className={decoRingOuter} />
+      <circle cx={CX} cy={CY} r={DECO_INNER_RING_R} className={decoRingInner} />
+    </>
+  );
+}
+
+function RomanNumerals() {
+  return (
+    <>
+      {ROMAN_NUMERALS.map((label, i) => {
+        const angleDeg = CLOCK_OFFSET_DEG + i * (360 / TOTAL_SEGMENTS);
+        const pos = polarToXY(angleDeg, NUMERAL_R);
+        return (
+          <text
+            key={i}
+            x={pos.x}
+            y={pos.y}
+            className={romanNumeral}
+          >
+            {label}
+          </text>
+        );
+      })}
+    </>
+  );
+}
 
 function ClockSegments({ filledCount }: { filledCount: number }) {
   const isNearFull = filledCount >= 10;
@@ -92,7 +176,7 @@ function ClockSegments({ filledCount }: { filledCount: number }) {
             d={arcPath(startDeg, endDeg, ARC_MID_R)}
             className={isFilled ? segmentFilled : segmentEmpty}
             strokeWidth={STROKE_W}
-            stroke={isFilled ? segmentColor(i) : undefined}
+            stroke={isFilled ? segmentColor(i) : 'rgba(80,70,60,0.4)'}
           />
         );
       })}
@@ -123,7 +207,6 @@ function HourMarkers() {
 
 function ClockHand({ angleDeg }: { angleDeg: number }) {
   const tip = polarToXY(angleDeg, HAND_LENGTH);
-  // Tail is short, pointing opposite direction
   const tail = polarToXY(angleDeg + 180, PIN_R + 2);
   return (
     <>
@@ -133,7 +216,7 @@ function ClockHand({ angleDeg }: { angleDeg: number }) {
         strokeWidth={HAND_WIDTH}
         className={clockHand}
       />
-      {/* centre pivot pin */}
+      {/* centre pivot */}
       <circle cx={CX} cy={CY} r={PIN_R} className={clockHandPin} />
     </>
   );
@@ -157,10 +240,16 @@ function BrokenFace() {
             className={brokenSegment}
             strokeWidth={STROKE_W}
             stroke="#dc2626"
-            strokeOpacity={0.6}
+            strokeOpacity={0.65}
           />
         );
       })}
+      {/* Broken texture overlay — fades in to show shattered face */}
+      <circle
+        cx={CX} cy={CY} r={DECO_RING_R}
+        fill={`url(#${BROKEN_PATTERN_ID})`}
+        className={brokenTextureOverlay}
+      />
       {cracks.map((d, i) => (
         <path key={i} d={d} strokeWidth={1.2} className={crackLine} />
       ))}
@@ -170,7 +259,7 @@ function BrokenFace() {
         x2={CX} y2={CY + HAND_LENGTH}
         strokeWidth={HAND_WIDTH}
         stroke="#dc2626"
-        strokeOpacity={0.8}
+        strokeOpacity={0.85}
         strokeLinecap="round"
       />
       <circle cx={CX} cy={CY} r={PIN_R} fill="#dc2626" />
@@ -213,7 +302,11 @@ export function DoomClock({ current, id }: DoomClockProps) {
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         aria-hidden="true"
       >
+        <ClockDefs />
+        <ClockFaceBackground />
+        <DecoRings />
         <HourMarkers />
+        <RomanNumerals />
         {isBroken ? (
           <BrokenFace />
         ) : (

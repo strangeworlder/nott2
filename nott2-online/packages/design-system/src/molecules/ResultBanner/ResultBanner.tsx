@@ -19,7 +19,12 @@
  */
 
 import React from 'react';
-import { bannerRecipe, bannerWord, bannerWordSuccess, bannerWordFailure, bannerDetail } from './ResultBanner.css';
+import { bannerRecipe, bannerWord, bannerTextureOverlay, bannerContent, bannerDetail } from './ResultBanner.css';
+import bannerTextureAsset from '../../assets/textures/banner_texture.png';
+import textTextureAsset from '../../assets/textures/text_texture.png';
+
+// Handle both string URLs (Vite/Rollup) and StaticImageData objects (Next.js)
+const getImageUrl = (image: any) => (typeof image === 'string' ? image : image?.src);
 
 interface ResultBannerProps {
   outcome: 'success' | 'failure';
@@ -29,13 +34,27 @@ interface ResultBannerProps {
 }
 
 export function ResultBanner({ outcome, total, difficulty, id }: ResultBannerProps) {
-  const wordClass = [bannerWord, outcome === 'success' ? bannerWordSuccess : bannerWordFailure].join(' ');
+  const bannerBg = `url(${getImageUrl(bannerTextureAsset)})`;
+  const textBg = `url(${getImageUrl(textTextureAsset)})`;
+
   return (
     <div id={id} className={bannerRecipe({ outcome })} role="status" aria-live="assertive">
-      <div className={wordClass}>{outcome === 'success' ? 'SUCCESS' : 'FAILURE'}</div>
-      {total !== undefined && difficulty !== undefined && (
-        <div className={bannerDetail}>Total {total} vs Difficulty {difficulty}</div>
-      )}
+      <div 
+        className={bannerTextureOverlay} 
+        aria-hidden="true" 
+        style={{ backgroundImage: bannerBg }} 
+      />
+      <div className={bannerContent}>
+        <div 
+          className={bannerWord}
+          style={{ backgroundImage: textBg }}
+        >
+          {outcome === 'success' ? 'SUCCESS' : 'FAILURE'}
+        </div>
+        {total !== undefined && difficulty !== undefined && (
+          <div className={bannerDetail}>Total {total} vs Difficulty {difficulty}</div>
+        )}
+      </div>
     </div>
   );
 }

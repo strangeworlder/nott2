@@ -22,6 +22,9 @@ const DummyBox = ({ label }: { label: string }) => (
 );
 
 export const Default: Story = {
+  args: {
+    children: null as any,
+  },
   render: (args) => (
     <Grid {...args}>
       <DummyBox label="1" />
@@ -40,6 +43,7 @@ export const DenseGrid: Story = {
   args: {
     columns: 6,
     gap: 'xs',
+    children: null as any, // satisfy typescript since it's injected by render
   },
   render: Default.render,
 };

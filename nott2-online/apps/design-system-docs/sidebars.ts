@@ -39,6 +39,7 @@ const sidebars: SidebarsConfig = {
             'components/atoms/separator',
             'components/atoms/grid',
             'components/atoms/selectable-tile',
+            'components/atoms/die-chip',
           ],
         },
         {

@@ -3,43 +3,226 @@ sidebar_position: 8
 title: EffortBand
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { EffortBand, Stack } from '@nott2/design-system';
+
 # EffortBand
 
-The d4 thermometer. Four levels with escalating color temperature — from controlled calm to breaking-point panic.
+The thermometer of desperation. Four readings — controlled, pushing it, overexertion, breaking point — that tell the player how close they are to losing control. Each level has its own color temperature, glow intensity, and kinetic energy. This is the d4 made visible: a number translated into consequence.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { EffortBand } from '@nott2/design-system';
+
+<EffortBand level="pushing-it" active />
+```
+</details>
 
 ## Why to Use
 
-EffortBand visualizes the escalating risk of the effort die, giving players an immediate read on how far they're pushing their luck.
+EffortBand translates the abstract d4 effort value into a visceral, color-coded status strip. Rather than requiring the player to mentally map a number to a consequence, the escalating visual treatment — from calm green to bleeding red — communicates the stakes immediately. The left-edge intensity bar is the wound: it widens and breathes harder as the player pushes their luck further.
 
 ## When to Use
 
-- In the resolution phase to show current effort level
-- As a reference during the Conversation & Stakes phase
+> **Do**
+> - Use in the Resolution phase to display the current effort level after the d4 result is known.
+> - Display all four levels stacked together as a reference during the Conversation & Stakes phase so players can see the full spectrum.
+> - Use the `active` prop only on the single level that matches the current roll result.
+
+> **Don't**
+> - Do not use for generic progress indicators. The four levels are hard-mapped to the game's effort mechanic and carry specific narrative weight.
+> - Do not use `EffortBand` as a standalone "alert" component. It is designed to be rendered in a stack of all four levels for contextual comparison.
+
+## Effort Levels — The Four Temperatures
+
+Each level maps directly to a d4 result and carries an escalating emotional and visual intensity. They are ordered from safest to most dangerous.
+
+### Controlled — The Calm
+
+Green. No extra cost. The player rolled well and kept their composure. The left edge is a static 2px sliver — no pulse, no urgency.
+
+<ComponentPreview>
+  <EffortBand level="controlled" active />
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Border | `vars.color.success` (green) | Safety — the only level where green appears |
+| Background | `rgba(45,90,45,0.12)` gradient | Faint green tint fading to transparent |
+| Left edge | 2px, static | No animation — calm is silent |
+| Icon | `target` | Precision, control |
+
+### Pushing It — The Warning
+
+Amber/yellow. Minor cost — the player must choose from fallout options. The left edge begins to pulse (3s cycle), breathing with growing unease.
+
+<ComponentPreview>
+  <EffortBand level="pushing-it" active />
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Border | `rgba(251,191,36,0.35)` (amber) | Caution — not yet dangerous, but uncomfortable |
+| Background | `rgba(251,191,36,0.08)` gradient | Warmer tint than controlled |
+| Left edge | 2px, pulsing (3s) | The first sign of life — the wound starts breathing |
+| Icon | `air` | Exertion, effort, pushing limits |
+
+### Overexertion — The Heat
+
+Orange. Sacrifice happens regardless — the player has pushed too far. The left edge widens to 3px and pulses faster (2.5s cycle).
+
+<ComponentPreview>
+  <EffortBand level="overexertion" active />
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Border | `vars.color.caution` (orange) | Unmistakable warning escalation from amber |
+| Background | `rgba(251,146,60,0.1)` gradient | Hot orange tint |
+| Left edge | 3px, pulsing (2.5s) | Wider and faster — the wound is growing |
+| Icon | `local_fire_department` | Fire — things are burning |
+
+### Breaking Point — The Blood
+
+Blood red. Sacrifice + Twist. This earns a Strike. The left edge is at maximum width (4px) and pulses fastest (2s cycle). The entire band radiates with `shadow.glowIntense` when active.
+
+<ComponentPreview>
+  <EffortBand level="breaking-point" active />
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Border | `vars.color.accent` (blood red) | Full brand red — maximum danger |
+| Background | `rgba(138,0,0,0.15)` gradient | The deepest, most saturated tint |
+| Left edge | 4px, pulsing (2s) | Widest and fastest — the wound is open |
+| Active glow | `vars.shadow.glowIntense` | The band radiates outward — danger spills beyond its bounds |
+| Icon | `dangerous` | The explicit warning symbol |
+
+## Anatomy
+
+```
+ ┌─────────────────────────────────────────────────────────┐
+ ┃  [🎯]   CONTROLLED        No extra cost.               │
+ └─────────────────────────────────────────────────────────┘
+ ↑    ↑         ↑                    ↑
+ │  icon     label              description
+ left-edge (::before)
+```
+
+1. **Left-edge intensity bar** (`::before`) — A vertical gradient sliver on the far left. Width escalates from 2px → 3px → 4px across levels. Pulsing animation speeds up from 3s → 2.5s → 2s.
+2. **Icon** (`bandIcon`) — A Material Symbol with a `drop-shadow` glow in `currentColor`, inheriting the level's color.
+3. **Label** (`bandLabel`) — Display font, uppercase, tracked. Shows the effort level name.
+4. **Description** (`bandDesc`) � Body font, pushed to the right via `margin-left: auto`. Shows the mechanical consequence of this level. Can be hidden via the `showDescription` prop.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `level` | `EffortLevel` | — | Current effort level |
-| `active` | `boolean` | `false` | Highlight the current level |
+Use these props to configure the EffortBand component.
 
-### EffortLevel Values
+### level
+The current effort level, mapped to d4 outcomes.
 
-| Value | Icon | Temperature | Meaning |
-|---|---|---|---|
-| `controlled` | `target` | Calm | Safe, low risk |
-| `pushing-it` | `air` | Tense | Moderate risk |
-| `overexertion` | `local_fire_department` | Hot | High risk |
-| `breaking-point` | `dangerous` | Critical | Maximum danger |
+| Type | Default | Description |
+|---|---|---|
+| `'controlled' \| 'pushing-it' \| 'overexertion' \| 'breaking-point'` | — | **Required.** Determines color, icon, label, description, and edge animation speed. |
 
-## Implementation Examples
+<ComponentPreview>
+  <Stack gap="sm" style={{ width: '100%' }}>
+    <EffortBand level="controlled" />
+    <EffortBand level="pushing-it" />
+    <EffortBand level="overexertion" />
+    <EffortBand level="breaking-point" />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<EffortBand level="controlled" active />
-<EffortBand level="breaking-point" active />
+<EffortBand level="controlled" />
+<EffortBand level="pushing-it" />
+<EffortBand level="overexertion" />
+<EffortBand level="breaking-point" />
 ```
+</details>
+
+### active
+Highlights the band as the current result. Intensifies glow and background saturation.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | When true, the background gradient deepens and the box-shadow intensifies (compound variant). |
+
+<ComponentPreview>
+  <Stack gap="sm" style={{ width: '100%' }}>
+    <EffortBand level="overexertion" active={false} />
+    <EffortBand level="overexertion" active={true} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<EffortBand level="overexertion" />        {/* Passive */}
+<EffortBand level="overexertion" active /> {/* Active — intensified */}
+```
+</details>
+
+### showDescription
+Controls whether the rules description text is visible.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `true` | When false, hides the description text, leaving only the icon and label. Useful for compact layouts. |
+
+<ComponentPreview>
+  <Stack gap="sm" style={{ width: '100%' }}>
+    <EffortBand level="pushing-it" active showDescription={true} />
+    <EffortBand level="pushing-it" active showDescription={false} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<EffortBand level="pushing-it" active showDescription={false} />
+```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<EffortBand level="controlled" id="effort-result" />
+```
+</details>
+
+## Behavior
+
+- **Escalating animation**: The left-edge `::before` pulse animation speeds up across levels — 3s (pushing-it) → 2.5s (overexertion) → 2s (breaking-point). The controlled level has no animation at all. This creates a subconscious sense of rising urgency.
+- **Compound variants**: The `active` prop doesn't just toggle a class — it triggers level-specific compound variants. Each level has its own active treatment with different gradient saturations and shadow intensities, ensuring that "active controlled" feels different from "active breaking-point."
+- **Edge width escalation**: The `::before` pseudo-element width grows from 2px (controlled/pushing-it) → 3px (overexertion) → 4px (breaking-point), making the "wound" physically wider as danger increases.
+- **Color inheritance**: The icon uses `currentColor` with a `drop-shadow`, so it automatically inherits the level's color and glows without any explicit color prop.
+
+## Accessibility
+
+- Uses `role="status"` to identify the band as a live status region.
+- Uses `aria-label` of "Effort: \{label\}" (e.g., "Effort: Breaking Point") so screen readers announce the level as a coherent phrase.
+- The icon is marked `aria-hidden="true"` since it is decorative — the label text carries the semantic meaning.
+- The `edgePulse` animation respects `prefers-reduced-motion: reduce` — when active, all animations are removed and the left edge is set to a static `opacity: 0.8`.
 
 ## Related Components
 
-- **[DieSelector](/components/molecules/die-selector)** — Used to set the effort die
-- **[DifficultyBadge](/components/molecules/difficulty-badge)** — Shows the target difficulty
+- **[DieSelector](/components/molecules/die-selector)** — Used to set the effort die value that determines which level is active
+- **[DifficultyBadge](/components/molecules/difficulty-badge)** — Shows the target difficulty alongside the effort level
+- **[Icon](/components/atoms/icon)** — The atomic component rendering the level-specific Material Symbol

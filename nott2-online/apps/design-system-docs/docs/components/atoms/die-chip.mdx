@@ -1,0 +1,215 @@
+---
+sidebar_position: 13
+title: DieChip
+---
+
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { DieChip, Row, Stack } from '@nott2/design-system';
+
+# DieChip
+
+The ghost of the die. After it has landed, what remains is this — a silent silhouette holding a number. The d10 is a diamond (two pyramids joined at the waist). The d4 is a single pyramid. The shape IS the identity — you know which die you're looking at before you read the label. When a die has been modified, the chip glows amber and the original value haunts it like a struck-through ghost beneath.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { DieChip } from '@nott2/design-system';
+
+<DieChip die="d10" value={7} />
+<DieChip die="d4" value={3} />
+```
+</details>
+
+## Why to Use
+
+DieChip replaces raw text numbers with a shaped, physical object. The geometric clip-path transforms a digit into an artifact — the diamond for the d10, the pyramid for the d4. This shape-first identification is crucial during rapid gameplay: you never need to read a label to know which die you're looking at.
+
+## When to Use
+
+> **Do**
+> - Use inside `DiceResult` as the primary way to display individual die values.
+> - Use the `modified` state when an Aptitude or Genre Point has altered the original roll.
+> - Always provide `originalValue` alongside `modified` so the ghost shows what the roll originally was.
+
+> **Don't**
+> - Do not use DieChip for die *selection* (choosing a value). Use `DieSelector` for input.
+> - Do not use DieChip as a generic number display. The shapes carry specific semantic meaning tied to the game's dice.
+
+## Die Shapes — Two Silhouettes
+
+### d10 — The Diamond
+
+A bipyramid profile (two triangles joined at the waist). Wider than tall. The most dominant shape in the game — the threat die determines the tens digit of the roll.
+
+<ComponentPreview>
+  <DieChip die="d10" value={7} />
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Shape | `polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)` | Diamond — two pyramids fused at the equator |
+| Size | 52×56px | Slightly taller than wide to feel like a real d10 profile |
+| Background | Gradient from `rgba(45,45,45,1)` to `surfaceElevated` | Subtle depth — the shape isn't flat |
+
+### d4 — The Pyramid
+
+An equilateral triangle. Smaller and more compact. The effort die — a smaller die in the real world, and a smaller silhouette here.
+
+<ComponentPreview>
+  <DieChip die="d4" value={3} />
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Shape | `polygon(50% 0%, 100% 100%, 0% 100%)` | Simple pyramid — instantly distinct from the diamond |
+| Size | 50×48px | Slightly smaller than the d10 to reflect the physical size difference |
+| Padding | `paddingTop: 10px` | The number sits lower inside the triangle to be visually centered in its mass |
+
+## Anatomy
+
+```
+       ╱╲
+      ╱  ╲
+     ╱  7 ╲          ← chipShape (clip-path diamond or pyramid)
+      ╲  ╱
+       ╲╱
+      D10             ← chipLabel (nano uppercase)
+       3              ← chipGhost (struck-through original, when modified)
+```
+
+1. **Wrapper** (`chipWrapper`) — Vertical flex column. Carries the `drop-shadow` glow when modified (because `clip-path` would clip a `box-shadow`).
+2. **Shape** (`chipShape`) — The clipped geometric silhouette. Contains the number. Gradient background with a subtle `1px solid rgba(255,255,255,0.12)` border for edge definition.
+3. **Value** (`chipValue`) — Display font, `lead` size, centered inside the shape. White normally, `goldBright` when modified.
+4. **Label** (`chipLabel`) — Nano-sized uppercase label below the shape. Defaults to "D10" or "D4" but can be overridden via the `label` prop.
+5. **Ghost** (`chipGhost`) — The struck-through original value. Always occupies vertical space (uses `\u00A0` when hidden) to prevent layout shift. Pulses with a 3s `modifiedPulse` animation when visible.
+
+## Key Props
+
+Use these props to configure the DieChip component.
+
+### die
+The type of die, determining the clip-path shape.
+
+| Type | Default | Description |
+|---|---|---|
+| `'d10' \| 'd4'` | — | **Required.** Diamond shape for d10, pyramid for d4. |
+
+<ComponentPreview>
+  <Row gap="xl" align="end">
+    <DieChip die="d10" value={7} />
+    <DieChip die="d4" value={3} />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieChip die="d10" value={7} />
+<DieChip die="d4" value={3} />
+```
+</details>
+
+### value
+The current die result.
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | — | **Required.** The number displayed inside the shape. |
+
+<ComponentPreview>
+  <Row gap="xl" align="end">
+    <DieChip die="d10" value={0} />
+    <DieChip die="d10" value={5} />
+    <DieChip die="d10" value={9} />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieChip die="d10" value={0} />
+<DieChip die="d10" value={9} />
+```
+</details>
+
+### modified & originalValue
+When both are provided, the chip shifts to its amber modified state: the shape border turns gold, the number turns `goldBright`, the wrapper radiates an amber `drop-shadow`, and the original value appears struck-through beneath.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | Whether the value has been altered from its original roll. |
+| `number` | — | The pre-modification value, shown as a struck-through ghost. |
+
+<ComponentPreview>
+  <Row gap="xl" align="end">
+    <DieChip die="d4" value={4} modified originalValue={3} />
+    <DieChip die="d10" value={8} modified originalValue={3} />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieChip die="d4" value={4} modified originalValue={3} />
+<DieChip die="d10" value={8} modified originalValue={3} />
+```
+</details>
+
+### label
+Override the default die type label.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | `die.toUpperCase()` | Custom label text. Useful for showing modifier context (e.g., "D4 +1"). |
+
+<ComponentPreview>
+  <Row gap="xl" align="end">
+    <DieChip die="d4" value={4} modified originalValue={3} label="D4 +1" />
+    <DieChip die="d10" value={7} label="Threat" />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieChip die="d4" value={4} modified originalValue={3} label="D4 +1" />
+```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DieChip die="d10" value={7} id="threat-chip" />
+```
+</details>
+
+## Behavior
+
+- **Shape as identity**: The `clip-path` polygon is the primary visual signal. The diamond vs pyramid distinction is recognizable at a glance, even at small sizes or in peripheral vision.
+- **Drop-shadow workaround**: `box-shadow` is clipped by `clip-path`, so the amber glow in the modified state uses `filter: drop-shadow()` on the outer wrapper instead. This produces a glow that follows the shape's contour rather than forming a rectangle.
+- **Ghost layout stability**: The ghost slot always renders — when no original value is present, it shows `\u00A0` (non-breaking space) with `visibility: hidden`. This prevents the chip from shifting height when transitioning between modified and unmodified states.
+- **Color inheritance**: The modified state changes both the shape's border (`gold`) and the value text (`goldBright`) simultaneously, creating a cohesive amber transformation.
+
+## Accessibility
+
+- Uses `aria-label` to announce the full die state as a single phrase (e.g., "D10: 7" or "D4: 4 (was 3)").
+- The ghost original value has its own `aria-label` when visible (e.g., "Original: 3") and is `aria-hidden` when not shown.
+- The `modifiedPulse` animation on the ghost text respects `prefers-reduced-motion: reduce` — animation is removed and opacity is set to a static 0.6.
+
+## Related Components
+
+- **[DiceResult](/components/molecules/dice-result)** — The molecule that composes two DieChips around a central total number
+- **[DieSelector](/components/molecules/die-selector)** — The input counterpart: where DieChip displays a result, DieSelector captures the value

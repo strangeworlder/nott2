@@ -26,4 +26,15 @@ describe('EffortBand', () => {
       unmount();
     }
   });
+
+  it('renders with active prop without error', () => {
+    const { unmount } = render(<EffortBand level="breaking-point" active />);
+    expect(screen.getByRole('status')).toBeTruthy();
+    unmount();
+  });
+
+  it('renders active=false by default', () => {
+    render(<EffortBand level="controlled" />);
+    expect(screen.getByRole('status')).toBeTruthy();
+  });
 });

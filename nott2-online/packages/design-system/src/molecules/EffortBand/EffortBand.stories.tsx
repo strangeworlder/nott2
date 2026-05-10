@@ -17,6 +17,9 @@ export const Overexertion:   Story = { args: { level: 'overexertion' } };
 export const BreakingPoint:  Story = { args: { level: 'breaking-point' } };
 export const NoDescription:  Story = { args: { level: 'overexertion', showDescription: false } };
 
+export const ActiveControlled:    Story = { args: { level: 'controlled', active: true } };
+export const ActiveBreakingPoint: Story = { args: { level: 'breaking-point', active: true } };
+
 export const AllLevels: Story = {
   args: { level: 'controlled' },
   render: () => (
@@ -25,6 +28,18 @@ export const AllLevels: Story = {
       <EffortBand level="pushing-it" />
       <EffortBand level="overexertion" />
       <EffortBand level="breaking-point" />
+    </div>
+  ),
+};
+
+export const AllLevelsActive: Story = {
+  args: { level: 'controlled' },
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <EffortBand level="controlled" active />
+      <EffortBand level="pushing-it" active />
+      <EffortBand level="overexertion" active />
+      <EffortBand level="breaking-point" active />
     </div>
   ),
 };

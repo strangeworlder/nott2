@@ -16,14 +16,27 @@ export const transitionRoot = style({
 export const transitionSvg = style({
   display: 'block',
   overflow: 'visible',
-  filter: 'drop-shadow(0 0 30px rgba(138, 0, 0, 0.4))',
+  filter: 'drop-shadow(0 4px 24px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 40px rgba(100, 60, 20, 0.3))',
+});
+
+/* ── Decorative rings ────────────────────────────────────────────────────── */
+
+export const decoRingOuter = style({
+  fill: 'none',
+  stroke: 'rgba(140, 105, 60, 0.6)',
+  strokeWidth: 1.5,
+});
+
+export const decoRingInner = style({
+  fill: 'none',
+  stroke: 'rgba(120, 90, 50, 0.4)',
+  strokeWidth: 1,
 });
 
 /* ── Segments ────────────────────────────────────────────────────────────── */
 
 export const segmentEmpty = style({
   fill: 'none',
-  stroke: vars.color.border,
   strokeLinecap: 'round',
 });
 
@@ -34,9 +47,9 @@ export const segmentFilled = style({
 
 /* Newly-filled segment glow pulse */
 const newSegmentGlow = keyframes({
-  '0%':   { filter: 'brightness(1)', strokeOpacity: 0 },
-  '30%':  { filter: 'brightness(2.5)', strokeOpacity: 1 },
-  '100%': { filter: 'brightness(1)', strokeOpacity: 1 },
+  '0%':   { filter: 'brightness(0.5)', strokeOpacity: 0 },
+  '30%':  { filter: 'brightness(3)', strokeOpacity: 1 },
+  '100%': { filter: 'brightness(1.2)', strokeOpacity: 1 },
 });
 
 export const segmentNew = style({
@@ -60,21 +73,35 @@ export const segmentNew = style({
 /* ── Hour markers ────────────────────────────────────────────────────────── */
 
 export const hourMarker = style({
-  stroke: vars.color.textMuted,
-  opacity: 0.3,
+  stroke: 'rgba(160, 130, 90, 0.55)',
 });
 
-/* ── Clock hand ──────────────────────────────────────────────────────────── */
+/* ── Roman numerals ──────────────────────────────────────────────────────── */
+
+export const romanNumeral = style({
+  fontFamily: "'Playfair Display', Georgia, serif",
+  fontWeight: 700,
+  fill: 'rgba(200, 170, 110, 0.65)',
+  textAnchor: 'middle',
+  dominantBaseline: 'central',
+  letterSpacing: '-0.5px',
+  userSelect: 'none',
+});
+
+/* ── Clock hand (sword-shaped) ───────────────────────────────────────────── */
 
 export const clockHand = style({
-  stroke: vars.color.text,
+  stroke: '#c8b89a',
   strokeLinecap: 'round',
   transition: 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
   transitionDelay: '600ms',
+  filter: 'drop-shadow(0 0 4px rgba(200, 180, 150, 0.7))',
 });
 
 export const clockHandPin = style({
-  fill: vars.color.text,
+  fill: '#b0926a',
+  stroke: 'rgba(220, 200, 160, 0.5)',
+  strokeWidth: 1,
 });
 
 /* ── Below-clock label ───────────────────────────────────────────────────── */
@@ -140,8 +167,9 @@ export const brokenSegment = style({
 });
 
 const crackFlicker = keyframes({
-  '0%, 100%': { opacity: 0.7 },
-  '50%': { opacity: 1 },
+  '0%, 100%': { opacity: 0.6 },
+  '30%': { opacity: 1 },
+  '60%': { opacity: 0.75 },
 });
 
 export const crackLine = style({
@@ -161,6 +189,31 @@ export const crackLine = style({
     },
   },
 });
+
+/* ── Broken texture overlay ──────────────────────────────────────────────── */
+
+const brokenReveal = keyframes({
+  '0%':   { opacity: 0 },
+  '25%':  { opacity: 0.7 },
+  '100%': { opacity: 0.55 },
+});
+
+export const brokenTextureOverlay = style({
+  opacity: 0,
+  animationName: brokenReveal,
+  animationDuration: '1.5s',
+  animationFillMode: 'forwards',
+  animationTimingFunction: 'ease-out',
+
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      opacity: 0.55,
+    },
+  },
+});
+
+/* ── Shake ───────────────────────────────────────────────────────────────── */
 
 const shakeAnim = keyframes({
   '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
@@ -189,9 +242,11 @@ export const brokenShake = style({
   },
 });
 
+/* ── Pulsing glow rings (broken state) ───────────────────────────────────── */
+
 const pulseGlow = keyframes({
-  '0%, 100%': { filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.3))' },
-  '50%':      { filter: 'drop-shadow(0 0 60px rgba(220, 38, 38, 0.8))' },
+  '0%, 100%': { filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.4)) drop-shadow(0 0 60px rgba(138, 0, 0, 0.2))' },
+  '50%':      { filter: 'drop-shadow(0 0 70px rgba(220, 38, 38, 0.9)) drop-shadow(0 0 120px rgba(138, 0, 0, 0.5))' },
 });
 
 export const brokenGlow = style({
@@ -203,7 +258,7 @@ export const brokenGlow = style({
   '@media': {
     '(prefers-reduced-motion: reduce)': {
       animation: 'none',
-      filter: 'drop-shadow(0 0 40px rgba(220, 38, 38, 0.5))',
+      filter: 'drop-shadow(0 0 50px rgba(220, 38, 38, 0.6))',
     },
   },
 });

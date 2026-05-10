@@ -1,74 +1,87 @@
 /**
- * DiceResult
+ * DiceResult — "The Verdict"
  *
  * Philosophical:
- * The autopsy report. After the dice have settled, this component presents the
- * clinical breakdown of what happened: a d10, a d4, and their sum. It is the
- * most-viewed UI state in the game. Its typography should be precise and
- * unambiguous — no drama here, just the truth of the numbers. Drama is the
- * ResultBanner's job. This is evidence.
+ * The verdict after the dice have spoken. Where the ResultBanner is the jump
+ * scare and the DifficultyBadge is the omen, this is the courtroom reading —
+ * one massive amber number flanked by two die-shaped silhouettes. The total
+ * radiates warmth; it IS the component. The d10 diamond and d4 pyramid are
+ * quiet evidence tokens orbiting the central truth. No plus signs, no equals
+ * signs — the spatial relationship implies the math. You see the number
+ * before you read anything else. That's the point.
  *
  * Technical:
- * Displays d10 + d4 = Total in a horizontal layout. Supports an optional
- * modifier on the d4 (from Aptitude), showing the modified value highlighted
- * and the original struck-through.
+ * Displays a central total number flanked by DieChip atoms (d10 left, d4 right).
+ * Supports modification on both dice — d4 via Aptitude, d10 via Genre Point Reroll.
+ * When modified, the relevant DieChip glows amber and shows the original value
+ * struck-through beneath.
  *
  * Props:
  * - d10: The d10 result (0–9, required).
  * - d4: The d4 result (1–4, required).
- * - modifier: Optional { value: -1 | 1, label: string } for aptitude modification.
- * - originalD4: The pre-modification d4 value, shown struck-through when modifier is set.
+ * - modifier: Optional { value: -1 | 1, label: string } for d4 aptitude modification.
+ * - originalD4: The pre-modification d4 value, shown as ghost on the d4 chip.
+ * - d10Modified: Whether the d10 was changed (e.g. Genre Point Reroll).
+ * - originalD10: The pre-reroll d10 value, shown as ghost on the d10 chip.
  * - id: Optional id attribute.
  */
 
-import { Text } from '../../atoms/Text/Text';
-import {
-  resultRoot, dieCell, dieCellTotal,
-} from './DiceResult.css';
+import React from 'react';
+import { DieChip } from '../../atoms/DieChip/DieChip';
+import { resultRoot, totalNumber, divider } from './DiceResult.css';
 
-interface DiceResultProps {
+export interface DiceResultProps {
   d10: number;
   d4: number;
   modifier?: { value: -1 | 1; label: string };
   originalD4?: number;
+  d10Modified?: boolean;
+  originalD10?: number;
   id?: string;
 }
 
-export function DiceResult({ d10, d4, modifier, originalD4, id }: DiceResultProps) {
+export function DiceResult({
+  d10,
+  d4,
+  modifier,
+  originalD4,
+  d10Modified = false,
+  originalD10,
+  id,
+}: DiceResultProps) {
   const total = d10 + d4;
-  const isModified = modifier !== undefined && originalD4 !== undefined;
-  const d4LabelText = `d4${isModified ? ` (${modifier!.value > 0 ? '+' : ''}${modifier!.value} ${modifier!.label})` : ''}`;
+  const isD4Modified = modifier !== undefined && originalD4 !== undefined;
 
   return (
-    <div id={id} className={resultRoot} aria-label={`Roll result: d10=${d10}, d4=${d4}, total=${total}`}>
-      {/* d10 */}
-      <div className={dieCell}>
-        <Text variant="label" color="muted">d10</Text>
-        <Text variant="h3">{d10}</Text>
-      </div>
+    <div
+      id={id}
+      className={resultRoot}
+      role="status"
+      aria-label={`Roll result: d10=${d10}, d4=${d4}, total=${total}`}
+    >
+      {/* Left — d10 diamond */}
+      <DieChip
+        die="d10"
+        value={d10}
+        modified={d10Modified}
+        originalValue={originalD10}
+      />
 
-      <Text variant="h3" color="muted" aria-hidden="true" style={{ alignSelf: 'center', gridRow: '1 / 4' }}>+</Text>
+      <div className={divider} aria-hidden="true" />
 
-      {/* d4 (with optional modifier) */}
-      <div className={dieCell}>
-        <Text variant="label" color="muted">{d4LabelText}</Text>
-        <Text variant="h3" color={isModified ? "red" : "white"}>
-          {d4}
-        </Text>
-        {isModified && originalD4 !== undefined && (
-          <Text variant="micro" color="muted" style={{ textDecoration: 'line-through' }} aria-label={`Original: ${originalD4}`}>
-            {originalD4}
-          </Text>
-        )}
-      </div>
+      {/* Center — The Verdict */}
+      <span className={totalNumber}>{total}</span>
 
-      <Text variant="h3" color="muted" aria-hidden="true" style={{ alignSelf: 'center', gridRow: '1 / 4' }}>=</Text>
+      <div className={divider} aria-hidden="true" />
 
-      {/* Total */}
-      <div className={[dieCell, dieCellTotal].join(' ')}>
-        <Text variant="label" color="muted">Total</Text>
-        <Text variant="h2">{total}</Text>
-      </div>
+      {/* Right — d4 pyramid */}
+      <DieChip
+        die="d4"
+        value={d4}
+        modified={isD4Modified}
+        originalValue={originalD4}
+        label={isD4Modified ? `D4 ${modifier!.value > 0 ? '+' : ''}${modifier!.value}` : undefined}
+      />
     </div>
   );
 }

@@ -3,36 +3,179 @@ sidebar_position: 7
 title: ResultBanner
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { ResultBanner, Stack } from '@nott2/design-system';
+
 # ResultBanner
 
-The verdict. **SUCCESS** (green) or **FAILURE** (red) in dramatic display font. The most dramatic single-moment UI element in the game.
+The verdict. A brutal, high-end "Cinematic Cut" banner that acts as the single most dramatic UI element in the game. It uses rich, distressed textures with `mix-blend-mode` over stark background colors, and a metallic scratched texture embedded directly into the text. It is designed to scream "premium" and deliver the final verdict like a physical, cursed artifact rather than standard HTML.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { ResultBanner } from '@nott2/design-system';
+
+<ResultBanner outcome="failure" total={6} difficulty={10} />
+```
+</details>
 
 ## Why to Use
 
-ResultBanner creates an unmistakable, emotionally-charged announcement of roll outcomes. The large display font and color-coding make the result instantly readable.
+ResultBanner creates an unmistakable, emotionally-charged announcement of roll outcomes. The edge-to-edge cinematic framing, visceral textures, and stark contrast make the result impossible to ignore and incredibly impactful.
 
 ## When to Use
 
-- After dice resolution to show the final outcome
-- Inside the resolution phase panel
+> **Do**
+> - Use inside the resolution phase panel after the dice have settled.
+> - Display the `total` vs `difficulty` as a reminder of *why* the outcome occurred.
+
+> **Don't**
+> - Do not use this as a generic alert or notification banner. It is strictly reserved for the final mechanical outcome of a roll.
+> - Do not nest inside a width-constrained container and expect correct display — the banner uses `100vw` breakout to span the full viewport regardless of parent width.
+
+## Outcome Variants — The Two Fates
+
+Each variant carries a fundamentally different emotional weight. They are not just color swaps — the entire feel shifts.
+
+### Failure — The Blood Verdict
+
+The default. Blood-red background saturated with distressed texture. This is the outcome the game is built around — horror means failure is *expected*. The red screams finality.
+
+<ComponentPreview>
+  <div style={{ width: '100%', overflow: 'hidden' }}>
+    <ResultBanner outcome="failure" total={6} difficulty={10} />
+  </div>
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Background | `vars.color.accent` (blood red) | The brand color IS the failure color — horror is the default state |
+| Texture blend | `mix-blend-mode: color-dodge` at 70% opacity | Grinds the distressed texture into the red, creating depth without washing out |
+| Text stroke | `1px rgba(255, 179, 0, 0.8)` (amber) | Amber outline on the word makes it legible against the busy texture |
+| Detail glow | Amber `linear-gradient` with `box-shadow` | The "Total vs Difficulty" line sits inside an amber light streak — a forensic spotlight |
+
+### Success — The Cold Reprieve
+
+Teal-green background. Success in a horror game is not triumphant — it's a narrow escape. The cold color communicates relief, not celebration. You survived *this time*.
+
+<ComponentPreview>
+  <div style={{ width: '100%', overflow: 'hidden' }}>
+    <ResultBanner outcome="success" total={12} difficulty={10} />
+  </div>
+</ComponentPreview>
+
+| Property | Value | Why |
+|---|---|---|
+| Background | `vars.color.success` (teal green) | Cold, clinical — survival is not a party |
+| Texture blend | Same `color-dodge` at 70% | Consistent texture treatment across both variants |
+| Text stroke | Same amber `1px` stroke | Unifies both variants under the same metallic text treatment |
+| Detail glow | Same amber spotlight | The forensic spotlight doesn't change — the *evidence* is always presented the same way |
+
+## Anatomy
+
+```
+ ┌─────────────────────────────────────────────┐  ← clip-path: polygon (jagged, uneven edges)
+ │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │  ← bannerTextureOverlay (z:0, color-dodge)
+ │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+ │           ╔═══════════════════╗              │  ← bannerContent (z:1, drop-shadow)
+ │           ║   F A I L U R E   ║              │  ← bannerWord (background-clip:text, textured)
+ │           ╚═══════════════════╝              │
+ │          ━━━━━━━━━━━━━━━━━━━━━━              │  ← bannerDetail ::before (amber glow streak)
+ │            Total 6 vs Diff 10               │  ← bannerDetail (dark text, widest tracking)
+ │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+ └─────────────────────────────────────────────┘  ← transform: rotate(-1deg)
+     ↕ 100vw breakout (margin calc trick)
+```
+
+The z-stack from back to front:
+1. **Base recipe** (`z: auto`) — The saturated block color with `clip-path` jagged borders and `-1deg` rotation.
+2. **Texture overlay** (`z: 0`) — An absolute-positioned distressed image layer set to `mix-blend-mode: color-dodge` at 70% opacity.
+3. **Content wrapper** (`z: 1`) — A flex column with `drop-shadow` to lift the text off the textured background.
+4. **Word** — The hero text uses `background-clip: text` with a separate metallic scratch texture, `text-stroke` for amber edge definition, and `mix-blend-mode: overlay`.
+5. **Detail** — The breakdown line with a `::before` pseudo-element creating a horizontal amber glow streak behind the text.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `result` | `'success' \| 'failure'` | — | Outcome type |
-| `total` | `number` | — | Roll total |
-| `difficulty` | `number` | — | Target difficulty |
-| `breakdown` | `string` | — | Optional text breakdown (e.g., "d10(7) + d4(3)") |
+Use these props to configure the ResultBanner component.
 
-## Implementation Examples
+### outcome
+The definitive result of the roll.
+
+| Type | Default | Description |
+|---|---|---|
+| `'success' \| 'failure'` | — | **Required.** Determines the banner's background color, texture blending, and displayed word. |
+
+<ComponentPreview>
+  <Stack gap="xl" style={{ width: '100%', overflow: 'hidden' }}>
+    <ResultBanner outcome="success" />
+    <ResultBanner outcome="failure" />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<ResultBanner result="success" total={12} difficulty={10} breakdown="d10(7) + d4(3) + 2" />
-<ResultBanner result="failure" total={6} difficulty={10} />
+<ResultBanner outcome="success" />
+<ResultBanner outcome="failure" />
 ```
+</details>
+
+### total & difficulty
+Optional context displaying the exact math that led to the outcome. Both must be provided together for the detail line to render.
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | — | The player's roll total (sum of d10 + d4). |
+| `number` | — | The challenge difficulty threshold. |
+
+<ComponentPreview>
+  <Stack gap="xl" style={{ width: '100%', overflow: 'hidden' }}>
+    <ResultBanner outcome="success" total={12} difficulty={10} />
+    <ResultBanner outcome="failure" total={6} difficulty={10} />
+  </Stack>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<ResultBanner outcome="success" total={12} difficulty={10} />
+<ResultBanner outcome="failure" total={6} difficulty={10} />
+```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<ResultBanner outcome="failure" id="resolution-banner" />
+```
+</details>
+
+## Behavior
+
+- **Full-bleed breakout**: The banner uses `width: 100vw` with `margin-left: calc(50% - 50vw)` to burst out of any parent container and span the full viewport width. This is intentional — the verdict should feel like it *breaks* the UI frame.
+- **Physical distortion**: A `clip-path: polygon(1% 2%, 99% 0%, 100% 98%, 0% 100%)` creates jagged, uneven edges so the banner looks torn or stamped rather than digitally clean. The `-1deg` rotation reinforces the unsettled, physical artifact feeling.
+- **Texture injection**: Both the background and the text receive their textures via inline `style={{ backgroundImage }}` rather than CSS imports. This allows the textures to work across both Vite (string URLs) and Next.js (`StaticImageData`) environments via the `getImageUrl` helper.
+- **Conditional detail**: The "Total X vs Difficulty Y" breakdown only renders when *both* `total` and `difficulty` are provided. Omitting either hides the detail line entirely.
+
+## Accessibility
+
+- Uses `role="status"` to identify the banner as a live status region — screen readers announce it as an update rather than requiring the user to navigate to it.
+- Uses `aria-live="assertive"` so the outcome is announced immediately, interrupting any current screen reader output. This matches the visual "jump scare" intent — the result demands attention *now*.
+- The texture overlay is marked `aria-hidden="true"` to prevent screen readers from attempting to describe the decorative image layer.
+- The text content ("SUCCESS" / "FAILURE" and the breakdown line) is plain DOM text, fully readable by assistive technology without requiring additional labels.
 
 ## Related Components
 
 - **[DieSelector](/components/molecules/die-selector)** — Input that leads to this result
-- **[DiceResult](/components/molecules/dice-result)** — Clinical breakdown of the roll
+- **[DiceResult](/components/molecules/dice-result)** — Clinical breakdown of the roll that precedes this banner

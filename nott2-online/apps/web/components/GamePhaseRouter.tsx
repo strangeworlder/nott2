@@ -9,6 +9,7 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { useGameStore } from '../store/game-store';
 import {
   WelcomeScreen,
@@ -25,6 +26,15 @@ import {
 export function GamePhaseRouter() {
   const { gameState } = useGameStore();
   const { phase } = gameState;
+
+  /* Scroll the phase panel to the top whenever the phase changes so the
+     phase headline is always visible on entry. */
+  useEffect(() => {
+    const container = document.querySelector('.game-phase-panel');
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [phase]);
 
   const Screen = (() => {
     switch (phase) {
