@@ -89,6 +89,21 @@ All breathing effects use **`ease-in-out`**, not `ease-out`. The symmetrical eas
 - **`3s`** — Atmospheric flicker (damage cracks, environmental decay)
 - **`4s`** — Slow ambient shimmer (decorative border effects, background texture)
 
+#### Semantic Acceleration
+
+Some components use **decreasing animation duration as danger increases** — the visual equivalent of a heartbeat speeding up before the jump scare. The EffortBand is the primary example:
+
+| Level | Duration | Speed | Emotional Register |
+|---|---|---|---|
+| `controlled` | — | Static | Calm, no motion needed |
+| `pushing-it` | 3s | Slow | Uneasy, something is grinding |
+| `overexertion` | 2.5s | Medium | Urgent, the body is breaking |
+| `breaking-point` | 2s | Fast | Critical, lethal territory |
+
+This pattern applies to the [Edge Bleed](/foundation/patterns#1-the-edge-bleed) pulse animation — the `::before` bar pulses faster as the semantic temperature rises. The same acceleration principle could be applied to any future component that maps to the system's [Semantic Heat](/visual-identity#3-semantic-heat) gradient.
+
+**The rule:** If a component has multiple danger levels, each level should breathe faster than the last. Never use the same duration for different danger levels — the acceleration IS the communication.
+
 ### 2. Entry Animations — Dramatic Arrivals
 
 One-shot animations that play when an element enters. They run once and stop.

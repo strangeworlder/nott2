@@ -1,27 +1,141 @@
 ---
-sidebar_position: 11
+sidebar_position: 20
 title: WeaknessTracker
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { WeaknessTracker } from '@nott2/design-system';
+
 # WeaknessTracker
 
-The countdown to hope. Four suit pips — found weaknesses glow green, unfound remain muted. Fixed order: Spades, Hearts, Clubs, Diamonds.
+The evidence board. Four slots — Spades, Hearts, Clubs, Diamonds — each representing a weakness the survivors are hunting for. Unfound slots sit dark and dormant with a faint red bleed at the edge: *the unknown is dangerous*. Each discovery flips a slot to green — the temperature of relief — and a breathing pulse confirms that knowledge has been won. When all four are revealed, the whole board glows: the Killer's armour has been mapped.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { WeaknessTracker } from '@nott2/design-system';
+
+<WeaknessTracker found={new Set(['Spades', 'Hearts'])} />
+```
+</details>
+
+## Why to Use
+
+WeaknessTracker gives players a persistent, glanceable summary of how much they've uncovered about the Killer's vulnerabilities. Each discovered weakness physically transforms its slot — the green glow and breathing edge bleed provide visceral positive feedback, rewarding investigation with visual warmth.
+
+## When to Use
+
+> **Do**
+> - Use in the `GameBoard` sidebar or `PhasePanel` to persistently display weakness discovery progress.
+> - Pass the full `Set<string>` of discovered suit names directly from game state.
+
+> **Don't**
+> - Do not use for general progress or checklist UI. The four pips are hard-mapped to the game's four suits (Spades, Hearts, Clubs, Diamonds).
+> - Do not use `Badge` or `Icon` components to manually build a weakness display. This molecule handles layout, state, and accessibility.
+
+## Anatomy
+
+```
+┌────────────┬────────────┬────────────┬────────────┐
+│     ♠      │     ♥      │     ♣      │     ♦      │
+│   Spades   │  Hearts    │   Clubs    │ Diamonds   │
+│  (muted)   │  (found)   │  (muted)   │  (found)   │
+│ ▌red bleed │ ▌grn pulse │ ▌red bleed │ ▌grn pulse │
+└────────────┴────────────┴────────────┴────────────┘
+     CSS Grid · 4 equal columns · gap: sm
+```
+
+1. **Root** (`trackerRoot`) — CSS Grid with 4 equal columns (`repeat(4, 1fr)`) and `sm` gap. When all 4 suits are found, gains `allFoundGlow` — the entire tracker radiates `glowGreen`.
+2. **Pip slot** (`pipSlot`) — Each suit is a vertical flex container: icon stacked above label. Dark surface background, subtle border, `overflow: hidden`. The `::before` pseudo-element provides a left-edge bleed — a faint red vertical line representing dormant danger.
+3. **Found state** (`pipFound`) — Transforms the slot: green gradient wash from top, `success` border, `glowGreenSubtle` box-shadow. The left-edge bleed switches to green with a 3s breathing pulse (`glowPulse` keyframe).
+4. **Icon** (`pipIcon` / `pipIconFound`) — 20px suit icon, muted by default. Found state switches to `successBright` with a green `drop-shadow` halo.
+5. **Label** (`pipLabel` / `pipLabelFound`) — Display font, `micro` size, uppercase, `wide` letter-spacing. Muted by default, `successBright` when found.
+
+### Visual States
+
+| State | Border | Background | Edge Bleed | Icon / Label Color | Shadow |
+|---|---|---|---|---|---|
+| Not found | `borderSubtle` | `surface` | Red, 35% opacity, static | `textMuted` | None |
+| Found | `success` | Green gradient wash | Green, breathing pulse (3s) | `successBright` + drop-shadow | `glowGreenSubtle` |
+| All found | `success` | Green gradient wash | Green, breathing pulse | `successBright` | Root gains `glowGreen` |
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `found` | `string[]` | `[]` | Array of found suit names |
+Use these props to configure the WeaknessTracker component.
 
-## Implementation Examples
+### found
+The set of suit names whose weaknesses have been discovered.
+
+| Type | Default | Description |
+|---|---|---|
+| `Set<string>` | — | **Required.** A Set containing any of `'Spades'`, `'Hearts'`, `'Clubs'`, `'Diamonds'`. Pips matching entries glow green. |
+
+<ComponentPreview>
+  <WeaknessTracker found={new Set()} />
+</ComponentPreview>
+
+<ComponentPreview>
+  <WeaknessTracker found={new Set(['Hearts'])} />
+</ComponentPreview>
+
+<ComponentPreview>
+  <WeaknessTracker found={new Set(['Spades', 'Hearts'])} />
+</ComponentPreview>
+
+<ComponentPreview>
+  <WeaknessTracker found={new Set(['Spades', 'Hearts', 'Clubs', 'Diamonds'])} />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
-<WeaknessTracker found={[]} />                       {/* All muted */}
-<WeaknessTracker found={['Spades', 'Hearts']} />     {/* Two green */}
-<WeaknessTracker found={['Spades', 'Hearts', 'Clubs', 'Diamonds']} /> {/* All green */}
+<WeaknessTracker found={new Set()} />                                           {/* None found */}
+<WeaknessTracker found={new Set(['Hearts'])} />                                 {/* One found */}
+<WeaknessTracker found={new Set(['Spades', 'Hearts'])} />                      {/* Two found */}
+<WeaknessTracker found={new Set(['Spades', 'Hearts', 'Clubs', 'Diamonds'])} /> {/* All found — board glows */}
 ```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+## Behavior
+
+- **Fixed order**: Suits always render in the order Spades → Hearts → Clubs → Diamonds, regardless of the order entries were added to the `Set`.
+- **Grid layout**: Uses CSS Grid (`repeat(4, 1fr)`) for uniform column widths. Unlike the previous flex-wrap layout, columns maintain equal size at all viewport widths.
+- **Transition**: The pip state change uses `transition: all` on the `slow` timing (400ms ease-out — "the slow pan"), so the border, color, background, and glow shift smoothly.
+- **Breathing pulse**: Found pips have a 3s `ease-in-out` breathing animation on their left-edge bleed — "the held breath" of relief. This matches the cadence used by EffortBand (controlled level) and DifficultyBadge.
+- **All-found glow**: When all 4 weaknesses are discovered, the root container receives `glowGreen` — the entire evidence board radiates as a single unit, signalling completion.
+- **Reduced motion**: `prefers-reduced-motion: reduce` disables the breathing pulse and holds the bleed at 80% opacity.
+
+## Visual Identity Alignment
+
+This molecule follows the system's five visual principles:
+
+| Principle | Implementation |
+|---|---|
+| **Dark Canvas, Luminous Actors** | Dark surface background; found pips radiate green glow outward |
+| **Physical Imperfection** | N/A — this is a functional widget, not a narrative set piece |
+| **Semantic Heat** | Green = Cold (Safe) temperature — discovery is relief |
+| **Diegetic Texture** | N/A — UI chrome, not a physical game prop |
+| **Cinematic Pacing** | 400ms slow-pan transitions; 3s held-breath breathing pulse |
+
+## Accessibility
+
+- Uses `role="status"` with `aria-label` announcing the overall count (e.g., "Weaknesses found: 2 of 4").
+- Each pip has its own `aria-label` (e.g., "Spades: weakness found" or "Hearts: not found").
+- Uses the `Icon` atom for suit rendering, ensuring consistent icon semantics.
+- `prefers-reduced-motion` disables all animations.
 
 ## Related Components
 
-- **[Icon](/components/atoms/icon)** — Suit icons used internally
-- **[Badge](/components/atoms/badge)** — Can show "Found" status inline
+- **[Icon](/components/atoms/icon)** — Suit icons (`spades`, `hearts`, `clubs`, `diamonds`) used internally
+- **[StrikeIndicator](/components/molecules/strike-indicator)** — Player health tracking (complementary to weakness tracking)
+- **[EffortBand](/components/molecules/effort-band)** — Uses the same edge-bleed and breathing-pulse vocabulary
+- **[DifficultyBadge](/components/molecules/difficulty-badge)** — Uses the same edge-bleed pattern

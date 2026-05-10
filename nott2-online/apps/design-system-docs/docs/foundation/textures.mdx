@@ -1,0 +1,170 @@
+---
+sidebar_position: 7
+title: Texture Library
+---
+
+# Texture Library
+
+Night of the Thirteenth uses photographic textures to make diegetic components feel *physical* — not flat colored boxes, but surfaces with grain, weight, and history. This page catalogues every texture asset in the system, its visual character, and where it's used.
+
+Textures are the bridge between the clean digital foundation and the visceral horror aesthetic. They should be used sparingly and deliberately — a texture without purpose is visual noise.
+
+---
+
+## Delivery Methods
+
+The system uses two different strategies for delivering textures, depending on where the component lives:
+
+| Method | How It Works | When To Use |
+|---|---|---|
+| **Vite Asset Import** | `import texture from '../../assets/textures/file.png'` — bundled, hashed, treeshakeable | Components inside `@nott2/design-system` package (ResultBanner, DoomClock) |
+| **Public URL** | `url(/textures/file.png)` — served from `apps/web/public/textures/` | Components that render only in the web app context (PlayingCard, CardMatt, SceneChallengeOverlay) |
+
+:::note Why Two Methods?
+The design system package is consumed by multiple apps (web, docs, storybook). Components that need textures in *all* contexts must bundle them via Vite imports. Components that only render in the main web app can reference `public/` URLs directly.
+:::
+
+---
+
+## Bundled Textures
+
+These live in `packages/design-system/src/assets/textures/` and are imported directly into component files.
+
+### banner_texture.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | Rough, warm metallic surface — scratched bronze or weathered brass |
+| **Dimensions** | ~1108KB |
+| **Blend Mode** | `color-dodge` at 0.7 opacity |
+| **Used By** | **ResultBanner** — the full-surface overlay that gives the banner its visceral materiality |
+| **Role** | Composited over the solid `success` or `accent` background to transform flat color into a hot, textured surface |
+
+### text_texture.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | Dark metallic grunge — weathered iron with scratches and patina |
+| **Dimensions** | ~1109KB |
+| **Blend Mode** | Applied via `background-clip: text` with `mixBlendMode: overlay` |
+| **Used By** | **ResultBanner** (`bannerWord`) — fills the hero text with a metallic material |
+| **Role** | Makes the text look *cast in metal* rather than rendered in a flat color. Paired with amber `WebkitTextStroke` for edge definition. |
+
+### clock_face_texture.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | Weathered iron — dark, hammered metal with subtle rust and grain |
+| **Dimensions** | ~1043KB |
+| **Blend Mode** | Used as SVG `<pattern>` fill via `<image>` element |
+| **Used By** | **DoomClock**, **DoomClockTransition** — the circular face background |
+| **Role** | Establishes the clock as a physical iron prop. The texture fills a circular clip mask and sits behind the segment arcs and decorative rings. |
+
+### clock_broken_texture.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | Cracked, bleeding iron — the clock face after it's been shattered |
+| **Dimensions** | ~1113KB |
+| **Blend Mode** | Overlaid via SVG `<image>` with animated opacity reveal |
+| **Used By** | **DoomClock** (broken state, ≥13), **DoomClockTransition** (broken state) |
+| **Role** | Fades in over the normal face texture when the clock reaches its breaking point, revealing cracks and a deep red bleed through the iron. Uses `brokenReveal` keyframe animation. |
+
+---
+
+## Public Textures
+
+These live in `apps/web/public/textures/` and are referenced via absolute URL paths.
+
+### parchment-card.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | Aged parchment — warm cream-yellow with subtle fiber texture and foxing |
+| **Dimensions** | ~633KB |
+| **Used By** | **PlayingCard** — the card face background |
+| **Role** | Grounds playing cards as physical paper objects. Applied as `backgroundImage` with `background-size: cover` over a `#d4c5a0` fallback color. |
+
+### card-back.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | Dark card back pattern — ornate design on near-black |
+| **Dimensions** | ~787KB |
+| **Used By** | **PlayingCard** — the face-down card state |
+| **Role** | The classic "backs of cards" pattern. Applied as `backgroundImage` with the surface color as fallback. |
+
+### red-velvet-matt.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | Red velvet fabric — photographed textile with visible weave and pile |
+| **Dimensions** | ~1191KB |
+| **Tile Size** | `320px × 320px` |
+| **Used By** | **CardMatt** — the card play surface |
+| **Role** | Creates the tactile casino-felt surface. Layered beneath a damask diamond weave pattern (`repeating-linear-gradient` at 45°/-45°) and a radial vignette. Uses `multiply` and `screen` blend modes for the overlay patterns. |
+
+### peeling-paint-bg.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | Deteriorating wall — peeling paint over cracked plaster |
+| **Dimensions** | ~924KB |
+| **Used By** | **ActBreakOverlay**, **SceneChallengeOverlay** — full-screen cinematic backdrops |
+| **Role** | The "walls closing in" effect. Applied as a full-screen background behind cinematic overlays, paired with a dark radial gradient for edge vignetting. |
+
+### vhs-grain.png
+
+| Property | Value |
+|---|---|
+| **Visual Character** | VHS static/grain — analog television noise |
+| **Dimensions** | ~807KB |
+| **Used By** | **ActBreakOverlay**, **SceneChallengeOverlay** — VHS-style overlays |
+| **Role** | A tileable grain pattern applied over cinematic overlays to create the analog horror "found footage" aesthetic. Used at very low opacity to add noise without obscuring content. |
+
+### Scene Textures (`textures/scenes/`)
+
+Four suit-specific scene backgrounds used for the SceneChallengeOverlay evidence-photo aesthetic:
+
+| File | Suit | Dimensions |
+|---|---|---|
+| `spades.png` | Spades | ~825KB |
+| `hearts.png` | Hearts | ~842KB |
+| `diamonds.png` | Diamonds | ~881KB |
+| `clubs.png` | Clubs | ~871KB |
+
+These are the "evidence photos" that slam into frame during scene challenges. Each depicts a moody, atmospheric photograph appropriate to the suit's thematic domain.
+
+---
+
+## Usage Guidelines
+
+### When to Use Textures
+
+- **Diegetic components** that represent physical game props (cards, table felt, clock, banners)
+- **Cinematic overlays** that need to feel like degraded film/VHS footage
+- **Hero-level set pieces** where materiality adds narrative weight
+
+### When NOT to Use Textures
+
+- **UI chrome** — buttons, inputs, callouts, badges. These should be clean and functional.
+- **Layout components** — stacks, rows, grids. These are invisible scaffolding.
+- **Body text or labels** — textures on small text are illegible noise.
+
+### Performance Considerations
+
+- Textures are large files (600KB–1.2MB). They are a meaningful part of the initial bundle.
+- Use Vite asset imports for design-system components — Vite will hash and optimize them.
+- Public textures load on demand — ensure they're not on the critical rendering path.
+- Always provide a `backgroundColor` fallback so the component renders correctly before the texture loads.
+
+### Adding New Textures
+
+1. **Choose delivery method** — bundle (if used in `@nott2/design-system`) or public (if web-app only)
+2. **Target resolution** — textures should be high enough quality for retina (2x) but not excessively large. Aim for ~1024px on the longest side for tileable textures, full-width for banners.
+3. **Visual consistency** — new textures must match the system's "weathered, physical, dark" aesthetic. No clean stock photos, no bright or cheerful surfaces.
+4. **Document here** — add an entry to this page with visual character, blend mode, and consuming components.
+
+:::caution
+Never reference a texture by hardcoded path in a `.css.ts` file if the component is in the design-system package. Use a Vite import and pass the URL as an inline style or prop. This ensures the texture is available in all consumer contexts (web app, storybook, docs).
+:::

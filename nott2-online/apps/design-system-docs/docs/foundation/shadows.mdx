@@ -101,6 +101,45 @@ active/selected → glowIntense (40px, 0.6 opacity)  "Committed"
 
 This pattern applies to **Buttons**, **PlayingCards**, **DieSelectors**, and any future interactive element. Breaking the escalation (e.g., jumping from `glowSubtle` to `glowIntense` on hover) will feel jarring and wrong.
 
+### Multi-Temperature Escalation
+
+The red escalation above governs **interaction states** (rest → hover → committed). But some components escalate across **semantic levels** — the EffortBand, for example, moves through four colors as danger intensifies:
+
+```
+controlled    → green glow (glowGreenSubtle)    "Safe"
+pushing-it    → amber external glow              "Strained"
+overexertion  → orange external glow              "Breaking"
+breaking-point → red glow (glowIntense)           "Lethal"
+```
+
+This is the [Semantic Heat](/visual-identity#3-semantic-heat) principle at work. The glow color follows the temperature gradient rather than a single-color escalation. Each level also increases the **edge bleed width** (2px → 3px → 4px) and **animation speed** (3s → 2.5s → 2s). See [Compositional Patterns](/foundation/patterns) for the full anatomy.
+
+---
+
+## Compositional Glow Patterns
+
+Beyond the token-based glows above, the system uses two structural glow patterns that are **not tokens** — they are CSS compositions built from color tokens and applied as `boxShadow` or `::before` / `::after` pseudo-elements.
+
+### The Inset Wound
+
+A 1px inset bottom border that creates a glowing cut along the element's bottom edge:
+
+```css
+boxShadow: `inset 0 -1px 0 ${vars.color.accent}, 0 4px 24px rgba(138, 0, 0, 0.25)`,
+```
+
+The two layers work together:
+1. **Inset layer** — sharp, precise, full-opacity cut inside the element
+2. **External layer** — diffuse glow that pools beneath (12–24px blur, 0.1–0.25 opacity)
+
+Used by: DifficultyBadge, DiceResult, EffortBand, TabBar. Full documentation in [Compositional Patterns](/foundation/patterns#2-the-inset-wound).
+
+### The Edge Bleed
+
+A `::before` pseudo-element positioned on the left edge with a vertical gradient that fades to transparent. Optionally animated with a breathing pulse. Width scales with danger (2px → 4px).
+
+Used by: DifficultyBadge, DiceResult, EffortBand. Full documentation in [Compositional Patterns](/foundation/patterns#1-the-edge-bleed).
+
 ## Beyond Tokens: Bespoke Glow
 
 Some components use glow effects **outside** the token system — animated, multi-layered, or contextually unique. These are cinematic set-pieces, not reusable patterns:

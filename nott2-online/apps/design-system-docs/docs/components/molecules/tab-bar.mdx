@@ -1,33 +1,153 @@
 ---
-sidebar_position: 13
+sidebar_position: 17
 title: TabBar
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { TabBar } from '@nott2/design-system';
+
 # TabBar
 
-Two-road sign. Horizontal tab navigation for switching between views. Understated and bureaucratic.
+A dividing line between two paths. The lobby offers a fork: create or join. Unlike a passive sign, this fork glows — the chosen path radiates with the brand's blood-red presence, while the unchosen path waits in shadow, ready to respond the moment you reconsider. It is navigation as tension: every choice forecloses another.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { TabBar } from '@nott2/design-system';
+
+<TabBar
+  tabs={[
+    { id: 'create', label: 'Create Room' },
+    { id: 'join', label: 'Join Room' },
+  ]}
+  activeTab="create"
+  onTabChange={(id) => setActiveTab(id)}
+/>
+```
+</details>
+
+## Why to Use
+
+TabBar provides a WAI-ARIA compliant horizontal tab navigation that follows the design system's glow escalation pattern. The active tab doesn't just highlight — it radiates with a bottom-edge glow line and a `glowSubtle` halo, reinforcing the brand's tension aesthetic even in a mundane navigation component.
+
+## When to Use
+
+> **Do**
+> - Use for switching between views within a single screen (e.g., Create Room / Join Room in the lobby).
+> - Provide a meaningful `id` and `label` for each tab — the `id` drives selection state, the `label` is visible text.
+> - Use optional `icon` props to add leading icons from the `Icon` atom for visual clarity.
+
+> **Don't**
+> - Do not use for navigation between separate pages or routes. Use standard links for that.
+> - Do not use for toggling a binary option. Use `Toggle` or `SegmentedControl` instead.
+> - Do not use more than ~4 tabs. The component uses `flex: 1` per tab, so too many will feel cramped.
+
+## Anatomy
+
+```
+ ┌─────────────────────────────────────────────┐
+ │                                             │
+ │   🎮 CREATE ROOM      │   🔗 JOIN ROOM     │
+ │   ════════════         │                    │
+ │                                             │
+ └─────────────────────────────────────────────┘
+ ↑                        ↑         ↑
+ tabRecipe (active)     tabIcon   tabRecipe (inactive)
+ + ::after glow line
+```
+
+1. **Root** (`tabBarRoot`) — Flex container with `surface` background, `border` border, `md` radius, and `xs` padding. The tabs live inside this contained segment bar.
+2. **Tab button** (`tabRecipe`) — Each tab is a `<button>` with `role="tab"`, display font, uppercase. Uses recipe variants for active/inactive states.
+3. **Bottom-edge indicator** (`::after`) — A 2px pseudo-element that transitions from transparent (inactive) to a red gradient glow (active). The active glow stretches from 10% to 90% of the tab width.
+4. **Tab icon** (`tabIcon`) — Optional leading `Icon` atom (18px) before the label text.
+
+### State Escalation
+
+| State | Text Color | Background | Box-shadow | Bottom edge |
+|---|---|---|---|---|
+| Rest | `textMuted` | Transparent | None | Hidden |
+| Hover | `text` (white) | `rgba(138,0,0,0.05)` | None | Hidden |
+| Active | `accentBright` (red) | `rgba(138,0,0,0.08)` | `glowSubtle` | Red gradient line |
+| Active + Hover | `accentBright` | `rgba(138,0,0,0.1)` | `glow` (stronger) | Red gradient line |
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `tabs` | `{ label: string; value: string }[]` | — | Tab definitions |
-| `activeTab` | `string` | — | Currently selected tab value |
-| `onTabChange` | `(value: string) => void` | — | Tab change handler |
+Use these props to configure the TabBar component.
 
-## Implementation Examples
+### tabs
+Array of tab definitions.
+
+| Type | Default | Description |
+|---|---|---|
+| `Tab[]` | — | **Required.** Each tab has `id` (selection key), `label` (display text), and optional `icon` (IconName). |
+
+### activeTab
+The currently selected tab.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | **Required.** The `id` of the active tab. |
+
+### onTabChange
+Callback when a tab is selected.
+
+| Type | Default | Description |
+|---|---|---|
+| `(id: string) => void` | — | **Required.** Called with the new tab's `id` on click or keyboard selection. |
+
+<ComponentPreview>
+  <TabBar
+    tabs={[
+      { id: 'create', label: 'Create Room' },
+      { id: 'join', label: 'Join Room' },
+    ]}
+    activeTab="create"
+    onTabChange={() => {}}
+  />
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
 <TabBar
   tabs={[
-    { label: 'Create Room', value: 'create' },
-    { label: 'Join Room', value: 'join' },
+    { id: 'create', label: 'Create Room', icon: 'add_circle' },
+    { id: 'join', label: 'Join Room', icon: 'link' },
   ]}
-  activeTab={currentTab}
-  onTabChange={setCurrentTab}
+  activeTab="create"
+  onTabChange={setActiveTab}
 />
 ```
+</details>
+
+### id
+HTML ID attribute for the tablist container.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+## Behavior
+
+- **Equal width tabs**: Each tab uses `flex: 1`, distributing available space equally regardless of label length.
+- **Keyboard navigation**: Full WAI-ARIA Tabs Pattern compliance:
+  - **ArrowRight/ArrowLeft**: Moves focus and selection to the next/previous tab (wrapping at edges).
+  - **Home/End**: Jumps to the first/last tab.
+  - Active tab has `tabIndex={0}`, inactive tabs have `tabIndex={-1}` — only the active tab is in the tab order.
+- **Glow escalation**: The active state doesn't just toggle a color — it adds a `glowSubtle` box-shadow, and hover over the active tab intensifies to `glow`.
+- **Bottom-edge animation**: The `::after` pseudo-element widens from 20%/80% (inactive, hidden) to 10%/90% (active, visible) during transition.
+
+## Accessibility
+
+- Uses `role="tablist"` on the container and `role="tab"` on each button.
+- Active tab has `aria-selected="true"`, inactive tabs have `aria-selected="false"`.
+- Roving `tabIndex` ensures only the active tab is in the sequential focus order.
+- `:focus-visible` ring (`2px solid accentBright`, inset `−2px`) for keyboard navigation.
+- All transitions respect `prefers-reduced-motion: reduce` — transitions are removed.
 
 ## Related Components
 
-- **[Button](/components/atoms/button)** — Individual actions (TabBar is for view switching)
+- **[Button](/components/atoms/button)** — For individual actions (TabBar is for view switching, not actions)
+- **[SegmentedControl](/components/atoms/segmented-control)** — For toggling between values within a form field

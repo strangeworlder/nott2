@@ -167,3 +167,68 @@ The glow color is **automatic**: it follows the text's `color` prop. Red text gl
 <Text variant="h2" glow>The Killer Strikes</Text>
 <Text variant="h2" color="success" glow>Weakness Discovered</Text>
 ```
+
+---
+
+## Type as Texture
+
+Beyond color and glow, the system uses a third expressive layer for hero text: **CSS text clipping** with photographic textures. This makes text look like it's *cast in metal* or *carved from stone* rather than rendered as flat color.
+
+This is the typographic equivalent of [Diegetic Texture](/visual-identity#4-diegetic-texture) — the text becomes a physical material.
+
+```css
+const materialText = style({
+  fontFamily: vars.font.display,
+  fontSize: vars.fontSize.hero,
+  fontWeight: 900,
+  textTransform: 'uppercase',
+
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+
+  /* Edge definition — without this, text dissolves into texture */
+  WebkitTextStroke: '1px rgba(255, 179, 0, 0.8)',
+  textShadow: '0 0 15px rgba(0, 0, 0, 0.8)',
+  mixBlendMode: 'overlay',
+});
+```
+
+### Rules
+
+- **Only for `hero`-sized display text** — never for body, labels, or headings. At small sizes, the texture becomes illegible noise.
+- Always pair with `WebkitTextStroke` for edge definition and `textShadow` for grounding.
+- The texture image is applied via inline `style={{ backgroundImage }}` in the React component, not in the CSS file — this allows dynamic texture selection.
+- Currently used only in the **ResultBanner** (`bannerWord`). See the [Texture Library](/foundation/textures) for available text textures.
+
+:::caution
+Text clipping is a high-impact pattern that should be used extremely sparingly. If more than one element on screen uses textured text, the effect is diluted.
+:::
+
+---
+
+## Fluid Display Numbers
+
+Molecules that feature a prominent display number (DifficultyBadge, DiceResult, DoomClockTransition) use `clamp()` for fluid responsive sizing. These are **not** standard type scale tokens — they are bespoke sizes tuned to the component's visual weight.
+
+| Component | `clamp()` Value | Role |
+|---|---|---|
+| **DifficultyBadge** | `clamp(2rem, 4vw, 2.75rem)` | The difficulty number — large enough to anchor the component |
+| **DiceResult** | `clamp(2.5rem, 5vw, 3.5rem)` | The total — the centerpiece verdict |
+| **DoomClockTransition** | `clamp(2rem, 5vw, 3.5rem)` | The clock count — must read at a glance |
+
+These follow the same `clamp(min, preferred, max)` pattern as the type scale tokens, but with values chosen per-component to maintain visual balance with adjacent elements. They always use `vars.font.display` (Playfair Display) and tight letter-spacing.
+
+```tsx
+// Component-specific display number — NOT a token, but follows token conventions:
+fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+fontFamily: vars.font.display,
+fontWeight: 700,
+letterSpacing: vars.letterSpacing.tight,
+```
+
+:::note
+These are component-level exceptions, similar to [button padding](/foundation/spacing#a-note-on-button-padding). The type scale tokens cover general-purpose text; display numbers in molecules need per-component tuning for visual balance.
+:::

@@ -212,9 +212,18 @@ export function useCardDealBridge() {
     prevIdsRef.current = currentIds;
   }, [visibleCards, deck.trophyPile, deal, dealMore, remove, deckRef, tableRef]);
 
-  // ── Clear on game reset ────────────────────────────────────────────────
+  // ── Clear on game reset / act transitions ────────────────────────────
+  // Act-setup signals an act boundary (Act 2, Act 3, Finale). The engine
+  // sweeps visibleCards back into the threat deck during act transitions,
+  // but the 3D card layer may still be animating removals from the
+  // previous scene. Force-clearing here guarantees no stale cards linger
+  // on the CardMatt after an act transition (e.g. number cards in Act 3).
   useEffect(() => {
-    if (gameState.phase === 'lobby' || gameState.phase === 'welcome') {
+    if (
+      gameState.phase === 'lobby' ||
+      gameState.phase === 'welcome' ||
+      gameState.phase === 'act-setup'
+    ) {
       clear();
       prevIdsRef.current = [];
     }

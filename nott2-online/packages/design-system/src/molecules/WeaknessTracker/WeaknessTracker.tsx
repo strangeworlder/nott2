@@ -2,15 +2,17 @@
  * WeaknessTracker
  *
  * Philosophical:
- * The countdown to hope. Four suits, four weaknesses, four steps toward the
- * Killer's downfall. Each pip starts dark and found ones glow green — a slow
- * accumulation of hard-won knowledge. This is the game's progress bar, and
- * it should feel like a map being filled in, one bloody room at a time.
+ * The evidence board. Four slots — Spades, Hearts, Clubs, Diamonds — each
+ * representing a weakness the survivors are hunting. Unfound slots sit dark
+ * and dormant with a faint red bleed at the edge: the unknown is dangerous.
+ * Each discovery flips a slot to green — the temperature of relief — and a
+ * breathing pulse confirms that knowledge has been won. When all four are
+ * revealed, the whole board glows: the Killer's armour has been mapped.
  *
  * Technical:
- * Renders 4 suit pips indicating which weaknesses have been discovered.
- * Found suits glow green; unfound are muted. Order is always Spades, Hearts,
- * Clubs, Diamonds. Uses Icon component for consistent suit rendering.
+ * Renders a 4-column CSS Grid of suit pips. Found suits glow green with a
+ * breathing left-edge bleed; unfound suits are muted with a dormant red
+ * bleed. When all 4 are found, the root container receives a green glow.
  *
  * Props:
  * - found: Set<string> of suit IDs whose weaknesses have been discovered.
@@ -18,7 +20,17 @@
  */
 
 import React from 'react';
-import { trackerRoot, pipBase, pipFound } from './WeaknessTracker.css';
+import {
+  trackerRoot,
+  allFoundGlow,
+  pipSlot,
+  pipFound,
+  pipIcon,
+  pipIconFound,
+  pipLabel,
+  pipLabelFound,
+  reducedMotion,
+} from './WeaknessTracker.css';
 import { Icon } from '../../atoms/Icon/Icon';
 import type { IconName } from '../../atoms/Icon/Icon';
 
@@ -35,22 +47,41 @@ interface WeaknessTrackerProps {
 }
 
 export function WeaknessTracker({ found, id }: WeaknessTrackerProps) {
+  const isAllFound = found.size === 4;
+
   return (
     <div
       id={id}
-      className={trackerRoot}
+      className={[
+        trackerRoot,
+        isAllFound ? allFoundGlow : '',
+        reducedMotion,
+      ].filter(Boolean).join(' ')}
       role="status"
       aria-label={`Weaknesses found: ${found.size} of 4`}
     >
-      {SUITS.map(s => (
-        <span
-          key={s.id}
-          className={[pipBase, found.has(s.id) ? pipFound : ''].filter(Boolean).join(' ')}
-          aria-label={`${s.id}: ${found.has(s.id) ? 'weakness found' : 'not found'}`}
-        >
-          <Icon name={s.icon} size={16} /> {s.id}
-        </span>
-      ))}
+      {SUITS.map(s => {
+        const isFound = found.has(s.id);
+        return (
+          <div
+            key={s.id}
+            className={[pipSlot, isFound ? pipFound : ''].filter(Boolean).join(' ')}
+            aria-label={`${s.id}: ${isFound ? 'weakness found' : 'not found'}`}
+          >
+            <span
+              className={[pipIcon, isFound ? pipIconFound : ''].filter(Boolean).join(' ')}
+              aria-hidden="true"
+            >
+              <Icon name={s.icon} size={20} />
+            </span>
+            <span
+              className={[pipLabel, isFound ? pipLabelFound : ''].filter(Boolean).join(' ')}
+            >
+              {s.id}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

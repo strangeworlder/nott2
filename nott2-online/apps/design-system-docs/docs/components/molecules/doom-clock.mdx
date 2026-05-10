@@ -1,51 +1,154 @@
 ---
-sidebar_position: 16
+sidebar_position: 9
 title: DoomClock
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { DoomClock, Row } from '@nott2/design-system';
+
 # DoomClock
 
-The impossible 13th hour. An SVG clock with 12 arc segments and a sweeping hand. When the reserve reaches 13 cards, the clock face shatters with cracks and red glow.
+The impossible 13th hour. A real clock only has 12. As reserve cards are added to the threat deck, the hour hand advances through 12 segments of dread. When the 13th card arrives, the clock cannot cope: it shatters, its face cracking under the weight of what it was never meant to show. This is Act 3. Time is broken. The night is truly here.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { DoomClock } from '@nott2/design-system';
+
+<DoomClock current={7} />
+```
+</details>
 
 ## Why to Use
 
-DoomClock provides an atmospheric, diegetic visualization of the game's tension escalation. It's a constant visual reminder that time is running out.
+DoomClock provides an atmospheric, diegetic visualization of the game's central tension mechanic — the reserve card countdown. Rather than a plain number, the clock gives players a visceral sense of time passing. Each segment that fills is an hour that can't be taken back. The color escalation from dark grey through amber to blood red means you can read the danger level from across the table without counting.
 
 ## When to Use
 
-- **DoomClock**: Compact (~80px) version for the sidebar/game board
-- **DoomClockTransition**: Full-screen (240px) version for dramatic tick animations between scenes
+> **Do**
+> - Use as the persistent sidebar indicator in the `GameBoard`, showing the current reserve card count at all times.
+> - Let the `current` prop drive the state automatically — the component handles segment filling, hand positioning, color escalation, and the broken state internally.
+
+> **Don't**
+> - Do not use for the dramatic "tick" animation between scenes. Use `DoomClockTransition` for that.
+> - Do not manually set `current` above 13. The component caps at 12 filled segments and enters the broken state at 13.
+
+## Anatomy
+
+```
+           ╭───────────╮
+         ╱    XII   I    ╲             ← decoRingOuter
+        │   ╭─────────╮   │
+        │ XI│  ╱│     │II  │           ← roman numerals (inner ring)
+        │   │╱  │     │   │
+        │ X ├───●─────┤III │           ← clockHand + clockHandPin
+        │   │   │     │   │
+        │ IX│   │     │IV  │
+        │   ╰─────────╯   │           ← decoRingInner
+         ╲   VIII  V    ╱
+           ╰───────────╯
+               ╔═╗
+               ║7║                     ← clockCountText (countdown number)
+               ╚═╝
+             to go                     ← clockSubLabel
+```
+
+### SVG Layers (inside → outside)
+
+1. **Face background** — A circular `<pattern>` fill using the weathered iron texture (`clock_face_texture.png`), clipped to the decorative ring radius.
+2. **Inner decorative ring** (`decoRingInner`) — A subtle bronze-toned circle at the inner edge of the arc band.
+3. **Roman numerals** — 12 `<text>` elements placed at each hour position in Playfair Display serif font.
+4. **Arc segments** (12 total) — Filled arc paths between `INNER_R` and `OUTER_R`. Each segment is a 25° arc (360° / 12 − 5° gap) with color escalation based on position.
+5. **Hour markers** — 12 small tick lines extending beyond the outer arc edge.
+6. **Clock hand** — A line from center to `HAND_LENGTH`, with a circular pin at the pivot.
+7. **Outer decorative ring** (`decoRingOuter`) — A bronze-toned ornamental border.
+8. **Pulse ring** — A red glow ring that appears when `current >= 10`, pulsing at 2s intervals.
+9. **Broken overlay** — Crack lines, red segments, a broken texture overlay, and a dead hand (pointing straight down) that replace the normal state at `current >= 13`.
+
+### HTML Below the SVG
+
+10. **Countdown number** (`clockCountText`) — The remaining cards to go, or "XIII" in the broken state (red).
+11. **Sub-label** (`clockSubLabel`) — "to go" or "broken".
+
+### Color Escalation
+
+The segment color progresses through four temperature bands:
+
+| Segment range | Color | Hex | Feeling |
+|---|---|---|---|
+| 1–6 | Dark grey | `#4a4a4a` | Calm — time is plentiful |
+| 7–9 | Dark amber | `#92400e` | Warning — past the halfway mark |
+| 10–11 | Bright amber | `#d97706` | Urgent — running out |
+| 12 | Blood red | `#dc2626` | Critical — one card from breaking |
 
 ## Key Props
 
-### DoomClock
+Use these props to configure the DoomClock component.
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `count` | `number` | — | Current reserve card count (0–13) |
-| `isBroken` | `boolean` | `false` | Shattered face state (at 13) |
+### current
+The number of reserve cards added so far.
 
-### DoomClockTransition
+| Type | Default | Description |
+|---|---|---|
+| `number` | — | **Required.** Range 0–13. Determines filled segments, hand position, color escalation, and broken state. |
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `fromCount` | `number` | — | Starting count |
-| `toCount` | `number` | — | Ending count (animates the tick) |
-| `isBreak` | `boolean` | `false` | Shatter animation variant |
-| `onComplete` | `() => void` | — | Fires after animation completes |
+<ComponentPreview>
+  <Row gap="xl" align="start">
+    <DoomClock current={0} />
+    <DoomClock current={4} />
+    <DoomClock current={8} />
+    <DoomClock current={11} />
+    <DoomClock current={13} />
+  </Row>
+</ComponentPreview>
 
-## Implementation Examples
+<details>
+<summary>Code example</summary>
 
 ```tsx
-{/* Compact sidebar clock */}
-<DoomClock count={7} />
-<DoomClock count={13} isBroken />
-
-{/* Full-screen transition */}
-<DoomClockTransition fromCount={11} toCount={12} onComplete={advancePhase} />
-<DoomClockTransition fromCount={12} toCount={13} isBreak onComplete={advancePhase} />
+<DoomClock current={0} />   {/* Empty — 13 to go */}
+<DoomClock current={8} />   {/* Past halfway — amber segments */}
+<DoomClock current={13} />  {/* Broken — Act 3 triggered */}
 ```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<DoomClock current={7} id="sidebar-clock" />
+```
+</details>
+
+## Behavior
+
+- **Automatic state management**: The component derives all visual state from the single `current` prop — filled segment count (`Math.min(current, 12)`), hand angle (`current * 30°` from 12 o'clock), countdown text (`13 - current`), and broken state (`current >= 13`).
+- **Near-full pulse**: When `current >= 10`, a `pulseRing` element appears — a red glow ring just outside the outer arc that pulses between 35% and 75% opacity over 2 seconds. This creates an ambient "heartbeat" warning.
+- **Broken state**: At `current >= 13`:
+  - All segments turn blood red (`#dc2626`) at 65% opacity.
+  - A broken texture overlay (`clock_broken_texture.png`) fades in via a `brokenReveal` keyframe (1.2s).
+  - Crack lines flicker with a `crackFlicker` keyframe (3s cycle, varying opacity).
+  - The hand stops dead — pointing straight down at 6 o'clock — symbolizing the clock giving up.
+  - The countdown text changes to "XIII" in red with the sub-label "broken".
+- **Compact sizing**: The entire SVG is 80×80px, designed for sidebar use where it's always visible but never dominant.
+
+## Accessibility
+
+- Uses `role="meter"` with `aria-valuemin={0}`, `aria-valuemax={13}`, and `aria-valuenow` set to the current count.
+- The `aria-label` announces either "Act 3 countdown: X reserve cards remaining" or "Act 3 triggered — the clock has broken".
+- The SVG is marked `aria-hidden="true"` — screen readers use the meter semantics instead.
+- The text area below the SVG is also `aria-hidden` to prevent duplicate announcements.
+- The `pulseGlow` and `crackFlicker` animations respect `prefers-reduced-motion: reduce` — replaced with static opacity values.
 
 ## Related Components
 
-- **[GameBoard](/components/organisms/game-board)** — Contains the DoomClockZone
+- **[DoomClockTransition](/components/molecules/doom-clock-transition)** — Full-screen cinematic version that animates the tick between scenes
+- **[GameBoard](/components/organisms/game-board)** — Contains the DoomClock zone in the sidebar

@@ -57,6 +57,7 @@ export { TrophyIndicator } from './molecules/TrophyIndicator/TrophyIndicator';
 export { WeaknessTracker } from './molecules/WeaknessTracker/WeaknessTracker';
 export { WaitingIndicator } from './molecules/WaitingIndicator/WaitingIndicator';
 export { TabBar } from './molecules/TabBar/TabBar';
+export type { Tab, TabBarProps } from './molecules/TabBar/TabBar';
 export { PhaseHeader } from './molecules/PhaseHeader/PhaseHeader';
 
 export { CardMatt } from './molecules/CardMatt/CardMatt';

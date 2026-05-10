@@ -1,39 +1,261 @@
 ---
-sidebar_position: 15
+sidebar_position: 5
 title: Deck
 ---
 
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { Deck, Row, Stack } from '@nott2/design-system';
+
 # Deck
 
-A shrouded stack of fate. Renders layered PlayingCard components (face-down) with optional top card (face-up for trophy pile).
+The beating heart of the table — a shrouded stack of fate. Every card is a real `PlayingCard`, face-down, waiting. When the top card is visible (Trophy Pile), it breaks the shroud — a known quantity atop the unknown. The visual is identical either way: a stack of cards, offset with subtle depth, promising consequences.
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { Deck } from '@nott2/design-system';
+
+<Deck count={12} label="Threat Deck" />
+```
+</details>
+
+## Why to Use
+
+Deck provides a physically convincing card pile that automatically manages visual depth (up to 5 stacked layers), count overlays, status badges, and interactive glow states. It composes `PlayingCard` atoms internally, so the deck looks and feels like a real pile of physical cards rather than an abstract container.
+
+## When to Use
+
+> **Do**
+> - Use as the Threat Deck in the `GameBoard` — the primary draw pile that players interact with each scene.
+> - Use as the Trophy Pile with the `topCard` prop to display the most recently won card face-up.
+> - Use `glow` to signal that a player should draw from this deck.
+> - Provide `onClick` to make the deck interactive during the draw phase.
+
+> **Don't**
+> - Do not use for displaying a single card. Use `PlayingCard` directly.
+> - Do not use for arbitrary card collections that aren't visually "stacked." This component is specifically a physical pile metaphor.
+
+## Anatomy
+
+```
+          THREAT DECK              ← deckLabel (optional)
+       ┌──────────┐
+      ┌┤──────────┤               ← stacked PlayingCard layers
+     ┌┤┤──────────┤                  (face-down, offset by -3px / +1px)
+     │││    12    ││               ← deckCount overlay (centered on top card)
+     │││          ││
+     └┤┤──────────┤
+      └┤──────────┤
+       └──────────┘
+       [ Shuffled ]                ← deckStatusBadgeWrapper (Badge atom)
+```
+
+1. **Root** (`deckRoot`) — Inline flex column aligning the label above the stack.
+2. **Label** (`deckLabel`) — Optional uppercase zone name above the pile (e.g., "Threat Deck", "Trophy Pile").
+3. **Stack** (`deckStack`) — A 52×72px relative container. Up to 5 `PlayingCard` layers are absolutely positioned with increasing offsets to create physical depth.
+4. **Count overlay** (`deckCount`) — Display font number centered on the top card face. Only shown on face-down decks when `showCount` is true.
+5. **Status badge** (`deckStatusBadgeWrapper`) — A `Badge` atom positioned at the bottom-center. Shows "Shuffled" (warning) or "Empty" (outline) states.
+6. **Hover reveal** (`deckStatusHover`) — A subtle pill showing "X cards" that fades in on hover/focus.
 
 ## Key Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `status` | `DeckStatus` | — | Deck state information |
-| `topCard` | `TopCardInfo` | — | Optional face-up top card (trophy pile) |
-| `glow` | `boolean` | `false` | Pulsing glow for draw prompts |
-| `showCount` | `boolean` | `false` | Show numeric card count badge |
-| `onClick` | `() => void` | — | Click handler (for drawing) |
+Use these props to configure the Deck component.
 
-## Implementation Examples
+### count
+The number of cards in the deck.
+
+| Type | Default | Description |
+|---|---|---|
+| `number` | — | **Required.** Determines the number of stacked layers (max 5) and the count overlay text. |
+
+<ComponentPreview>
+  <Row gap="3xl" align="start">
+    <Deck count={1} label="1 card" />
+    <Deck count={3} label="3 cards" />
+    <Deck count={12} label="12 cards" />
+    <Deck count={0} label="Empty" />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Deck count={1} label="1 card" />
+<Deck count={12} label="12 cards" />
+<Deck count={0} label="Empty" />
+```
+</details>
+
+### label
+Zone label displayed above the stack.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Uppercase label text. Also included in the `aria-label` for screen readers. |
+
+<ComponentPreview>
+  <Row gap="3xl" align="start">
+    <Deck count={12} label="Threat Deck" />
+    <Deck count={5} label="Trophy Pile" />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Deck count={12} label="Threat Deck" />
+```
+</details>
+
+### glow
+Pulsing amber/crimson halo signalling that the player should draw from this deck.
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `false` | When true, the deck radiates a pulsing gold glow via a `glowPulse` keyframe animation (2.5s cycle). |
+
+<ComponentPreview>
+  <Row gap="3xl" align="start">
+    <Deck count={12} label="Inactive" />
+    <Deck count={12} label="Draw!" glow />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Deck count={12} glow label="Draw!" />
+```
+</details>
+
+### topCard
+When provided, the top card renders face-up instead of face-down. Used for the Trophy Pile.
+
+| Type | Default | Description |
+|---|---|---|
+| `TopCardInfo \| null` | `null` | Object with `suit`, `rank`, and optional `joker`/`jokerColor` fields. |
+
+<ComponentPreview>
+  <Row gap="3xl" align="start">
+    <Deck count={3} label="Trophy Pile" topCard={{ suit: 'Hearts', rank: 'K' }} />
+    <Deck count={1} label="Joker Won" topCard={{ joker: true, jokerColor: 'Red' }} />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
 
 ```tsx
 <Deck
-  status={{ remaining: 12, total: 52 }}
-  glow={isDrawPhase}
-  onClick={handleDraw}
-/>
-
-{/* Trophy pile with top card visible */}
-<Deck
-  status={{ remaining: 3, total: 52 }}
+  count={3}
+  label="Trophy Pile"
   topCard={{ suit: 'Hearts', rank: 'K' }}
 />
 ```
+</details>
+
+### status
+Transient status overlay rendered as a `Badge` atom at the bottom of the stack.
+
+| Type | Default | Description |
+|---|---|---|
+| `'shuffled' \| 'empty' \| null` | `null` | `'shuffled'` shows a warning Badge, `'empty'` shows an outline Badge. Both fade-in with a scale animation. |
+
+<ComponentPreview>
+  <Row gap="3xl" align="start">
+    <Deck count={12} label="Just Shuffled" status="shuffled" />
+    <Deck count={0} label="Depleted" status="empty" />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Deck count={12} status="shuffled" />
+<Deck count={0} status="empty" />
+```
+</details>
+
+### showCount & compact
+
+| Type | Default | Description |
+|---|---|---|
+| `boolean` | `true` | `showCount` — when false, hides the numeric count overlay on the deck face. |
+| `boolean` | `false` | `compact` — smaller font size for the count overlay. |
+
+<ComponentPreview>
+  <Row gap="3xl" align="start">
+    <Deck count={12} label="With Count" />
+    <Deck count={12} label="No Count" showCount={false} />
+    <Deck count={12} label="Compact" compact />
+  </Row>
+</ComponentPreview>
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Deck count={12} showCount={false} />
+<Deck count={12} compact />
+```
+</details>
+
+### onClick
+Makes the deck interactive. When provided, the stack becomes a button with hover scale, focus ring, and keyboard support.
+
+| Type | Default | Description |
+|---|---|---|
+| `() => void` | — | Click handler. Adds `role="button"`, `tabIndex={0}`, and Enter/Space keyboard handling. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Deck count={12} glow onClick={handleDraw} label="Threat Deck" />
+```
+</details>
+
+### id
+HTML ID attribute for testing or DOM targeting.
+
+| Type | Default | Description |
+|---|---|---|
+| `string` | — | Standard HTML `id` attribute. |
+
+<details>
+<summary>Code example</summary>
+
+```tsx
+<Deck count={12} id="threat-deck" />
+```
+</details>
+
+## Behavior
+
+- **Layer depth**: Up to `MAX_LAYERS` (5) `PlayingCard` components are stacked with `-3px` vertical and `+1px` horizontal offsets to create a physical pile effect. Decks with more than 5 cards still show 5 layers.
+- **Empty state**: When `count` is 0, the stack renders a dashed-border placeholder with an em-dash (`—`) instead of PlayingCard layers.
+- **Count overlay logic**: The numeric count badge only shows on face-down decks (not when `topCard` is provided, to avoid obscuring the revealed card) and only when `showCount` is true.
+- **Hover reveal**: When no status badge is active and the deck isn't empty, a subtle "X cards" pill fades in on hover/focus-visible (from `opacity: 0` to `opacity: 1` via the `deckStatusHover` style).
+- **Interactive mode**: When `onClick` is provided, the stack gains `cursor: pointer`, `role="button"`, `tabIndex={0}`, and a scale-up hover transform with `shadow.glow`. Enter/Space keys trigger the handler.
+- **Glow animation**: The `glowPulse` keyframe alternates between two `box-shadow` intensities (gold at 40%/20% to goldBright at 70%/35%) over 2.5 seconds, creating a "beacon" effect.
+- **Status badge animation**: Both "Shuffled" and "Empty" badges animate in with a `fadeInScale` keyframe (300ms ease-out), preventing jarring state transitions.
+
+## Accessibility
+
+- The stack container uses `aria-label` combining the label and count (e.g., "Threat Deck, 12 cards").
+- When `onClick` is provided, the stack receives `role="button"` and `tabIndex={0}` with full keyboard support (Enter and Space).
+- A `:focus-visible` ring (`2px solid accentBright` with `2px` offset) appears for keyboard navigation.
+- All stacked card layers except the top are marked `aria-hidden="true"` to prevent redundant announcements.
+- Status badges use `role="status"` with descriptive `aria-label` values ("Deck shuffled", "Deck empty").
+- The `glowPulse` animation respects `prefers-reduced-motion: reduce` — replaced with a static `shadow.beacon` box-shadow.
 
 ## Related Components
 
-- **[PlayingCard](/components/molecules/playing-card)** — Individual cards in the deck
-- **[CardMatt](/components/molecules/card-matt)** — Surface where drawn cards land
+- **[PlayingCard](/components/molecules/playing-card)** — Individual cards composing the stack
+- **[CardMatt](/components/molecules/card-matt)** — The surface where drawn cards land
+- **[Badge](/components/atoms/badge)** — The atom used for status overlays ("Shuffled", "Empty")
