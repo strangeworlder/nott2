@@ -53,7 +53,6 @@ export type { EffortLevel } from './molecules/EffortBand/EffortBand';
 export { DifficultyBadge } from './molecules/DifficultyBadge/DifficultyBadge';
 export { DiceResult } from './molecules/DiceResult/DiceResult';
 export type { DiceResultProps } from './molecules/DiceResult/DiceResult';
-export { TrophyIndicator } from './molecules/TrophyIndicator/TrophyIndicator';
 export { WeaknessTracker } from './molecules/WeaknessTracker/WeaknessTracker';
 export { WaitingIndicator } from './molecules/WaitingIndicator/WaitingIndicator';
 export { TabBar } from './molecules/TabBar/TabBar';

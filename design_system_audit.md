@@ -115,7 +115,7 @@ Molecules (composed atoms — single-purpose game widgets)
 ├── Card, ActionFooter, PlayingCard, PlayerAvatar
 ├── StrikeIndicator, DieSelector, ResultBanner
 ├── EffortBand, DifficultyBadge, DiceResult
-├── TrophyIndicator, WeaknessTracker, WaitingIndicator
+├── WeaknessTracker, WaitingIndicator
 ├── TabBar, CardMatt, Deck, DoomClock, DoomClockTransition
 
 Organisms (compound — full screen sections)
@@ -282,8 +282,7 @@ Sizes: `sm` (CharacterBar) · `md` (panels) · `lg` (lobby).
 ### DiceResult
 **The autopsy report.** Clinical `d10 + d4 = Total` layout with optional aptitude modifier (struck-through original value).
 
-### TrophyIndicator
-**The Killer's power level.** Shows trophy pile top card (suit icon + rank). Amber-toned, always present.
+
 
 ### WeaknessTracker
 **The countdown to hope.** Four suit pips — found ones glow green, unfound are muted. Fixed order: Spades, Hearts, Clubs, Diamonds.

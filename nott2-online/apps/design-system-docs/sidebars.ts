@@ -67,7 +67,6 @@ const sidebars: SidebarsConfig = {
             'components/molecules/result-banner',
             'components/molecules/strike-indicator',
             'components/molecules/tab-bar',
-            'components/molecules/trophy-indicator',
             'components/molecules/waiting-indicator',
             'components/molecules/weakness-tracker',
           ],
