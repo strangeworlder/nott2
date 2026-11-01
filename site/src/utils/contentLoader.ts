@@ -1,4 +1,5 @@
 import { marked } from 'marked';
+import type { RulesContent } from '../data/rules';
 
 // Load all JSON data files
 const dataFiles = import.meta.glob('../data/**/*.json', { eager: true });
@@ -805,6 +806,16 @@ export interface UiLabelsContent {
   unknownCard: {
     hint: string;
   };
+  rulesReference: {
+    tabs: {
+      basic: string;
+      characters: string;
+      prompts: string;
+      fallout: string;
+    };
+    downloadBooklet: string;
+    bookletUrl: string;
+  };
 }
 
 export function getUiLabelsContent(playsetId?: string | null): UiLabelsContent {
@@ -817,4 +828,8 @@ export interface HeaderContent {
 
 export function getHeaderContent(playsetId?: string | null): HeaderContent {
   return loadData<HeaderContent>('header.json', playsetId);
+}
+
+export function getRulesContent(playsetId?: string | null): RulesContent {
+  return loadData<RulesContent>('rules.json', playsetId);
 }

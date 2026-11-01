@@ -20,7 +20,7 @@
             "labelOff": "Use Genre Point",
             "countLabel": "Genre Points: ",
             "noneAvailable": "No genre points available.",
-            "description": "Genre points allow you to reroll both dice. The point is removed from the game."
+            "description": "Genre points allow you to reroll both dice and add +1 to the d10 (max 9). You must accept the new result. The point is removed from the game."
         },
         "aptitude": {
             "title": "Aptitude?",

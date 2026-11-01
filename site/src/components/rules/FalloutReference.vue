@@ -1,7 +1,28 @@
 <script setup lang="ts">
-import { effortScale } from '../../data/rules';
+/**
+ * FalloutReference
+ *
+ * Philosophical:
+ * FalloutReference displays the Effort Scale—the price of survival. Every push
+ * of effort carries a narrative cost, escalating from controlled composure to
+ * a fatal Breaking Point.
+ *
+ * Technical:
+ * Renders a 2-column grid of Cards for the 4 Effort Scale levels loaded via
+ * contentLoader.
+ *
+ * Props:
+ * (None - uses useLivePlay and contentLoader directly)
+ */
+
+import { computed } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getRulesContent } from '../../utils/contentLoader';
 import Card from '../Card.vue';
 import Text from '../Text.vue';
+
+const { selectedPlayset } = useLivePlay();
+const effortScale = computed(() => getRulesContent(selectedPlayset.value).effortScale);
 </script>
 
 <template>

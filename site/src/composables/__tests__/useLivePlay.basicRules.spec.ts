@@ -40,6 +40,10 @@ describe('useLivePlay - Basic Rules (NotT_2.md)', () => {
     assignStrike,
     characters,
     addNextReserve,
+    currentAct,
+    pendingActSetups,
+    currentPhase,
+    startNextScene,
   } = useLivePlay();
 
   // Helper to create a test card
@@ -300,6 +304,7 @@ describe('useLivePlay - Basic Rules (NotT_2.md)', () => {
       expect(isBlackJokerRemoved.value).toBe(false);
       applyGameStateUpdates();
       expect(isBlackJokerRemoved.value).toBe(true);
+      expect(pendingActSetups.value).not.toContain('jokers');
     });
 
     it('should add King on Black Joker failure after applying updates', () => {
@@ -378,6 +383,43 @@ describe('useLivePlay - Basic Rules (NotT_2.md)', () => {
       // Add 13th card (should trigger)
       const triggered = addNextReserve();
       expect(triggered).toBe(true);
+    });
+  });
+
+  // ===========================================================================
+  // ACT 1 -> ACT 2 TRANSITION TESTS
+  // ===========================================================================
+  describe('Act 1 to Act 2 Transition', () => {
+    it('should transition to Act 2 and queue Act 2 setup screen when winning against first Face Card', () => {
+      expect(currentAct.value).toBe(1);
+      setTrophyTop(5);
+      setupActiveCard(11, 'Spades'); // Jack difficulty = 6
+      rollMain.value = 6;
+      rollEffort.value = 1; // Total = 7 >= 6 (Success)
+
+      applyGameStateUpdates();
+
+      expect(currentAct.value).toBe(2);
+      expect(pendingActSetups.value).toContain('2');
+
+      startNextScene();
+      expect(currentPhase.value).toBe('act-setup');
+    });
+
+    it('should transition to Act 2 and queue Act 2 setup screen when failing against first Face Card', () => {
+      expect(currentAct.value).toBe(1);
+      setTrophyTop(10);
+      setupActiveCard(11, 'Hearts'); // Jack difficulty = 11
+      rollMain.value = 1;
+      rollEffort.value = 1; // Total = 2 < 11 (Failure)
+
+      applyGameStateUpdates();
+
+      expect(currentAct.value).toBe(2);
+      expect(pendingActSetups.value).toContain('2');
+
+      startNextScene();
+      expect(currentPhase.value).toBe('act-setup');
     });
   });
 });

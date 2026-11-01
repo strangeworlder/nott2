@@ -203,6 +203,9 @@ const isWeaknessJustFound = computed(() => {
                     <ProcessStep step="2" variant="success" :title="content.jokers.black.success.title">
                         <Text variant="body"><span v-html="content.jokers.black.success.body"></span></Text>
                     </ProcessStep>
+                    <ProcessStep step="3" variant="success" :title="content.standard.success.remains.title">
+                        <Text variant="body"><strong><span v-html="content.standard.success.remains.body"></span></strong></Text>
+                    </ProcessStep>
                   </div>
               </template>
 
@@ -303,6 +306,13 @@ const isWeaknessJustFound = computed(() => {
                         :title="content.jokers.black.failure.title"
                     >
                         <Text variant="body"><span v-html="content.jokers.black.failure.body"></span></Text>
+                    </ProcessStep>
+                    <ProcessStep 
+                        step="3" 
+                        variant="failure" 
+                        :title="content.standard.failure.remains.title"
+                    >
+                        <Text variant="body"><strong><span v-html="content.standard.failure.remains.body"></span></strong></Text>
                     </ProcessStep>
                  </template>
               </template>

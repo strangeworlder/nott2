@@ -1,5 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+/**
+ * RulesReference
+ *
+ * Philosophical:
+ * RulesReference is the table's quick-reference codex. It organizes the rules
+ * into digestible tabs—Basic Rules, Characters, Prompt Matrix, and Effort Scale—
+ * so players can look up any mechanic or prompt without losing their place in
+ * the Live Play Helper, or download the complete printable Ashcan Booklet PDF.
+ *
+ * Technical:
+ * A tabbed container component switching between BasicRules, CharacterRules,
+ * PromptMatrix, and FalloutReference, with an action to open/download the
+ * printable Ashcan Booklet PDF.
+ *
+ * Props:
+ * (None - manages active tab internally)
+ */
+
+import { computed, ref } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getUiLabelsContent } from '../../utils/contentLoader';
+import Button from '../Button.vue';
 import PromptMatrix from '../live-play/PromptMatrix.vue';
 import NavButton from '../NavButton.vue';
 import Navigation from '../Navigation.vue';
@@ -7,37 +28,43 @@ import BasicRules from './BasicRules.vue';
 import CharacterRules from './CharacterRules.vue';
 import FalloutReference from './FalloutReference.vue';
 
-const activeTab = ref<'basic' | 'characters' | 'prompts' | 'fallout'>('basic');
+type TabId = 'basic' | 'characters' | 'prompts' | 'fallout';
+
+const { selectedPlayset } = useLivePlay();
+const labels = computed(() => getUiLabelsContent(selectedPlayset.value).rulesReference);
+
+const tabs = computed<{ id: TabId; label: string }[]>(() => [
+  { id: 'basic', label: labels.value.tabs.basic },
+  { id: 'characters', label: labels.value.tabs.characters },
+  { id: 'prompts', label: labels.value.tabs.prompts },
+  { id: 'fallout', label: labels.value.tabs.fallout },
+]);
+
+const activeTab = ref<TabId>('basic');
+
+function downloadBooklet() {
+  window.open(labels.value.bookletUrl, '_blank', 'noopener,noreferrer');
+}
 </script>
 
 <template>
   <div class="space-y-8">
     <Navigation>
-      <NavButton 
-        :active="activeTab === 'basic'"
-        @click="activeTab = 'basic'"
+      <NavButton
+        v-for="tab in tabs"
+        :key="tab.id"
+        :active="activeTab === tab.id"
+        @click="activeTab = tab.id"
       >
-        Basic Rules
-      </NavButton>
-      <NavButton 
-        :active="activeTab === 'characters'"
-        @click="activeTab = 'characters'"
-      >
-        Characters
-      </NavButton>
-      <NavButton 
-        :active="activeTab === 'prompts'"
-        @click="activeTab = 'prompts'"
-      >
-        Prompt Matrix
-      </NavButton>
-      <NavButton 
-        :active="activeTab === 'fallout'"
-        @click="activeTab = 'fallout'"
-      >
-        Effort Scale
+        {{ tab.label }}
       </NavButton>
     </Navigation>
+
+    <div class="flex justify-center">
+      <Button variant="secondary" size="sm" @click="downloadBooklet">
+        {{ labels.downloadBooklet }}
+      </Button>
+    </div>
 
     <Transition
       enter-active-class="transition duration-300 ease-out"

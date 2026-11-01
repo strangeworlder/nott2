@@ -43,7 +43,7 @@
                 "steps": [
                     "**Face Cards:** Face cards represent the Killer's direct intervention. They are harder to defeat.",
                     "**Weaknesses:** You are looking for 4 different weaknesses of the killer. These are represented by you defeating a face card from each of the four suits.",
-                    "**Progression:** Once you've found the four Weaknesses, Act 3 will begin."
+                    "**Progression:** Act 3 begins once you've found all 4 Weaknesses OR added 13 cards from the Number Reserve (finding all 4 Weaknesses also triggers The Finale and adds the Jokers)."
                 ]
             }
         ],

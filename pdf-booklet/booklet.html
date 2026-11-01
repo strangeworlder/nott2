@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Night of the Thirteenth — Second Edition Ashcan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Philosopher:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Trade+Winds&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: 148mm 210mm;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    :root {
+      --ink: #000000;
+      --oxblood: #360700;
+      --red: #d52d31;
+      --blue: #364a8c;
+      --olive: #251e10;
+      --font-display: 'Philosopher', Georgia, serif;
+      --font-body: 'Crimson Pro', Georgia, serif;
+      --font-typewriter: 'Special Elite', 'Courier New', monospace;
+      --font-cover-sub: 'Trade Winds', cursive;
+    }
+
+    html, body {
+      width: 419.53pt;
+      margin: 0;
+      padding: 0;
+      background: #f3ede6;
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 9.8pt;
+      line-height: 1.24;
+    }
+
+    .page {
+      position: relative;
+      width: 419.53pt;
+      height: 595.28pt;
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+      background-size: 100% 100%;
+      background-position: top left;
+      background-repeat: no-repeat;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    /* Page Number inside the bottom skull watermark */
+    .page-num {
+      position: absolute;
+      bottom: 14.5pt;
+      width: 30pt;
+      text-align: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 8.5pt;
+      color: var(--ink);
+      z-index: 10;
+    }
+    .page-num.even {
+      left: 14.2pt;
+    }
+    .page-num.odd {
+      left: 374.5pt;
+    }
+
+    /* Typography Primitives */
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.08;
+    }
+
+    h1.page-title {
+      font-size: 20pt;
+      margin-bottom: 6pt;
+    }
+
+    h2.section-title {
+      font-size: 14.5pt;
+      margin-top: 8pt;
+      margin-bottom: 3.5pt;
+    }
+
+    h3.sub-title {
+      font-size: 11.5pt;
+      color: var(--oxblood);
+      margin-top: 6pt;
+      margin-bottom: 2pt;
+    }
+
+    p {
+      margin-bottom: 5.5pt;
+      text-align: left;
+    }
+
+    ul, ol {
+      padding-left: 12pt;
+      margin-bottom: 5.5pt;
+    }
+
+    li {
+      margin-bottom: 2.5pt;
+    }
+
+    .term {
+      font-weight: 700;
+      color: var(--oxblood);
+      font-size: 10.3pt;
+    }
+
+    .red-accent {
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    .blue-accent {
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .suit-blue {
+      color: var(--blue);
+      font-family: 'Segoe UI Symbol', 'Arial', sans-serif;
+      font-weight: 700;
+    }
+
+    .suit-red {
+      color: var(--red);
+      font-family: 'Segoe UI Symbol', 'Arial', sans-serif;
+      font-weight: 700;
+    }
+
+    /* Typewriter callout notes */
+    .callout {
+      position: absolute;
+      font-family: var(--font-typewriter);
+      font-size: 7.6pt;
+      line-height: 1.18;
+      color: var(--blue);
+      z-index: 5;
+    }
+    .callout.dark {
+      color: var(--ink);
+    }
+
+    /* Subtle rule box for sidebars / modules */
+    .rule-box {
+      border: 1pt solid rgba(54, 7, 0, 0.35);
+      background: rgba(255, 252, 247, 0.52);
+      border-radius: 3pt;
+      padding: 6.5pt 8.5pt;
+      margin-top: 6pt;
+      margin-bottom: 6pt;
+    }
+
+    /* Cover subtitle */
+    .cover-subtitle {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      bottom: 49pt;
+      text-align: center;
+      font-family: var(--font-cover-sub);
+      font-size: 20.5pt;
+      letter-spacing: 0.6pt;
+      color: var(--red);
+      -webkit-text-stroke: 2.2pt var(--oxblood);
+      paint-order: stroke fill;
+    }
+
+    /* Quick Reference Table */
+    table.ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2pt;
+      margin-bottom: 5pt;
+      font-size: 8.6pt;
+      line-height: 1.15;
+    }
+    table.ref-table th,
+    table.ref-table td {
+      border-bottom: 0.6pt solid rgba(54, 7, 0, 0.25);
+      padding: 2.2pt 4pt;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.ref-table th {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--oxblood);
+      background: rgba(54, 7, 0, 0.06);
+      font-size: 8.8pt;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =====================================================================
+       PAGE 1: COVER (Odd / Right)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_1.png');">
+    <div class="cover-subtitle">SECOND EDITION ASHCAN</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 2: CREDITS, LEGAL & OPTIONAL MODULES (Even / Left)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_2.png'); padding: 26pt 28pt 36pt 24pt;">
+    <div style="font-size: 9.8pt; line-height: 1.32; margin-bottom: 14pt;">
+      <p style="margin-bottom: 3pt;"><strong>(c) 2025–2026 Gogam</strong></p>
+      <p style="margin-bottom: 3pt;"><strong>Designed by Petri Leinonen</strong></p>
+      <p style="margin-bottom: 3pt;"><strong>Revised Interaction Core by The Table</strong></p>
+      <p style="margin-bottom: 8pt;"><strong>Published by Gogam</strong></p>
+      <p style="margin-bottom: 2pt;">ISBN 978-952-65030-8-0 (softcover)</p>
+      <p style="margin-bottom: 8pt;">ISBN 978-952-65030-9-7 (PDF)</p>
+      <p style="font-size: 8.8pt; line-height: 1.22; color: #222;">
+        <em>Uses the Vectorized Playing Cards 3.2 (https://totalnonsense.com/open-source-vector-playing-cards/)<br/>
+        Copyright 2011, 2024 – Chris Aguilar. Licensed under: LGPL 3.0</em>
+      </p>
+    </div>
+
+    <div class="rule-box" style="margin-top: 10pt;">
+      <h2 class="section-title" style="margin-top: 0; font-size: 13pt; color: var(--oxblood);">Rule of Thumb</h2>
+      <p style="margin-bottom: 0; font-size: 9.4pt;">
+        Generally, more specific rules trump generic rules, and playset instructions supersede core rule instructions. If a card or playset says one thing and the core rules say another, follow the playset.
+      </p>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 14pt;">Optional Rules Modules (Playsets)</h2>
+    <p>Playsets may enable special rule modules that modify setup or gameplay:</p>
+
+    <div class="rule-box">
+      <h3 class="sub-title" style="margin-top: 0;">Classic Setup (<em>Generic Slasher</em>)</h3>
+      <p style="margin-bottom: 3.5pt;">Uses the original curated deck escalation instead of random number piles:</p>
+      <ul style="margin-bottom: 0;">
+        <li><span class="term">Number Reserve</span>: Shuffle <strong>5s</strong>, <strong>6s</strong>, <strong>7s</strong>, <strong>8s</strong>, <strong>9s</strong>, and <strong>10s</strong> separately. Stack them face down so <strong>5s</strong> are on top and <strong>10s</strong> are on the bottom.</li>
+        <li><span class="term">Threat Deck</span>: Shuffle all <strong>2s</strong>, <strong>3s</strong>, and <strong>4s</strong> together with <strong>1 random Jack</strong> face down. Place the <strong>4 Aces</strong> face up on top.</li>
+        <li><span class="term">Trophy Pile</span>: Draw the bottom card of the Number Reserve (a random <strong>10</strong>) and place it face up to start the Trophy Pile.</li>
+      </ul>
+    </div>
+
+    <div class="rule-box">
+      <h3 class="sub-title" style="margin-top: 0;">Final Girl Rule (<em>Summer Camp Massacre</em>)</h3>
+      <ul style="margin-bottom: 0;">
+        <li><span class="term">Lethal Encounters</span>: Any encounter with the Killer (whenever a <span class="term">Face Card</span> is drawn onto the table) immediately results in <span class="red-accent">1 Strike</span> to assign.</li>
+        <li><span class="term">Sole Survivor Climax</span>: <span class="term">Act 3</span> and <span class="term">The Finale</span> (adding the Jokers) begin immediately when there is <strong>only one surviving character</strong> left.</li>
+      </ul>
+    </div>
+
+    <div class="page-num even">2</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 3: NO DIRECTOR, REQUIREMENTS, SETUP & THE d13 (Odd / Right)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_3.png'); padding: 18pt 26pt 36pt 38pt;">
+    <h1 class="page-title" style="font-size: 18pt; margin-bottom: 4pt;">“No Director, Only Victims”</h1>
+    <p style="margin-bottom: 4pt;">
+      In this second edition of <span class="term">Night of the Thirteenth</span>, we strip away the safety net. There is no permanent Game Master to guide you, save you, or condemn you. Instead, in each scene the <span class="term">Active Player (AP)</span> steps into the spotlight as both the Protagonist and the <span class="term">Director for the scene</span>—framing the start of the scene, maintaining the tone, and holding final authority (and veto power) over their character’s actions.
+    </p>
+    <p style="margin-bottom: 4pt;">
+      They are not alone. The rest of the table shifts roles to play side characters, the <span class="term">Camera Crew</span>, and the <span class="term">Editor</span>—answering sensory questions, escalating the danger, and ensuring the horror lands with maximum impact. You are all responsible for the nightmare.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12pt; margin-top: 4pt; margin-bottom: 2pt;">
+      <div>
+        <h2 class="section-title" style="margin-top: 0;">Requirements</h2>
+        <ul style="font-size: 9.2pt; margin-bottom: 2pt;">
+          <li><span class="term">Standard playing card deck</span> with two distinct Jokers (Red and Black).</li>
+          <li><span class="term">Dice</span>: At least one <span class="term">d10</span> and one <span class="term">d4</span>.</li>
+          <li><span class="term">13 Tokens</span>: To represent the central pool of <span class="term">Genre Points</span>.</li>
+          <li><span class="term">Writing Materials</span>: To record your name, archetype, and demise.</li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="section-title" style="margin-top: 0;">Setting Up</h2>
+        <ol style="font-size: 9.2pt; margin-bottom: 2pt;">
+          <li><span class="term">Choose the Playset</span>: Decide which horror movie you are living through tonight.</li>
+          <li><span class="term">Build the Decks</span>: Follow <span class="term">The Table Setup</span> on page 4.</li>
+          <li><span class="term">Create the Cast</span>: Follow <span class="term">Creating the Cast</span> (or create on the fly during the 4 Prologue Aces).</li>
+          <li><span class="term">Begin</span>: Good luck. You’ll need it.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 3pt; text-align: center; font-size: 15.5pt;">The d13</h2>
+    <p style="margin-bottom: 3.5pt;">
+      The game uses a unique die roll called the <span class="term">“d13”</span>—a combination of a <span class="term">d10</span> and a <span class="term">d4</span> rolled together and added for a total between <strong>1 and 13</strong>:
+    </p>
+    <ul style="margin-bottom: 3.5pt;">
+      <li>The <span class="term">d10 (Main Die)</span> represents your skill and luck. The <strong>0</strong> face is read as <strong>zero</strong> (not ten), producing a result from <strong>0 to 9</strong>.</li>
+      <li>The <span class="term">d4 (Effort Die)</span> represents how hard you push yourself, producing a result from <strong>1 to 4</strong>. It is added to the Main Die AND sets your tier on the <span class="term">Effort Scale</span>.</li>
+    </ul>
+    <p style="font-size: 8.9pt; font-style: italic; margin-bottom: 0;">
+      <strong>Important:</strong> A modifier can never raise or lower a die outside its natural range (<strong>0–9</strong> for the d10, <strong>1–4</strong> for the d4). You cannot roll higher than 13 or lower than 1.
+    </p>
+
+    <div class="page-num odd">3</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 4: THE TABLE SETUP (Even / Left Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_4.png');">
+    <!-- Left Column Rules Text (x: 14pt to 180pt) -->
+    <div style="position: absolute; left: 14.2pt; top: 14pt; width: 162pt; font-size: 8.85pt; line-height: 1.19;">
+      <h1 class="page-title" style="font-size: 16pt; margin-bottom: 4pt;">The Table Setup</h1>
+
+      <p style="margin-bottom: 4.5pt;">
+        <span class="term">The Threat Deck</span>: The horror starts small. Take the <span class="term">Face Cards</span>, <span class="term">Aces</span>, and <span class="term">Jokers</span> aside. Shuffle the remaining Number Cards (<strong>2–10</strong>) and deal <strong>8 random number cards</strong> face down. Add <strong>one random Jack</strong> to this pile and shuffle it again. Place the <strong>four Aces</strong> face up on top as the Prologue.
+      </p>
+      <p style="margin-bottom: 5pt;">
+        During the Prologue, resolve the top Ace one by one. In the Main Game, <span class="term">draw up to two cards</span> face up onto the table and choose one to face.
+      </p>
+
+      <p style="margin-bottom: 4.5pt;">
+        <span class="term">The Reserves</span>: Deal <strong>14 of the remaining number cards</strong> face down to form the <span class="term">Number Reserve</span> (remove any leftover number cards from the game unseen). Shuffle the remaining <strong>Jacks (3)</strong>, <strong>Queens (4)</strong>, and <strong>Kings (4)</strong> into three separate face-down <span class="term">Face Card Reserves</span>. Keep the <strong>two Jokers</strong> face up and separate for the Finale.
+      </p>
+
+      <p style="margin-bottom: 4.5pt;">
+        <span class="term">The Trophy Pile</span>: Flip the <strong>top card</strong> of the <span class="term">Number Reserve</span> face up to start the <span class="term">Trophy Pile</span> (leaving <strong>13 cards</strong> in the Number Reserve).
+      </p>
+      <p style="margin-bottom: 0;">
+        Whenever you succeed against a Number Card, place it face up on top of the <span class="term">Trophy Pile</span>. Its top card sets the <span class="term">Base Difficulty</span> whenever you confront a <span class="term">Face Card</span> or <span class="term">Joker</span>.
+      </p>
+    </div>
+
+    <!-- Typewriter Annotations on Right Diagram -->
+    <div class="callout" style="left: 178pt; top: 62pt; width: 125pt; transform: rotate(-13deg);">
+      4 Aces on top for the<br/>Prologue; draw 2 cards<br/>in the Main Game.
+    </div>
+
+    <div class="callout" style="left: 222pt; top: 196pt; width: 165pt; transform: rotate(2deg);">
+      13 Number Reserve cards &amp; Face Card<br/>Reserves get added to the Threat Deck
+    </div>
+
+    <div class="callout" style="left: 246pt; top: 365pt; width: 130pt; transform: rotate(-1.5deg);">
+      And these when you<br/>get to the Endgame
+    </div>
+
+    <div class="callout" style="left: 178pt; top: 472pt; width: 108pt; transform: rotate(-13deg);">
+      13 Genre Points in a<br/>central pool for the<br/>table to award
+    </div>
+
+    <div class="callout" style="left: 282pt; top: 494pt; width: 120pt; transform: rotate(5deg);">
+      Trophy Pile: top card<br/>sets Base Difficulty<br/>against Face Cards
+    </div>
+
+    <div class="page-num even">4</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 5: THE THREAT CARD (Odd / Right Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_5.png');">
+    <!-- Typewriter Annotations on Card Corners -->
+    <div class="callout dark" style="left: 84pt; top: 18pt; width: 95pt; transform: rotate(18deg);">
+      How hard the next<br/>challenge is going<br/>to be.
+    </div>
+
+    <div class="callout dark" style="left: 36pt; top: 145pt; width: 98pt; transform: rotate(-3.5deg);">
+      What the challenge<br/>will be about
+    </div>
+
+    <div class="callout dark" style="left: 300pt; top: 374pt; width: 104pt; transform: rotate(38deg);">
+      Face Card, so you’re<br/>going to face the Killer<br/>for your next challenge!
+    </div>
+
+    <!-- Top-Right Card Content: The Suit & The Number -->
+    <div style="position: absolute; left: 158pt; top: 30pt; width: 228pt; font-size: 9.2pt; line-height: 1.2;">
+      <h2 class="section-title" style="margin-top: 0; font-size: 15pt;">The Suit</h2>
+      <p style="margin-bottom: 4pt;">
+        ... of the <span class="term">Threat Card</span> tells you the nature of the challenge and which <span class="term">Aptitude</span> applies:
+      </p>
+      <ul style="list-style: none; padding-left: 2pt; margin-bottom: 7pt;">
+        <li>• <span class="suit-blue">♠</span> : <span class="term">Power</span> — physical challenges &amp; brute force</li>
+        <li>• <span class="suit-red">♥</span> : <span class="term">Resolve</span> — challenges of nerves &amp; fear</li>
+        <li>• <span class="suit-blue">♣</span> : <span class="term">Intellect</span> — know-how &amp; investigation</li>
+        <li>• <span class="suit-red">♦</span> : <span class="term">Finesse</span> — speed, stealth &amp; precision</li>
+      </ul>
+
+      <h2 class="section-title" style="margin-top: 4pt; font-size: 15pt;">The Number</h2>
+      <p style="margin-bottom: 4pt;">
+        ... of the <span class="term">Threat Card</span> sets the <span class="term">Target Difficulty</span> you must roll equal to or higher than on the <span class="term">d13</span>:
+      </p>
+      <ul style="padding-left: 11pt; margin-bottom: 0;">
+        <li><span class="term">Aces (Difficulty 1)</span>: Prologue Establishing Shots. Impossible to fail; keep the Ace as your Aptitude token.</li>
+        <li><span class="term">Number Cards (2–10)</span>: Static Difficulty equal to the card’s <strong>Rank</strong> (<strong>2 to 10</strong>).</li>
+      </ul>
+    </div>
+
+    <!-- Bottom-Left Card Content: Choosing & Face Cards -->
+    <div style="position: absolute; left: 34pt; top: 324pt; width: 258pt; font-size: 9.1pt; line-height: 1.19;">
+      <h2 class="section-title" style="margin-top: 0; font-size: 14.5pt;">Face Cards (The Killer)</h2>
+      <p style="margin-bottom: 4.5pt;">
+        In the Main Game, up to <strong>two Threat Cards</strong> are face up on the table, and the Active Player chooses one to resolve.
+      </p>
+      <p style="margin-bottom: 4.5pt;">
+        <span class="term">Face Card Lock</span>: While a <span class="term">Face Card</span> is on the table, you <strong>cannot draw</strong> another card from the Threat Deck. You may resolve the other visible card first, leaving the Face Card as the sole remaining card the next Active Player <strong>must</strong> confront!
+      </p>
+      <p style="margin-bottom: 0;">
+        When confronting a <span class="term">Face Card</span>, you face the Killer directly. The Suit still sets the nature of the scene, and the <span class="term">Difficulty</span> is determined by adding the <span class="term">Trophy Pile’s</span> top card to the Face Card’s modifier below:
+      </p>
+    </div>
+
+    <div class="page-num odd">5</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 6: RUNNING A SCENE — PHASES 1 & 2 (Even / Left Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_2.png'); padding: 24pt 26pt 36pt 24pt;">
+    <h1 class="page-title">Running a Scene</h1>
+    <p>
+      Play proceeds in scenes around the table. In each scene, one player takes the spotlight as the <span class="term">Active Player (AP)</span> and acts as the <span class="term">Director for the scene</span>.
+    </p>
+
+    <h2 class="section-title">Phase 1: Scene Setup (Choose Your Path)</h2>
+    <ul>
+      <li>
+        <span class="term">The Prologue (The Four Aces)</span>: The first four scenes resolve the four Aces on top of the Threat Deck. Each Ace showcases the character with the matching <span class="term">Aptitude</span> in an <em>Establishing Shot</em> (Difficulty 1). Because they use their Aptitude (<span class="term">-1 Effort</span>), the worst Effort they can suffer is <span class="term">Overexertion (3)</span>—never a Strike.
+      </li>
+      <li>
+        <span class="term">The Main Game</span>: Once all four Aces are resolved, ensure there are <strong>two cards</strong> face up on the table (unless locked by a <span class="term">Face Card</span>) and choose <strong>one</strong> to tackle. Look up or improvise the threat from the card’s <strong>Suit</strong> and <strong>Rank</strong>.
+      </li>
+    </ul>
+
+    <h2 class="section-title">Phase 2: Conversation &amp; Stakes (Focusing the Lens)</h2>
+    <p>
+      The Active Player has complete authority over their character’s actions and a <span class="term">veto right</span> over suggestions from other players (except step 3 below). Follow these four steps before rolling the dice:
+    </p>
+
+    <ol style="padding-left: 13pt;">
+      <li style="margin-bottom: 4.5pt;">
+        <span class="term">Set the Scene</span>: Based on the Threat Card, the <span class="term">Active Player</span> describes where the scene takes place with their character front and center. The <span class="term">other players</span> describe the surroundings and any side characters present.
+      </li>
+      <li style="margin-bottom: 4.5pt;">
+        <span class="term">Focus the Camera</span>: The Active Player asks an Act-specific sensory question, and the other players answer to build atmosphere:
+        <div class="rule-box" style="margin-top: 3pt; margin-bottom: 3pt; padding: 4.5pt 7pt; font-size: 8.9pt;">
+          <div>• <span class="term">Act 1</span>: <em>“What does it look/smell like?” “How close is the Killer?” “How dark is it?”</em></div>
+          <div>• <span class="term">Act 2</span>: <em>“What sound makes you freeze?” “Where is the blood coming from?” “Who is watching you?”</em></div>
+          <div>• <span class="term">Act 3</span>: <em>“Why is there no hope?” “What part of your body hurts the most?” “How do you know you’re going to die?”</em></div>
+        </div>
+      </li>
+      <li style="margin-bottom: 4.5pt;">
+        <span class="term">Escalate (“Something’s Not Right...”)</span>: Once per scene, any other player may interject: <span class="red-accent">“Something’s not right...”</span> and introduce a terrifying detail that makes the situation worse. The Active Player <strong>must accept this truth</strong> (no veto).
+      </li>
+      <li style="margin-bottom: 0;">
+        <span class="term">Commit to the Effort (The Stakes)</span>: Before rolling, the table asks the Active Player: <em>“If you end up pushing yourself to reach your goal, what are you willing to risk?”</em> Agree together on a specific <span class="term">Overexertion</span> sacrifice fitting the current Act. <strong>You may not roll until the sacrifice is agreed upon.</strong>
+      </li>
+    </ol>
+
+    <div class="page-num even">6</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 7: PHASE 3 — THE TEST & THE EFFORT SCALE (Odd / Right Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_6.png'); padding: 20pt 22pt 30pt 24pt;">
+    <h1 class="page-title" style="margin-bottom: 4pt;">Phase 3: The Test</h1>
+    <p style="margin-bottom: 4.5pt;">
+      When the stakes are set, roll the <span class="term">d13</span> (<span class="term">d10 Main Die</span> + <span class="term">d4 Effort Die</span>), apply any <span class="term">Genre Point</span> reroll or <span class="term">Aptitude</span> adjustment, and compare your <strong>Total</strong> to the card’s <span class="term">Difficulty</span>:
+    </p>
+    <ul style="margin-bottom: 6pt;">
+      <li><span class="term">Equal or Greater (Total &ge; Difficulty)</span>: <span class="term">Success.</span> You achieve your goal and push through the challenge.</li>
+      <li><span class="term">Less (Total &lt; Difficulty)</span>: <span class="term">Failure.</span> You fall short and the situation spirals out of control.</li>
+    </ul>
+
+    <h2 class="section-title" style="margin-top: 4pt; margin-bottom: 4pt;">The Effort Scale (Pushing Your Luck)</h2>
+    <p style="margin-bottom: 6pt;">
+      Regardless of whether you succeeded or failed, the final result of your <span class="term">d4 Effort Die</span> determines the physical and narrative toll of the attempt:
+    </p>
+
+    <!-- Effort 1 & 2 (Full width above the cleaver) -->
+    <div style="margin-bottom: 5pt;">
+      <p style="margin-bottom: 4.5pt;">
+        <span class="term">1 — Controlled Effort (Safe &amp; Effective)</span>: You kept your cool. You narrate the outcome (Success or Failure) <strong>entirely on your own terms</strong>. You look capable, or your failure is tragic and noble.
+      </p>
+      <p style="margin-bottom: 4.5pt;">
+        <span class="term">2 — Pushing It (Minor Costs)</span>: You exerted yourself. You narrate the core outcome, and the other players suggest <strong>2–3 minor costs</strong> (scratches, noise, lost time). You choose <strong>one</strong> cost to include in the scene.
+      </p>
+    </div>
+
+    <!-- Effort 3 & 4 (Right column beside the bloody cleaver illustration) -->
+    <div style="margin-left: 196pt; font-size: 9.15pt; line-height: 1.19;">
+      <p style="margin-bottom: 6pt;">
+        <span class="term">3 — Overexertion (Guaranteed Sacrifice)</span>: You pushed too hard. Whether you Succeeded or Failed, the <span class="term">Agreed Sacrifice</span> from Phase 2 happens:
+        <br/>• <em>If Success</em>: You achieve your goal, but you pay the price.
+        <br/>• <em>If Failure</em>: You don’t get what you wanted, and you <em>still</em> pay the price.
+      </p>
+      <p style="margin-bottom: 0;">
+        <span class="term">4 — Breaking Point (Disaster Strikes)</span>: You lost control. The <span class="term">Agreed Sacrifice</span> happens, <strong>AND</strong> it gets worse. The other players suggest <span class="term">“The Twist”</span>—a new, horrible revelation or immediate danger. You choose which Twist becomes true, and you immediately take <span class="red-accent">1 Strike</span>!
+      </p>
+    </div>
+
+    <div class="page-num odd">7</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 8: PHASE 4 — UPDATING THE GAME STATE (Even / Left Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_2.png'); padding: 22pt 26pt 36pt 24pt;">
+    <h1 class="page-title" style="margin-bottom: 4pt;">Phase 4: Fallout &amp; Deck Updates</h1>
+    <p style="margin-bottom: 5pt;">
+      After narrating the close of the scene, check if any player wishes to award a <span class="term">Genre Point</span> from the central pool, record any <span class="red-accent">Strikes</span> earned, and update the decks based on the card resolved:
+    </p>
+
+    <h3 class="sub-title">1. Aces (The Prologue)</h3>
+    <p style="margin-bottom: 5pt;">
+      Remove the resolved Ace from the game and place it in front of the Active Player as their <span class="term">Aptitude</span> token. Do <strong>not</strong> place it on the Trophy Pile or draw from the Number Reserve.
+    </p>
+
+    <h3 class="sub-title">2. Number Cards (2–10)</h3>
+    <ul style="margin-bottom: 5pt;">
+      <li>
+        <span class="term">On a Success</span>: Place the resolved Number Card face up on <strong>top of the Trophy Pile</strong> (updating the Base Difficulty for future Face Cards). Then take the top card of the <span class="term">Number Reserve</span> and place it face down at the <strong>bottom of the Threat Deck</strong>.
+      </li>
+      <li>
+        <span class="term">On a Failure</span>: Place the resolved Number Card face down at the <strong>bottom of the Threat Deck</strong> to haunt you again later, AND place the top card of the <span class="term">Number Reserve</span> face down at the <strong>bottom of the Threat Deck</strong>.
+      </li>
+    </ul>
+
+    <h3 class="sub-title">3. Face Cards (Facing the Killer)</h3>
+    <ul style="margin-bottom: 5pt;">
+      <li>
+        <span class="term">On a Success</span>:
+        <ol style="padding-left: 12pt; margin-top: 2pt; margin-bottom: 2pt;">
+          <li><span class="term">Check Suit Weakness</span>: If this is the <strong>first time</strong> you have defeated a Face Card of this Suit (<span class="suit-blue">♠</span> <span class="suit-red">♥</span> <span class="suit-blue">♣</span> <span class="suit-red">♦</span>), you uncover one of the Killer’s <strong>Weaknesses</strong>—remove this Face Card from the game permanently! If you already found this Suit’s Weakness earlier, the Face Card stays in the Threat Deck.</li>
+          <li><span class="term">The Killer Retaliates</span>: Based on your final <span class="term">Effort Die (d4)</span>:
+            <br/>• <strong>Effort 1–2 (Controlled / Pushing It)</strong>: Add a random <span class="term">Jack</span> from the Reserves to the Threat Deck.
+            <br/>• <strong>Effort 3–4 (Overexertion / Breaking Point)</strong>: Add a random <span class="term">Queen</span> from the Reserves to the Threat Deck.</li>
+          <li><span class="term">Shuffle</span>: Shuffle the <strong>entire Threat Deck</strong> (including any unchosen card on the table) and shuffle the <strong>Trophy Pile</strong> to reveal a new random top Trophy Card.</li>
+        </ol>
+      </li>
+      <li>
+        <span class="term">On a Failure</span>: The Active Player takes <span class="red-accent">1 Strike</span> (in addition to any Strike from rolling Effort 4). Add a random <span class="term">King</span> from the Reserves to the Threat Deck, return all table cards to the Threat Deck, and shuffle both the <strong>Threat Deck</strong> and the <strong>Trophy Pile</strong>.
+      </li>
+    </ul>
+
+    <div class="rule-box" style="padding: 4.5pt 7.5pt; font-size: 8.8pt; margin-top: 3pt;">
+      <span class="term">Empty Face Card Reserves</span>: If a Reserve pile is empty when adding a card, substitute the next closest rank: <strong>No Jacks?</strong> Add a Queen (then King). <strong>No Queens?</strong> Add a King (then Jack). <strong>No Kings?</strong> Add a Queen (then Jack). If no Face Cards remain in any Reserve, add nothing.
+    </div>
+
+    <div class="page-num even">8</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 9: THE THREE ACTS (Odd / Right Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_7.png'); padding: 24pt 26pt 36pt 38pt;">
+    <h1 class="page-title">The Three Acts</h1>
+    <p>
+      A session of <span class="term">Night of the Thirteenth</span> unfolds across three escalating Acts, shifting the pace from creeping atmospheric dread to a relentless fight for survival.
+    </p>
+
+    <div class="rule-box" style="margin-top: 8pt;">
+      <h2 class="section-title" style="margin-top: 0;">Act 1: The Setup</h2>
+      <p>
+        The Killer is a shadow in the background—watching, waiting, and isolating the cast before the massacre begins in earnest.
+      </p>
+      <ul style="margin-bottom: 0;">
+        <li><span class="term">Duration</span>: From the first Prologue Ace until the <strong>very first confrontation with a Face Card is resolved</strong> (whether you Succeed or Fail).</li>
+        <li><span class="term">Pacing</span>: Only the single <span class="term">Jack</span> seeded into the initial Threat Deck can appear during Act 1. As soon as that Jack is faced and resolved, <strong>Act 2 begins immediately</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="rule-box" style="margin-top: 8pt;">
+      <h2 class="section-title" style="margin-top: 0;">Act 2: The Horror Story</h2>
+      <p>
+        The blood has been spilled. The Killer is now actively hunting the group, and every scene pushes the survivors closer to the edge.
+      </p>
+      <ul style="margin-bottom: 0;">
+        <li><span class="term">Duration</span>: Continues until <strong>all four Suit Weaknesses are uncovered</strong> OR <strong>all 13 cards from the Number Reserve have been added</strong> to the Threat Deck.</li>
+        <li><span class="term">Uncovering Weaknesses</span>: Each time you defeat a <span class="term">Face Card</span> of a Suit (<span class="suit-blue">♠</span>, <span class="suit-red">♥</span>, <span class="suit-blue">♣</span>, <span class="suit-red">♦</span>) for the first time, record that Suit’s Weakness and remove that Face Card from the game.</li>
+      </ul>
+    </div>
+
+    <div class="rule-box" style="margin-top: 8pt;">
+      <h2 class="section-title" style="margin-top: 0;">Act 3: The Climax</h2>
+      <p>
+        There is nowhere left to hide. The quiet moments are over—every scene is now a direct confrontation with the Killer.
+      </p>
+      <ul style="margin-bottom: 0;">
+        <li><span class="term">Trigger</span>: Begins immediately when <strong>4 Weaknesses are found</strong> OR when the <strong>13th Number Reserve card</strong> is added to the Threat Deck (or when <strong>1 survivor remains</strong> under the <em>Final Girl Rule</em>).</li>
+        <li><span class="term">Purging the Deck</span>: Immediately <strong>remove all Number Cards</strong> from the Threat Deck (and set aside any remaining Number Reserve). Only <span class="term">Face Cards</span> remain in the Threat Deck!</li>
+        <li><span class="term">Entering the Finale</span>: Once all <strong>four Suit Weaknesses</strong> have been found, shuffle both <span class="term">Jokers</span> into the Threat Deck (see <span class="term">The Endgame</span> on page 13).</li>
+      </ul>
+    </div>
+
+    <div class="page-num odd">9</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 10: CREATING THE CAST (Even / Left Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_8.png');">
+    <!-- Center Column between the four road signs (top: 48pt to 275pt) -->
+    <div style="position: absolute; left: 128pt; top: 48pt; width: 144pt; text-align: center; font-size: 8.75pt; line-height: 1.16;">
+      <p style="text-align: center; margin-bottom: 6pt;">
+        You are no heroes. You are just in the wrong place at the wrong time.
+      </p>
+      <p style="text-align: center; margin-bottom: 3pt;">Choose a <span class="term" style="font-size: 9.2pt;">Name</span>.</p>
+      <p style="text-align: center; margin-bottom: 3pt;">Come up with a clear <span class="term" style="font-size: 9.2pt;">Archetype</span>.</p>
+      <p style="text-align: center; margin-bottom: 3pt;">Answer <span class="term" style="font-size: 9.2pt;">“Why are you here?”</span>.</p>
+      <p style="text-align: center; margin-bottom: 4.5pt;">
+        Claim a distinct <span class="term" style="font-size: 9.2pt;">Aptitude</span> (<span class="term" style="font-size: 9.2pt;">Power</span>, <span class="term" style="font-size: 9.2pt;">Resolve</span>, <span class="term" style="font-size: 9.2pt;">Intellect</span>, or <span class="term" style="font-size: 9.2pt;">Finesse</span>). Matching a living character’s Aptitude lets you shift your <span class="term" style="font-size: 9.2pt;">Effort Die (d4)</span> by <strong>&plusmn;1</strong>.
+      </p>
+      <p style="text-align: center; font-size: 8pt; font-style: italic; margin-bottom: 0;">
+        <strong>On-the-Fly Creation:</strong> Or create characters during the first four scenes as the Prologue Aces assign each Aptitude!
+      </p>
+    </div>
+
+    <!-- Archetype Examples (top: 308pt to 450pt) -->
+    <div style="position: absolute; left: 64pt; top: 306pt; width: 292pt; text-align: center; font-size: 9.2pt; line-height: 1.24;">
+      <h2 class="section-title" style="text-align: center; color: var(--oxblood); font-size: 13pt; margin-bottom: 5pt;">Archetype examples</h2>
+
+      <p style="text-align: center; margin-bottom: 5pt;">
+        Ideas for <span class="suit-blue">♠</span> (<span class="term">Power</span>): The Jock, The Protective, The Townie,<br/>
+        The Greaser, The Sheriff, The Father, The Rival
+      </p>
+      <p style="text-align: center; margin-bottom: 5pt;">
+        Ideas for <span class="suit-red">♥</span> (<span class="term">Resolve</span>): The Final Them, The Babysitter, The Pure,<br/>
+        The Sibling, The Atoner, The New Kid, The Sheriff’s Child
+      </p>
+      <p style="text-align: center; margin-bottom: 5pt;">
+        Ideas for <span class="suit-blue">♣</span> (<span class="term">Intellect</span>): The Genre Savant, The Reporter, The Skeptic,<br/>
+        The Loner, The Bookworm, The Techie, The Conspiracy Nut
+      </p>
+      <p style="text-align: center; margin-bottom: 0;">
+        Ideas for <span class="suit-red">♦</span> (<span class="term">Finesse</span>): The Rebel, The Class Clown, The Royal Bee,<br/>
+        The Thief, The Rich Kid, The Cheerleader, The Slacker
+      </p>
+    </div>
+
+    <!-- Tilted Bottom Note -->
+    <div style="position: absolute; left: 118pt; top: 472pt; width: 190pt; transform: rotate(-6.5deg); font-size: 9.1pt; line-height: 1.2;">
+      <span class="term">For your consideration:</span> It makes a balanced cast when each of the four players claims a different <span class="term">Aptitude</span>—ensuring every Suit is covered at the start of the night, until characters begin to die!
+    </div>
+
+    <div class="page-num even">10</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 11: USING YOUR CHARACTER TO INFLUENCE ROLLS (Odd / Right Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_9.png');">
+    <!-- Content sits between the top heading (y ~ 104pt from top) and the DANGER sign (y ~ 380pt from top) -->
+    <div style="position: absolute; left: 42pt; top: 104pt; width: 336pt; font-size: 8.85pt; line-height: 1.16;">
+      <h2 class="section-title" style="text-align: center; font-size: 15pt; color: var(--olive); margin-top: 0; margin-bottom: 0.5pt;">Genre Points</h2>
+      <p style="text-align: center; font-family: var(--font-display); font-size: 11pt; color: var(--oxblood); margin-bottom: 3.5pt;">
+        Lean on the tropes
+      </p>
+      <p style="margin-bottom: 3.5pt;">
+        The Table begins with <span class="term" style="font-size: 9.3pt;">13 Genre Points</span> in a central pool. At the end of any scene, <strong>any player</strong> can award a Genre Point from the pool to the Active Player (or another player) for leaning into a horror trope (<em>“I’ll be right back!”</em>), making a dramatic roleplay choice, or genuinely terrifying the table.
+      </p>
+      <p style="margin-bottom: 6pt;">
+        <span class="term" style="font-size: 9.3pt;">Spending a Genre Point</span>: During Phase 3 (The Test), you can spend one held Genre Point to <strong>reroll both dice (your entire d13)</strong> and add <span class="term" style="font-size: 9.3pt;">+1 to the d10 Main Die</span> (max 9). <strong>Warning:</strong> You must accept the new result, even if it is worse! The spent token is <strong>removed from the game</strong> permanently.
+      </p>
+
+      <h2 class="section-title" style="text-align: center; font-size: 15pt; color: var(--olive); margin-top: 0; margin-bottom: 0.5pt;">Aptitude</h2>
+      <p style="text-align: center; font-family: var(--font-display); font-size: 11pt; color: var(--oxblood); margin-bottom: 3.5pt;">
+        Play to your strengths
+      </p>
+      <p style="margin-bottom: 3pt;">
+        Whenever a Threat Card’s Suit matches the <span class="term" style="font-size: 9.3pt;">Aptitude</span> of a <strong>living character</strong> at the table, the Active Player may adjust their <span class="term" style="font-size: 9.3pt;">Effort Die (d4)</span> result by <span class="term" style="font-size: 9.3pt;">&plusmn;1</span> after rolling (within the <strong>1–4</strong> range):
+      </p>
+      <ul style="margin-bottom: 0;">
+        <li style="margin-bottom: 2pt;"><span class="term" style="font-size: 9.3pt;">Increase Effort (+1)</span>: Push yourself harder to raise your <strong>d13 Total by +1</strong> (turning a near-miss into a Success), at the cost of escalating your <span class="term" style="font-size: 9.3pt;">Effort Scale</span> tier.</li>
+        <li style="margin-bottom: 2pt;"><span class="term" style="font-size: 9.3pt;">Decrease Effort (-1)</span>: Rely on natural talent to lower your <span class="term" style="font-size: 9.3pt;">Effort Scale</span> tier by 1 (avoiding a Breaking Point Strike or Overexertion), while lowering your <strong>d13 Total by -1</strong>.</li>
+        <li style="margin-bottom: 0;"><span class="term" style="font-size: 9.3pt;">Death &amp; Jokers</span>: When a character dies (3 Strikes), their Suit’s Aptitude is <strong>lost for the rest of the game</strong>. No one gets an Aptitude edge against a <span class="term" style="font-size: 9.3pt;">Joker</span>!</li>
+      </ul>
+    </div>
+
+    <div class="page-num odd">11</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 12: THREE STRIKES AND YOU'RE OUT! (Even / Left Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_10.png');">
+    <!-- Content sits below the "Three Strikes and you're out!" artwork (top: 252pt from top) -->
+    <div style="position: absolute; left: 62pt; top: 256pt; width: 296pt; font-size: 9.8pt; line-height: 1.26;">
+      <p style="text-align: center; margin-bottom: 10pt;">
+        Every character in <span class="term">Night of the Thirteenth</span> gets two close calls with death before the end comes for them.
+      </p>
+
+      <p style="text-align: center; font-family: var(--font-display); font-size: 15pt; font-weight: 700; margin-bottom: 7pt;">
+        You gain a <span class="red-accent">Strike</span> when you:
+      </p>
+
+      <div class="rule-box" style="text-align: center; padding: 7pt 10pt; margin-bottom: 10pt;">
+        <p style="text-align: center; font-weight: 700; color: var(--oxblood); font-size: 10.6pt; margin-bottom: 4pt;">
+          • Fail any Test against a Face Card (the Killer).
+        </p>
+        <p style="text-align: center; font-weight: 700; color: var(--oxblood); font-size: 10.6pt; margin-bottom: 4pt;">
+          • Roll a 4 (Breaking Point) on the Effort Scale<br/>
+          <span style="font-weight: 400; font-size: 9.4pt; color: var(--ink);">(whether you Succeed or Fail the Test).</span>
+        </p>
+        <p style="text-align: center; font-size: 9pt; margin-bottom: 0;">
+          • <em>(Optional Final Girl Rule)</em>: Whenever a <span class="term">Face Card</span> is drawn onto the table.
+        </p>
+      </div>
+
+      <p style="margin-bottom: 6pt;">
+        A <span class="term">Strike</span> means something horrible either happens to your character or <em>almost</em> happens to them—leaving them bloodied, cornered, or traumatized. <em>(Note: Failing against a Face Card while also rolling a 4 on the Effort Scale inflicts <strong>two Strikes</strong> at once!)</em>
+      </p>
+
+      <p style="margin-bottom: 0;">
+        <span class="term">The Third Strike</span>: When your character receives their third <span class="term">Strike</span>, their story is over. In a genre-fitting, gruesome fashion, they meet their demise. Collaborate with the table to stage their final scene. Once dead, that character’s <span class="term">Suit Aptitude</span> is permanently lost for the rest of the game. If all four characters are killed, the Killer wins!
+      </p>
+    </div>
+
+    <div class="page-num even">12</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 13: THE ENDGAME (Odd / Right Spread)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_11.png');">
+    <!-- Top intro block below "The Endgame" heading (top: 118pt to 228pt) -->
+    <div style="position: absolute; left: 42pt; top: 116pt; width: 336pt; font-size: 9.4pt; line-height: 1.22;">
+      <p style="margin-bottom: 5pt;">
+        Should you survive long enough to defeat a <span class="term">Face Card</span> from all <span class="term">four Suits</span> (<span class="suit-blue">♠</span> <span class="suit-red">♥</span> <span class="suit-blue">♣</span> <span class="suit-red">♦</span>)—uncovering all four of the Killer’s <span class="term">Weaknesses</span>—the night reaches its bloody crescendo.
+      </p>
+      <p style="margin-bottom: 5pt;">
+        Remove <strong>all Number Cards</strong> from the <span class="term">Threat Deck</span>, leaving only the remaining <span class="term">Face Cards</span>. Both <span class="term">Jokers</span> are shuffled into the Threat Deck.
+      </p>
+      <p style="margin-bottom: 0;">
+        Whenever a <span class="term">Joker</span> is drawn and confronted during the Endgame, its <span class="term">Target Difficulty</span> is equal to the <span class="term">Trophy Pile’s top card (+0)</span>, and <strong>no character may use an Aptitude modifier</strong> on the roll!
+      </p>
+    </div>
+
+    <!-- Middle-Right block next to the tilted Black Joker (left: 148pt, top: 248pt) -->
+    <div style="position: absolute; left: 148pt; top: 246pt; width: 232pt; font-size: 9.3pt; line-height: 1.21;">
+      <p style="margin-bottom: 4pt;">
+        <span class="term">The Black Joker (The Twist)</span>: <em>One last desperate attempt. What do you sacrifice to survive?</em>
+      </p>
+      <p style="margin-bottom: 4pt;">
+        Test against the <span class="term">Trophy Pile’s</span> top card:
+      </p>
+      <ul style="margin-bottom: 0;">
+        <li><span class="term">On a Success</span>: Remove the <span class="term">Black Joker</span> from the game, AND permanently remove the <strong>highest-ranking Face Card</strong> currently in the Threat Deck (<span class="term">King &rarr; Queen &rarr; Jack</span>). Shuffle the Threat Deck and Trophy Pile.</li>
+        <li><span class="term">On a Failure</span>: Remove the <span class="term">Black Joker</span> from the game, and add a random <span class="term">King</span> from the Reserves to the Threat Deck. Shuffle the Threat Deck and Trophy Pile.</li>
+      </ul>
+    </div>
+
+    <!-- Bottom-Left block next to the tilted Red Joker (left: 42pt, top: 406pt) -->
+    <div style="position: absolute; left: 42pt; top: 406pt; width: 232pt; font-size: 9.3pt; line-height: 1.21;">
+      <p style="margin-bottom: 4pt;">
+        <span class="term">The Red Joker (The Final Test)</span>: <em>The Killer has you dead to rights. How do you escape death?</em>
+      </p>
+      <p style="margin-bottom: 4pt;">
+        This is it—the true climax of the movie. Test against the <span class="term">Trophy Pile’s</span> top card:
+      </p>
+      <ul style="margin-bottom: 0;">
+        <li><span class="term">On a Success</span>: <span class="term">Victory!</span> You deliver the final blow or make the impossible escape. The Killer is defeated, and all surviving characters see the dawn!</li>
+        <li><span class="term">On a Failure</span>: <span class="red-accent">Instant Death.</span> Your character is killed on the spot. If other survivors remain, shuffle the <span class="term">Red Joker</span> back into the Threat Deck (and shuffle the Trophy Pile)—the nightmare continues!</li>
+      </ul>
+    </div>
+
+    <div class="page-num odd">13</div>
+  </section>
+
+  <!-- =====================================================================
+       PAGE 14: QUICK REFERENCE SHEET (Even / Left Back Cover)
+       ===================================================================== -->
+  <section class="page" style="background-image: url('assets/page_bg_2.png'); padding: 20pt 24pt 32pt 24pt;">
+    <h1 class="page-title" style="font-size: 17.5pt; margin-bottom: 3pt;">Quick Reference</h1>
+
+    <h3 class="sub-title" style="margin-top: 2pt;">1. The 4-Phase Scene Loop</h3>
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th style="width: 27%;">Phase</th>
+          <th>Summary of Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="term">Phase 1: Setup</span></td>
+          <td><strong>Prologue:</strong> Resolve the top Ace (Diff 1). <strong>Main Game:</strong> Ensure 2 Threat Cards are face up (unless locked by a Face Card) and choose 1 to resolve.</td>
+        </tr>
+        <tr>
+          <td><span class="term">Phase 2: Stakes</span></td>
+          <td>1. <strong>AP</strong> sets the scene. 2. <strong>AP</strong> asks an Act sensory question. 3. Any player may interject <em>“Something’s not right...”</em> (no veto). 4. Agree on the <strong>Overexertion Sacrifice</strong>.</td>
+        </tr>
+        <tr>
+          <td><span class="term">Phase 3: The Test</span></td>
+          <td>Roll <strong>d13</strong> (<strong>d10</strong> <code>0–9</code> + <strong>d4</strong> <code>1–4</code>). Optional: spend a <strong>Genre Point</strong> (reroll both, +1 to d10, discard token) or apply living <strong>Aptitude</strong> (&plusmn;1 to d4). Total &ge; Diff = <strong>Success</strong>.</td>
+        </tr>
+        <tr>
+          <td><span class="term">Phase 4: Fallout</span></td>
+          <td>Narrate outcome via the <strong>Effort Scale (1–4)</strong>, award Genre Points, assign <span class="red-accent">Strikes</span>, and update the Threat Deck &amp; Trophy Pile.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8pt;">
+      <div>
+        <h3 class="sub-title" style="margin-top: 1pt;">2. Target Difficulty</h3>
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Card Type</th>
+              <th>Difficulty Formula</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="term">Ace (Prologue)</span></td>
+              <td><strong>1</strong> (Auto-success)</td>
+            </tr>
+            <tr>
+              <td><span class="term">Number (2–10)</span></td>
+              <td><strong>Card Rank</strong> (2–10)</td>
+            </tr>
+            <tr>
+              <td><span class="term">Jack / Queen / King</span></td>
+              <td><strong>Trophy Top + 1 / + 2 / + 3</strong></td>
+            </tr>
+            <tr>
+              <td><span class="term">Red / Black Joker</span></td>
+              <td><strong>Trophy Top + 0</strong> (No Aptitude)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <h3 class="sub-title" style="margin-top: 1pt;">3. The Effort Scale (d4)</h3>
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>d4</th>
+              <th>Narrative Toll</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="term">1</span></td>
+              <td><strong>Controlled:</strong> AP narrates freely.</td>
+            </tr>
+            <tr>
+              <td><span class="term">2</span></td>
+              <td><strong>Pushing It:</strong> Pick 1 minor cost from crew.</td>
+            </tr>
+            <tr>
+              <td><span class="term">3</span></td>
+              <td><strong>Overexertion:</strong> Agreed Sacrifice happens.</td>
+            </tr>
+            <tr>
+              <td><span class="term">4</span></td>
+              <td><strong>Breaking Point:</strong> Sacrifice + Twist + <span class="red-accent">1 Strike</span>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 class="sub-title" style="margin-top: 1pt;">4. Deck Updates &amp; Escalation</h3>
+    <table class="ref-table" style="margin-bottom: 4pt;">
+      <thead>
+        <tr>
+          <th style="width: 24%;">Card Type</th>
+          <th style="width: 38%;">On Success (Total &ge; Diff)</th>
+          <th style="width: 38%;">On Failure (Total &lt; Diff)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="term">Number (2–10)</span></td>
+          <td>Card &rarr; <strong>top of Trophy Pile</strong>.<br/>Top Number Reserve &rarr; bottom of Threat Deck.</td>
+          <td>Card &rarr; <strong>bottom of Threat Deck</strong>.<br/>Top Number Reserve &rarr; bottom of Threat Deck.</td>
+        </tr>
+        <tr>
+          <td><span class="term">Face Card (J/Q/K)</span></td>
+          <td>1st time Suit defeated = <strong>Weakness</strong> (remove card). Add <strong>Jack</strong> (d4=1–2) or <strong>Queen</strong> (d4=3–4). Shuffle Threat &amp; Trophy decks.</td>
+          <td>Take <span class="red-accent">1 Strike</span>. Add <strong>King</strong> from Reserve. Return cards and shuffle Threat &amp; Trophy decks.</td>
+        </tr>
+        <tr>
+          <td><span class="term">Black Joker</span></td>
+          <td>Remove Black Joker + remove highest Face Card in Threat Deck. Shuffle both decks.</td>
+          <td>Remove Black Joker + add <strong>King</strong> from Reserve. Shuffle both decks.</td>
+        </tr>
+        <tr>
+          <td><span class="term">Red Joker</span></td>
+          <td><strong>VICTORY!</strong> Surviving cast wins the game.</td>
+          <td><span class="red-accent">Instant Death.</span> Shuffle Red Joker back in.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="rule-box" style="padding: 4pt 7pt; font-size: 8.5pt; margin-top: 2pt;">
+      <span class="term">Act Transitions</span>: <strong>Act 2</strong> begins after the 1st Face Card is resolved. <strong>Act 3</strong> begins when <strong>4 Suit Weaknesses</strong> are found OR <strong>13 Number Reserve cards</strong> are added (remove all Number Cards from Threat Deck). <strong>The Finale</strong> adds both Jokers once all <strong>4 Weaknesses</strong> are found.
+    </div>
+
+    <div class="page-num even">14</div>
+  </section>
+
+</body>
+</html>

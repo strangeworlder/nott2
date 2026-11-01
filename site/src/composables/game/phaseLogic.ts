@@ -185,8 +185,18 @@ export const fullReset = () => {
 
   drawnCards.value.clear();
   visibleCards.value = [];
+  selectedCardId.value = null;
+  falloutCard.value = null;
+  selectedJoker.value = null;
+  manualJoker.value = null;
   trophyPile.value = [];
   trophyTop.value = null;
+
+  rollMain.value = null;
+  rollEffort.value = null;
+  sacrificeConfirmed.value = false;
+  isGenrePointUsed.value = false;
+  isGenrePointAwarded.value = false;
 
   reserveQueue.value = [5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10];
 
@@ -435,10 +445,10 @@ const handleJokerResolution = (success: boolean) => {
     if (success) {
       isGameWon.value = true;
       currentPhase.value = 'win';
+    } else {
+      shuffleThreatDeck();
+      shuffleTrophyPile();
     }
-    // Failure = Death (Handled by UI/Rules text usually? Or do we kill character here?)
-    // "Character Dies." -> assignStrike(active)?
-    // Let's leave UI to handle narrative unless we want to force kill.
   } else if (selectedJoker.value === 'Black') {
     if (success) {
       removeHighestFaceCardFromDeck();
@@ -450,7 +460,6 @@ const handleJokerResolution = (success: boolean) => {
     shuffleThreatDeck();
     shuffleTrophyPile();
     // NOTE: selectedJoker is cleared in startNextScene() to preserve it for FalloutPhase display
-    triggerJokerEvent(); // Logic to proceed?
   }
 };
 
@@ -506,9 +515,13 @@ const handleFaceResolution = (success: boolean) => {
     // shuffleThreatDeck() will iterate visibleCards and return them to the deck.
 
     addFaceCardFromReserve('King');
+  }
 
-    if (currentAct.value === 1) {
-      currentAct.value = 2;
+  // Resolving the first Face Card (Win or Lose) transitions from Act 1 to Act 2
+  if (currentAct.value === 1) {
+    currentAct.value = 2;
+    if (!pendingActSetups.value.includes('2')) {
+      pendingActSetups.value.push('2');
     }
   }
 
@@ -552,11 +565,6 @@ export const startNextScene = () => {
         // Queue Jokers screen
         pendingActSetups.value.push('jokers');
       }
-      // Go to act-setup phase to show the queued screens
-      if (pendingActSetups.value.length > 0) {
-        currentPhase.value = 'act-setup';
-        return; // Exit early to show act setup screens first
-      }
     }
   }
 
@@ -575,14 +583,14 @@ export const startNextScene = () => {
   rollMain.value = null;
   rollEffort.value = null;
 
-  if (isEndgame.value && !isEndgameInitialized.value) {
-    currentPhase.value = 'act-setup';
-    return;
-  }
-
   const nextCard = getNextValidCard();
   manualRank.value = nextCard.rank;
   manualSuit.value = nextCard.suit;
+
+  if (pendingActSetups.value.length > 0 || (isEndgame.value && !isEndgameInitialized.value)) {
+    currentPhase.value = 'act-setup';
+    return;
+  }
 
   currentPhase.value = 'scene-setup';
 };

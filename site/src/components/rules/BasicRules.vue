@@ -1,67 +1,104 @@
 <script setup lang="ts">
-import { basicRules, characterRules } from '../../data/rules';
+/**
+ * BasicRules
+ *
+ * Philosophical:
+ * BasicRules is the survivor's field manual—a quick, scannable digest of the
+ * core mechanics that govern life and death at the table. It presents the rules
+ * not as a dense textbook, but as structured tactical cards that players can
+ * consult at a glance without losing the tension of the night.
+ *
+ * Technical:
+ * Displays core game mechanics (d13, Decks, State Updates, Scene Loop, Three Acts
+ * & Finale, Strikes, Genre Points, and Rules Modules) loaded dynamically via
+ * contentLoader.
+ *
+ * Props:
+ * (None - uses useLivePlay and contentLoader directly)
+ */
+
+import { computed } from 'vue';
+import { useLivePlay } from '../../composables/useLivePlay';
+import { getRulesContent } from '../../utils/contentLoader';
 import Card from '../Card.vue';
 import List from '../List.vue';
 import ListItem from '../ListItem.vue';
+import Text from '../Text.vue';
+
+const { selectedPlayset } = useLivePlay();
+const basicRules = computed(() => getRulesContent(selectedPlayset.value).basicRules);
 </script>
 
 <template>
   <div class="space-y-8">
     <!-- The d13 -->
     <Card :title="basicRules.d13.title">
-      <p class="text-lg mb-2">{{ basicRules.d13.description }}</p>
-      <p class="text-nott-red italic text-sm">{{ basicRules.d13.note }}</p>
+      <div class="space-y-2">
+        <Text variant="lead">{{ basicRules.d13.description }}</Text>
+        <Text variant="caption" color="red">{{ basicRules.d13.note }}</Text>
+      </div>
     </Card>
 
     <!-- Deck Rules -->
-    <section>
-      <h3 class="text-2xl font-display text-nott-white mb-4 border-l-4 border-nott-red pl-4">{{ basicRules.deckRules.title }}</h3>
+    <section class="space-y-4">
+      <Text variant="h3" border="left">{{ basicRules.deckRules.title }}</Text>
       <div class="grid gap-6 md:grid-cols-3">
         <Card :title="basicRules.deckRules.threat.title">
-          <div class="space-y-2 text-nott-white/80">
-            <p><strong class="text-nott-red">Setup:</strong> {{ basicRules.deckRules.threat.setup }}</p>
-            <p>{{ basicRules.deckRules.threat.mechanic }}</p>
+          <div class="space-y-3">
+            <div>
+              <Text variant="label" color="red">{{ basicRules.deckRules.setupLabel }}</Text>
+              <Text variant="body" color="muted">{{ basicRules.deckRules.threat.setup }}</Text>
+            </div>
+            <Text variant="body">{{ basicRules.deckRules.threat.mechanic }}</Text>
           </div>
         </Card>
         <Card :title="basicRules.deckRules.reserves.title">
           <List>
-            <ListItem v-for="pile in basicRules.deckRules.reserves.piles" :key="pile">{{ pile }}</ListItem>
+            <ListItem v-for="pile in basicRules.deckRules.reserves.piles" :key="pile">
+              <Text variant="body" as="span">{{ pile }}</Text>
+            </ListItem>
           </List>
         </Card>
         <Card :title="basicRules.deckRules.trophy.title">
-          <div class="space-y-2 text-nott-white/80">
-            <p><strong class="text-nott-red">Setup:</strong> {{ basicRules.deckRules.trophy.setup }}</p>
-            <p>{{ basicRules.deckRules.trophy.mechanic }}</p>
+          <div class="space-y-3">
+            <div>
+              <Text variant="label" color="red">{{ basicRules.deckRules.setupLabel }}</Text>
+              <Text variant="body" color="muted">{{ basicRules.deckRules.trophy.setup }}</Text>
+            </div>
+            <Text variant="body">{{ basicRules.deckRules.trophy.mechanic }}</Text>
           </div>
         </Card>
       </div>
     </section>
 
     <!-- Deck Updates -->
-    <section>
-      <h3 class="text-2xl font-display text-nott-white mb-4 border-l-4 border-nott-red pl-4">{{ basicRules.deckUpdates.title }}</h3>
+    <section class="space-y-4">
+      <Text variant="h3" border="left">{{ basicRules.deckUpdates.title }}</Text>
+      <Card :title="basicRules.deckUpdates.aces.title">
+        <Text variant="body" color="muted">{{ basicRules.deckUpdates.aces.description }}</Text>
+      </Card>
       <div class="grid gap-6 md:grid-cols-2">
         <Card :title="basicRules.deckUpdates.numberCards.title">
-          <div class="space-y-4 text-nott-white/80">
-            <div>
-              <strong class="text-nott-red block mb-1">Success</strong>
-              <p>{{ basicRules.deckUpdates.numberCards.success }}</p>
+          <div class="space-y-4">
+            <div class="space-y-1">
+              <Text variant="label" color="red">{{ basicRules.deckUpdates.successLabel }}</Text>
+              <Text variant="body" color="muted">{{ basicRules.deckUpdates.numberCards.success }}</Text>
             </div>
-            <div>
-              <strong class="text-nott-red block mb-1">Failure</strong>
-              <p>{{ basicRules.deckUpdates.numberCards.failure }}</p>
+            <div class="space-y-1">
+              <Text variant="label" color="red">{{ basicRules.deckUpdates.failureLabel }}</Text>
+              <Text variant="body" color="muted">{{ basicRules.deckUpdates.numberCards.failure }}</Text>
             </div>
           </div>
         </Card>
         <Card :title="basicRules.deckUpdates.faceCards.title">
-          <div class="space-y-4 text-nott-white/80">
-            <div>
-              <strong class="text-nott-red block mb-1">Success</strong>
-              <p>{{ basicRules.deckUpdates.faceCards.success }}</p>
+          <div class="space-y-4">
+            <div class="space-y-1">
+              <Text variant="label" color="red">{{ basicRules.deckUpdates.successLabel }}</Text>
+              <Text variant="body" color="muted">{{ basicRules.deckUpdates.faceCards.success }}</Text>
             </div>
-            <div>
-              <strong class="text-nott-red block mb-1">Failure</strong>
-              <p>{{ basicRules.deckUpdates.faceCards.failure }}</p>
+            <div class="space-y-1">
+              <Text variant="label" color="red">{{ basicRules.deckUpdates.failureLabel }}</Text>
+              <Text variant="body" color="muted">{{ basicRules.deckUpdates.faceCards.failure }}</Text>
             </div>
           </div>
         </Card>
@@ -69,96 +106,94 @@ import ListItem from '../ListItem.vue';
     </section>
 
     <!-- Game Loop -->
-    <section>
-      <h3 class="text-2xl font-display text-nott-white mb-4 border-l-4 border-nott-red pl-4">The Game Loop</h3>
+    <section class="space-y-4">
+      <Text variant="h3" border="left">{{ basicRules.gameLoopTitle }}</Text>
       <div class="grid gap-4 md:grid-cols-2">
-        <div 
-          v-for="step in basicRules.gameLoop" 
+        <Card
+          v-for="step in basicRules.gameLoop"
           :key="step.step"
-          class="bg-nott-gray/10 p-4 rounded border border-nott-gray/30"
+          :title="step.step"
         >
-          <h4 class="text-nott-red font-display uppercase mb-2">{{ step.step }}</h4>
-          <p class="text-sm text-nott-white/80">{{ step.description }}</p>
-        </div>
+          <Text variant="body" color="muted">{{ step.description }}</Text>
+        </Card>
       </div>
     </section>
 
-    <!-- Endgame -->
-    <section>
-      <h3 class="text-2xl font-display text-nott-white mb-4 border-l-4 border-nott-red pl-4">{{ basicRules.endgame.title }}</h3>
-      <Card class="mb-6">
-        <div class="text-nott-white/90 text-lg text-center">
-          <p class="mb-2"><strong class="text-nott-red">Trigger:</strong> {{ basicRules.endgame.trigger }}</p>
-          <p><strong class="text-nott-red">Setup:</strong> {{ basicRules.endgame.setup }}</p>
-        </div>
-      </Card>
+    <!-- Three Acts & Endgame -->
+    <section class="space-y-4">
+      <Text variant="h3" border="left">{{ basicRules.endgame.title }}</Text>
+      <div class="grid gap-4 md:grid-cols-2">
+        <Card
+          v-for="act in basicRules.endgame.acts"
+          :key="act.title"
+          :title="act.title"
+        >
+          <Text variant="body" color="muted">{{ act.description }}</Text>
+        </Card>
+      </div>
       <div class="grid gap-6 md:grid-cols-2">
-        <Card :title="basicRules.endgame.redJoker.title" class="border-nott-red/50">
-          <div class="space-y-2 text-nott-white/80">
-            <p class="italic">{{ basicRules.endgame.redJoker.effect }}</p>
-            <div class="mt-4 pt-4 border-t border-nott-gray/30">
-              <p><strong class="text-nott-red">Success:</strong> {{ basicRules.endgame.redJoker.success }}</p>
-              <p><strong class="text-nott-red">Failure:</strong> {{ basicRules.endgame.redJoker.failure }}</p>
+        <Card :title="basicRules.endgame.redJoker.title">
+          <div class="space-y-3">
+            <Text variant="caption" color="muted">{{ basicRules.endgame.redJoker.effect }}</Text>
+            <div class="pt-3 border-t border-nott-gray/30 space-y-2">
+              <div>
+                <Text variant="label" color="red" as="span">{{ basicRules.deckUpdates.successLabel }}: </Text>
+                <Text variant="body" as="span">{{ basicRules.endgame.redJoker.success }}</Text>
+              </div>
+              <div>
+                <Text variant="label" color="red" as="span">{{ basicRules.deckUpdates.failureLabel }}: </Text>
+                <Text variant="body" as="span">{{ basicRules.endgame.redJoker.failure }}</Text>
+              </div>
             </div>
           </div>
         </Card>
         <Card :title="basicRules.endgame.blackJoker.title">
-          <div class="space-y-2 text-nott-white/80">
-            <p class="italic">{{ basicRules.endgame.blackJoker.effect }}</p>
-            <div class="mt-4 pt-4 border-t border-nott-gray/30">
-              <p><strong class="text-nott-red">Success:</strong> {{ basicRules.endgame.blackJoker.success }}</p>
-              <p><strong class="text-nott-red">Failure:</strong> {{ basicRules.endgame.blackJoker.failure }}</p>
+          <div class="space-y-3">
+            <Text variant="caption" color="muted">{{ basicRules.endgame.blackJoker.effect }}</Text>
+            <div class="pt-3 border-t border-nott-gray/30 space-y-2">
+              <div>
+                <Text variant="label" color="red" as="span">{{ basicRules.deckUpdates.successLabel }}: </Text>
+                <Text variant="body" as="span">{{ basicRules.endgame.blackJoker.success }}</Text>
+              </div>
+              <div>
+                <Text variant="label" color="red" as="span">{{ basicRules.deckUpdates.failureLabel }}: </Text>
+                <Text variant="body" as="span">{{ basicRules.endgame.blackJoker.failure }}</Text>
+              </div>
             </div>
           </div>
         </Card>
       </div>
     </section>
 
+    <!-- Strikes & Genre Points -->
     <div class="grid gap-6 md:grid-cols-2">
-      <!-- Strikes -->
       <Card :title="basicRules.strikes.title">
-        <List spacing="md">
-          <ListItem v-for="trigger in basicRules.strikes.triggers" :key="trigger">
-            {{ trigger }}
-          </ListItem>
-        </List>
-        <p class="text-nott-red font-display uppercase text-sm">{{ basicRules.strikes.consequence }}</p>
+        <div class="space-y-4">
+          <List spacing="md">
+            <ListItem v-for="trigger in basicRules.strikes.triggers" :key="trigger">
+              <Text variant="body" as="span">{{ trigger }}</Text>
+            </ListItem>
+          </List>
+          <Text variant="label" color="red">{{ basicRules.strikes.consequence }}</Text>
+        </div>
       </Card>
 
-      <!-- Genre Points -->
       <Card :title="basicRules.genrePoints.title">
-        <p class="text-nott-white/90">{{ basicRules.genrePoints.description }}</p>
+        <Text variant="body" color="muted">{{ basicRules.genrePoints.description }}</Text>
       </Card>
     </div>
 
-    <!-- Character Rules -->
-    <section>
-      <h3 class="text-2xl font-display text-nott-white mb-4 border-l-4 border-nott-red pl-4">Character Rules</h3>
+    <!-- Optional Rules Modules -->
+    <section class="space-y-4">
+      <Text variant="h3" border="left">{{ basicRules.rulesModules.title }}</Text>
       <div class="grid gap-6 md:grid-cols-2">
-        <Card title="Creation">
-          <List as="ol">
-            <ListItem v-for="step in characterRules.creationSteps" :key="step">{{ step }}</ListItem>
-          </List>
+        <Card
+          v-for="mod in basicRules.rulesModules.modules"
+          :key="mod.name"
+          :title="mod.name"
+        >
+          <Text variant="body" color="muted">{{ mod.description }}</Text>
         </Card>
-        <Card title="Aptitudes">
-          <p class="text-nott-white/80 mb-4">{{ characterRules.aptitudes.description }}</p>
-          <List spacing="md">
-            <ListItem v-for="apt in characterRules.aptitudes.list" :key="apt.name" class="flex items-center gap-2">
-              <span class="text-nott-red font-display w-24">{{ apt.name }}</span>
-              <span class="text-nott-white/60 text-sm">({{ apt.suit }}: {{ apt.description }})</span>
-            </ListItem>
-          </List>
-        </Card>
-      </div>
-      <div class="mt-6">
-        <h4 class="text-xl text-nott-white font-display mb-4">Archetypes</h4>
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card v-for="arch in characterRules.archetypes" :key="arch.suit" :title="arch.suit + ' (' + arch.aptitude + ')'">
-            <List spacing="sm">
-              <ListItem v-for="ex in arch.examples" :key="ex">{{ ex }}</ListItem>
-            </List>
-          </Card>
-        </div>
       </div>
     </section>
   </div>
