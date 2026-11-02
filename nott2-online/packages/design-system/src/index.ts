@@ -54,6 +54,8 @@ export { DifficultyBadge } from './molecules/DifficultyBadge/DifficultyBadge';
 export { DiceResult } from './molecules/DiceResult/DiceResult';
 export type { DiceResultProps } from './molecules/DiceResult/DiceResult';
 export { WeaknessTracker } from './molecules/WeaknessTracker/WeaknessTracker';
+export { ScriptSparks } from './molecules/ScriptSparks/ScriptSparks';
+export type { ScriptSparksProps } from './molecules/ScriptSparks/ScriptSparks';
 export { WaitingIndicator } from './molecules/WaitingIndicator/WaitingIndicator';
 export { TabBar } from './molecules/TabBar/TabBar';
 export type { Tab, TabBarProps } from './molecules/TabBar/TabBar';

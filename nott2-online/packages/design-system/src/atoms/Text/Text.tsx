@@ -57,6 +57,8 @@ interface TextProps {
   /** Layout spacing only (margin, padding). Never use for typography overrides — use variant/color props instead. */
   style?: React.CSSProperties;
   onClick?: React.MouseEventHandler;
+  href?: string;
+  htmlFor?: string;
 }
 
 const variantTagMap: Record<TextVariant, ElementType> = {
@@ -88,6 +90,8 @@ export function Text({
   id,
   style,
   onClick,
+  href,
+  htmlFor,
 }: TextProps) {
   const Tag = as ?? variantTagMap[variant];
 
@@ -106,6 +110,8 @@ export function Text({
       className={cn}
       style={style}
       onClick={onClick}
+      href={href}
+      htmlFor={htmlFor}
       dangerouslySetInnerHTML={dangerouslySetInnerHTML}
     >
       {dangerouslySetInnerHTML ? undefined : children}

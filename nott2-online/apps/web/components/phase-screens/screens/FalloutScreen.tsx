@@ -8,12 +8,34 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  PhasePanel, Card, Button, ActionFooter,
-  StatusCallout, ResultBanner, EffortBand, WeaknessTracker,
-  Icon, suitToIconName, Text,
+  PhasePanel,
+  Card,
+  Button,
+  ActionFooter,
+  StatusCallout,
+  ResultBanner,
+  EffortBand,
+  WeaknessTracker,
+  Icon,
+  suitToIconName,
+  Text,
+  Stack,
+  Row,
+  Badge,
+  Separator,
+  ScriptSparks,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
-import { calculateDifficulty, calculateTotal, isSuccessful, getEffortLevel } from '@nott2/game-engine';
+import {
+  calculateDifficulty,
+  calculateTotal,
+  isSuccessful,
+  getEffortLevel,
+  getOutcomeFacilitation,
+  getOutcomeWordPool,
+  type Suit,
+  type EffortLevel,
+} from '@nott2/game-engine';
 import { getRankLabel } from '../helpers';
 import { useTransitionContext } from '../../../contexts/TransitionContext';
 
@@ -96,8 +118,15 @@ function describeFalloutEvents(
 // ── Component ────────────────────────────────────────────────────────────────
 
 export function FalloutScreen() {
-  const { gameState, applyFallout, commitClockTick, assignStrike, awardGenrePoint, nextPhase } = useGameStore();
-  const { scene, deck, characters, players } = gameState;
+  const {
+    gameState,
+    applyFallout,
+    commitClockTick,
+    assignStrike,
+    awardGenrePoint,
+    nextPhase,
+  } = useGameStore();
+  const { scene, deck, characters, players, currentAct, playset } = gameState;
 
   const [applied, setApplied] = useState(false);
   const [events, setEvents] = useState<FalloutEvent[]>([]);
@@ -106,7 +135,7 @@ export function FalloutScreen() {
   const snapshot = useRef<{
     selectedCard: { rank: number; suit: string; id: string } | null;
     joker: string | null; d4: number; d10: number;
-    total: number; difficulty: number; success: boolean; effortLevel: string | null;
+    total: number; difficulty: number; success: boolean; effortLevel: EffortLevel | null;
     /** cardsAddedFromReserve BEFORE applyFallout ran */
     reserveBefore: number;
   } | null>(null);
@@ -187,9 +216,6 @@ export function FalloutScreen() {
     }
 
     // 3. Check if the doom clock ticked (reserve count increased).
-    //    Guard: skip the overlay if reserveBefore is already at or past TRIGGER (13).
-    //    In Act 3 the counter can increment from 13→14, which passes the `>` check
-    //    but both values display as "0 left" — showing the animation is meaningless.
     const DOOM_TRIGGER = 13;
     const clockTicked = pendingClock !== null && pendingClock > reserveBefore && reserveBefore < DOOM_TRIGGER;
 
@@ -203,19 +229,37 @@ export function FalloutScreen() {
     }
 
     // 4. No visual transition — commit any pending clock value immediately
-    //    so the store isn't left in limbo.
     commitClockTick();
     advancePhase();
   };
 
   if (!applied || !snapshot.current) return null;
 
-  const { total, difficulty, success, effortLevel } = snapshot.current;
+  const { total, difficulty, success, effortLevel, selectedCard } = snapshot.current;
+  const suit = (selectedCard?.suit as Suit | undefined) ?? null;
+
+  const outcomeFacilitation = getOutcomeFacilitation({
+    success,
+    effortLevel,
+    suit,
+    act: currentAct,
+    playsetId: playset,
+  });
+
+  const outcomeWords = getOutcomeWordPool({
+    effortLevel,
+    suit,
+    act: currentAct,
+    playsetId: playset,
+  });
+
+  const isSacrificeTriggered =
+    effortLevel === 'overexertion' || effortLevel === 'breaking-point';
 
   return (
     <PhasePanel
       title="The Result"
-      subtitle="Narrate the outcome, then resolve deck changes and proceed to the next scene."
+      subtitle="Narrate the outcome together, then resolve deck changes and proceed to the next scene."
       step={{ current: 4, total: 4 }}
     >
       <ResultBanner outcome={success ? 'success' : 'failure'} total={total} difficulty={difficulty ?? undefined} />
@@ -226,22 +270,51 @@ export function FalloutScreen() {
         </StatusCallout>
       )}
 
-      {effortLevel && <EffortBand level={effortLevel as any} />}
+      {effortLevel && <EffortBand level={effortLevel} />}
 
       <Card title="Narrate the Outcome">
-        <Text variant="caption" color="muted">
-          {success ? 'Describe how your character overcomes the challenge. The table frames the shot.'
-            : 'Describe how the challenge overcomes your character. Make it hurt, make it matter.'}
-        </Text>
+        <Stack gap="md">
+          {/* Sacrifice reminder when Effort is 3 or 4 */}
+          {isSacrificeTriggered && (
+            <StatusCallout variant="warning" icon="local_fire_department">
+              <strong>Agreed Sacrifice Triggered:</strong> The Overexertion sacrifice you agreed upon before rolling happens now.
+            </StatusCallout>
+          )}
+
+          {/* Active Player Narration Prompt */}
+          <Stack gap="xs">
+            <Row gap="xs" align="center">
+              <Badge variant="red">Active Player — Director</Badge>
+            </Row>
+            <Text variant="body">{outcomeFacilitation.activePlayerPrompt}</Text>
+          </Stack>
+
+          <Separator />
+
+          {/* Camera Crew / Table Prompt + Optional 9-Word Spark Drawer */}
+          <Stack gap="xs">
+            <Row gap="xs" align="center">
+              <Badge variant="outline">Camera Crew — The Table</Badge>
+            </Row>
+            <Text variant="caption" color="muted">
+              {outcomeFacilitation.tablePrompt}
+            </Text>
+            <ScriptSparks
+              words={outcomeWords}
+              triggerLabel={outcomeFacilitation.sparkTriggerLabel ?? 'Need a Spark? — 9 Outcome Words'}
+              trayHint="9 evocative words to inspire the outcome description (optional):"
+            />
+          </Stack>
+        </Stack>
       </Card>
 
       {events.length > 0 && (
         <Card title="Deck Changes">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <Stack gap="sm">
             {events.map((evt, i) => (
               <StatusCallout key={i} variant={evt.variant} icon={evt.icon}>{evt.text}</StatusCallout>
             ))}
-          </div>
+          </Stack>
         </Card>
       )}
 
@@ -256,31 +329,33 @@ export function FalloutScreen() {
           complete={remainingToStage <= 0}
           completionLabel="All strikes assigned."
         >
-          <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
-            {remainingToStage > 0
-              ? `${remainingToStage} strike${remainingToStage > 1 ? 's' : ''} left to assign. Strikes are committed when you click Next Scene.`
-              : 'All strikes assigned — proceed when ready.'}
-          </Text>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {characters.filter(c => !c.isDead).map(c => {
-              const staged = pendingStrikes[c.id] ?? 0;
-              const totalAfter = c.strikes + staged;
-              return (
-                <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
-                    <Icon name={suitToIconName(c.id)} size={16} />
-                    <Text variant="label" as="span">{c.name}</Text>
-                    <Text variant="micro" color="muted" as="span">{c.strikes}/3{staged > 0 ? ` → ${totalAfter}` : ''}</Text>
-                  </div>
-                  <div style={{ display: 'flex', gap: 4 }}>
-                    <Button variant="ghost" size="sm" onClick={() => handleRemovePendingStrike(c.id)} disabled={staged <= 0}>−</Button>
-                    <Button variant={staged > 0 ? 'primary' : 'secondary'} size="sm"
-                      onClick={() => handleAddPendingStrike(c.id)} disabled={remainingToStage <= 0 || totalAfter >= 3}>+{staged > 0 ? ` ${staged}` : ''}</Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <Stack gap="sm">
+            <Text variant="caption" color="muted">
+              {remainingToStage > 0
+                ? `${remainingToStage} strike${remainingToStage > 1 ? 's' : ''} left to assign. Strikes are committed when you click Next Scene.`
+                : 'All strikes assigned — proceed when ready.'}
+            </Text>
+            <Stack gap="sm">
+              {characters.filter(c => !c.isDead).map(c => {
+                const staged = pendingStrikes[c.id] ?? 0;
+                const totalAfter = c.strikes + staged;
+                return (
+                  <Row key={c.id} justify="between" align="center">
+                    <Row gap="xs" align="center">
+                      <Icon name={suitToIconName(c.id)} size={16} />
+                      <Text variant="label" as="span">{c.name}</Text>
+                      <Text variant="micro" color="muted" as="span">{c.strikes}/3{staged > 0 ? ` → ${totalAfter}` : ''}</Text>
+                    </Row>
+                    <Row gap="xs">
+                      <Button variant="ghost" size="sm" onClick={() => handleRemovePendingStrike(c.id)} disabled={staged <= 0}>−</Button>
+                      <Button variant={staged > 0 ? 'primary' : 'secondary'} size="sm"
+                        onClick={() => handleAddPendingStrike(c.id)} disabled={remainingToStage <= 0 || totalAfter >= 3}>+{staged > 0 ? ` ${staged}` : ''}</Button>
+                    </Row>
+                  </Row>
+                );
+              })}
+            </Stack>
+          </Stack>
         </Card>
       )}
 
@@ -290,19 +365,24 @@ export function FalloutScreen() {
           complete={scene.isGenrePointAwarded}
           completionLabel="Genre point awarded."
         >
-          {!scene.isGenrePointAwarded && (
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {players.map(p => {
-                const char = characters.find(c => c.id === p.characterId);
-                if (!char || char.isDead) return null;
-                return (
-                  <Button key={p.id} variant="secondary" size="sm" onClick={() => awardGenrePoint(p.id)}>
-                    To <Icon name={suitToIconName(p.characterId)} size={16} /> {char.name}
-                  </Button>
-                );
-              })}
-            </div>
-          )}
+          <Stack gap="sm">
+            <Text variant="caption" color="muted">
+              Did someone lean into a slasher trope (&ldquo;I&rsquo;ll be right back!&rdquo;), make a doomed roleplay choice, or genuinely terrify the table?
+            </Text>
+            {!scene.isGenrePointAwarded && (
+              <Row gap="sm" wrap>
+                {players.map(p => {
+                  const char = characters.find(c => c.id === p.characterId);
+                  if (!char || char.isDead) return null;
+                  return (
+                    <Button key={p.id} variant="secondary" size="sm" onClick={() => awardGenrePoint(p.id)}>
+                      To <Icon name={suitToIconName(p.characterId)} size={16} /> {char.name}
+                    </Button>
+                  );
+                })}
+              </Row>
+            )}
+          </Stack>
         </Card>
       )}
 

@@ -21,6 +21,8 @@ const htmlPath = path.join(repoRoot, 'pdf-booklet', 'booklet.html');
 const rootPdfOut = path.join(repoRoot, 'NotT 2 - Interactive Ashcan.pdf');
 const publicDir = path.join(repoRoot, 'site', 'public');
 const publicPdfOut = path.join(publicDir, 'NotT-2-Interactive-Ashcan.pdf');
+const onlinePublicDir = path.join(repoRoot, 'nott2-online', 'apps', 'web', 'public');
+const onlinePdfOut = path.join(onlinePublicDir, 'NotT-2-Interactive-Ashcan.pdf');
 
 function findBrowserExecutable() {
   if (process.env.BROWSER_PATH && fs.existsSync(process.env.BROWSER_PATH)) {
@@ -82,10 +84,17 @@ function generatePdf() {
   fs.mkdirSync(publicDir, { recursive: true });
   fs.copyFileSync(rootPdfOut, publicPdfOut);
 
+  if (fs.existsSync(onlinePublicDir)) {
+    fs.copyFileSync(rootPdfOut, onlinePdfOut);
+  }
+
   const stats = fs.statSync(rootPdfOut);
   console.log(`Successfully generated booklet PDF (${(stats.size / (1024 * 1024)).toFixed(2)} MB):`);
   console.log(`  -> ${rootPdfOut}`);
   console.log(`  -> ${publicPdfOut}`);
+  if (fs.existsSync(onlinePdfOut)) {
+    console.log(`  -> ${onlinePdfOut}`);
+  }
 }
 
 generatePdf();

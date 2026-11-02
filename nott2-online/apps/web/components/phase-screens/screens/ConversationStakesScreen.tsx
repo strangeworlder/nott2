@@ -1,25 +1,56 @@
 /**
- * ConversationStakesScreen — Scene prompt, difficulty, escalation, sacrifice.
- * Operational phase — uses PhasePanel.
+ * ConversationStakesScreen — Two-part Platonic scene prompt (Director + Camera Crew),
+ * two read-only 9-word <ScriptSparks> drawers (Active Player + Camera Crew with
+ * official "Focus the Camera" questions), Escalation, and Stakes.
+ *
+ * Operational phase — uses PhasePanel and Design System primitives.
  */
 
 'use client';
 
 import React from 'react';
 import {
-  PhasePanel, Card, Button, ActionFooter,
-  StatusCallout, DifficultyBadge, Text, Icon,
+  PhasePanel,
+  Card,
+  Button,
+  ActionFooter,
+  DifficultyBadge,
+  Text,
+  Icon,
+  suitToIconName,
+  Stack,
+  Row,
+  Separator,
+  Badge,
+  ScriptSparks,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
-import type { Rank } from '@nott2/game-engine';
-import { getScenePrompt, getJokerPrompt, getFaceCardPrefix } from '@nott2/game-engine';
+import {
+  getDetailedScenePrompt,
+  getDetailedJokerPrompt,
+  getFaceCardPrefix,
+  getPlaysetInfo,
+  getStakesGuidance,
+  getCombinedFragmentPool,
+  type Rank,
+} from '@nott2/game-engine';
 
 export function ConversationStakesScreen() {
-  const { gameState, confirmSacrifice, escalate, nextPhase } = useGameStore();
-  const { scene, deck } = gameState;
+  const {
+    gameState,
+    confirmSacrifice,
+    escalate,
+    nextPhase,
+  } = useGameStore();
+  const { scene, deck, currentAct, playset, characters, players } = gameState;
 
   const selectedCard = scene.selectedCardId
     ? deck.visibleCards.find(c => c.id === scene.selectedCardId) ?? null
+    : null;
+
+  const activePlayer = players.find(p => p.id === scene.activePlayerId);
+  const activeChar = activePlayer
+    ? characters.find(c => c.id === activePlayer.characterId) ?? null
     : null;
 
   const trophyRank = deck.trophyTop?.rank ?? 1;
@@ -32,79 +63,176 @@ export function ConversationStakesScreen() {
         if (r === 12) return trophyRank + 2;
         return trophyRank + 3;
       })()
-    : scene.activeJoker ? trophyRank : null;
+    : scene.activeJoker
+    ? trophyRank
+    : null;
 
-  const isFace = selectedCard ? selectedCard.rank >= 11 : false;
-  const suit   = selectedCard?.suit;
-  const rank   = selectedCard?.rank;
+  const suit = selectedCard?.suit ?? null;
+  const rank = (selectedCard?.rank as Rank | undefined) ?? null;
+  const isPrologueAce = rank === 1;
 
-  let prompt: string;
-  if (scene.activeJoker) {
-    prompt = getJokerPrompt(scene.activeJoker);
-  } else if (isFace) {
-    prompt = getFaceCardPrefix();
-    if (suit && rank) {
-      const fp = getScenePrompt(suit, rank as Rank, !gameState.weaknessesFound.includes(suit));
-      if (fp) prompt = `${getFaceCardPrefix()} — ${fp}`;
-    }
-  } else if (suit && rank) {
-    prompt = getScenePrompt(suit, rank as Rank) ?? getFaceCardPrefix();
-  } else {
-    prompt = getFaceCardPrefix();
-  }
+  // ── Resolve Platonic two-part prompt ───────────────────────────────────────
+  const detailedPrompt = scene.activeJoker
+    ? getDetailedJokerPrompt(scene.activeJoker, playset)
+    : suit && rank
+    ? getDetailedScenePrompt(
+        suit,
+        rank,
+        !gameState.weaknessesFound.includes(suit),
+        playset,
+      )
+    : null;
+
+  const activePlayerPrompt = detailedPrompt?.activePlayer ?? getFaceCardPrefix();
+  const cameraCrewPrompt =
+    detailedPrompt?.cameraCrew ??
+    'Describe the surrounding shadows, the tension in the air, and who else is in the frame.';
+
+  const playsetInfo = getPlaysetInfo(playset);
+  const stakesGuidance = getStakesGuidance(currentAct);
+
+  // Combined multi-axis word pools (Universal/Playset + Suit + Act + RankGroup)
+  const fragmentPool = getCombinedFragmentPool({
+    suit,
+    act: currentAct,
+    rank,
+    isJoker: Boolean(scene.activeJoker),
+    playsetId: playset,
+  });
+
+  const canProceed = isPrologueAce || scene.sacrificeConfirmed;
 
   return (
     <PhasePanel
-      title="Conversation & Stakes"
-      subtitle="Focus the camera. Define the sacrifice. Then proceed to roll."
+      title={isPrologueAce ? 'Prologue — Establishing Shot' : 'Conversation & Stakes'}
+      subtitle={
+        isPrologueAce
+          ? 'Introduce your character, answer the Camera Crew, and set the tone before the nightmare begins.'
+          : 'Start the conversation, focus the camera, escalate the danger, and agree on the sacrifice.'
+      }
       step={{ current: 2, total: 4 }}
     >
-      <Card variant="instruction" title="Scene Prompt">
-        <Text variant="flavor">
-          &ldquo;{prompt}&rdquo;
-        </Text>
+      {/* Card 1: Two-Part Scene Prompt (Active Player + Camera Crew) */}
+      <Card variant="instruction" title="The Scene — Start the Conversation">
+        <Stack gap="md">
+          {/* Part 1: Active Player (Director) */}
+          <Stack gap="xs">
+            <Row gap="xs" align="center">
+              <Badge variant="red">Active Player — Director</Badge>
+              {activeChar && (
+                <Text variant="label">
+                  <Icon name={suitToIconName(activeChar.id)} size={14} /> {activeChar.name}
+                </Text>
+              )}
+            </Row>
+
+            {isPrologueAce && suit && (
+              <Row gap="xs" wrap>
+                {playsetInfo.archetypes[suit].map(arch => (
+                  <Badge key={arch} variant="outline">
+                    {arch}
+                  </Badge>
+                ))}
+              </Row>
+            )}
+
+            <Text variant="flavor">&ldquo;{activePlayerPrompt}&rdquo;</Text>
+
+            <ScriptSparks
+              words={fragmentPool.activePlayerWords}
+              triggerLabel="Need a Spark? — 9 Narration Words"
+              trayHint="9 evocative words to spark your narration (grab one or two):"
+            />
+          </Stack>
+
+          <Separator />
+
+          {/* Part 2: Camera Crew (The Table) */}
+          <Stack gap="xs">
+            <Row gap="xs" align="center">
+              <Badge variant="outline">Camera Crew — The Table</Badge>
+              <Text variant="caption" color="muted">
+                Focus the lens &amp; pull the scene into a conversation
+              </Text>
+            </Row>
+            <Text variant="body">{cameraCrewPrompt}</Text>
+            <ScriptSparks
+              words={fragmentPool.cameraCrewWords}
+              questions={fragmentPool.cameraQuestions}
+              questionsLabel={`Act ${currentAct} — Focus the Camera (ask one):`}
+              triggerLabel="Need a Spark? — Atmosphere &amp; Camera Questions"
+              trayHint="9 sensory &amp; atmospheric words to paint the shot:"
+            />
+          </Stack>
+        </Stack>
       </Card>
 
       {difficulty !== null && (
         <DifficultyBadge
           value={difficulty}
           breakdown={
-            selectedCard && selectedCard.rank <= 10
+            selectedCard && selectedCard.rank === 1
+              ? 'Prologue Ace = 1 (Always succeeds, but Effort 4 still triggers a Breaking Point Strike)'
+              : selectedCard && selectedCard.rank <= 10
               ? `Number card rank = ${selectedCard.rank}`
               : selectedCard && selectedCard.rank >= 11
               ? `Trophy (${trophyRank}) + ${selectedCard.rank - 10} = ${difficulty}`
-              : scene.activeJoker ? `Trophy (${trophyRank}) + 0 = ${difficulty}` : undefined
+              : scene.activeJoker
+              ? `Trophy (${trophyRank}) + 0 = ${difficulty}`
+              : undefined
           }
         />
       )}
 
+      {/* Card 2: Escalation ("Something's Not Right...") */}
       <Card
-        title="Escalation — Something Not Right"
+        title="Escalation — &ldquo;Something&rsquo;s Not Right...&rdquo;"
         complete={scene.escalationUsed}
         completionLabel="Escalation used this scene."
       >
-        <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
-          Any non-AP player can add a terrifying detail. Once per scene.
-        </Text>
-        {!scene.escalationUsed && (
-          <Button variant="secondary" size="sm" onClick={escalate}>Use Escalation</Button>
-        )}
+        <Stack gap="sm">
+          <Text variant="caption" color="muted">
+            Once per scene, any player in the Camera Crew can interject: &ldquo;Something&rsquo;s not right...&rdquo; and add one terrifying detail that makes the situation worse. The Active Player must accept this truth (no veto).
+          </Text>
+          {!scene.escalationUsed && (
+            <Row>
+              <Button variant="secondary" size="sm" onClick={escalate}>
+                Escalation Used
+              </Button>
+            </Row>
+          )}
+        </Stack>
       </Card>
 
+      {/* Card 3: The Stakes (Define the Overexertion Sacrifice) */}
       <Card
-        title="The Stakes — Define the Sacrifice"
+        title="The Stakes — Commit to the Effort"
         complete={scene.sacrificeConfirmed}
-        completionLabel="Sacrifice confirmed."
+        completionLabel="Sacrifice agreed for Overexertion (3+)."
       >
-        <Text variant="caption" color="muted" style={{ marginBottom: 12 }}>
-          &ldquo;If you push yourself, what are you willing to sacrifice?&rdquo; Define the Overexertion result — specific and a genuine loss.
-        </Text>
-        {!scene.sacrificeConfirmed && (
-          <Button variant="secondary" size="sm" onClick={confirmSacrifice}>Sacrifice Defined</Button>
-        )}
+        <Stack gap="sm">
+          <Text variant="body">
+            &ldquo;If you end up pushing yourself to reach your goal, what are you willing to risk?&rdquo;
+          </Text>
+          <Text variant="caption" color="muted">
+            {stakesGuidance}
+          </Text>
+          {!scene.sacrificeConfirmed && (
+            <Row>
+              <Button variant="secondary" size="sm" onClick={confirmSacrifice}>
+                Sacrifice Agreed
+              </Button>
+            </Row>
+          )}
+        </Stack>
       </Card>
 
-      <ActionFooter label="Proceed to Roll →" onClick={nextPhase} />
+      <ActionFooter
+        label="Proceed to Roll →"
+        disabled={!canProceed}
+        hint={canProceed ? undefined : 'Agree on the Overexertion Sacrifice with the table first'}
+        onClick={nextPhase}
+      />
     </PhasePanel>
   );
 }

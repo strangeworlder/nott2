@@ -201,6 +201,8 @@ Both "failed challenge" and "already-defeated suit returns" use `arrow_downward`
   <Icon name="playing_cards" size={32} color="white" />
   <Icon name="person_raised_hand" size={32} color="white" />
   <Icon name="movie" size={32} color="muted" />
+  <Icon name="push_pin" size={32} color="red" />
+  <Icon name="refresh" size={32} color="red" />
   <Icon name="star" size={32} color="white" />
 </ComponentPreview>
 
@@ -208,7 +210,9 @@ Both "failed challenge" and "already-defeated suit returns" use `arrow_downward`
 |---|---|---|
 | `playing_cards` | Cards being dealt — the instruction to draw from the Threat Deck. Chosen because it's the most literal possible icon for "do something with cards." The player sees this and knows to click the deck. No abstraction, no metaphor — just cards. | `SceneSetupScreen`: draw instruction callouts |
 | `person_raised_hand` | A raised hand — fate has chosen this character. During the Prologue, the Ace of a suit forces that suit's character to act. Chosen because a raised hand says "you've been called on" — it's compulsory, not voluntary. The character didn't choose to step forward; the card demanded it. | `SceneSetupScreen`: Prologue auto-AP callout |
-| `movie` | A film camera — this is scene management information, not a game event. Chosen because the camera represents the narrative frame: who's in the scene, how many have acted, what round it is. It's the director's clipboard, not the actor's prop. | `SceneSetupScreen`: round progress; active player callout |
+| `movie` | A film camera — this is scene management and screenplay facilitation information, not a mechanical game event. Chosen because the camera represents the narrative frame: who's in the scene, how many have acted, and what's written in the script. It's the director's clipboard, not the actor's prop. | `SceneSetupScreen`: round progress, active player callout; `ScriptSparks`: "Check the Script" trigger and "Other Takes" button |
+| push_pin | A physical thumbtack — pinning a concrete script beat onto the active scene card so the entire table shares the same visual truth. Chosen because it evokes pinning an index card or screenplay note to a production corkboard. | ScriptSparks: option button pin affordance and pinned beat badge |
+| efresh | Cycling arrows — dealing a fresh page of 3 script takes when the current options don't click. | ScriptSparks: "New Takes (1/3)" reload button in the tray header |
 | `star` | A decorative pip replacing the suit symbol on Joker cards. Chosen because Jokers have no suit, and a star is the traditional placeholder in physical card decks. This is visual identity only — the star communicates "this card has no suit." Never use `star` for achievements or victories. | `PlayingCard`: Joker corner pips only |
 
 :::note `star` is decoration, not a game event
@@ -275,12 +279,14 @@ Don't use `star` for victories or achievements — use `military_tech`. `star` o
 <ComponentPreview>
   <Icon name="expand_more" size={32} color="muted" />
   <Icon name="expand_less" size={32} color="muted" />
+  <Icon name="close" size={32} color="muted" />
 </ComponentPreview>
 
 | Icon | Why This Icon | Where Used |
 |---|---|---|
 | `expand_more` | A downward chevron — the universal affordance for "more content is hidden below, click to reveal." Chosen because it is the most universally understood expand/collapse indicator across web and mobile interfaces. The arrow points toward the hidden content. | `Card`: collapsible content toggle (collapsed state) |
-| `expand_less` | An upward chevron — the inverse of `expand_more`. Indicates that the content is currently visible and can be collapsed. The arrow points away from the content, suggesting "push it back up." | `Card`: collapsible content toggle (expanded state) |
+| `expand_less` | An upward chevron — the inverse of `expand_more`. Indicates that the content is currently visible and can be collapsed. The arrow points away from the content, suggesting "push it back up." | `Card`: collapsible content toggle (expanded state); `ScriptSparks`: tray "Close" button |
+| `close` | An X mark — clears or dismisses an active selection without destroying the underlying data. | `ScriptSparks`: "Unpin" action in the pinned beat header |
 
 ---
 
@@ -297,7 +303,7 @@ These icons are in the `MaterialIconName` type and are valid to use, but have no
 | `group` | Multiplayer player list |
 | `person` | Single player / character reference |
 | `check` | Inline confirmation tick (smaller than `check_circle`) |
-| `close` | Dismiss / close overlay |
+| `lightbulb` | Alternative inspiration / hint indicator |
 | `description` | Rules text or document reference |
 | `assignment` | Quest/objective card |
 | `crown` | Killer designation or trophy display variant |

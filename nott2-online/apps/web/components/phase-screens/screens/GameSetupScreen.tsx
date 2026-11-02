@@ -1,22 +1,42 @@
 /**
- * GameSetupScreen — Character names and rules modules.
+ * GameSetupScreen — Playset selection, character names/archetypes, and rules modules.
  *
- * Operational phase — uses PhasePanel.
+ * Operational phase — uses PhasePanel and Design System primitives.
  */
 
 'use client';
 
 import React, { useState } from 'react';
 import {
-  PhasePanel, Card, ActionFooter, Icon, suitToIconName, Text, Toggle,
+  PhasePanel,
+  Card,
+  ActionFooter,
+  Text,
+  Toggle,
+  TextField,
+  SegmentedControl,
+  Grid,
+  Stack,
+  Row,
+  Badge,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
-import type { Suit } from '@nott2/game-engine';
+import {
+  getAvailablePlaysets,
+  getPlaysetInfo,
+  getSuitTheme,
+  type Suit,
+} from '@nott2/game-engine';
+
+const SUITS: readonly Suit[] = ['Spades', 'Hearts', 'Clubs', 'Diamonds'];
 
 export function GameSetupScreen() {
   const { gameState, initGame, nextPhase } = useGameStore();
-  const [classicSetup, setClassicSetup] = useState(false);
-  const [finalGirl, setFinalGirl] = useState(false);
+  const playsets = getAvailablePlaysets();
+
+  const [selectedPlayset, setSelectedPlayset] = useState<string>(gameState.playset || 'default');
+  const [classicSetup, setClassicSetup] = useState(gameState.rulesModules.classicSetup);
+  const [finalGirl, setFinalGirl] = useState(gameState.rulesModules.finalGirl);
   const [names, setNames] = useState<Record<Suit, string>>({
     Spades:   gameState.characters.find(c => c.id === 'Spades')?.name ?? '',
     Hearts:   gameState.characters.find(c => c.id === 'Hearts')?.name ?? '',
@@ -24,58 +44,93 @@ export function GameSetupScreen() {
     Diamonds: gameState.characters.find(c => c.id === 'Diamonds')?.name ?? '',
   });
 
+  const activePlayset = getPlaysetInfo(selectedPlayset);
+
+  const handlePlaysetChange = (playsetId: string) => {
+    setSelectedPlayset(playsetId);
+    const info = getPlaysetInfo(playsetId);
+    setClassicSetup(info.defaultModules.classicSetup);
+    setFinalGirl(info.defaultModules.finalGirl);
+  };
+
   const handleStart = () => {
-    initGame('default', { classicSetup, finalGirl }, names);
+    initGame(selectedPlayset, { classicSetup, finalGirl }, names);
     nextPhase();
   };
 
   return (
     <PhasePanel
       title="Game Setup"
-      subtitle="Name your characters and choose your rules modules."
+      subtitle="Choose your horror movie, name your cast, and configure the deck rules."
       step={{ current: 1, total: 2 }}
     >
-      <Card title="Character Names (Optional)">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          {(['Spades', 'Hearts', 'Clubs', 'Diamonds'] as Suit[]).map(suit => (
-            <div key={suit}>
-              <Text variant="label" as="label" className="field-label" htmlFor={`name-${suit}`}>
-                <Icon name={suitToIconName(suit)} size={16} /> {suit}
-              </Text>
-              <input
-                id={`name-${suit}`}
-                type="text"
-                className="field-select"
-                value={names[suit]}
-                onChange={e => setNames(n => ({ ...n, [suit]: e.target.value }))}
-                placeholder={`The ${suit === 'Spades' ? 'Power' : suit === 'Hearts' ? 'Resolve' : suit === 'Clubs' ? 'Intellect' : 'Finesse'}`}
-              />
-            </div>
-          ))}
-        </div>
+      <Card title="Choose the Playset">
+        <Stack gap="sm">
+          <SegmentedControl
+            options={playsets.map(p => ({ value: p.id, label: p.name }))}
+            value={selectedPlayset}
+            onChange={handlePlaysetChange}
+          />
+          <Text variant="flavor">{activePlayset.tagline}</Text>
+          <Text variant="caption" color="muted">
+            {activePlayset.description}
+          </Text>
+          <Row gap="xs" wrap>
+            {activePlayset.touchstones.map(film => (
+              <Badge key={film} variant="outline">
+                {film}
+              </Badge>
+            ))}
+          </Row>
+        </Stack>
+      </Card>
+
+      <Card title="Creating the Cast (Now or During the 4 Prologue Aces)">
+        <Stack gap="sm">
+          <Text variant="caption" color="muted">
+            You are no heroes—just victims in the wrong place at the wrong time. Pick a movie-character name and an archetype for each Aptitude, or discover them on the fly during the four Prologue Aces.
+          </Text>
+          <Grid columns={2} gap="md">
+            {SUITS.map(suit => {
+              const suitTheme = getSuitTheme(suit) ?? suit;
+              const archetypes = activePlayset.archetypes[suit].join(', ');
+              return (
+                <TextField
+                  key={suit}
+                  id={`name-${suit}`}
+                  label={`${suit} — ${suitTheme}`}
+                  value={names[suit]}
+                  onChange={val => setNames(n => ({ ...n, [suit]: val }))}
+                  placeholder={`The ${suit === 'Spades' ? 'Power' : suit === 'Hearts' ? 'Resolve' : suit === 'Clubs' ? 'Intellect' : 'Finesse'}`}
+                  helperText={`Archetype ideas: ${archetypes}`}
+                />
+              );
+            })}
+          </Grid>
+        </Stack>
       </Card>
 
       <Card title="Rules Modules">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <Stack gap="md">
+          <Row align="start" gap="md">
             <Toggle variant="switch" value={classicSetup} onChange={setClassicSetup} labelOn="On" labelOff="Off" />
-            <div>
-              <Text variant="label" as="div">Classic Setup</Text>
-              <Text variant="caption" color="muted" as="div" style={{ marginTop: 2 }}>
+            <Stack gap="xs">
+              <Text variant="label">Classic Setup</Text>
+              <Text variant="caption" color="muted">
                 Curated deck: 2s, 3s, 4s in threat deck. Ordered reserve: 5–10. Starts with a random 10 as trophy.
               </Text>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            </Stack>
+          </Row>
+          <Row align="start" gap="md">
             <Toggle variant="switch" value={finalGirl} onChange={setFinalGirl} labelOn="On" labelOff="Off" />
-            <div>
-              <Text variant="label" as="div">Final Girl</Text>
-              <Text variant="caption" color="muted" as="div" style={{ marginTop: 2 }}>
+            <Stack gap="xs">
+              <Text variant="label">Final Girl</Text>
+              <Text variant="caption" color="muted">
                 Increased lethality. Any face card encounter earns a Strike. Solo survivor triggers Act 3.
               </Text>
-            </div>
-          </div>
-        </div>
+            </Stack>
+          </Row>
+        </Stack>
       </Card>
 
       <ActionFooter label="Initialize Decks →" onClick={handleStart} />

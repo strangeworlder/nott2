@@ -64,3 +64,14 @@ Is it a cinematic announcement? → <PhaseDisplay>
 Does it need a scrollable content area? → <PhasePanel>
 Is it full-bleed and dramatic? → <PhaseDisplay>
 ```
+
+## "How do I offer optional improv or script inspiration?"
+
+```
+Does the prompt ask the player or Camera Crew to invent a narrative detail? -> <ScriptSparks>
+  Active Player scene beat?      -> triggerLabel="Check the Script (3 Scene Ideas)"
+  Camera Crew sensory question?  -> triggerLabel="Check the Script (3 Camera Questions)"
+  Escalation ("Something's not right...")? -> triggerLabel="Check the Script (3 Escalation Ideas)"
+  Overexertion Sacrifice?        -> triggerLabel="Check the Script (3 Sacrifice Ideas)"
+  Post-roll Effort 2/4 outcome?  -> triggerLabel="Check the Script (3 Minor Costs / Twists)"
+```

@@ -286,7 +286,10 @@ Once a card is selected, look at the **Suit and Rank** to determine the scene pr
 
 ### 8.2 The Prompt Matrix
 
-The selected card generates a narrative prompt based on suit (theme) and rank (intensity).
+The selected card generates a two-part narrative prompt based on suit (theme) and rank (intensity):
+1. **Active Player (Director & Protagonist):** Expresses the universal ("Platonic") horror archetype of the card, connects to the group, and ends with an explicit action hook that drives toward the d13 roll.
+2. **Camera Crew (The Table):** Gives the other players a specific follow-up question or sensory angle to immediately start a table conversation.
+3. **Check the Script (Playset Sparks):** Each card also provides 3 concrete, playset-coupled script beats that can be revealed on demand and pinned to the scene.
 
 #### Number Cards
 

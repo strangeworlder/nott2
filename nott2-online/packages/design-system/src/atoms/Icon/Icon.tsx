@@ -118,6 +118,8 @@ type MaterialIconName =
   // Document / UI
   | 'description'
   | 'assignment'
+  | 'push_pin'
+  | 'lightbulb'
   | 'settings'
   | 'shuffle'
   | 'delete'

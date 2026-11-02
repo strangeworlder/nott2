@@ -65,6 +65,7 @@ const sidebars: SidebarsConfig = {
             'components/molecules/player-avatar',
             'components/molecules/playing-card',
             'components/molecules/result-banner',
+            'components/molecules/script-sparks',
             'components/molecules/strike-indicator',
             'components/molecules/tab-bar',
             'components/molecules/waiting-indicator',

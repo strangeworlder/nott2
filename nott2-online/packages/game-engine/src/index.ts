@@ -116,13 +116,26 @@ export {
 export { validateAction } from './validation';
 
 // Scene Prompts
-export type { FaceCardPrompt, CardPrompt, SuitPrompts, JokerPrompts, PromptData } from './scene-prompts';
+export type { FaceCardPrompt, CardPrompt, SuitPrompts, JokerPrompts, PromptData, DetailedScenePrompt, TwoPartPrompt, PlaysetDefinition, OutcomeFacilitation } from './scene-prompts';
 export {
   getScenePrompt,
   getJokerPrompt,
   getFaceCardPrefix,
   getSuitTheme,
   getDefaultPrompts,
+  getDetailedScenePrompt,
+  getDetailedJokerPrompt,
+  getPlaysetInfo,
+  getAvailablePlaysets,
+  getCameraSparks,
+  getEscalationSparks,
+  getStakesGuidance,
+  getSacrificeSparks,
+  getOutcomeFacilitation,
+  getCombinedFragmentPool,
+  getRankGroup,
+  getFocusCameraQuestions,
+  getOutcomeWordPool,
 } from './scene-prompts';
 
 export const GAME_ENGINE_VERSION = '0.0.0';
