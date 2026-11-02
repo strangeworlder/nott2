@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { DoomClockTransition } from './DoomClockTransition';
 
 describe('DoomClockTransition', () => {
@@ -35,7 +35,9 @@ describe('DoomClockTransition', () => {
     const onComplete = vi.fn();
     render(<DoomClockTransition from={0} to={1} onComplete={onComplete} />);
     expect(onComplete).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(2600);
+    act(() => {
+      vi.advanceTimersByTime(2600);
+    });
     expect(onComplete).toHaveBeenCalledOnce();
     vi.useRealTimers();
   });

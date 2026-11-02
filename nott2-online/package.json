@@ -14,11 +14,34 @@
     "docs:dev": "turbo run docs:dev --filter=@nott2/design-system-docs"
   },
   "devDependencies": {
-    "turbo": "^2.0.0",
+    "turbo": "^2.11.10",
     "typescript": "~5.5.0"
+  },
+  "overrides": {
+    "node-domexception": "npm:@nolyfill/domexception@^1.0.28",
+    "uuid": "^11.1.1",
+    "glob": "^14.0.3",
+    "serialize-javascript": "^7.1.4",
+    "minimatch": "^11.0.4",
+    "websocket-driver": "^0.7.5",
+    "ws": "^8.22.1",
+    "postcss": "^8.5.32",
+    "tinypool": "^2.2.0",
+    "@grpc/grpc-js": "^1.14.7",
+    "qs": "^6.17.1",
+    "vite": "^6.4.5",
+    "esbuild": "^0.25.12",
+    "deepmerge": "4.1.2"
   },
   "packageManager": "npm@10.9.2",
   "engines": {
     "node": ">=20.0.0"
+  },
+  "allowScripts": {
+    "@swc/core@1.16.21": true,
+    "@firebase/util@1.15.3": true,
+    "core-js@3.49.0": true,
+    "esbuild@0.25.12": true,
+    "protobufjs@7.6.6": true
   }
 }

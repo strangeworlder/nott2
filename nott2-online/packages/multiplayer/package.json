@@ -13,10 +13,10 @@
   },
   "dependencies": {
     "@nott2/game-engine": "*",
-    "firebase": "^11.0.0"
+    "firebase": "^12.19.0"
   },
   "devDependencies": {
     "typescript": "~5.5.0",
-    "vitest": "^2.0.0"
+    "vitest": "^4.1.12"
   }
 }
