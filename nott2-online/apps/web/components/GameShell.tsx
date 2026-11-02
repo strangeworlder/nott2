@@ -22,6 +22,7 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { darkTheme, Header, TransitionOverlay, DoomClockTransition, ActBreakOverlay, SceneChallengeOverlay } from '@nott2/design-system';
 import { useGameStore } from '../store/game-store';
 import { GamePhaseRouter } from './GamePhaseRouter';
@@ -58,6 +59,13 @@ function GameShellInner({ mode, roomCode, sidebar, onReset }: GameShellProps) {
   const { transition, clearTransition, fireMidpoint } = useTransitionContext();
   const { CardOverlayPortal } = useCardDealBridge();
   const sceneChallengeProps = useSceneChallengeProps();
+
+  // Deal a randomized initial deck on the client after SSR hydration completes
+  useEffect(() => {
+    if (mode === 'solo' && phase === 'lobby' && gameState.deck.trophyTop === null) {
+      fullReset();
+    }
+  }, [mode, phase, gameState.deck.trophyTop, fullReset]);
 
   const handleReset = onReset ?? fullReset;
 

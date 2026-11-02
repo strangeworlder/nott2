@@ -1,7 +1,13 @@
 /**
- * FalloutScreen — Post-roll unified screen.
- * Handles both 'resolve-scene' and 'fallout' phases.
- * Auto-applies fallout on mount so the user lands on a fully populated screen.
+ * FalloutScreen — Step 4 / 4: The Result.
+ *
+ * Handles both 'resolve-scene' and 'fallout' phases in a progressive two-beat flow:
+ *   - Beat 1 ('narration'): The Verdict & Narration — shows `<ResultBanner>`,
+ *     `<EffortBand>`, and `<SceneDossier mode="script">` with side-by-side
+ *     Director & Camera Crew outcome prompts and role-gated 9-word `<ScriptSparks>`.
+ *   - Beat 2 ('aftermath'): The Aftermath Ledger — shows `<SceneDossier mode="aftermath">`
+ *     with compact single-line Fate/Deck outcomes, tactile Strike assignment
+ *     (pre-staging the Active Player by default), and an inline Genre Point toss row.
  */
 
 'use client';
@@ -9,7 +15,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   PhasePanel,
-  Card,
   Button,
   ActionFooter,
   StatusCallout,
@@ -22,8 +27,10 @@ import {
   Stack,
   Row,
   Badge,
-  Separator,
   ScriptSparks,
+  SceneDossier,
+  type SceneDossierFateItem,
+  type SceneDossierFateTone,
 } from '@nott2/design-system';
 import { useGameStore } from '../../../store/game-store';
 import {
@@ -32,63 +39,118 @@ import {
   isSuccessful,
   getEffortLevel,
   getOutcomeFacilitation,
-  getOutcomeWordPool,
+  getCombinedFragmentPool,
+  getSuitTheme,
   type Suit,
+  type Rank,
   type EffortLevel,
 } from '@nott2/game-engine';
 import { getRankLabel } from '../helpers';
 import { useTransitionContext } from '../../../contexts/TransitionContext';
 
-// ── Types ────────────────────────────────────────────────────────────────────
-
-type FalloutEventVariant = 'info' | 'success' | 'warning' | 'danger' | 'highlight';
-type FalloutEvent = {
-  text: string;
-  variant: FalloutEventVariant;
-  icon: 'emoji_events' | 'arrow_downward' | 'input' | 'bolt' | 'auto_awesome' | 'key' | 'delete' | 'dangerous' | 'military_tech' | 'shuffle' | 'warning';
+const SCENE_IMAGES: Record<string, string> = {
+  Spades: '/textures/scenes/spades.png',
+  Hearts: '/textures/scenes/hearts.png',
+  Clubs: '/textures/scenes/clubs.png',
+  Diamonds: '/textures/scenes/diamonds.png',
+  Joker: '/textures/scenes/spades.png',
 };
 
-// ── Fallout Event Builder ────────────────────────────────────────────────────
+// ── Fallout Ledger Item Builder ──────────────────────────────────────────────
 
 function describeFalloutEvents(
   card: { rank: number; suit: string; id: string } | null,
-  joker: string | null, isSuccess: boolean, d4: number,
-  trophyTop: { rank: number; suit: string } | null,
+  joker: string | null,
+  isSuccess: boolean,
+  d4: number,
   weaknessesBefore: readonly string[],
-): FalloutEvent[] {
-  const events: FalloutEvent[] = [];
+): SceneDossierFateItem[] {
+  const events: SceneDossierFateItem[] = [];
   const rankLabel = card ? getRankLabel(card.rank) : null;
   const cardLabel = card ? `${rankLabel} of ${card.suit}` : null;
 
   if (joker === 'Red') {
-    events.push(isSuccess
-      ? { text: 'The Red Joker is defeated — you survived the Night!', variant: 'highlight', icon: 'military_tech' }
-      : { text: 'The Red Joker kills the Active Player. The Red Joker is shuffled back into the Threat Deck.', variant: 'danger', icon: 'dangerous' });
+    events.push(
+      isSuccess
+        ? {
+            text: 'The Red Joker is defeated — you survived the Night!',
+            tone: 'highlight',
+            icon: 'military_tech',
+          }
+        : {
+            text: 'The Red Joker kills the Active Player and is shuffled back into the Threat Deck.',
+            tone: 'danger',
+            icon: 'dangerous',
+          },
+    );
     return events;
   }
   if (joker === 'Black') {
-    events.push(isSuccess
-      ? { text: 'Black Joker defeated — the highest face card is removed from the Threat Deck.', variant: 'success', icon: 'delete' }
-      : { text: 'Black Joker failed — a random King is added from the Face Card Reserves to the Threat Deck.', variant: 'danger', icon: 'dangerous' });
-    events.push({ text: 'The Black Joker is permanently removed from the game.', variant: 'info', icon: 'delete' });
-    events.push({ text: 'Threat Deck and Trophy Pile shuffled.', variant: 'info', icon: 'shuffle' });
+    events.push(
+      isSuccess
+        ? {
+            text: 'Black Joker defeated — highest Face Card removed from the Threat Deck.',
+            tone: 'success',
+            icon: 'delete',
+          }
+        : {
+            text: 'Black Joker failed — a random King added from Reserves to the Threat Deck.',
+            tone: 'danger',
+            icon: 'dangerous',
+          },
+    );
+    events.push({
+      text: 'Black Joker permanently removed; Threat Deck and Trophy Pile shuffled.',
+      tone: 'info',
+      icon: 'shuffle',
+    });
     return events;
   }
 
   if (!card) return events;
 
   if (card.rank === 1) {
-    events.push({ text: `${cardLabel} — Prologue card permanently retired (becomes turn-order token).`, variant: 'info', icon: 'delete' });
-    if (d4 === 4) events.push({ text: 'Breaking Point (d4 = 4) — the Active Player earns a Strike.', variant: 'danger', icon: 'bolt' });
+    events.push({
+      text: `${cardLabel} — Prologue card retired as turn-order token.`,
+      tone: 'info',
+      icon: 'delete',
+    });
+    if (d4 === 4) {
+      events.push({
+        text: 'Breaking Point (d4 = 4) — the Active Player earns a Strike.',
+        tone: 'danger',
+        icon: 'bolt',
+      });
+    }
     return events;
   }
 
   if (card.rank <= 10) {
-    events.push(isSuccess
-      ? { text: `${cardLabel} placed on the Trophy Pile. New base difficulty for Face Cards: ${card.rank}.`, variant: 'success', icon: 'emoji_events' }
-      : { text: `${cardLabel} returned to the bottom of the Threat Deck.`, variant: 'warning', icon: 'arrow_downward' });
-    events.push({ text: 'Next card drawn from the Number Reserve → added to bottom of the Threat Deck.', variant: 'info', icon: 'input' });
-    if (d4 === 4) events.push({ text: 'Breaking Point (d4 = 4) — the Active Player earns a Strike.', variant: 'danger', icon: 'bolt' });
+    events.push(
+      isSuccess
+        ? {
+            text: `${cardLabel} placed on Trophy Pile (New Face Card base difficulty: ${card.rank}).`,
+            tone: 'success',
+            icon: 'emoji_events',
+          }
+        : {
+            text: `${cardLabel} returned to the bottom of the Threat Deck.`,
+            tone: 'warning',
+            icon: 'arrow_downward',
+          },
+    );
+    events.push({
+      text: 'Next card drawn from Number Reserve → bottom of Threat Deck.',
+      tone: 'info',
+      icon: 'input',
+    });
+    if (d4 === 4) {
+      events.push({
+        text: 'Breaking Point (d4 = 4) — the Active Player earns a Strike.',
+        tone: 'danger',
+        icon: 'bolt',
+      });
+    }
     return events;
   }
 
@@ -97,21 +159,55 @@ function describeFalloutEvents(
   const alreadyDefeated = weaknessesBefore.includes(card.suit);
   if (isSuccess) {
     if (!alreadyDefeated) {
-      events.push({ text: `First defeat of a ${card.suit} Face Card — a Weakness has been found!`, variant: 'highlight', icon: 'key' });
-      events.push({ text: `${faceLabel} permanently removed from the game.`, variant: 'success', icon: 'delete' });
+      events.push({
+        text: `First defeat of a ${card.suit} Face Card — Weakness found! ${faceLabel} removed from game.`,
+        tone: 'highlight',
+        icon: 'key',
+      });
     } else {
-      events.push({ text: `${faceLabel} of ${card.suit} — already defeated this suit. Card returned to the Threat Deck.`, variant: 'warning', icon: 'arrow_downward' });
+      events.push({
+        text: `${faceLabel} of ${card.suit} — suit weakness already known; returned to Threat Deck.`,
+        tone: 'warning',
+        icon: 'arrow_downward',
+      });
     }
     const targetRank = d4 <= 2 ? 'Jack' : 'Queen';
-    events.push({ text: `A random ${targetRank} added from Face Card Reserves to the Threat Deck (effort: ${d4}).`, variant: 'warning', icon: 'dangerous' });
-    if (d4 === 4) events.push({ text: 'Breaking Point (d4 = 4) — the Active Player earns a Strike.', variant: 'danger', icon: 'bolt' });
+    events.push({
+      text: `A random ${targetRank} added from Face Card Reserves to Threat Deck (Effort ${d4}).`,
+      tone: 'warning',
+      icon: 'dangerous',
+    });
+    if (d4 === 4) {
+      events.push({
+        text: 'Breaking Point (d4 = 4) — the Active Player earns a Strike.',
+        tone: 'danger',
+        icon: 'bolt',
+      });
+    }
   } else {
-    events.push({ text: `Failed against the ${faceLabel} of ${card.suit}.`, variant: 'danger', icon: 'dangerous' });
-    events.push({ text: 'Failure against the Killer — the Active Player earns a Strike.', variant: 'danger', icon: 'bolt' });
-    events.push({ text: 'A random King added from Face Card Reserves to the Threat Deck.', variant: 'danger', icon: 'dangerous' });
-    if (d4 === 4) events.push({ text: 'Breaking Point (d4 = 4) — an additional Strike is earned.', variant: 'danger', icon: 'bolt' });
+    events.push({
+      text: `Failed against the ${faceLabel} of ${card.suit} — Active Player earns a Strike.`,
+      tone: 'danger',
+      icon: 'bolt',
+    });
+    events.push({
+      text: 'A random King added from Face Card Reserves to the Threat Deck.',
+      tone: 'danger',
+      icon: 'dangerous',
+    });
+    if (d4 === 4) {
+      events.push({
+        text: 'Breaking Point (d4 = 4) — an additional Strike is earned.',
+        tone: 'danger',
+        icon: 'bolt',
+      });
+    }
   }
-  events.push({ text: 'Threat Deck and Trophy Pile shuffled. New visible cards and trophy top will be drawn.', variant: 'info', icon: 'shuffle' });
+  events.push({
+    text: 'Threat Deck and Trophy Pile shuffled.',
+    tone: 'info',
+    icon: 'shuffle',
+  });
   return events;
 }
 
@@ -126,28 +222,39 @@ export function FalloutScreen() {
     awardGenrePoint,
     nextPhase,
   } = useGameStore();
+  const { playerId, roomCode } = useGameStore() as any;
   const { scene, deck, characters, players, currentAct, playset } = gameState;
 
   const [applied, setApplied] = useState(false);
-  const [events, setEvents] = useState<FalloutEvent[]>([]);
+  const [beat, setBeat] = useState<'narration' | 'aftermath'>('narration');
+  const [events, setEvents] = useState<SceneDossierFateItem[]>([]);
   const [pendingStrikes, setPendingStrikes] = useState<Record<string, number>>({});
 
   const snapshot = useRef<{
     selectedCard: { rank: number; suit: string; id: string } | null;
-    joker: string | null; d4: number; d10: number;
-    total: number; difficulty: number; success: boolean; effortLevel: EffortLevel | null;
+    joker: string | null;
+    d4: number;
+    d10: number;
+    total: number;
+    difficulty: number;
+    success: boolean;
+    effortLevel: EffortLevel | null;
     /** cardsAddedFromReserve BEFORE applyFallout ran */
     reserveBefore: number;
   } | null>(null);
 
   useEffect(() => {
-    const card = scene.selectedCardId ? deck.visibleCards.find(c => c.id === scene.selectedCardId) ?? null : null;
+    const card = scene.selectedCardId
+      ? deck.visibleCards.find(c => c.id === scene.selectedCardId) ?? null
+      : null;
     const joker = scene.activeJoker ?? null;
     const d4 = (scene.modifiedEffort ?? scene.rollEffort) as number;
     const d10 = scene.rollMain as number;
     if (d4 == null || d10 == null) return;
 
-    const threatCard = joker ? { id: `Joker-${joker}`, color: joker, isJoker: true as const } : (card as any);
+    const threatCard = joker
+      ? { id: `Joker-${joker}`, color: joker, isJoker: true as const }
+      : (card as any);
     const difficulty = threatCard ? calculateDifficulty(threatCard, deck.trophyTop) : 0;
     const total = calculateTotal(d10 as any, d4 as any);
     const success = isSuccessful(total, difficulty);
@@ -156,13 +263,58 @@ export function FalloutScreen() {
     // Capture reserve count BEFORE fallout so we can detect ticks
     const reserveBefore = deck.cardsAddedFromReserve;
 
-    snapshot.current = { selectedCard: card, joker, d4, d10, total, difficulty, success, effortLevel, reserveBefore };
-    const evts = describeFalloutEvents(card, joker, success, d4, deck.trophyTop, gameState.weaknessesFound);
+    snapshot.current = {
+      selectedCard: card,
+      joker,
+      d4,
+      d10,
+      total,
+      difficulty,
+      success,
+      effortLevel,
+      reserveBefore,
+    };
+    const evts = describeFalloutEvents(
+      card,
+      joker,
+      success,
+      d4,
+      gameState.weaknessesFound,
+    );
     applyFallout();
+
+    // Auto-stage earned strikes on the Active Player by default when eligible
+    const updatedState = useGameStore.getState().gameState;
+    const earnedStrikes = updatedState.strikesToAssign;
+    if (earnedStrikes > 0) {
+      const ap = updatedState.players.find(
+        p => p.id === updatedState.scene.activePlayerId,
+      );
+      const apChar = ap
+        ? updatedState.characters.find(c => c.id === ap.characterId)
+        : null;
+      if (apChar && !apChar.isDead) {
+        const capacity = Math.max(0, 3 - apChar.strikes);
+        const autoCount = Math.min(earnedStrikes, capacity);
+        if (autoCount > 0) {
+          setPendingStrikes({ [apChar.id]: autoCount });
+        }
+      }
+    }
+
     setEvents(evts);
     setApplied(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const activePlayer = players.find(p => p.id === scene.activePlayerId);
+  const activeChar = activePlayer
+    ? characters.find(c => c.id === activePlayer.characterId) ?? null
+    : null;
+
+  const isMultiplayer = Boolean(roomCode);
+  const isDirector = !isMultiplayer || playerId === scene.activePlayerId;
+  const isCameraCrew = !isMultiplayer || playerId !== scene.activePlayerId;
 
   const strikesToAssign = gameState.strikesToAssign;
   const pendingTotal = Object.values(pendingStrikes).reduce((a, b) => a + b, 0);
@@ -198,9 +350,6 @@ export function FalloutScreen() {
       for (let i = 0; i < count; i++) assignStrike(charId as any);
     }
 
-    // Read the deferred clock value from the store. applyFallout wrote the
-    // original counter to gameState.deck.cardsAddedFromReserve and stashed
-    // the real (incremented) value in pendingClockValue.
     const pendingClock = useGameStore.getState().pendingClockValue;
     const reserveBefore = snapshot.current?.reserveBefore ?? 0;
 
@@ -215,9 +364,12 @@ export function FalloutScreen() {
       return;
     }
 
-    // 3. Check if the doom clock ticked (reserve count increased).
+    // 3. Check if the doom clock ticked (reserve count increased)
     const DOOM_TRIGGER = 13;
-    const clockTicked = pendingClock !== null && pendingClock > reserveBefore && reserveBefore < DOOM_TRIGGER;
+    const clockTicked =
+      pendingClock !== null &&
+      pendingClock > reserveBefore &&
+      reserveBefore < DOOM_TRIGGER;
 
     if (clockTicked) {
       showTransition(
@@ -235,8 +387,10 @@ export function FalloutScreen() {
 
   if (!applied || !snapshot.current) return null;
 
-  const { total, difficulty, success, effortLevel, selectedCard } = snapshot.current;
+  const { total, difficulty, success, effortLevel, selectedCard, joker } =
+    snapshot.current;
   const suit = (selectedCard?.suit as Suit | undefined) ?? null;
+  const rank = (selectedCard?.rank as Rank | undefined) ?? null;
 
   const outcomeFacilitation = getOutcomeFacilitation({
     success,
@@ -246,155 +400,225 @@ export function FalloutScreen() {
     playsetId: playset,
   });
 
-  const outcomeWords = getOutcomeWordPool({
-    effortLevel,
+  const fragmentPool = getCombinedFragmentPool({
     suit,
     act: currentAct,
+    rank,
+    isJoker: Boolean(joker),
     playsetId: playset,
   });
 
   const isSacrificeTriggered =
     effortLevel === 'overexertion' || effortLevel === 'breaking-point';
 
+  const suitTheme = joker
+    ? 'The Finale'
+    : isFace
+    ? 'The Killer is Here'
+    : suit
+    ? getSuitTheme(suit) ?? suit
+    : 'The Scene';
+
+  const suitIcon = joker
+    ? 'warning'
+    : suit
+    ? suitToIconName(suit)
+    : 'playing_cards';
+
+  const imageSrc = joker
+    ? SCENE_IMAGES.Joker
+    : suit
+    ? SCENE_IMAGES[suit] ?? SCENE_IMAGES.Spades
+    : SCENE_IMAGES.Spades;
+
+  const allFateItems: SceneDossierFateItem[] = [
+    ...events,
+    ...(gameState.pendingActSetups.length > 0
+      ? [
+          {
+            icon: 'warning' as const,
+            text: `Act transition pending: ${gameState.pendingActSetups.join(' → ')}`,
+            tone: 'warning' as SceneDossierFateTone,
+          },
+        ]
+      : []),
+  ];
+
   return (
     <PhasePanel
-      title="The Result"
-      subtitle="Narrate the outcome together, then resolve deck changes and proceed to the next scene."
+      title={beat === 'narration' ? 'The Result' : 'The Aftermath'}
+      subtitle={
+        beat === 'narration'
+          ? 'Narrate how the scene resolves — the Director leads the outcome while the Camera Crew frames the reaction.'
+          : 'Review fate changes, assign any earned Strikes, and award a Genre Point before the next scene.'
+      }
       step={{ current: 4, total: 4 }}
     >
-      <ResultBanner outcome={success ? 'success' : 'failure'} total={total} difficulty={difficulty ?? undefined} />
+      <ResultBanner
+        outcome={success ? 'success' : 'failure'}
+        total={total}
+        difficulty={difficulty ?? undefined}
+      />
 
       {scene.modifiedEffort !== null && (
         <StatusCallout variant="highlight" icon="auto_awesome">
-          Aptitude applied — Effort modified from <strong>{scene.rollEffort}</strong> to <strong>{scene.modifiedEffort}</strong>
+          Aptitude applied — Effort modified from{' '}
+          <strong>{scene.rollEffort}</strong> to{' '}
+          <strong>{scene.modifiedEffort}</strong>
         </StatusCallout>
       )}
 
       {effortLevel && <EffortBand level={effortLevel} />}
 
-      <Card title="Narrate the Outcome">
-        <Stack gap="md">
-          {/* Sacrifice reminder when Effort is 3 or 4 */}
-          {isSacrificeTriggered && (
-            <StatusCallout variant="warning" icon="local_fire_department">
-              <strong>Agreed Sacrifice Triggered:</strong> The Overexertion sacrifice you agreed upon before rolling happens now.
-            </StatusCallout>
-          )}
-
-          {/* Active Player Narration Prompt */}
-          <Stack gap="xs">
-            <Row gap="xs" align="center">
-              <Badge variant="red">Active Player — Director</Badge>
-            </Row>
-            <Text variant="body">{outcomeFacilitation.activePlayerPrompt}</Text>
-          </Stack>
-
-          <Separator />
-
-          {/* Camera Crew / Table Prompt + Optional 9-Word Spark Drawer */}
-          <Stack gap="xs">
-            <Row gap="xs" align="center">
-              <Badge variant="outline">Camera Crew — The Table</Badge>
-            </Row>
-            <Text variant="caption" color="muted">
-              {outcomeFacilitation.tablePrompt}
-            </Text>
+      <SceneDossier
+        mode={beat === 'narration' ? 'script' : 'aftermath'}
+        imageSrc={imageSrc}
+        suitIcon={suitIcon}
+        suitTheme={suitTheme}
+        activeCharacterName={activeChar?.name}
+        activeCharacterSuit={activeChar ? suitToIconName(activeChar.id) : undefined}
+        difficulty={difficulty}
+        sacrificeTriggered={beat === 'narration' && isSacrificeTriggered}
+        directorPrompt={outcomeFacilitation.activePlayerPrompt}
+        directorSparks={
+          isDirector ? (
             <ScriptSparks
-              words={outcomeWords}
-              triggerLabel={outcomeFacilitation.sparkTriggerLabel ?? 'Need a Spark? — 9 Outcome Words'}
-              trayHint="9 evocative words to inspire the outcome description (optional):"
+              words={fragmentPool.activePlayerWords}
+              triggerLabel={
+                outcomeFacilitation.sparkTriggerLabel ??
+                'Need a Spark? — 9 Outcome Words'
+              }
             />
-          </Stack>
-        </Stack>
-      </Card>
-
-      {events.length > 0 && (
-        <Card title="Deck Changes">
-          <Stack gap="sm">
-            {events.map((evt, i) => (
-              <StatusCallout key={i} variant={evt.variant} icon={evt.icon}>{evt.text}</StatusCallout>
-            ))}
-          </Stack>
-        </Card>
-      )}
-
-      {isFace && deck.weaknessesBySuit.size > 0 && (
-        <Card variant="success" title="Weaknesses Found"><WeaknessTracker found={deck.weaknessesBySuit} /></Card>
-      )}
-
-      {strikesToAssign > 0 && (
-        <Card
-          variant="failure"
-          title={`Assign ${strikesToAssign} Strike${strikesToAssign > 1 ? 's' : ''}`}
-          complete={remainingToStage <= 0}
-          completionLabel="All strikes assigned."
-        >
-          <Stack gap="sm">
-            <Text variant="caption" color="muted">
-              {remainingToStage > 0
-                ? `${remainingToStage} strike${remainingToStage > 1 ? 's' : ''} left to assign. Strikes are committed when you click Next Scene.`
-                : 'All strikes assigned — proceed when ready.'}
-            </Text>
+          ) : undefined
+        }
+        cameraPrompt={outcomeFacilitation.tablePrompt}
+        cameraSparks={
+          isCameraCrew ? (
+            <ScriptSparks
+              words={fragmentPool.cameraCrewWords}
+              triggerLabel="Need a Spark? — 9 Reaction Words"
+              trayHint="9 sensory & atmospheric reaction words:"
+            />
+          ) : undefined
+        }
+        fateItems={allFateItems}
+        weaknessSlot={
+          isFace && deck.weaknessesBySuit.size > 0 ? (
+            <WeaknessTracker found={deck.weaknessesBySuit} />
+          ) : undefined
+        }
+        strikesTitle={`Blood Price — Assign ${strikesToAssign} Strike${
+          strikesToAssign > 1 ? 's' : ''
+        }`}
+        strikesSlot={
+          strikesToAssign > 0 ? (
             <Stack gap="sm">
-              {characters.filter(c => !c.isDead).map(c => {
-                const staged = pendingStrikes[c.id] ?? 0;
-                const totalAfter = c.strikes + staged;
-                return (
-                  <Row key={c.id} justify="between" align="center">
-                    <Row gap="xs" align="center">
-                      <Icon name={suitToIconName(c.id)} size={16} />
-                      <Text variant="label" as="span">{c.name}</Text>
-                      <Text variant="micro" color="muted" as="span">{c.strikes}/3{staged > 0 ? ` → ${totalAfter}` : ''}</Text>
-                    </Row>
-                    <Row gap="xs">
-                      <Button variant="ghost" size="sm" onClick={() => handleRemovePendingStrike(c.id)} disabled={staged <= 0}>−</Button>
-                      <Button variant={staged > 0 ? 'primary' : 'secondary'} size="sm"
-                        onClick={() => handleAddPendingStrike(c.id)} disabled={remainingToStage <= 0 || totalAfter >= 3}>+{staged > 0 ? ` ${staged}` : ''}</Button>
-                    </Row>
-                  </Row>
-                );
-              })}
+              <Text variant="caption" color="muted">
+                {remainingToStage > 0
+                  ? `${remainingToStage} strike${
+                      remainingToStage > 1 ? 's' : ''
+                    } left to assign.`
+                  : 'Strikes staged — click Next Scene to commit.'}
+              </Text>
+              <Stack gap="xs">
+                {characters
+                  .filter(c => !c.isDead)
+                  .map(c => {
+                    const staged = pendingStrikes[c.id] ?? 0;
+                    const totalAfter = c.strikes + staged;
+                    const isActiveChar = activeChar?.id === c.id;
+                    return (
+                      <Row key={c.id} justify="between" align="center">
+                        <Row gap="xs" align="center">
+                          <Icon name={suitToIconName(c.id)} size={16} />
+                          <Text variant="label" as="span">
+                            {c.name}
+                          </Text>
+                          {isActiveChar && (
+                            <Badge variant="red">Active</Badge>
+                          )}
+                          <Text variant="micro" color="muted" as="span">
+                            {c.strikes}/3{staged > 0 ? ` → ${totalAfter}` : ''}
+                          </Text>
+                        </Row>
+                        <Row gap="xs">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemovePendingStrike(c.id)}
+                            disabled={staged <= 0}
+                          >
+                            −
+                          </Button>
+                          <Button
+                            variant={staged > 0 ? 'primary' : 'secondary'}
+                            size="sm"
+                            onClick={() => handleAddPendingStrike(c.id)}
+                            disabled={remainingToStage <= 0 || totalAfter >= 3}
+                          >
+                            +{staged > 0 ? ` ${staged}` : ''}
+                          </Button>
+                        </Row>
+                      </Row>
+                    );
+                  })}
+              </Stack>
             </Stack>
-          </Stack>
-        </Card>
-      )}
-
-      {gameState.tableGenrePoints > 0 && (
-        <Card
-          title="Award Genre Point?"
-          complete={scene.isGenrePointAwarded}
-          completionLabel="Genre point awarded."
-        >
-          <Stack gap="sm">
-            <Text variant="caption" color="muted">
-              Did someone lean into a slasher trope (&ldquo;I&rsquo;ll be right back!&rdquo;), make a doomed roleplay choice, or genuinely terrify the table?
-            </Text>
-            {!scene.isGenrePointAwarded && (
-              <Row gap="sm" wrap>
+          ) : undefined
+        }
+        genrePointTitle="Award Genre Point? (Leaned into a slasher trope or terrified the table)"
+        genrePointSlot={
+          gameState.tableGenrePoints > 0 || scene.isGenrePointAwarded ? (
+            scene.isGenrePointAwarded ? (
+              <Row gap="xs" align="center">
+                <Icon name="check_circle" size={16} color="success" />
+                <Text variant="caption" color="success" as="span">
+                  Genre Point awarded this scene.
+                </Text>
+              </Row>
+            ) : (
+              <Row gap="xs" wrap>
                 {players.map(p => {
                   const char = characters.find(c => c.id === p.characterId);
                   if (!char || char.isDead) return null;
                   return (
-                    <Button key={p.id} variant="secondary" size="sm" onClick={() => awardGenrePoint(p.id)}>
-                      To <Icon name={suitToIconName(p.characterId)} size={16} /> {char.name}
+                    <Button
+                      key={p.id}
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => awardGenrePoint(p.id)}
+                    >
+                      To <Icon name={suitToIconName(p.characterId)} size={15} />{' '}
+                      {char.name}
                     </Button>
                   );
                 })}
               </Row>
-            )}
-          </Stack>
-        </Card>
-      )}
+            )
+          ) : undefined
+        }
+        onBackToScene={beat === 'aftermath' ? () => setBeat('narration') : undefined}
+        backLabel="Back to Narration"
+      />
 
-      {gameState.pendingActSetups.length > 0 && (
-        <StatusCallout variant="warning" icon="warning">
-          Act transition pending: {gameState.pendingActSetups.join(' → ')}
-        </StatusCallout>
+      {beat === 'narration' ? (
+        <ActionFooter
+          label="Continue to Aftermath →"
+          onClick={() => setBeat('aftermath')}
+        />
+      ) : (
+        <ActionFooter
+          label={
+            !strikesReady
+              ? `Assign ${remainingToStage} Strike${
+                  remainingToStage > 1 ? 's' : ''
+                } first`
+              : 'Next Scene →'
+          }
+          disabled={!strikesReady}
+          onClick={handleNextScene}
+        />
       )}
-
-      <ActionFooter
-        label={!strikesReady ? `Assign ${remainingToStage} Strike${remainingToStage > 1 ? 's' : ''} first` : 'Next Scene →'}
-        disabled={!strikesReady} onClick={handleNextScene} />
     </PhasePanel>
   );
 }

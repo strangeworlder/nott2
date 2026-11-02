@@ -7,7 +7,7 @@ export const panelRoot = style({
   padding: vars.space.md,
   gap: vars.space.md,
   flex: 1,
-  maxWidth: '640px',
+  maxWidth: '760px',
   width: '100%',
   alignSelf: 'center',
 });

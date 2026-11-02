@@ -65,13 +65,14 @@ Does it need a scrollable content area? → <PhasePanel>
 Is it full-bleed and dramatic? → <PhaseDisplay>
 ```
 
-## "How do I offer optional improv or script inspiration?"
+## "How do I frame a scene's prompts, stakes, and aftermath?"
 
 ```
-Does the prompt ask the player or Camera Crew to invent a narrative detail? -> <ScriptSparks>
-  Active Player scene beat?      -> triggerLabel="Check the Script (3 Scene Ideas)"
-  Camera Crew sensory question?  -> triggerLabel="Check the Script (3 Camera Questions)"
-  Escalation ("Something's not right...")? -> triggerLabel="Check the Script (3 Escalation Ideas)"
-  Overexertion Sacrifice?        -> triggerLabel="Check the Script (3 Sacrifice Ideas)"
-  Post-roll Effort 2/4 outcome?  -> triggerLabel="Check the Script (3 Minor Costs / Twists)"
+Framing the active scene (Step 2) or outcome narration & fallout (Step 4)? -> <SceneDossier>
+  Dual-role prompts (Director + Camera Crew side-by-side)? -> mode="script"
+  Commit to the Overexertion sacrifice (Beat 2)?           -> mode="stakes"
+  Post-roll Fate, Strikes, and Genre Point ledger?         -> mode="aftermath"
+Does a role need optional improv fuel inside the dossier?  -> <ScriptSparks>
+  Active Player (Director) column? -> words={fragmentPool.activePlayerWords}
+  Camera Crew (The Table) column?  -> words={fragmentPool.cameraCrewWords} questions={fragmentPool.cameraQuestions}
 ```

@@ -146,6 +146,9 @@ export function createMultiplayerSlice(
           set({ remotePlayers: players as any }, false, 'createRoom/players');
         });
 
+        if (get().gameState.phase === 'lobby' && get().gameState.deck.trophyTop === null) {
+          get().fullReset();
+        }
         pushState(code, get().gameState);
         return code;
       } catch (err) {

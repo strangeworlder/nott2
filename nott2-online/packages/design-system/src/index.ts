@@ -56,6 +56,13 @@ export type { DiceResultProps } from './molecules/DiceResult/DiceResult';
 export { WeaknessTracker } from './molecules/WeaknessTracker/WeaknessTracker';
 export { ScriptSparks } from './molecules/ScriptSparks/ScriptSparks';
 export type { ScriptSparksProps } from './molecules/ScriptSparks/ScriptSparks';
+export { SceneDossier } from './molecules/SceneDossier/SceneDossier';
+export type {
+  SceneDossierProps,
+  SceneDossierMode,
+  SceneDossierFateItem,
+  SceneDossierFateTone,
+} from './molecules/SceneDossier/SceneDossier';
 export { WaitingIndicator } from './molecules/WaitingIndicator/WaitingIndicator';
 export { TabBar } from './molecules/TabBar/TabBar';
 export type { Tab, TabBarProps } from './molecules/TabBar/TabBar';

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 16
+sidebar_position: 18
 title: ScriptSparks
 ---
 
@@ -49,7 +49,7 @@ export const SAMPLE_CAMERA_WORDS = [
   'Frost',
 ];
 
-export const SAMPLE_CAMERA_QUESTIONS = [
+export const SAMPLE_QUESTIONS = [
   'What does it look like?',
   'What does it smell like?',
   'How close is the Killer?',
@@ -59,7 +59,7 @@ export const SAMPLE_CAMERA_QUESTIONS = [
 
 # ScriptSparks
 
-The table's read-only 9-word improvisation drawer. *"They should never be the answer, only the starting point for the answer."* Pre-written full sentences fight whatever scene the table has already imagined. Instead, `ScriptSparks` folds open to reveal **9 evocative words** (mixing abstract concepts with visceral nouns and verbs like `"Meat"`, `"Wound"`, `"Electronics"`, `"Clanking"`, `"Leverage"`, `"Paranoia"`) — plus optional Act-specific **"Focus the Camera"** questions for the Camera Crew.
+The table's read-only 9-word improvisation drawer. *"They should never be the answer, only the starting point for the answer."* When a prompt asks the Active Player (Director) or the Camera Crew to describe a scene, escalate the danger, or name a sacrifice, `ScriptSparks` folds open to reveal **9 evocative words** drawn uniformly with zero overlap from a multi-axis thematic pool — alongside optional Act-specific **"Focus the Camera"** questions for the Camera Crew.
 
 <details open>
 <summary>Code example</summary>
@@ -69,55 +69,53 @@ import { ScriptSparks } from '@nott2/design-system';
 import { getCombinedFragmentPool } from '@nott2/game-engine';
 
 const fragmentPool = getCombinedFragmentPool({
-  suit: 'Clubs',
-  act: 1,
-  rank: 1,
+  suit: 'Spades',
+  act: 2,
+  rank: 6,
   playsetId: 'default',
 });
 
-{/* Active Player Drawer: 9 Scene Words */}
+// Active Player (Director) word bank
 <ScriptSparks
   words={fragmentPool.activePlayerWords}
-  triggerLabel="Need a Spark? — 9 Scene Words"
-  trayHint="9 evocative words to spark your narration (grab one or two):"
+  triggerLabel="Need a Spark? — 9 Director Words"
 />
 
-{/* Camera Crew Drawer: 9 Sensory Words + Focus the Camera Questions */}
+// Camera Crew sensory bank + official Focus the Camera questions
 <ScriptSparks
   words={fragmentPool.cameraCrewWords}
   questions={fragmentPool.cameraQuestions}
   triggerLabel="Need a Spark? — 9 Sensory Words & Camera Questions"
-  trayHint="9 sensory & atmospheric words (grab one or two):"
-  questionsLabel="Focus the Camera (ask the Active Player):"
 />
 ```
 </details>
 
 ## Why to Use
 
-When players are improvising a scene together, presenting full pre-written sentences (*"Testing the landline..."*, *"I inherited a mysterious key..."*) pitches contradictory realities and forces the player out of their own imagination.
+Pre-written full sentences fight the scene the table has already imagined and make the game feel like a multiple-choice quiz.
 
-`ScriptSparks` solves this with three rules-faithful principles:
+`ScriptSparks` is designed around three facilitation principles:
 
-1. **Single evocative words adapt to any location:** Whether the table is in a flooded basement, a car, a cabin, or a hospital hallway, single words like `"Electronics"`, `"Clanking"`, `"Wound"`, `"Dripping"`, or `"Copper"` spark an immediate sensory detail without contradicting the room the table just established.
-2. **Two focused drawers inside The Scene:**
-   - **Active Player Drawer:** Deals **9 evocative scene words** (`activePlayerWords`) drawn via uniform Fisher-Yates shuffle (zero duplicates) from a multi-axis pool combining **Universal/Playset**, **Suit**, **Act**, and **Rank Group**.
-   - **Camera Crew Drawer:** Deals **9 sensory/atmospheric words** (`cameraCrewWords`) alongside the Act's official **"Focus the Camera"** questions from `NotT_2.md` (*"What does it look like?"*, *"What does it smell like?"*, *"Where is the blood coming from?"*, *"Why is there no hope?"*).
-3. **Pure read-only inspiration:** Nothing inside `ScriptSparks` is a selectable button or saved to `SceneState`, and clicking **Shuffle Words** deals 9 fresh words excluding the 9 just shown.
+1. **Read-only inspiration, never a choice button:** Nothing inside the open drawer is selectable or saved to game state, and it never completes a game phase. It exists purely as mental fuel for what the player says aloud.
+2. **9 Evocative Words per Role:**
+   - **Active Player (`activePlayerWords`):** Mixes abstract thematic concepts and visceral nouns/verbs (*"Meat"*, *"Wound"*, *"Electronics"*, *"Clanking"*, *"Leverage"*, *"Paranoia"*) merged across Universal/Playset + Suit + Act + Rank Group axes.
+   - **Camera Crew (`cameraCrewWords` + `cameraQuestions`):** Pairs 9 sensory/atmospheric words (*"Dripping"*, *"Copper"*, *"Flicker"*, *"Rot"*, *"Echo"*, *"Shadow"*) with the Act's official **"Focus the Camera"** questions from `NotT_2.md`.
+3. **Zero-Overlap Uniform Shuffle:** Clicking **Shuffle Words** deals 9 fresh words from the combined pool while excluding the 9 words just shown.
 
 ## When to Use
 
 > **Do**
-> - Place `ScriptSparks` inside the **Active Player** and **Camera Crew** sections of **The Scene** (`ConversationStakesScreen`) and inside **Narrate the Outcome** (`FalloutScreen`).
-> - Pass `activePlayerWords`, `cameraCrewWords`, and `cameraQuestions` from `getCombinedFragmentPool()` or `getOutcomeWordPool()` in `@nott2/game-engine`.
+> - Slot `ScriptSparks` into [`SceneDossier`](/components/molecules/scene-dossier) (`directorSparks`, `cameraSparks`, `escalationSparks`, `stakesSparks`).
+> - Gate `directorSparks` to the Active Player and `cameraSparks` to the Camera Crew in multiplayer rooms so each player only sees their own role's word bank.
+> - Pass `words={fragmentPool.activePlayerWords}` for the Director and `words={fragmentPool.cameraCrewWords}` + `questions={fragmentPool.cameraQuestions}` for the Camera Crew.
 
 > **Don't**
-> - Do not put full concrete sentences into `ScriptSparks` — they dictate the scene instead of sparking it.
-> - Do not clutter **Escalation** or **The Stakes** with extra `ScriptSparks` drawers; once the scene is established, the table already knows what is at stake.
+> - Do not use `ScriptSparks` as a selection control or form input.
+> - Do not pass tiny pools; use `getCombinedFragmentPool()` from `@nott2/game-engine` (60+ words per role).
 
 ---
 
-## States — The Three Modes
+## States — The Two Beats
 
 ### 1. Collapsed Trigger — Quiet Lifeline
 
@@ -127,73 +125,33 @@ By default, `ScriptSparks` stays folded into a compact, dashed-border trigger bu
   <div style={{ width: '100%', maxWidth: 540 }}>
     <ScriptSparks
       words={SAMPLE_ACTIVE_WORDS}
-      triggerLabel="Need a Spark? — 9 Scene Words"
+      triggerLabel="Need a Spark? — 9 Director Words"
     />
   </div>
 </ComponentPreview>
 
-| Property | Value | Why |
-|---|---|---|
-| Background | `rgba(138, 0, 0, 0.12)` (`0.24` on hover) | Subtle crimson tint distinguishes creative fuel from mechanical phase actions |
-| Border | `1px dashed vars.color.borderActive` | Dashed stroke signals an optional, expandable margin note |
-| Icon | `lightbulb` (`15px`, `color="red"`) | Communicates a spark of inspiration rather than a mandatory rule |
+### 2. Revealed 9-Word Inspiration Drawer
 
-### 2. Active Player Drawer — 9 Evocative Words
+Clicking the trigger opens the read-only tray showing 9 word chips and, when provided for the Camera Crew, the Act's **Focus the Camera** questions.
 
-Opening the Active Player drawer reveals **9 evocative words** (`data-testid="spark-words"`) mixing abstract concepts with visceral nouns and verbs. Clicking **Shuffle Words** deals 9 fresh words with zero overlap against the previous 9.
-
-<ComponentPreview label="State 2 — Active Player Drawer (9 Evocative Words)">
+<ComponentPreview label="State 2a — Active Player 9-Word Drawer (Click 'Shuffle Words')">
   <div style={{ width: '100%', maxWidth: 560 }}>
     <ScriptSparks
       words={SAMPLE_ACTIVE_WORDS}
       defaultOpen={true}
-      triggerLabel="Need a Spark? — 9 Scene Words"
-      trayHint="9 evocative words to spark your narration (grab one or two):"
+      triggerLabel="Need a Spark? — 9 Director Words"
     />
   </div>
 </ComponentPreview>
 
-### 3. Camera Crew Drawer — 9 Sensory Words + Focus the Camera Questions
-
-Opening the Camera Crew drawer reveals **9 sensory/atmospheric words** (`data-testid="spark-words"`) plus the Act's official **"Focus the Camera"** questions (`data-testid="camera-questions"`) from `NotT_2.md`.
-
-<ComponentPreview label="State 3 — Camera Crew Drawer (9 Sensory Words + Camera Questions)">
+<ComponentPreview label="State 2b — Camera Crew Sensory Words + Focus the Camera Questions">
   <div style={{ width: '100%', maxWidth: 560 }}>
     <ScriptSparks
       words={SAMPLE_CAMERA_WORDS}
-      questions={SAMPLE_CAMERA_QUESTIONS}
+      questions={SAMPLE_QUESTIONS}
       defaultOpen={true}
       triggerLabel="Need a Spark? — 9 Sensory Words & Camera Questions"
-      trayHint="9 sensory & atmospheric words (grab one or two):"
-      questionsLabel="Focus the Camera (ask the Active Player):"
     />
-  </div>
-</ComponentPreview>
-
-| Element | Styling | Why |
-|---|---|---|
-| `wordChip` (×9) | `rgba(138, 0, 0, 0.14)`, `1px solid vars.color.borderActive`, uppercase bold `Inter` | Punches out 9 single-word sparks in a glanceable cluster |
-| `questionChip` | `vars.color.diegeticSurface`, `1px solid vars.color.borderSubtle`, italic `Crimson Text` | Frames the official *Focus the Camera* questions from `NotT_2.md` as spoken table prompts |
-| `reloadButton` | `refresh` icon + `"Shuffle Words"` | Deals 9 fresh non-overlapping words from the 55+ word pool |
-
----
-
-### Live Context Preview
-
-<ComponentPreview label="In-Context Demo — Inside a Scene Prompt Card">
-  <div style={{ width: '100%', maxWidth: 560 }}>
-    <Card title="The Scene — Start the Conversation" variant="instruction">
-      <Stack gap="sm">
-        <Text variant="flavor">
-          &ldquo;ESTABLISHING SHOT — We see your sharp mind at work—checking an exit, a piece of gear, or an odd detail everyone else missed. What are you examining, and what brought you here tonight?&rdquo;
-        </Text>
-        <ScriptSparks
-          words={SAMPLE_ACTIVE_WORDS}
-          triggerLabel="Need a Spark? — 9 Scene Words"
-          trayHint="9 evocative words to spark your narration (grab one or two):"
-        />
-      </Stack>
-    </Card>
   </div>
 </ComponentPreview>
 
@@ -203,28 +161,20 @@ Opening the Camera Crew drawer reveals **9 sensory/atmospheric words** (`data-te
 
 ```
 State 1: Collapsed (!isOpen)
-┌─────────────────────────────────────────┐
-│ [lightbulb] Need a Spark? — 9 Scene Words│  <button class={triggerButton} aria-expanded="false">
-└─────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│ [lightbulb] Need a Spark? — 9 Director Words │  <button class={triggerButton} aria-expanded="false">
+└──────────────────────────────────────────────┘
 
 State 2: Revealed Drawer (isOpen)
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│ 9 EVOCATIVE WORDS TO SPARK YOUR NARRATION...  [refresh] Shuffle Words  [expand_less] Close │  trayHeader
-├──────────────────────────────────────────────────────────────────────────────────┤
-│ [MEAT]  [WOUND]  [ELECTRONICS]  [CLANKING]  [LEVERAGE]                           │  wordsGrid (wordChip × 9)
-│ [PARANOIA]  [ALIBI]  [SPLINTER]  [BARRICADE]                                     │
-├──────────────────────────────────────────────────────────────────────────────────┤
-│ FOCUS THE CAMERA (ASK THE ACTIVE PLAYER):                                        │  questionsSection (optional)
-│ [“What does it look like?”]  [“What does it smell like?”]  [“Is it pitch black?”]│  questionChip × N
-└──────────────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 9 EVOCATIVE WORDS TO SPARK YOUR NARRATION:   [refresh] Shuffle  [^] Close  │  trayHeader
+├────────────────────────────────────────────────────────────────────────────┤
+│ [Meat] [Wound] [Electronics] [Clanking] [Leverage] [Paranoia] [Alibi] ...  │  wordsGrid (wordChip × 9)
+├────────────────────────────────────────────────────────────────────────────┤
+│ FOCUS THE CAMERA (ASK ONE):                                                │  questionsSection (optional)
+│ “What does it look like?”  “What does it smell like?”  “Is it pitch black?”│  questionChip × N
+└────────────────────────────────────────────────────────────────────────────┘
 ```
-
-1. **Root (`styles.root`)** — Flex column container (`gap: vars.space.sm`). Returns `null` when both `words` and `questions` are empty.
-2. **Trigger Button (`styles.triggerButton`)** — Shown when `!isOpen`. Displays the `lightbulb` icon and `triggerLabel`.
-3. **Tray (`styles.tray`)** — Shown when `isOpen` is `true` (`role="region"`, `aria-label={triggerLabel}`).
-4. **Tray Header (`styles.trayHeader`)** — Pairs `trayLabel` with `trayActions` (`reloadButton` + `closeButton`).
-5. **Words Grid (`styles.wordsGrid`)** — Flex wrap container (`data-testid="spark-words"`) rendering 9 `wordChip` spans.
-6. **Questions Section (`styles.questionsSection`)** — Optional section (`data-testid="camera-questions"`) rendering `questionsLabel` and `questionChip` pills.
 
 ---
 
@@ -232,38 +182,18 @@ State 2: Revealed Drawer (isOpen)
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `words` | `readonly string[]` | `[]` | Pool of evocative words (50+ words in `@nott2/game-engine`). 9 drawn at a time with zero overlap. |
-| `sparks` | `readonly string[]` | - | Legacy alias for `words`. |
-| `questions` | `readonly string[]` | - | Optional Act-specific *"Focus the Camera"* questions for the Camera Crew. |
-| `questionsLabel` | `string` | `'Focus the Camera (ask one):'` | Uppercase micro-label above the optional camera questions section. |
+| `words` | `readonly string[]` | — | Pool of evocative words (9 drawn at a time with zero overlap). |
+| `sparks` | `readonly string[]` | — | Alias for `words`. |
+| `questions` | `readonly string[]` | — | Optional Act-specific *"Focus the Camera"* questions for the Camera Crew. |
+| `questionsLabel` | `string` | `'Focus the Camera (ask one):'` | Header above the optional camera questions section. |
 | `triggerLabel` | `string` | `'Need a Spark?'` | Label on the collapsed disclosure button. |
 | `trayHint` | `string` | `'9 evocative words to spark your narration (grab one or two):'` | Uppercase micro-hint in the tray header. |
 | `reloadLabel` | `string` | `'Shuffle Words'` | Label on the shuffle button inside the tray header. |
-| `onReload` | `() => void` | - | Optional callback fired when the user clicks **Shuffle Words**. |
+| `onReload` | `() => void` | — | Optional callback fired when the user clicks **Shuffle Words**. |
 | `defaultOpen` | `boolean` | `false` | Whether the tray starts expanded on mount. |
-| `id` | `string` | - | Optional HTML `id` attribute. |
-
----
-
-## Multi-Axis Word Pool Architecture
-
-`getCombinedFragmentPool()` in `@nott2/game-engine` merges four thematic axes into deduplicated 55+ word pools for the Active Player (`activePlayerWords`) and the Camera Crew (`cameraCrewWords`), plus Act-specific `cameraQuestions`:
-
-| Axis | Active Player Words (Abstract + Visceral Nouns/Verbs) | Camera Crew Words (Sensory & Atmospheric) |
-|---|---|---|
-| **1. Universal / Playset** | *Generic Slasher*: `MEAT`, `WOUND`, `ELECTRONICS`, `CLANKING`, `THRESHOLD`, `DEADBOLT`<br/>*Summer Camp*: `BOATHOUSE`, `GENERATOR`, `CANOE`, `LANTERN`, `MACHETE` | *Generic Slasher*: `DRIPPING`, `COPPER`, `FLICKER`, `ROT`, `OZONE`, `MILDEW`<br/>*Summer Camp*: `PINE`, `KEROSENE`, `MOSQUITO`, `MUDDY`, `BLACKWATER` |
-| **2. Suit** | *Spades*: `LEVERAGE`, `CROWBAR`, `FRACTURE`<br/>*Hearts*: `PARANOIA`, `BETRAYAL`, `PULSE`<br/>*Clubs*: `CIPHER`, `AUTOPSY`, `WIRING`<br/>*Diamonds*: `TIGHTROPE`, `RICOCHET`, `SHARD` | *Spades*: `SWEAT`, `IRON`, `GRINDING`<br/>*Hearts*: `SHIVER`, `WHISPER`, `HEARTBEAT`<br/>*Clubs*: `STATIC`, `FORMALDEHYDE`, `CLICKING`<br/>*Diamonds*: `CREAKING`, `VERTIGO`, `SLICK` |
-| **3. Act (1–3)** | *Act 1*: `OMEN`, `CURIOSITY`, `LOCKED`<br/>*Act 2*: `HUNTED`, `TOURNIQUET`, `CORNERED`<br/>*Act 3*: `FINALITY`, `CARNAGE`, `EXECUTION` | *Act 1*: `UNEASY`, `DISTANT`, `DRAFTY`<br/>*Act 2*: `ARTERIAL`, `POUNDING`, `CORNERED`<br/>*Act 3*: `BLINDING`, `CHOKING`, `DEAFENING` |
-| **4. Rank Group** | `ace` (1), `low` (2–4), `mid` (5–7), `high` (8–10), `face` (11–13), `joker` | Scales from `ARRIVAL` / `BASELINE` to `STALKING` / `LETHAL` / `UNMASKED` |
-
-## Accessibility
-
-- **Disclosure semantics:** The trigger button sets `aria-expanded={false}`, and the open tray renders with `role="region"` and `aria-label={triggerLabel}`.
-- **Read-only clarity:** Words and camera questions are rendered in non-interactive `<span>` elements (`userSelect: 'text'`) so assistive technologies do not falsely announce them as buttons or form inputs.
-- **Explicit action labels:** The shuffle and close buttons provide clear accessible names (`aria-label="Shuffle nine new spark words"`, `aria-label="Close script ideas"`) and `:focus-visible` outlines.
+| `id` | `string` | — | Optional HTML `id` attribute. |
 
 ## Related Components
 
-- **[Card](/components/molecules/card)** — Parent container for scene prompts and outcome narration.
+- **[SceneDossier](/components/molecules/scene-dossier)** — Parent diegetic stage that slots `ScriptSparks` into the Director, Camera Crew, Escalation, and Stakes regions.
 - **[Icon](/components/atoms/icon)** — Supplies the `lightbulb`, `refresh`, and `expand_less` icons.
-- **[EffortBand](/components/molecules/effort-band)** — Paired with `ScriptSparks` on `FalloutScreen`.

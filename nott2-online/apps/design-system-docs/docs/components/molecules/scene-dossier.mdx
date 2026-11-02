@@ -1,0 +1,320 @@
+---
+sidebar_position: 17
+title: SceneDossier
+---
+
+import React from 'react';
+import { ComponentPreview } from '@site/src/components/ComponentPreview';
+import { SceneDossier, ScriptSparks, Button, Row, Text, Icon } from '@nott2/design-system';
+
+export const DIRECTOR_WORDS = [
+  'Meat',
+  'Wound',
+  'Electronics',
+  'Clanking',
+  'Leverage',
+  'Paranoia',
+  'Alibi',
+  'Splinter',
+  'Barricade',
+  'Padlock',
+  'Fusebox',
+  'Crowbar',
+  'Threshold',
+  'Shiver',
+  'Trapdoor',
+  'Deadbolt',
+  'Signal',
+  'Baggage',
+];
+
+export const CAMERA_WORDS = [
+  'Dripping',
+  'Copper',
+  'Flicker',
+  'Rot',
+  'Echo',
+  'Shadow',
+  'Humid',
+  'Scraping',
+  'Silence',
+  'Ozone',
+  'Draft',
+  'Mildew',
+  'Buzzing',
+  'Rusted',
+  'Condensation',
+  'Kerosene',
+  'Soot',
+  'Frost',
+];
+
+export const CAMERA_QUESTIONS = [
+  'What does it look like?',
+  'What does it smell like?',
+  'How close is the Killer?',
+  'Is it pitch black?',
+  'How dark is it?',
+];
+
+# SceneDossier
+
+The open case file and director's monitor on the table while a scene unfolds. Where `SceneChallengeOverlay` is the jump-cut title card that slams the player into a room, `SceneDossier` is the persistent diegetic stage that keeps the crime-scene photo, suit threat, active spotlight, and target difficulty anchored at the top while the lower stage progresses through the scene's dramatic beats (`'script'` → `'stakes'` → `'aftermath'`).
+
+<details open>
+<summary>Code example</summary>
+
+```tsx
+import { SceneDossier, ScriptSparks } from '@nott2/design-system';
+
+<SceneDossier
+  mode="script"
+  imageSrc="/textures/scenes/spades.png"
+  suitIcon="spades"
+  suitTheme="Power (Physical threat)"
+  activeCharacterName="Alex"
+  activeCharacterSuit="spades"
+  difficulty={6}
+  difficultyBreakdown="Number card rank = 6"
+  directorPrompt="Something cold and vice-like snatches your ankle from the shadows below. How do you wrench yourself free, and what bruising mark does it leave on your skin?"
+  cameraPrompt="What did they kick loose in the struggle, and what sound retreats into the dark afterward?"
+  directorSparks={
+    <ScriptSparks
+      words={DIRECTOR_WORDS}
+      triggerLabel="Need a Spark? — 9 Director Words"
+    />
+  }
+  cameraSparks={
+    <ScriptSparks
+      words={CAMERA_WORDS}
+      questions={CAMERA_QUESTIONS}
+      triggerLabel="Need a Spark? — 9 Sensory Words & Camera Questions"
+    />
+  }
+  onEscalate={() => {}}
+/>
+```
+</details>
+
+## Why to Use
+
+In a multi-role horror TTRPG, dumping the Active Player's prompt, the Camera Crew's prompt, Escalation rules, Stakes confirmation, and post-roll Deck Changes into a vertical stack of generic `<Card>` containers makes the game feel like a web dashboard rather than a slasher film.
+
+`SceneDossier` solves this through three structural principles:
+
+1. **Persistent Diegetic Anchor:** The crime-scene evidence Polaroid, suit threat heading, active character spotlight, and Target Difficulty remain pinned in the dossier header so players never lose sight of the physical threat after dismissing `SceneChallengeOverlay`.
+2. **Side-by-Side Dual-Role Screenplay (`'script'` mode):** Everyone at the table sees both the **Director (Active Player)** prompt and the **Camera Crew (The Table)** prompt side-by-side across a vertical crimson gradient divider, while `<ScriptSparks>` drawers are gated to each player's active role.
+3. **Progressive Beat-by-Beat Stage (`'script'` → `'stakes'` → `'aftermath'`):** Instead of scrolling down a long form, the lower stage swaps cleanly between framing the scene (`'script'`), committing to the Overexertion sacrifice (`'stakes'`), and resolving the post-roll Fate & Fallout ledger (`'aftermath'`).
+
+## When to Use
+
+> **Do**
+> - Use `SceneDossier` as the primary centerpiece in `ConversationStakesScreen` (Step 2/4) and `FalloutScreen` (Step 4/4).
+> - Gate `directorSparks` to the Active Player and `cameraSparks` to the Camera Crew in multiplayer rooms so each player only sees their own improvisation drawer.
+> - Use the ambient `onEscalate` / `escalated` props for *"Something's Not Right..."* rather than rendering a separate rules `<Card>`.
+
+> **Don't**
+> - Do not pair `SceneDossier` with a duplicate `<DifficultyBadge>` on the same screen — the dossier header already owns the Target Difficulty readout.
+> - Do not stack multiple `SceneDossier` instances on a single screen; swap `mode` (`'script'` | `'stakes'` | `'aftermath'`) as the player advances through beats.
+
+---
+
+## States — The Three Beats
+
+### 1. Script Beat (`mode="script"`) — Side-by-Side Director & Camera Crew
+
+In Beat 1 of Step 2 (and Beat 1 of Step 4), the stage splits into two columns: the **Director (Active Player)** on the left in italic `Playfair Display`, and the **Camera Crew (The Table)** on the right in `Inter`, separated by a vertical gradient divider. Above the columns sits the ambient *"Something's not right..."* interjection bar.
+
+<ComponentPreview label="Beat 1 — Dual-Role Script Stage (mode='script')">
+  <div style={{ width: '100%', maxWidth: 720 }}>
+    <SceneDossier
+      mode="script"
+      suitIcon="spades"
+      suitTheme="Power (Physical threat)"
+      activeCharacterName="Alex"
+      activeCharacterSuit="spades"
+      difficulty={6}
+      difficultyBreakdown="Number card rank = 6"
+      directorPrompt="Something cold and vice-like snatches your ankle from the shadows below. How do you wrench yourself free, and what bruising mark does it leave on your skin?"
+      cameraPrompt="What did they kick loose in the struggle, and what sound retreats into the dark afterward?"
+      directorSparks={
+        <ScriptSparks
+          words={DIRECTOR_WORDS}
+          triggerLabel="Need a Spark? — 9 Director Words"
+        />
+      }
+      cameraSparks={
+        <ScriptSparks
+          words={CAMERA_WORDS}
+          questions={CAMERA_QUESTIONS}
+          triggerLabel="Need a Spark? — 9 Sensory Words & Camera Questions"
+        />
+      }
+      onEscalate={() => {}}
+    />
+  </div>
+</ComponentPreview>
+
+### 2. Stakes Beat (`mode="stakes"`) & Escalation Stamp (`escalated={true}`)
+
+When the table clicks **Set the Stakes →**, the dossier header stays anchored while the lower stage transitions to `mode="stakes"`, focusing on the Overexertion question and Act-scaled stakes guidance. If the Camera Crew has triggered *"Something's Not Right..."*, the left-edge bleed thickens to `4px` and a tilted crimson stamp brands the dossier.
+
+<ComponentPreview label="Beat 2 — Stakes Stage with Escalation Stamp (mode='stakes', escalated=true)">
+  <div style={{ width: '100%', maxWidth: 720 }}>
+    <SceneDossier
+      mode="stakes"
+      suitIcon="spades"
+      suitTheme="Power (Physical threat)"
+      activeCharacterName="Alex"
+      activeCharacterSuit="spades"
+      difficulty={6}
+      difficultyBreakdown="Number card rank = 6"
+      escalated={true}
+      stakesQuestion="If you end up pushing yourself to reach your goal, what are you willing to risk?"
+      stakesGuidance="Act 2 Stakes — The hunt is on: agree on a genuine, painful loss—a bleeding wound, a destroyed escape route, or leaving someone exposed."
+      stakesSparks={
+        <ScriptSparks
+          words={DIRECTOR_WORDS}
+          triggerLabel="Need a Spark? — 9 Sacrifice Words"
+        />
+      }
+      onBackToScene={() => {}}
+    />
+  </div>
+</ComponentPreview>
+
+### 3. Aftermath Ledger Beat (`mode="aftermath"`)
+
+In Step 4 Beat 2, `SceneDossier` switches to `mode="aftermath"`, replacing bulky multi-card callouts with a unified **Fate & Fallout Ledger**: single-line semantic fate records, a blood-bordered Strike assignment section, and an inline Genre Point toss row.
+
+<ComponentPreview label="Step 4 Beat 2 — Aftermath Ledger Stage (mode='aftermath')">
+  <div style={{ width: '100%', maxWidth: 720 }}>
+    <SceneDossier
+      mode="aftermath"
+      suitIcon="spades"
+      suitTheme="Power (Physical threat)"
+      activeCharacterName="Alex"
+      activeCharacterSuit="spades"
+      difficulty={6}
+      fateItems={[
+        {
+          icon: 'emoji_events',
+          text: '6 of Spades placed on the Trophy Pile (New Face Card base difficulty: 6).',
+          tone: 'success',
+        },
+        {
+          icon: 'input',
+          text: 'Next card drawn from the Number Reserve → added to bottom of the Threat Deck.',
+          tone: 'info',
+        },
+        {
+          icon: 'bolt',
+          text: 'Breaking Point (d4 = 4) — the Active Player earns a Strike.',
+          tone: 'danger',
+        },
+      ]}
+      strikesSlot={
+        <Row gap="sm" align="center" justify="between">
+          <Text variant="label">Alex (Spades) — 1 → 2 / 3 Strikes</Text>
+          <Row gap="xs">
+            <Button variant="ghost" size="sm">−</Button>
+            <Button variant="primary" size="sm">+ 1</Button>
+          </Row>
+        </Row>
+      }
+      genrePointSlot={
+        <Row gap="xs" wrap>
+          <Button variant="secondary" size="sm">To Alex</Button>
+          <Button variant="secondary" size="sm">To Sam</Button>
+          <Button variant="secondary" size="sm">To Riley</Button>
+        </Row>
+      }
+      onBackToScene={() => {}}
+      backLabel="Back to Narration"
+    />
+  </div>
+</ComponentPreview>
+
+---
+
+## Anatomy
+
+```
+┌────────────────────────────────────────────────────────────────────────────┐
+┃ ┌────────┐  ♠ POWER (PHYSICAL THREAT)                        │   TARGET    │  headerBar
+┃ │ PHOTO  │  ♠ Alex   [The Jock] [The Protective]             │     6       │  (photoFrame + headerMeta
+┃ └────────┘                                                   │  Rank = 6   │   + difficultyBlock)
+├────────────────────────────────────────────────────────────────────────────┤
+┃ [!] “Something’s not right...” (Escalate Once)   [Need a Spark? — Words]   │  escalationStrip
+├────────────────────────────────────────────────────────────────────────────┤
+┃ 🎬 DIRECTOR — ACTIVE PLAYER       │  🎥 CAMERA CREW — THE TABLE            │  scriptGrid (mode="script")
+┃ “Something cold and vice-like     │  What did they kick loose in the       │  (roleColumn + scriptDivider
+┃  snatches your ankle...”          │  struggle, and what sound retreats?    │   + roleColumn)
+┃ [Need a Spark? — 9 Words]         │  [Need a Spark? — 9 Sensory + Focus]   │
+└════════════════════════════════════════════════════════════════════════════┘
+  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+  Inset bottom wound + external crimson glow pool
+```
+
+1. **Root (`styles.dossierRecipe`)** — Implements the **Bleeding Component** stack: a 3px pulsing crimson left-edge bleed (`4px` when `escalated`), a 1px inset crimson bottom wound with external glow, and a left-to-right directional wash.
+2. **Dossier Header (`styles.headerBar`)** — Houses the tilted Polaroid `photoFrame` (with `vhs-grain.png` texture overlay), `headerMeta` (suit theme, active character badge, optional Prologue `archetypes`), a vertical gradient `headerDivider`, and `difficultyBlock`.
+3. **Escalation Strip (`styles.escalationStrip`)** — Renders either the interactive *"Something's not right..."* trigger button (`styles.escalationTriggerBtn`) or the angled crimson `escalationStamp` when `escalated={true}`, alongside optional `escalationSparks`.
+4. **Sacrifice Banner (`styles.sacrificeBanner`)** — Shown when `sacrificeTriggered={true}` (Post-Roll Effort 3+), reminding the table that the agreed Overexertion sacrifice happens now.
+5. **Dual-Role Script Grid (`styles.scriptGrid`)** — Shown when `mode="script"`. Two equal columns separated by a 1px vertical gradient `scriptDivider` (collapsing to a horizontal gradient divider on viewports `≤640px`).
+6. **Single-Stage Container (`styles.singleStage`)** — Shown when `mode="stakes"` or `mode="aftermath"`, providing a clean header bar with a `Back to Scene` button (`onBackToScene`) and dedicated stage content.
+
+---
+
+## Key Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `mode` | `'script' \| 'stakes' \| 'aftermath'` | `'script'` | Controls which dramatic beat is rendered in the dossier stage. |
+| `imageSrc` | `string` | — | Optional URL for the Polaroid crime-scene photo in the header. |
+| `suitIcon` | `IconName` | — | Suit or threat icon displayed next to `suitTheme`. |
+| `suitTheme` | `string` | — | Uppercase suit theme or encounter label in the header. |
+| `activeCharacterName` | `string` | — | Spotlight character's name in the header. |
+| `activeCharacterSuit` | `IconName` | — | Suit icon for the spotlight character. |
+| `archetypes` | `readonly string[]` | — | Optional Prologue archetype tags rendered next to the character name. |
+| `difficulty` | `number \| null` | — | Target difficulty number in the right-hand header readout. |
+| `difficultyBreakdown` | `string` | — | Formula caption under `difficulty` (e.g., `"Trophy (4) + 2 = 6"`). |
+| `escalated` | `boolean` | `false` | Intensifies the dossier's bleed/glow and replaces the trigger button with the crimson Escalation stamp. |
+| `onEscalate` | `() => void` | — | Callback fired when the *"Something's not right..."* button is clicked. |
+| `escalationSparks` | `ReactNode` | — | Optional inline `<ScriptSparks>` rendered in the escalation strip. |
+| `sacrificeTriggered` | `boolean` | `false` | Renders the heated Overexertion sacrifice reminder strip above the stage. |
+| `directorPrompt` | `string` | — | Active Player prompt rendered in the left column (`mode="script"`). |
+| `directorSparks` | `ReactNode` | — | Slot for the Director's role-gated `<ScriptSparks>` (`mode="script"`). |
+| `cameraPrompt` | `string` | — | Camera Crew prompt rendered in the right column (`mode="script"`). |
+| `cameraSparks` | `ReactNode` | — | Slot for the Camera Crew's role-gated `<ScriptSparks>` (`mode="script"`). |
+| `stakesQuestion` | `string` | `'If you end up pushing yourself...'` | Core Overexertion question (`mode="stakes"`). |
+| `stakesGuidance` | `string` | — | Act-scaled stakes guidance (`mode="stakes"`). |
+| `stakesSparks` | `ReactNode` | — | Slot for `<ScriptSparks>` (`mode="stakes"`). |
+| `fateItems` | `readonly SceneDossierFateItem[]` | `[]` | Compact 1-line fate & deck outcomes (`mode="aftermath"`). |
+| `weaknessSlot` | `ReactNode` | — | Optional inline `<WeaknessTracker>` (`mode="aftermath"`). |
+| `strikesSlot` | `ReactNode` | — | Optional Blood Price strike assignment controls (`mode="aftermath"`). |
+| `genrePointSlot` | `ReactNode` | — | Optional inline Genre Point award controls (`mode="aftermath"`). |
+| `onBackToScene` | `() => void` | — | Optional callback to return to Beat 1 (`mode="stakes"` or `"aftermath"`). |
+
+---
+
+## Visual Identity Alignment
+
+| Principle | How SceneDossier Implements It |
+|---|---|
+| **Dark Canvas, Luminous Actors** | Uses the **Bleeding Component** stack (left-edge bleed + inset bottom wound + directional wash) so the dossier radiates crimson heat instead of floating on drop shadows. |
+| **Physical Imperfection** | The crime-scene Polaroid tilts at `-1.5deg`, and the Escalation stamp uses `clip-path: polygon(...)` with a `-1.5deg` rotation. |
+| **Semantic Heat** | Escalating from a 3s subtle crimson bleed to a 2s 4px bright crimson bleed when escalated, with orange thermal accents on Overexertion stakes and sacrifice banners. |
+| **Diegetic Texture** | Composites `vhs-grain.png` with `mix-blend-mode: overlay` over the desaturated crime-scene Polaroid in the header. |
+| **Cinematic Pacing** | Replaces vertical scrolling feeds with `200ms ease-out` beat transitions (`'script'` → `'stakes'` → `'aftermath'`). |
+
+## Accessibility
+
+- **Landmark semantics:** Renders as a `<section>` with `aria-label="Scene Dossier: {suitTheme}"` and exposes `aria-label="Target Difficulty {difficulty}"` on the difficulty readout.
+- **Live status announcements:** Both the Escalation stamp (`role="status"`) and the Sacrifice Triggered banner (`role="status"`) announce state changes to assistive technology.
+- **Reduced motion:** All entry animations, stamp slams, and left-edge bleed pulses disable cleanly under `@media (prefers-reduced-motion: reduce)`.
+
+## Related Components
+
+- **[SceneChallengeOverlay](/components/organisms/scene-challenge-overlay)** — The full-bleed jump-cut overlay that precedes `SceneDossier` on entering Step 2.
+- **[ScriptSparks](/components/molecules/script-sparks)** — The read-only 9-word improvisation drawer slotted into the Director, Camera Crew, and Stakes stages.
+- **[ResultBanner](/components/molecules/result-banner)** & **[EffortBand](/components/molecules/effort-band)** — Paired above `SceneDossier` in Step 4 (`FalloutScreen`).

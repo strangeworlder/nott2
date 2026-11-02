@@ -4,13 +4,11 @@ import 'material-symbols/rounded.css';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
-  weight: ['400', '600', '700'],
   variable: '--font-display',
 });
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
   variable: '--font-body',
 });
 

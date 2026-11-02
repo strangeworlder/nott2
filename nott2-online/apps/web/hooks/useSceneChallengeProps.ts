@@ -101,7 +101,7 @@ export function useSceneChallengeProps() {
 
   // ── Jump scare determination ───────────────────────────────────────────────
   // The random roll is captured once per card selection change.
-  const recurringRollRef = useRef(Math.random());
+  const recurringRollRef = useRef(1);
   const prevSelectedIdRef = useRef<string | null>(null);
 
   const selectionKey = scene.selectedCardId ?? (scene.activeJoker ? `Joker-${scene.activeJoker}` : null);

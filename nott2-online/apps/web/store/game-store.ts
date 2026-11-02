@@ -116,11 +116,42 @@ function initialState(): engine.GameState {
   };
 }
 
+/**
+ * Deterministic initial state for SSR and initial client hydration.
+ * Avoids non-deterministic deck values in SSR HTML so server-rendered markup
+ * and client hydration match identically. Client components call fullReset()
+ * or initGame() after mount to deal a randomized deck.
+ */
+function initialSSRState(): engine.GameState {
+  const gs = initialState();
+  const aces = engine.SUITS.map(s => engine.makeCard(1, s));
+  const numbers = engine.NUMBER_RANKS.flatMap(r => engine.SUITS.map(s => engine.makeCard(r, s)));
+  const jacks = engine.SUITS.map(s => engine.makeCard(11, s));
+  const queens = engine.SUITS.map(s => engine.makeCard(12, s));
+  const kings = engine.SUITS.map(s => engine.makeCard(13, s));
+  return {
+    ...gs,
+    deck: {
+      threatDeck: [...aces, ...numbers.slice(0, 8), jacks[0]],
+      reserve: numbers.slice(9),
+      faceCardReserve: [...jacks.slice(1), ...queens, ...kings],
+      trophyPile: [numbers[8]],
+      trophyTop: null,
+      visibleCards: [],
+      removedCards: [],
+      weaknessesBySuit: new Set(),
+      cardsAddedFromReserve: 0,
+    },
+  };
+}
+
+const ssrInitialState = initialSSRState();
+
 export const useGameStore = create<GameStore>()(
   devtools(
     (set, get) => ({
-      gameState: initialState(),
-      computed: recompute(initialState()),
+      gameState: ssrInitialState,
+      computed: recompute(ssrInitialState),
       pendingClockValue: null,
       sceneChallengeVisible: false,
 
